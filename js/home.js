@@ -65,8 +65,13 @@ function renderStats() {
     let modulesCount = 0;
     if (db && db.modules) {
         Object.keys(db.modules).forEach(k => {
-            const arr = db.modules[k];
-            if (Array.isArray(arr)) modulesCount += arr.length;
+            const entry = db.modules[k];
+            if (Array.isArray(entry)) {
+                modulesCount += entry.length;
+            } else if (entry && typeof entry === 'object') {
+                const vals = Object.values(entry);
+                modulesCount += vals.length;
+            }
         });
     }
 
@@ -74,11 +79,22 @@ function renderStats() {
     let resourcesCount = 0;
     let contributionsCount = 0;
     if (db && db.resources) {
+        console.log('in')
         Object.keys(db.resources).forEach(k => {
-            const arr = db.resources[k];
-            if (Array.isArray(arr)) {
-                resourcesCount += arr.length;
-                arr.forEach(item => { if (item && item.unverified) contributionsCount++; });
+            const entry = db.resources[k];
+            console.log(entry);
+            if (!entry) return;
+
+            // Support both array and keyed-object snapshots from Firebase
+            if (Array.isArray(entry)) {
+                resourcesCount += entry.length;
+                console.log('Counting contributions in', k, entry);
+                entry.forEach(item => { if (item && item.unverified) contributionsCount++; });
+            } else if (typeof entry === 'object') {
+                const vals = Object.values(entry);
+                resourcesCount += vals.length;
+                console.log('Counting contributions in', k, vals);
+                vals.forEach(item => { if (item && item.unverified) contributionsCount++; });
             }
         });
     }
@@ -100,7 +116,10 @@ function renderFields() {
 
     if (!db.fields) return;
 
-    db.fields.forEach(field => {
+    // `db.fields` may be an array or an object (Firebase keyed snapshot)
+    const fieldsArr = Array.isArray(db.fields) ? db.fields : Object.values(db.fields || {});
+
+    fieldsArr.forEach(field => {
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
