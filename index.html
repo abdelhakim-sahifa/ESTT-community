@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EST Tétouan - Ressources Étudiants</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTA2IxTavd4umLUcIaTE_74EGua44Z7VScBvQ&s">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container header-content">
+            <div class="logo-container">
+                <img src="https://www.est.uae.ma/assets/images/logo/logo__five.svg" alt="EST Tétouan Logo" class="logo">
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Accueil</a></li>
+                    <li><a href="contribute.html">Contribuer</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <h1>Bienvenue sur la plateforme d'entraide étudiante</h1>
+                <p>Retrouvez tous les cours, TD, examens et vidéos pour votre réussite.</p>
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="global-search" placeholder="Rechercher un module, un cours...">
+                </div>
+            </div>
+        </section>
+
+        <!-- Banners for main programs -->
+        <section id="program-banners" class="banners-section">
+            <div class="grid-container banners-grid" id="banners-container">
+                <!-- Banners rendered by JS or fallback in HTML -->
+                <a class="banner-card" href="browse.html?field=ia" aria-label="IA program">
+                    <img src="https://www.est.uae.ma/assets/images/program/DUT-1.jpg" alt="AI program banner">
+                    <div class="banner-label">Intelligence Artificielle</div>
+                </a>
+                <a class="banner-card" href="browse.html?field=insem" aria-label="Naval program">
+                    <img src="https://www.est.uae.ma/assets/images/program/DUT-2.jpg" alt="Naval program banner">
+                    <div class="banner-label">Industrie Navale</div>
+                </a>
+                <a class="banner-card" href="browse.html?field=casi" aria-label="Cyber program">
+                    <img src="https://www.est.uae.ma/assets/images/program/DUT-3.jpg" alt="Cyber program banner">
+                    <div class="banner-label">Cybersécurité</div>
+                </a>
+                <a class="banner-card" href="browse.html?field=idd" aria-label="IDD program">
+                    <img src="https://www.est.uae.ma/assets/images/course/program-big3.jpg" alt="IDD program banner">
+                    <div class="banner-label">Informatique & Dév Digital</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Statistics: contributions, resources, modules -->
+        <section id="site-stats" class="stats-section">
+            <h2 class="section-header">État de la plateforme</h2>
+            <div class="stats-grid" id="stats-container">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-contributions">0</div>
+                    <div class="stat-label">Contributions en attente</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-resources">0</div>
+                    <div class="stat-label">Ressources totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-modules">0</div>
+                    <div class="stat-label">Modules disponibles</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fields-grid" class="fields-section">
+            <h2>Nos Filières</h2>
+            <div class="grid-container" id="fields-container">
+                <!-- Fields will be rendered here by home.js -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Promo 2 - EST Tétouan. Fait avec <i class="fa-solid fa-heart"></i> pour les futurs étudiants.</p>
+        </div>
+    </footer>
+
+    <!-- Global loading spinner -->
+    <div id="spinner-overlay" class="spinner-overlay hidden" aria-hidden="true">
+        <div class="spinner" role="status" aria-label="Chargement"></div>
+    </div>
+
+    <script type="module" src="js/home.js"></script>
+</body>
+</html>

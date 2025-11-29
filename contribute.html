@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contribuer - EST Tétouan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTA2IxTavd4umLUcIaTE_74EGua44Z7VScBvQ&s">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="container header-content">
+            <div class="logo-container">
+                <img src="https://www.est.uae.ma/assets/images/logo/logo__five.svg" alt="EST Tétouan Logo" class="logo">
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="contribute.html" class="active">Contribuer</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="contribution-section">
+            <div class="section-header">
+                <h2>Contribuer une Ressource</h2>
+                <p>Aidez vos camarades en partageant vos cours, TD ou examens.</p>
+            </div>
+
+            <form id="contribution-form" class="contribution-form">
+                <div class="form-group">
+                    <label for="field-select">Filière</label>
+                    <select id="field-select" required>
+                        <option value="">Choisir une filière</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="semester-select">Semestre</label>
+                    <select id="semester-select" required>
+                        <option value="">Choisir un semestre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="module-select">Module</label>
+                    <select id="module-select" required>
+                        <option value="">Choisir un module</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="prof-select">Professeur</label>
+                    <select id="prof-select" required>
+                        <option value="">Choisir un professeur</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="res-type">Type de ressource</label>
+                    <select id="res-type" required>
+                        <option value="cours">Cours</option>
+                        <option value="td">TD</option>
+                        <option value="exam">Examen</option>
+                        <option value="video">Vidéo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="res-title">Titre du fichier</label>
+                    <input type="text" id="res-title" placeholder="Ex: Chapitre 1 - Introduction" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="res-link">Lien (Drive, YouTube, etc.)</label>
+                    <input type="url" id="res-link" placeholder="https://..." required>
+                </div>
+
+                <button type="submit" class="submit-btn">Envoyer</button>
+            </form>
+
+            <div id="contrib-result" class="contrib-result" style="display:none; margin-top:1.25rem; padding:1rem; border:1px solid #e0e0e0; background:#fbfbff;">
+                <!-- Filled dynamically after a successful contribution -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Promo 2 - EST Tétouan. Fait avec <i class="fa-solid fa-heart"></i> pour les futurs étudiants.
+            </p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/contribute.js"></script>
+</body>
+
+</html>

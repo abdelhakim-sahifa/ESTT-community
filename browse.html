@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ressources - EST Tétouan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTA2IxTavd4umLUcIaTE_74EGua44Z7VScBvQ&s">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="container header-content">
+            <div class="logo-container">
+                <img src="https://www.est.uae.ma/assets/images/logo/logo__five.svg" alt="EST Tétouan Logo" class="logo">
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="contribute.html">Contribuer</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="app" class="container">
+        <!-- Content will be dynamically injected by browse.js -->
+        <p style="text-align: center; padding: 2rem;">Chargement...</p>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Promo 2 - EST Tétouan. Fait avec <i class="fa-solid fa-heart"></i> pour les futurs étudiants.
+            </p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/browse.js"></script>
+    <!-- Global loading spinner -->
+    <div id="spinner-overlay" class="spinner-overlay hidden" aria-hidden="true">
+        <div class="spinner" role="status" aria-label="Chargement"></div>
+    </div>
+</body>
+
+</html>
