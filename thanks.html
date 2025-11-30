@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merci — Contribution reçue</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="container header-content">
+            <div class="logo-container">
+                <img src="https://www.est.uae.ma/assets/images/logo/logo__five.svg" alt="EST Tétouan Logo" class="logo">
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="contribute.html">Contribuer</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="thank-card">
+            <h2>Merci pour votre contribution !</h2>
+            <p id="thank-desc">Votre ressource a bien été reçue. Elle sera modérée et publiée prochainement.</p>
+            <div id="resource-info" style="margin-top:8px; color:#556; font-weight:600;"></div>
+
+            <div class="thank-actions">
+                <a href="browse.html" class="btn btn-outline">Voir les ressources</a>
+                <a href="index.html" class="btn btn-primary">Retour à l'accueil</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Promo 2 - EST Tétouan. Fait avec <i class="fa-solid fa-heart"></i> pour les futurs étudiants.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Parse query params and display a short summary
+        (function () {
+            const qs = new URLSearchParams(location.search);
+            const title = qs.get('title') || '';
+            const field = qs.get('field') || '';
+            const sem = qs.get('semester') || '';
+            if (title) {
+                const info = document.getElementById('resource-info');
+                info.textContent = `Ressource : "${decodeURIComponent(title)}"`;
+            }
+
+            // Friendly auto-focus for keyboard users
+            const actions = document.querySelector('.thank-actions .btn-primary');
+            if (actions) actions.focus();
+        })();
+    </script>
+</body>
+
+</html>

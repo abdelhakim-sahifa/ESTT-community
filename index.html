@@ -23,6 +23,12 @@
                     <li><a href="contribute.html">Contribuer</a></li>
                 </ul>
             </nav>
+            <div class="auth-controls">
+                <a href="login.html" id="btn-open-login" class="btn-link">Se connecter</a>
+                <a href="signup.html" id="btn-open-signup" class="btn-link">S'inscrire</a>
+                <span id="user-label" class="user-label"></span>
+                <button id="btn-signout" class="btn-link" style="display:none">Se déconnecter</button>
+            </div>
         </div>
     </header>
 
@@ -113,6 +119,7 @@
         <div class="spinner" role="status" aria-label="Chargement"></div>
     </div>
 
+    <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/home.js"></script>
 </body>
 </html>

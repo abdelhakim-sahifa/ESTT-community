@@ -25,6 +25,12 @@
                     <li><a href="contribute.html" class="active">Contribuer</a></li>
                 </ul>
             </nav>
+            <div class="auth-controls">
+                <a href="login.html" id="btn-open-login" class="btn-link">Se connecter</a>
+                <a href="signup.html" id="btn-open-signup" class="btn-link">S'inscrire</a>
+                <span id="user-label" class="user-label"></span>
+                <button id="btn-signout" class="btn-link" style="display:none">Se déconnecter</button>
+            </div>
         </div>
     </header>
 
@@ -106,8 +112,14 @@
 
                 <button type="submit" class="submit-btn btn btn-primary btn-lg">Partager maintenant</button>
             </form>
+            <p class="muted" style="margin-top:.75rem; text-align:center; font-size:0.95rem; color:#666;">Vos contributions sont modérées avant publication — merci pour votre aide !</p>
+
             <div id="contrib-result" class="contrib-result" style="display:none; margin-top:1.25rem; padding:1rem; border:1px solid #e0e0e0; background:#fbfbff;">
                 <!-- Filled dynamically after a successful contribution -->
+            </div>
+            <!-- Global spinner used during upload/submit -->
+            <div id="spinner" class="spinner-overlay hidden" aria-hidden="true">
+                <div class="spinner" role="status" aria-label="Chargement"></div>
             </div>
         </section>
     </main>
@@ -119,6 +131,7 @@
         </div>
     </footer>
 
+    <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/contribute.js"></script>
 </body>
 

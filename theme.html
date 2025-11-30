@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Thème — ESTT-community</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="container header-content">
+      <div class="logo-container"><img src="assets/images/logo__five.svg" class="logo" alt="logo"></div>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="contribute.html">Contribuer</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="contribution-section" style="margin-top:2rem;">
+      <h2 class="section-header">Préférences de thème</h2>
+      <p>Choisissez le thème du site. Le réglage est mémorisé localement dans votre navigateur.</p>
+
+      <div style="display:flex; gap:1rem; align-items:center; margin-top:1rem;">
+        <label style="display:flex; gap:.6rem; align-items:center;">
+          <input id="theme-light" name="theme" type="radio" value="light"> Clair
+        </label>
+        <label style="display:flex; gap:.6rem; align-items:center;">
+          <input id="theme-dark" name="theme" type="radio" value="dark"> Sombre
+        </label>
+      </div>
+
+      <p style="margin-top:1rem; color:#666;">Note: le thème est local à votre navigateur. Pour appliquer sur plusieurs appareils, connectez-vous et utilisez un réglage serveur (non fourni ici).</p>
+    </section>
+  </main>
+
+  <script type="module" src="js/theme.js"></script>
+</body>
+</html>

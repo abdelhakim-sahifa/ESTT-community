@@ -525,3 +525,80 @@ h1, h2, h3, h4, h5, h6,
     to { transform: rotate(360deg); }
 }
 
+/* Thank you page card */
+.thank-card {
+    max-width: 720px;
+    margin: 3rem auto 4rem;
+    background: linear-gradient(180deg,#fff,#fbfdff);
+    border-radius: 18px;
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+.thank-card h2 { color: var(--primary-color); margin-bottom: 0.5rem; }
+.thank-card p { color: #33475b; margin-bottom: 1rem; }
+.thank-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:1rem; }
+.thank-actions a { text-decoration:none; padding:0.75rem 1.1rem; border-radius:12px; font-weight:700; }
+.thank-actions .btn-primary { background: linear-gradient(90deg,var(--primary-color),#0077ff); color:#fff; }
+.thank-actions .btn-outline { background:#fff; border:1px solid rgba(0,0,0,0.06); color:var(--primary-color); }
+
+/* Auth / Modal styles */
+.auth-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.btn-link {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+}
+.btn-link:hover { background: rgba(0,86,179,0.06); }
+.user-label { font-weight:700; color:#23456a; margin-right:0.5rem; }
+
+.modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.35);
+    z-index: 2000;
+}
+.modal.hidden { display: none; }
+.modal-content {
+    background: var(--card-bg);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    width: 380px;
+    max-width: calc(100% - 32px);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+}
+.auth-close { position: absolute; top:10px; right:10px; border:none; background:transparent; font-size:1.2rem; cursor:pointer; }
+.form-row { margin-bottom:0.75rem; }
+.form-row input { width:100%; padding:0.6rem; border-radius:8px; border:1px solid #e6e6e6; }
+.form-note { font-size:0.9rem; color:#555; margin:0.6rem 0; }
+.form-message { color: #b00020; min-height:1.2rem; margin-bottom:0.4rem; }
+.form-actions { display:flex; gap:0.6rem; align-items:center; justify-content:space-between; }
+.form-actions .link { font-size:0.9rem; color:var(--primary-color); text-decoration:underline; }
+
+/* Theme (dark) overrides */
+[data-theme="dark"] {
+    --primary-color: #58a6ff;
+    --secondary-color: #6cc0ff;
+    --text-color: #e6eef8;
+    --bg-color: #0b1220;
+    --card-bg: #0f1724;
+}
+
+/* Minor responsive tweak for auth modal */
+@media (max-width:460px) {
+    .modal-content { width: 92%; padding: 1rem; }
+    .auth-controls .btn-link { padding: 0.4rem; }
+}
+

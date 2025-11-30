@@ -178,7 +178,31 @@ async function handleContributionSubmit(e) {
     try {
         push(fbRef(firebaseDB, `resources/${moduleId}`), newRes)
             .then(() => {
-                showContributionResult(newRes, fieldId, semester, moduleId);
+                // Provide immediate feedback and redirect to a thank-you page
+                try {
+                    const submitBtn = e.target.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = 'Merci — redirection...';
+                    }
+                    const spinner = document.getElementById('spinner');
+                    if (spinner) spinner.classList.remove('hidden');
+                } catch (err) {
+                    console.warn('UI update failed', err);
+                }
+
+                const params = new URLSearchParams({
+                    title: newRes.title || '',
+                    field: fieldId || '',
+                    semester: semester || '',
+                    module: moduleId || ''
+                });
+
+                // Short delay so user sees the confirmation before redirect
+                setTimeout(() => {
+                    window.location.href = `thanks.html?${params.toString()}`;
+                }, 700);
+
                 e.target.reset();
             })
             .catch(err => {
