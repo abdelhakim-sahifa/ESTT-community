@@ -1,6 +1,10 @@
 import { db, initFirebase, updateActiveLink } from './common.js';
 import { db as firebaseDB, ref as fbRef, push } from './firebase-config.js';
 import { uploadResourceFile } from './supabase.js';
+import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { app } from './firebase-config.js';
+
+const auth = getAuth(app);
 
 function init() {
     updateActiveLink('contribute.html');
@@ -173,6 +177,12 @@ async function handleContributionSubmit(e) {
         semester,
         unverified: true
     };
+
+    // Store user email if authenticated (not displayed anywhere, just stored in DB)
+    const currentUser = auth.currentUser;
+    if (currentUser && currentUser.email) {
+        newRes.userEmail = currentUser.email;
+    }
 
     // Push to Firebase under resources/<moduleId>
     try {
