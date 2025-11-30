@@ -9,13 +9,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTA2IxTavd4umLUcIaTE_74EGua44Z7VScBvQ&s">
+    <link rel="icon" href="assets/images/favicon.jpg">
 </head>
 <body>
     <header class="main-header">
         <div class="container header-content">
             <div class="logo-container">
-                <img src="https://www.est.uae.ma/assets/images/logo/logo__five.svg" alt="EST Tétouan Logo" class="logo">
+                <img src="assets/images/logo__five.svg" alt="EST Tétouan Logo" class="logo">
             </div>
             <nav class="main-nav">
                 <ul>
@@ -29,8 +29,22 @@
     <main class="container">
         <section id="hero" class="hero-section">
             <div class="hero-content">
-                <h1>Bienvenue sur la plateforme d'entraide étudiante</h1>
-                <p>Retrouvez tous les cours, TD, examens et vidéos pour votre réussite.</p>
+                <h1>Partage tes ressources — aide tes camarades, gagne du temps</h1>
+                <p class="hero-sub">Tu as un cours, un TD, un exercice ou une vidéo utile ? Contribue en moins de 2 minutes.</p>
+
+                <div class="hero-ctas">
+                    <a href="contribute.html" class="btn btn-primary">Contribuer une ressource</a>
+                    <a href="browse.html" class="btn btn-outline">Parcourir les ressources</a>
+                </div>
+
+                <div class="hero-meta" aria-hidden="false">
+                    <div class="meta-item"><strong id="hero-stat-resources">0</strong> ressources</div>
+                    <div class="meta-item"><strong id="hero-stat-contributions">0</strong> contributions en attente</div>
+                    <div class="meta-item"><strong id="hero-stat-modules">0</strong> modules</div>
+                </div>
+
+                <div class="how-works">Formats acceptés : PDF · Images · Liens · Vidéos — Anonyme possible · Modération rapide</div>
+
                 <div class="search-bar">
                     <i class="fa-solid fa-search"></i>
                     <input type="text" id="global-search" placeholder="Rechercher un module, un cours...">
@@ -43,19 +57,19 @@
             <div class="grid-container banners-grid" id="banners-container">
                 <!-- Banners rendered by JS or fallback in HTML -->
                 <a class="banner-card" href="browse.html?field=ia" aria-label="IA program">
-                    <img src="https://www.est.uae.ma/assets/images/program/DUT-1.jpg" alt="AI program banner">
+                    <img src="assets/images/DUT-1.jpg" alt="AI program banner" loading="lazy">
                     <div class="banner-label">Intelligence Artificielle</div>
                 </a>
                 <a class="banner-card" href="browse.html?field=insem" aria-label="Naval program">
-                    <img src="https://www.est.uae.ma/assets/images/program/DUT-2.jpg" alt="Naval program banner">
+                    <img src="assets/images/DUT-2.jpg" alt="Naval program banner" loading="lazy">
                     <div class="banner-label">Industrie Navale</div>
                 </a>
                 <a class="banner-card" href="browse.html?field=casi" aria-label="Cyber program">
-                    <img src="https://www.est.uae.ma/assets/images/program/DUT-3.jpg" alt="Cyber program banner">
+                    <img src="assets/images/DUT-3.jpg" alt="Cyber program banner" loading="lazy">
                     <div class="banner-label">Cybersécurité</div>
                 </a>
                 <a class="banner-card" href="browse.html?field=idd" aria-label="IDD program">
-                    <img src="https://www.est.uae.ma/assets/images/course/program-big3.jpg" alt="IDD program banner">
+                    <img src="assets/images/program-big3.jpg" alt="IDD program banner" loading="lazy">
                     <div class="banner-label">Informatique & Dév Digital</div>
                 </a>
             </div>

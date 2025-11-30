@@ -31,10 +31,10 @@ function renderBanners() {
 
     // Map field ids to the provided banner images (fallbacks if you change names)
     const bannerMap = {
-        'ia': 'https://www.est.uae.ma/assets/images/program/DUT-1.jpg',
-        'insem': 'https://www.est.uae.ma/assets/images/program/DUT-2.jpg',
-        'casi': 'https://www.est.uae.ma/assets/images/program/DUT-3.jpg',
-        'idd': 'https://www.est.uae.ma/assets/images/course/program-big3.jpg'
+        'ia': 'assets/images/DUT-1.jpg',
+        'insem': 'assets/images/DUT-2.jpg',
+        'casi': 'assets/images/DUT-3.jpg',
+        'idd': 'assets/images/program-big3.jpg'
     };
 
     // If we have dynamic `db.fields`, render banners to match filières
@@ -47,7 +47,7 @@ function renderBanners() {
             a.href = `browse.html?field=${encodeURIComponent(field.id)}`;
             a.title = field.name || field.id;
             a.innerHTML = `
-                <img src="${imgSrc}" alt="${escapeHtml(field.name || field.id)} program banner">
+                <img src="${imgSrc}" alt="${escapeHtml(field.name || field.id)} program banner" loading="lazy">
                 <div class="banner-label">${escapeHtml(field.name || field.id)}</div>
             `;
             bannersContainer.appendChild(a);
@@ -107,6 +107,14 @@ function renderStats() {
     if (elContrib) elContrib.textContent = String(contributionsCount || 0);
     if (elRes) elRes.textContent = String(resourcesCount || 0);
     if (elMods) elMods.textContent = String(modulesCount || 0);
+
+    // Also mirror the counts to the hero area (if present) for immediate visibility
+    const heroRes = document.getElementById('hero-stat-resources');
+    const heroContrib = document.getElementById('hero-stat-contributions');
+    const heroMods = document.getElementById('hero-stat-modules');
+    if (heroRes) heroRes.textContent = String(resourcesCount || 0);
+    if (heroContrib) heroContrib.textContent = String(contributionsCount || 0);
+    if (heroMods) heroMods.textContent = String(modulesCount || 0);
 }
 
 function renderFields() {

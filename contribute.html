@@ -32,7 +32,13 @@
         <section class="contribution-section">
             <div class="section-header">
                 <h2>Contribuer une Ressource</h2>
-                <p>Aidez vos camarades en partageant vos cours, TD ou examens.</p>
+                <p>Partage rapidement un cours, un TD, un examen ou une vidéo. Ta contribution aide des dizaines d'étudiants — et ça prend moins de 2 minutes.</p>
+            </div>
+
+            <div class="contrib-tips">
+                <div class="tip"><span class="icon"><i class="fa-solid fa-bolt"></i></span><strong>Rapide :</strong> rempli 3 champs et partage le lien.</div>
+                <div class="tip"><span class="icon"><i class="fa-solid fa-shield-check"></i></span><strong>Sécurisé :</strong> modération rapide, option d'envoi anonyme.</div>
+                <div class="tip"><span class="icon"><i class="fa-solid fa-award"></i></span><strong>Reconnu :</strong> chaque contributeur est remercié publiquement.</div>
             </div>
 
             <form id="contribution-form" class="contribution-form">
@@ -80,13 +86,26 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="res-link">Lien (Drive, YouTube, etc.)</label>
-                    <input type="url" id="res-link" placeholder="https://..." required>
+                    <label>Source de la ressource</label>
+                    <div style="display:flex; gap:1rem; align-items:center; margin-bottom:0.5rem;">
+                        <label><input type="radio" name="res-source" value="link" checked> Lien</label>
+                        <label><input type="radio" name="res-source" value="file"> Fichier (uploader)</label>
+                    </div>
+
+                    <div id="res-link-group">
+                        <label for="res-link">Lien (Drive, YouTube, etc.)</label>
+                        <input type="url" id="res-link" placeholder="https://...">
+                    </div>
+
+                    <div id="res-file-group" style="display:none;">
+                        <label for="res-file">Fichier à uploader</label>
+                        <input type="file" id="res-file" accept=".pdf,.doc,.docx,.ppt,.pptx,application/pdf,video/*">
+                        <small class="muted">Max 10 MB. Formats courants : PDF, DOC, PPT, vidéo.</small>
+                    </div>
                 </div>
 
-                <button type="submit" class="submit-btn">Envoyer</button>
+                <button type="submit" class="submit-btn btn btn-primary btn-lg">Partager maintenant</button>
             </form>
-
             <div id="contrib-result" class="contrib-result" style="display:none; margin-top:1.25rem; padding:1rem; border:1px solid #e0e0e0; background:#fbfbff;">
                 <!-- Filled dynamically after a successful contribution -->
             </div>

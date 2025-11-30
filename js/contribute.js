@@ -1,5 +1,6 @@
 import { db, initFirebase, updateActiveLink } from './common.js';
 import { db as firebaseDB, ref as fbRef, push } from './firebase-config.js';
+import { uploadResourceFile } from './supabase.js';
 
 function init() {
     updateActiveLink('contribute.html');
@@ -16,6 +17,31 @@ function init() {
     if (form) {
         form.onsubmit = handleContributionSubmit;
     }
+
+    // Setup source toggle (link vs file)
+    setupSourceToggle();
+}
+
+function setupSourceToggle() {
+    const radios = document.querySelectorAll('input[name="res-source"]');
+    const linkGroup = document.getElementById('res-link-group');
+    const fileGroup = document.getElementById('res-file-group');
+
+    function update() {
+        const val = document.querySelector('input[name="res-source"]:checked')?.value || 'link';
+        if (val === 'file') {
+            linkGroup.style.display = 'none';
+            fileGroup.style.display = 'block';
+            document.getElementById('res-link').required = false;
+        } else {
+            linkGroup.style.display = 'block';
+            fileGroup.style.display = 'none';
+            document.getElementById('res-link').required = true;
+        }
+    }
+
+    radios.forEach(r => r.addEventListener('change', update));
+    update();
 }
 
 function populateForm() {
@@ -96,7 +122,7 @@ function populateModuleSelect(fieldId, semester) {
     });
 }
 
-function handleContributionSubmit(e) {
+async function handleContributionSubmit(e) {
     e.preventDefault();
     const fieldId = document.getElementById('field-select').value;
     const semester = document.getElementById('semester-select').value;
@@ -105,15 +131,41 @@ function handleContributionSubmit(e) {
     const type = document.getElementById('res-type').value;
     const title = document.getElementById('res-title').value.trim();
     const link = document.getElementById('res-link').value.trim();
+    const source = document.querySelector('input[name="res-source"]:checked')?.value || 'link';
+    const fileInput = document.getElementById('res-file');
+    const file = fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
 
-    if (!fieldId || !semester || !moduleId || !professor || !type || !title || !link) {
+    if (!fieldId || !semester || !moduleId || !professor || !type || !title) {
         alert('Veuillez remplir tous les champs requis.');
+        return;
+    }
+
+    // If source is file, upload it first to Supabase storage and get public URL
+    let finalLink = link;
+    try {
+        if (source === 'file') {
+            if (!file) {
+                alert('Veuillez choisir un fichier à uploader.');
+                return;
+            }
+
+            // Upload and get public URL
+            const uploaded = await uploadResourceFile(file);
+            finalLink = uploaded.publicUrl;
+            // If user didn't provide a title, use file name
+            if (!title) {
+                document.getElementById('res-title').value = file.name;
+            }
+        }
+    } catch (err) {
+        console.error('Upload failed:', err);
+        alert('Erreur lors de l\'upload du fichier. Consultez la console.');
         return;
     }
 
     const newRes = {
         title,
-        link,
+        link: finalLink,
         type,
         date: new Date().toISOString().split('T')[0],
         professor,
