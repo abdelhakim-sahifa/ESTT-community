@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Étudiant - EST Tétouan</title>
+    <title>Article - EST Tétouan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -43,32 +43,13 @@
     </header>
 
     <main class="container">
-        <section class="blog-hero">
-            <h1>Blog Étudiant</h1>
-            <p class="hero-sub">Partagez vos expériences, conseils et découvertes avec la communauté</p>
-            <a href="write-article.html" class="btn btn-primary" id="new-article-btn">
-                <i class="fas fa-plus"></i> Écrire un article
-            </a>
-        </section>
-
-        <section class="blog-filters">
-            <div class="search-bar">
-                <i class="fa-solid fa-search"></i>
-                <input type="text" id="blog-search" placeholder="Rechercher un article...">
+        <article id="full-article" class="full-article-container" style="max-width: 800px; margin: 3rem auto;">
+            <!-- Content loaded via JS -->
+            <div class="loading-state" style="text-align: center; padding: 4rem;">
+                <div class="spinner" style="display: inline-block;"></div>
+                <p>Chargement de l'article...</p>
             </div>
-            <div class="filter-tags">
-                <button class="tag-btn active" data-category="all">Tous</button>
-                <button class="tag-btn" data-category="tutoriel">Tutoriels</button>
-                <button class="tag-btn" data-category="experience">Expériences</button>
-                <button class="tag-btn" data-category="conseil">Conseils</button>
-                <button class="tag-btn" data-category="projet">Projets</button>
-                <button class="tag-btn" data-category="autre">Autre</button>
-            </div>
-        </section>
-
-        <section class="blog-grid" id="blog-articles">
-            <p class="empty-state">Aucun article pour le moment. Soyez le premier à partager !</p>
-        </section>
+        </article>
     </main>
 
     <footer class="main-footer">

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Écrire un article - EST Tétouan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="assets/images/favicon.jpg">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="container header-content">
+            <div class="logo-container">
+                <a href="index.html">
+                    <img src="assets/images/logo__five.svg" alt="EST Tétouan Logo" class="logo">
+                </a>
+            </div>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="blog.html" class="active">Blog</a></li>
+                    <li><a href="contribute.html">Contribuer</a></li>
+                    <li><a href="profile.html">Profil</a></li>
+                </ul>
+            </nav>
+            <div class="auth-controls">
+                <a href="login.html" id="btn-open-login" class="btn-link">Se connecter</a>
+                <a href="signup.html" id="btn-open-signup" class="btn-link">S'inscrire</a>
+                <span id="user-label" class="user-label"></span>
+                <button id="btn-signout" class="btn-link" style="display:none">Se déconnecter</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="blog-hero" style="padding: 2rem 0;">
+            <h1>Nouvel Article</h1>
+            <p class="hero-sub">Partagez vos connaissances avec la communauté</p>
+        </section>
+
+        <section class="write-article-section" style="max-width: 800px; margin: 0 auto 4rem;">
+            <form id="new-article-form" class="card" style="padding: 2rem;">
+                <div class="form-row">
+                    <label for="article-title">Titre de l'article *</label>
+                    <input type="text" id="article-title" name="title" required maxlength="100"
+                        placeholder="Un titre accrocheur...">
+                </div>
+
+                <div class="form-row">
+                    <label for="article-cover">Image de couverture (Optionnel)</label>
+                    <input type="file" id="article-cover" name="cover" accept="image/*">
+                    <p class="form-hint" style="font-size: 0.85rem; color: #666; margin-top: 0.3rem;">
+                        Format recommandé : JPG, PNG. Max 5 Mo.
+                    </p>
+                    <div id="cover-preview" style="margin-top: 1rem; max-width: 100%; display: none;">
+                        <img src="" alt="Aperçu"
+                            style="max-width: 100%; border-radius: 8px; max-height: 300px; object-fit: cover;">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="article-category">Catégorie *</label>
+                    <select id="article-category" name="category" required>
+                        <option value="">Sélectionner...</option>
+                        <option value="tutoriel">Tutoriel</option>
+                        <option value="experience">Expérience</option>
+                        <option value="conseil">Conseil</option>
+                        <option value="projet">Projet</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="article-summary">Résumé (optionnel)</label>
+                    <input type="text" id="article-summary" name="summary" maxlength="200"
+                        placeholder="Un bref résumé de votre article...">
+                </div>
+                <div class="form-row">
+                    <label for="article-content">Contenu *</label>
+                    <textarea id="article-content" name="content" required rows="15"
+                        placeholder="Partagez votre histoire, vos conseils, vos découvertes..."></textarea>
+                </div>
+                <div class="form-row">
+                    <label for="article-tags">Tags (séparés par des virgules)</label>
+                    <input type="text" id="article-tags" name="tags" placeholder="ex: python, machine learning, stage">
+                </div>
+
+                <div class="form-message" id="article-message"></div>
+
+                <div class="form-actions" style="margin-top: 2rem; display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Publier l'article
+                    </button>
+                    <a href="blog.html" class="btn btn-outline">Annuler</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Promo 2 - EST Tétouan. Fait avec <i class="fa-solid fa-heart"></i> pour les futurs étudiants.
+            </p>
+        </div>
+    </footer>
+
+    <div id="spinner-overlay" class="spinner-overlay hidden" aria-hidden="true">
+        <div class="spinner" role="status" aria-label="Chargement"></div>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/blog.js"></script>
+</body>
+
+</html>

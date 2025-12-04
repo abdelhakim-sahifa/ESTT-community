@@ -1,16 +1,24 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Inscription — ESTT-community</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <header class="main-header">
     <div class="container header-content">
-      <div class="logo-container"><a href="index.html"><img src="assets/images/logo__five.svg" class="logo" alt="logo"></a></div>
-      <nav class="main-nav"><ul><li><a href="index.html">Accueil</a></li><li><a href="contribute.html">Contribuer</a></li></ul></nav>
+      <div class="logo-container"><a href="index.html"><img src="assets/images/logo__five.svg" class="logo"
+            alt="logo"></a></div>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="contribute.html">Contribuer</a></li>
+        </ul>
+      </nav>
     </div>
   </header>
 
@@ -26,7 +34,8 @@
         </div>
         <div class="form-row">
           <label for="signup-password">Mot de passe</label>
-          <input id="signup-password" name="password" type="password" placeholder="Mot de passe (6+ caractères)" required>
+          <input id="signup-password" name="password" type="password" placeholder="Mot de passe (6+ caractères)"
+            required>
         </div>
         <div class="form-row">
           <label for="first-name">Prénom</label>
@@ -38,11 +47,17 @@
         </div>
         <div class="form-row">
           <label for="filiere">Filière</label>
-          <input id="filiere" name="filiere" type="text" placeholder="Filière / Département">
+          <select id="filiere" name="filiere" required>
+            <option value="">Sélectionner votre filière...</option>
+            <!-- Populated by JS -->
+          </select>
         </div>
         <div class="form-row">
           <label for="start-year">Année de début</label>
-          <input id="start-year" name="startYear" type="number" placeholder="Ex: 2023">
+          <select id="start-year" name="startYear" required>
+            <option value="">Sélectionner l'année...</option>
+            <!-- Populated by JS -->
+          </select>
         </div>
 
         <div id="signup-message" class="form-message" aria-live="polite"></div>
@@ -57,4 +72,5 @@
 
   <script type="module" src="js/auth.js"></script>
 </body>
+
 </html>

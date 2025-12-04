@@ -20,13 +20,20 @@ let fields = {};
 let semesters = {};
 let modules = {};
 let currentEditResource = null;
+let currentTab = 'overview'; // 'overview', 'pending', 'all'
 
 // DOM Elements
 const loadingScreen = document.getElementById('loading-screen');
 const adminDashboard = document.getElementById('admin-dashboard');
-const adminEmail = document.getElementById('admin-email');
+const userLabel = document.getElementById('user-label');
 const resourcesContainer = document.getElementById('resources-container');
 const emptyState = document.getElementById('empty-state');
+const badgePending = document.getElementById('badge-pending');
+const refreshBtn = document.getElementById('refresh-btn');
+
+// Tabs
+const tabs = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
 
 // Statistics
 const statPending = document.getElementById('stat-pending');
@@ -40,7 +47,7 @@ const filterSemester = document.getElementById('filter-semester');
 const filterField = document.getElementById('filter-field');
 const filterType = document.getElementById('filter-type');
 const searchInput = document.getElementById('search-input');
-const btnResetFilters = document.getElementById('btn-reset-filters');
+const statusFilterGroup = document.getElementById('status-filter-group');
 
 // Modal
 const editModal = document.getElementById('edit-modal');
@@ -155,6 +162,10 @@ async function fetchMetadata() {
 function populateFilterDropdowns() {
     // Populate semesters
     if (semesters) {
+        // Clear existing options except first
+        while (filterSemester.options.length > 1) {
+            filterSemester.remove(1);
+        }
         Object.entries(semesters).forEach(([id, name]) => {
             const option = document.createElement('option');
             option.value = id;
@@ -165,6 +176,9 @@ function populateFilterDropdowns() {
 
     // Populate fields
     if (fields) {
+        while (filterField.options.length > 1) {
+            filterField.remove(1);
+        }
         Object.entries(fields).forEach(([id, name]) => {
             const option = document.createElement('option');
             option.value = id;
@@ -206,7 +220,7 @@ function listenToResources() {
     });
 }
 
-// Update Statistics
+// Update Statistics & Badges
 function updateStatistics() {
     const pending = allResources.filter(r => r.unverified === true).length;
     const approved = allResources.filter(r => !r.unverified).length;
@@ -217,39 +231,84 @@ function updateStatistics() {
     statApproved.textContent = approved;
     statTotal.textContent = total;
     statToday.textContent = today;
+
+    // Update badge
+    badgePending.textContent = pending;
+    if (pending > 0) {
+        badgePending.classList.remove('hidden');
+    } else {
+        badgePending.classList.add('hidden');
+    }
+}
+
+// Tab Switching Logic
+function switchTab(tabName) {
+    currentTab = tabName;
+
+    // Update buttons
+    tabs.forEach(btn => {
+        if (btn.dataset.tab === tabName) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Update content visibility
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+
+    if (tabName === 'overview') {
+        document.getElementById('tab-overview').classList.add('active');
+    } else {
+        document.getElementById('tab-resources').classList.add('active');
+
+        // Configure filters based on tab
+        if (tabName === 'pending') {
+            statusFilterGroup.classList.add('hidden');
+            filterStatus.value = 'pending'; // Force pending
+        } else {
+            statusFilterGroup.classList.remove('hidden');
+            filterStatus.value = 'all'; // Default to all
+        }
+        renderResources();
+    }
 }
 
 // Filter Resources
 function getFilteredResources() {
     let filtered = [...allResources];
 
-    // Status filter
-    const status = filterStatus.value;
-    if (status === 'pending') {
+    // Tab-based filtering
+    if (currentTab === 'pending') {
         filtered = filtered.filter(r => r.unverified === true);
-    } else if (status === 'approved') {
-        filtered = filtered.filter(r => !r.unverified);
+    } else if (currentTab === 'all') {
+        // Apply status filter if in 'all' tab
+        const status = filterStatus.value;
+        if (status === 'pending') {
+            filtered = filtered.filter(r => r.unverified === true);
+        } else if (status === 'approved') {
+            filtered = filtered.filter(r => !r.unverified);
+        }
     }
 
-    // Semester filter
+    // Common filters
     const semester = filterSemester.value;
     if (semester !== 'all') {
         filtered = filtered.filter(r => r.semester === semester);
     }
 
-    // Field filter
     const field = filterField.value;
     if (field !== 'all') {
         filtered = filtered.filter(r => r.field === field);
     }
 
-    // Type filter
     const type = filterType.value;
     if (type !== 'all') {
         filtered = filtered.filter(r => r.type === type);
     }
 
-    // Search filter
     const searchTerm = searchInput.value.toLowerCase().trim();
     if (searchTerm) {
         filtered = filtered.filter(r => {
@@ -264,6 +323,8 @@ function getFilteredResources() {
 
 // Render Resources
 function renderResources() {
+    if (currentTab === 'overview') return;
+
     const filtered = getFilteredResources();
 
     if (filtered.length === 0) {
@@ -274,36 +335,30 @@ function renderResources() {
 
     emptyState.classList.add('hidden');
 
-    // Group by semester
+    // Group by semester -> module
     const groupedBySemester = {};
     filtered.forEach(resource => {
         const sem = resource.semester || 'unknown';
-        if (!groupedBySemester[sem]) {
-            groupedBySemester[sem] = {};
-        }
+        if (!groupedBySemester[sem]) groupedBySemester[sem] = {};
 
         const mod = resource.moduleId || 'unknown';
-        if (!groupedBySemester[sem][mod]) {
-            groupedBySemester[sem][mod] = [];
-        }
+        if (!groupedBySemester[sem][mod]) groupedBySemester[sem][mod] = [];
 
         groupedBySemester[sem][mod].push(resource);
     });
 
-    // Render
     let html = '';
 
-    Object.entries(groupedBySemester).forEach(([semesterId, semesterModules]) => {
+    Object.entries(groupedBySemester).sort().forEach(([semesterId, semesterModules]) => {
         const semesterName = semesters[semesterId] || `Semestre ${semesterId}`;
         const semesterResourceCount = Object.values(semesterModules).flat().length;
 
         html += `
             <div class="semester-group">
                 <div class="semester-header">
-                    <span>${semesterName}</span>
-                    <span class="semester-count">${semesterResourceCount} ressource(s)</span>
+                    <h3>${semesterName}</h3>
+                    <span class="semester-count">${semesterResourceCount}</span>
                 </div>
-                <div class="semester-modules">
         `;
 
         Object.entries(semesterModules).forEach(([moduleId, moduleResources]) => {
@@ -312,8 +367,7 @@ function renderResources() {
             html += `
                 <div class="module-group">
                     <div class="module-header">
-                        <span>${moduleName}</span>
-                        <span class="module-count">${moduleResources.length}</span>
+                        <i class="fas fa-folder"></i> ${moduleName}
                     </div>
                     <div class="module-resources">
             `;
@@ -328,10 +382,7 @@ function renderResources() {
             `;
         });
 
-        html += `
-                </div>
-            </div>
-        `;
+        html += `</div>`;
     });
 
     resourcesContainer.innerHTML = html;
@@ -341,51 +392,52 @@ function renderResources() {
 function renderResourceCard(resource) {
     const isPending = resource.unverified === true;
     const statusClass = isPending ? 'pending' : 'approved';
-    const statusText = isPending ? 'En attente' : 'Approuvée';
     const typeIcon = getTypeIcon(resource.type);
     const fieldName = fields[resource.field] || resource.field || 'N/A';
 
     return `
         <div class="resource-card ${statusClass}" data-module-id="${resource.moduleId}" data-resource-id="${resource.resourceId}">
             <div class="resource-header">
-                <div class="resource-title-section">
-                    <h3 class="resource-title">
-                        <span class="resource-type-icon">${typeIcon}</span>
-                        ${resource.title || 'Sans titre'}
-                    </h3>
-                    <span class="resource-status ${statusClass}">${statusText}</span>
-                </div>
+                <h4 class="resource-title">${resource.title || 'Sans titre'}</h4>
+                <span class="resource-type" title="${resource.type}">${typeIcon}</span>
             </div>
-            <div class="resource-details">
-                <div class="resource-detail">
-                    <strong>Type:</strong> ${resource.type || 'N/A'}
+            
+            <div class="resource-meta">
+                <div class="meta-row">
+                    <i class="fas fa-user-tie"></i>
+                    <span>${resource.professor || 'Prof. N/A'}</span>
                 </div>
-                <div class="resource-detail">
-                    <strong>Professeur:</strong> ${resource.professor || 'N/A'}
+                <div class="meta-row">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>${fieldName}</span>
                 </div>
-                <div class="resource-detail">
-                    <strong>Filière:</strong> ${fieldName}
-                </div>
-                <div class="resource-detail">
-                    <strong>Date:</strong> ${formatDate(resource.date)}
+                <div class="meta-row">
+                    <i class="fas fa-calendar"></i>
+                    <span>${formatDate(resource.date)}</span>
                 </div>
                 ${resource.userEmail ? `
-                <div class="resource-detail">
-                    <strong>Contributeur:</strong> ${resource.userEmail}
+                <div class="meta-row">
+                    <i class="fas fa-user"></i>
+                    <span style="font-size:0.8em">${resource.userEmail}</span>
                 </div>
                 ` : ''}
-                <div class="resource-detail" style="grid-column: 1 / -1;">
-                    <strong>Lien:</strong> 
-                    <a href="${resource.link}" target="_blank" class="resource-link">${resource.link}</a>
-                </div>
             </div>
+
             <div class="resource-actions">
+                <a href="${resource.link}" target="_blank" class="btn btn-outline" title="Voir">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+                <button class="btn btn-outline btn-edit-resource" title="Modifier">
+                    <i class="fas fa-pen"></i>
+                </button>
                 ${isPending ? `
-                    <button class="btn btn-success btn-approve">✓ Approuver</button>
-                    <button class="btn btn-danger btn-reject">✗ Rejeter</button>
+                    <button class="btn btn-success btn-approve" title="Approuver">
+                        <i class="fas fa-check"></i>
+                    </button>
                 ` : ''}
-                <button class="btn btn-edit btn-edit-resource">✎ Modifier</button>
-                <button class="btn btn-danger btn-delete">🗑 Supprimer</button>
+                <button class="btn btn-danger btn-delete" title="Supprimer">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
         </div>
     `;
@@ -400,17 +452,6 @@ function attachResourceEventListeners() {
             const moduleId = card.dataset.moduleId;
             const resourceId = card.dataset.resourceId;
             await approveResource(moduleId, resourceId);
-        });
-    });
-
-    // Reject buttons
-    document.querySelectorAll('.btn-reject').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            if (!confirm('Êtes-vous sûr de vouloir rejeter cette ressource ?')) return;
-            const card = e.target.closest('.resource-card');
-            const moduleId = card.dataset.moduleId;
-            const resourceId = card.dataset.resourceId;
-            await rejectResource(moduleId, resourceId);
         });
     });
 
@@ -442,27 +483,17 @@ async function approveResource(moduleId, resourceId) {
         await update(ref(db, `resources/${moduleId}/${resourceId}`), {
             unverified: false
         });
-        showToast('Ressource approuvée avec succès', 'success');
+        showToast('Ressource approuvée', 'success');
     } catch (error) {
         console.error('Error approving resource:', error);
         showToast('Erreur lors de l\'approbation', 'error');
     }
 }
 
-async function rejectResource(moduleId, resourceId) {
-    try {
-        await remove(ref(db, `resources/${moduleId}/${resourceId}`));
-        showToast('Ressource rejetée et supprimée', 'success');
-    } catch (error) {
-        console.error('Error rejecting resource:', error);
-        showToast('Erreur lors du rejet', 'error');
-    }
-}
-
 async function deleteResource(moduleId, resourceId) {
     try {
         await remove(ref(db, `resources/${moduleId}/${resourceId}`));
-        showToast('Ressource supprimée avec succès', 'success');
+        showToast('Ressource supprimée', 'success');
     } catch (error) {
         console.error('Error deleting resource:', error);
         showToast('Erreur lors de la suppression', 'error');
@@ -513,7 +544,7 @@ async function handleEditSubmit(e) {
             ref(db, `resources/${currentEditResource.moduleId}/${currentEditResource.resourceId}`),
             updates
         );
-        showToast('Ressource modifiée avec succès', 'success');
+        showToast('Ressource modifiée', 'success');
         closeEditModal();
     } catch (error) {
         console.error('Error updating resource:', error);
@@ -536,7 +567,7 @@ async function initialize() {
         if (!isAdmin) return;
 
         // Show dashboard
-        adminEmail.textContent = user.email;
+        if (userLabel) userLabel.textContent = user.email;
         loadingScreen.classList.add('hidden');
         adminDashboard.classList.remove('hidden');
 
@@ -546,14 +577,24 @@ async function initialize() {
     });
 
     // Event Listeners
-    document.getElementById('btn-logout').addEventListener('click', async () => {
-        try {
-            await signOut(auth);
-            window.location.href = 'index.html';
-        } catch (error) {
-            console.error('Error signing out:', error);
-            showToast('Erreur lors de la déconnexion', 'error');
-        }
+    const signoutBtn = document.getElementById('btn-signout');
+    if (signoutBtn) {
+        signoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                showToast('Erreur lors de la déconnexion', 'error');
+            }
+        });
+    }
+
+    // Tab listeners
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            switchTab(btn.dataset.tab);
+        });
     });
 
     // Filter listeners
@@ -563,14 +604,13 @@ async function initialize() {
     filterType.addEventListener('change', renderResources);
     searchInput.addEventListener('input', renderResources);
 
-    btnResetFilters.addEventListener('click', () => {
-        filterStatus.value = 'all';
-        filterSemester.value = 'all';
-        filterField.value = 'all';
-        filterType.value = 'all';
-        searchInput.value = '';
-        renderResources();
-    });
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            fetchMetadata();
+            // Re-trigger listener? onValue is real-time, so maybe just toast
+            showToast('Données actualisées', 'info');
+        });
+    }
 
     // Modal listeners
     editModal.querySelector('.modal-close').addEventListener('click', closeEditModal);

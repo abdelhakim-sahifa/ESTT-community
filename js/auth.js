@@ -1,5 +1,6 @@
 // Simple Firebase auth + profile storage using Realtime Database
 import { app, db, ref, set } from './firebase-config.js';
+import { db as staticDb } from './data.js'; // Import static data
 import {
     getAuth,
     createUserWithEmailAndPassword,
@@ -16,6 +17,31 @@ function validateAcademicEmail(email) {
     return typeof email === 'string' && email.toLowerCase().endsWith('@etu.uae.ac.ma');
 }
 
+function populateDropdowns() {
+    const filiereSelect = $('#filiere');
+    const yearSelect = $('#start-year');
+
+    if (filiereSelect && staticDb.fields) {
+        staticDb.fields.forEach(field => {
+            const option = document.createElement('option');
+            option.value = field.id; // Or field.name if preferred
+            option.textContent = field.name;
+            filiereSelect.appendChild(option);
+        });
+    }
+
+    if (yearSelect) {
+        const currentYear = new Date().getFullYear();
+        for (let i = 0; i < 5; i++) {
+            const year = currentYear - i;
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+        }
+    }
+}
+
 function openAuthModal(mode = 'login') {
     const modal = $('#auth-modal');
     if (!modal) return;
@@ -24,6 +50,8 @@ function openAuthModal(mode = 'login') {
     const signupFields = modal.querySelectorAll('.signup-only');
     signupFields.forEach(f => f.style.display = mode === 'signup' ? 'block' : 'none');
     modal.querySelector('.auth-title').textContent = mode === 'signup' ? "S'inscrire" : 'Se connecter';
+
+    if (mode === 'signup') populateDropdowns();
 }
 
 function closeAuthModal() {
@@ -148,7 +176,10 @@ function attachUI() {
     const pageAuthForms = document.querySelectorAll('form#auth-form[data-mode]');
     pageAuthForms.forEach(f => {
         const mode = f.dataset.mode;
-        if (mode === 'signup') f.addEventListener('submit', handleSignup);
+        if (mode === 'signup') {
+            f.addEventListener('submit', handleSignup);
+            populateDropdowns(); // Populate on page load for signup page
+        }
         else f.addEventListener('submit', handleLogin);
     });
 
