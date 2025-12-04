@@ -1,6 +1,6 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, get, push, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, get, push, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 // Fixed Firebase config
 const firebaseConfig = {
@@ -17,4 +17,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-export { app, db, ref, get, push, set, update };
+export { app, db, ref, get, push, set, update, onValue };
