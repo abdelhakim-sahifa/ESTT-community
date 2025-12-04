@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - EST Tétouan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="assets/images/favicon.jpg">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container header-content">
+            <div class="logo-container">
+                <img src="assets/images/logo__five.svg" alt="EST Tétouan Logo" class="logo">
+            </div>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contribute.html">Contribuer</a></li>
+                    <li><a href="profile.html" class="active">Profil</a></li>
+                </ul>
+            </nav>
+            <div class="auth-controls">
+                <a href="login.html" id="btn-open-login" class="btn-link">Se connecter</a>
+                <a href="signup.html" id="btn-open-signup" class="btn-link">S'inscrire</a>
+                <span id="user-label" class="user-label"></span>
+                <button id="btn-signout" class="btn-link" style="display:none">Se déconnecter</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="auth-required" class="auth-required-message" style="display:none;">
+            <div class="message-card">
+                <i class="fas fa-lock"></i>
+                <h2>Connexion requise</h2>
+                <p>Vous devez être connecté pour accéder à votre profil.</p>
+                <div class="message-actions">
+                    <a href="login.html" class="btn btn-primary">Se connecter</a>
+                    <a href="signup.html" class="btn btn-outline">S'inscrire</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile-content" style="display:none;">
+            <section class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <h1 id="profile-name">Chargement...</h1>
+                    <p id="profile-email" class="profile-email"></p>
+                    <div class="profile-meta">
+                        <span class="meta-badge" id="profile-filiere"></span>
+                        <span class="meta-badge" id="profile-year"></span>
+                    </div>
+                </div>
+                <button class="btn btn-outline edit-profile-btn" id="edit-profile-btn">
+                    <i class="fas fa-edit"></i> Modifier le profil
+                </button>
+            </section>
+
+            <section class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    <div class="stat-value" id="stat-contributions">0</div>
+                    <div class="stat-label">Contributions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-blog"></i></div>
+                    <div class="stat-value" id="stat-articles">0</div>
+                    <div class="stat-label">Articles de blog</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="stat-value" id="stat-member-since">-</div>
+                    <div class="stat-label">Membre depuis</div>
+                </div>
+            </section>
+
+            <section class="profile-tabs-section">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="contributions">
+                        <i class="fas fa-file-alt"></i> Mes Contributions
+                    </button>
+                    <button class="tab-btn" data-tab="articles">
+                        <i class="fas fa-blog"></i> Mes Articles
+                    </button>
+                </div>
+
+                <div class="tab-content active" id="tab-contributions">
+                    <div class="resources-list" id="user-contributions">
+                        <p class="empty-state">Aucune contribution pour le moment.</p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-articles">
+                    <div class="articles-list" id="user-articles">
+                        <p class="empty-state">Aucun article pour le moment.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="auth-close" id="close-edit-modal">&times;</button>
+            <h2 class="auth-title">Modifier le profil</h2>
+            <form id="edit-profile-form">
+                <div class="form-row">
+                    <label for="edit-firstName">Prénom</label>
+                    <input type="text" id="edit-firstName" name="firstName" required>
+                </div>
+                <div class="form-row">
+                    <label for="edit-lastName">Nom</label>
+                    <input type="text" id="edit-lastName" name="lastName" required>
+                </div>
+                <div class="form-row">
+                    <label for="edit-filiere">Filière</label>
+                    <select id="edit-filiere" name="filiere" required>
+                        <option value="">Sélectionner...</option>
+                        <option value="ia">Intelligence Artificielle</option>
+                        <option value="insem">Industrie Navale</option>
+                        <option value="casi">Cybersécurité</option>
+                        <option value="idd">Informatique & Dév Digital</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="edit-startYear">Année de début</label>
+                    <input type="number" id="edit-startYear" name="startYear" min="2000" max="2030" required>
+                </div>
+                <div class="form-message" id="edit-message"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <button type="button" class="btn btn-outline" id="cancel-edit">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Promo 2 - EST Tétouan. Fait avec <i class="fa-solid fa-heart"></i> pour les futurs étudiants.</p>
+        </div>
+    </footer>
+
+    <div id="spinner-overlay" class="spinner-overlay hidden" aria-hidden="true">
+        <div class="spinner" role="status" aria-label="Chargement"></div>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Étudiant - EST Tétouan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="assets/images/favicon.jpg">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="container header-content">
+            <div class="logo-container">
+                <img src="assets/images/logo__five.svg" alt="EST Tétouan Logo" class="logo">
+            </div>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="blog.html" class="active">Blog</a></li>
+                    <li><a href="contribute.html">Contribuer</a></li>
+                    <li><a href="profile.html">Profil</a></li>
+                </ul>
+            </nav>
+            <div class="auth-controls">
+                <a href="login.html" id="btn-open-login" class="btn-link">Se connecter</a>
+                <a href="signup.html" id="btn-open-signup" class="btn-link">S'inscrire</a>
+                <span id="user-label" class="user-label"></span>
+                <button id="btn-signout" class="btn-link" style="display:none">Se déconnecter</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="blog-hero">
+            <h1>Blog Étudiant</h1>
+            <p class="hero-sub">Partagez vos expériences, conseils et découvertes avec la communauté</p>
+            <button class="btn btn-primary" id="new-article-btn">
+                <i class="fas fa-plus"></i> Écrire un article
+            </button>
+        </section>
+
+        <section class="blog-filters">
+            <div class="search-bar">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="blog-search" placeholder="Rechercher un article...">
+            </div>
+            <div class="filter-tags">
+                <button class="tag-btn active" data-category="all">Tous</button>
+                <button class="tag-btn" data-category="tutoriel">Tutoriels</button>
+                <button class="tag-btn" data-category="experience">Expériences</button>
+                <button class="tag-btn" data-category="conseil">Conseils</button>
+                <button class="tag-btn" data-category="projet">Projets</button>
+                <button class="tag-btn" data-category="autre">Autre</button>
+            </div>
+        </section>
+
+        <section class="blog-grid" id="blog-articles">
+            <p class="empty-state">Aucun article pour le moment. Soyez le premier à partager !</p>
+        </section>
+    </main>
+
+    <!-- New Article Modal -->
+    <div id="new-article-modal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <button class="auth-close" id="close-article-modal">&times;</button>
+            <h2 class="auth-title">Nouvel Article</h2>
+            <form id="new-article-form">
+                <div class="form-row">
+                    <label for="article-title">Titre de l'article *</label>
+                    <input type="text" id="article-title" name="title" required maxlength="100"
+                        placeholder="Un titre accrocheur...">
+                </div>
+                <div class="form-row">
+                    <label for="article-category">Catégorie *</label>
+                    <select id="article-category" name="category" required>
+                        <option value="">Sélectionner...</option>
+                        <option value="tutoriel">Tutoriel</option>
+                        <option value="experience">Expérience</option>
+                        <option value="conseil">Conseil</option>
+                        <option value="projet">Projet</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="article-summary">Résumé (optionnel)</label>
+                    <input type="text" id="article-summary" name="summary" maxlength="200"
+                        placeholder="Un bref résumé de votre article...">
+                </div>
+                <div class="form-row">
+                    <label for="article-content">Contenu *</label>
+                    <textarea id="article-content" name="content" required rows="12"
+                        placeholder="Partagez votre histoire, vos conseils, vos découvertes..."></textarea>
+                </div>
+                <div class="form-row">
+                    <label for="article-tags">Tags (séparés par des virgules)</label>
+                    <input type="text" id="article-tags" name="tags" placeholder="ex: python, machine learning, stage">
+                </div>
+                <div class="form-message" id="article-message"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Publier
+                    </button>
+                    <button type="button" class="btn btn-outline" id="cancel-article">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Article Detail Modal -->
+    <div id="article-detail-modal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <button class="auth-close" id="close-detail-modal">&times;</button>
+            <article class="article-detail" id="article-detail-content">
+                <!-- Article content will be loaded here -->
+            </article>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Promo 2 - EST Tétouan. Fait avec <i class="fa-solid fa-heart"></i> pour les futurs étudiants.
+            </p>
+        </div>
+    </footer>
+
+    <div id="spinner-overlay" class="spinner-overlay hidden" aria-hidden="true">
+        <div class="spinner" role="status" aria-label="Chargement"></div>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/blog.js"></script>
+</body>
+
+</html>

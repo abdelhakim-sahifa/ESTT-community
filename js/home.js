@@ -170,4 +170,24 @@ function setupSearch() {
     }
 }
 
+// Mobile menu toggle
+function initMobileMenu() {
+    const toggle = document.getElementById('mobile-menu-toggle');
+    const nav = document.getElementById('main-nav');
+
+    if (toggle && nav) {
+        toggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!toggle.contains(e.target) && !nav.contains(e.target)) {
+                nav.classList.remove('active');
+            }
+        });
+    }
+}
+
 init();
+initMobileMenu();

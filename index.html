@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,16 +12,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="assets/images/favicon.jpg">
 </head>
+
 <body>
     <header class="main-header">
         <div class="container header-content">
             <div class="logo-container">
                 <img src="assets/images/logo__five.svg" alt="EST Tétouan Logo" class="logo">
             </div>
-            <nav class="main-nav">
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="main-nav" id="main-nav">
                 <ul>
                     <li><a href="index.html" class="active">Accueil</a></li>
+                    <li><a href="blog.html">Blog</a></li>
                     <li><a href="contribute.html">Contribuer</a></li>
+                    <li><a href="profile.html">Profil</a></li>
                 </ul>
             </nav>
             <div class="auth-controls">
@@ -36,7 +43,8 @@
         <section id="hero" class="hero-section">
             <div class="hero-content">
                 <h1>Partage tes ressources — aide tes camarades, gagne du temps</h1>
-                <p class="hero-sub">Tu as un cours, un TD, un exercice ou une vidéo utile ? Contribue en moins de 2 minutes.</p>
+                <p class="hero-sub">Tu as un cours, un TD, un exercice ou une vidéo utile ? Contribue en moins de 2
+                    minutes.</p>
 
                 <div class="hero-ctas">
                     <a href="contribute.html" class="btn btn-primary">Contribuer une ressource</a>
@@ -45,11 +53,13 @@
 
                 <div class="hero-meta" aria-hidden="false">
                     <div class="meta-item"><strong id="hero-stat-resources">0</strong> ressources</div>
-                    <div class="meta-item"><strong id="hero-stat-contributions">0</strong> contributions en attente</div>
+                    <div class="meta-item"><strong id="hero-stat-contributions">0</strong> contributions en attente
+                    </div>
                     <div class="meta-item"><strong id="hero-stat-modules">0</strong> modules</div>
                 </div>
 
-                <div class="how-works">Formats acceptés : PDF · Images · Liens · Vidéos — Anonyme possible · Modération rapide</div>
+                <div class="how-works">Formats acceptés : PDF · Images · Liens · Vidéos — Anonyme possible · Modération
+                    rapide</div>
 
                 <div class="search-bar">
                     <i class="fa-solid fa-search"></i>
@@ -110,7 +120,8 @@
 
     <footer class="main-footer">
         <div class="container">
-            <p>&copy; 2025 Promo 2 - EST Tétouan. Fait avec <i class="fa-solid fa-heart"></i> pour les futurs étudiants.</p>
+            <p>&copy; 2025 Promo 2 - EST Tétouan. Fait avec <i class="fa-solid fa-heart"></i> pour les futurs étudiants.
+            </p>
         </div>
     </footer>
 
@@ -122,4 +133,5 @@
     <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/home.js"></script>
 </body>
+
 </html>
