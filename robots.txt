@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://estt-community.vercel.app/sitemap.xml
