@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <!-- 
@@ -72,3 +73,79 @@
         <priority>0.7</priority>
     </url>
 </urlset>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- 
+        Main Static Pages 
+    -->
+    <url>
+        <loc>https://estt-community.vercel.app/index.html</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://estt-community.vercel.app/</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://estt-community.vercel.app/browse.html</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://estt-community.vercel.app/blog.html</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://estt-community.vercel.app/contribute.html</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://estt-community.vercel.app/login.html</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://estt-community.vercel.app/signup.html</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <!-- Dynamic Field Pages (Main Categories) -->
+    <url>
+        <loc>https://estt-community.vercel.app/browse.html?field=ia</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://estt-community.vercel.app/browse.html?field=insem</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://estt-community.vercel.app/browse.html?field=casi</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://estt-community.vercel.app/browse.html?field=idd</loc>
+        <lastmod>2025-12-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+</urlset>
+>>>>>>> 4b0ab029a199919ed48081c75760651963081666
