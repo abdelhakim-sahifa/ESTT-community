@@ -5,7 +5,8 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
-    signOut as firebaseSignOut
+    signOut as firebaseSignOut,
+    sendEmailVerification
 } from 'firebase/auth';
 import { auth, db, ref, onValue } from '@/lib/firebase';
 
@@ -63,8 +64,12 @@ export const AuthProvider = ({ children }) => {
         return firebaseSignOut(auth);
     };
 
+    const sendVerification = (user) => {
+        return sendEmailVerification(user);
+    };
+
     return (
-        <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut, sendVerification }}>
             {!loading && children}
         </AuthContext.Provider>
     );

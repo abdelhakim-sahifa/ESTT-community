@@ -21,7 +21,7 @@ import { Loader2, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function SignupPage() {
     const router = useRouter();
-    const { signUp } = useAuth();
+    const { signUp, sendVerification } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -81,8 +81,12 @@ export default function SignupPage() {
                 createdAt: Date.now()
             });
 
-            setMessage('Compte créé avec succès !');
-            setTimeout(() => router.push('/'), 1500);
+            // Send verification email
+            await sendVerification(user);
+
+            setMessage('Compte créé ! Un email de vérification a été envoyé à votre adresse académique. Veuillez vérifier votre boîte de réception avant de vous connecter.');
+            // We don't redirect immediately to let them read the message
+            // setTimeout(() => router.push('/login'), 5000);
         } catch (error) {
             console.error(error);
             setMessage(error.message || 'Erreur lors de la création du compte.');

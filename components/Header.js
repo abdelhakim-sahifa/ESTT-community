@@ -31,8 +31,10 @@ export default function Header() {
     ];
 
     if (user) {
+        navItems.push({ href: '/chat', label: 'Chat' });
         navItems.push({ href: '/profile', label: 'Profil' });
     }
+
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -79,9 +81,15 @@ export default function Header() {
                             </>
                         ) : (
                             <>
-                                <span className="text-sm font-medium text-muted-foreground hidden lg:inline-block">
+                                <span className="text-sm font-medium text-muted-foreground hidden lg:flex items-center gap-2">
                                     {profile?.firstName ? `Salut, ${profile.firstName}` : user.email}
+                                    {profile?.startYear && (new Date().getFullYear() - parseInt(profile.startYear) >= 1) && Object.keys(profile?.contributions || {}).length > 5 && (
+                                        <Badge variant="secondary" className="bg-yellow-400 text-white border-none text-[8px] px-1 animate-pulse">
+                                            MENTOR
+                                        </Badge>
+                                    )}
                                 </span>
+
                                 <Button variant="outline" onClick={handleSignOut}>
                                     Se déconnecter
                                 </Button>

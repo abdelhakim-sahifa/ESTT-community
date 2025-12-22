@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { db, ref, get } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, PenSquare } from 'lucide-react';
+import { Loader2, PenSquare, Clock, User, ChevronRight } from 'lucide-react';
 
 export default function BlogPage() {
     const [posts, setPosts] = useState([]);
@@ -35,72 +35,95 @@ export default function BlogPage() {
     }, []);
 
     return (
-        <main className="container py-12">
-            <section className="mb-12 text-center">
-                <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl mb-4">
+        <main className="container py-16 px-4">
+            <header className="mb-16 text-center">
+                <div className="inline-block px-4 py-1.5 mb-6 text-[10px] font-black tracking-[0.3em] uppercase bg-primary/10 text-primary rounded-full">
+                    Communauté EST
+                </div>
+                <h1 className="text-5xl md:text-6xl font-heading font-medium tracking-tight text-slate-900 mb-6">
                     Blog Étudiant
                 </h1>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-                    Partage tes expériences, conseils et découvertes avec la communauté
+                <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
+                    Le lieu où les étudiants de l'EST partagent leurs expériences, conseils et réussites.
                 </p>
                 <Link href="/blog/write">
-                    <Button size="lg" className="gap-2">
+                    <Button size="lg" className="h-14 px-8 rounded-2xl gap-3 text-lg font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all">
                         <PenSquare className="w-5 h-5" />
                         Écrire un article
                     </Button>
                 </Link>
-            </section>
+            </header>
 
             <section>
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-20">
-                        <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-                        <p className="text-muted-foreground">Chargement des articles...</p>
+                    <div className="flex flex-col items-center justify-center py-32">
+                        <Loader2 className="w-12 h-12 animate-spin text-primary mb-6 opacity-40" />
+                        <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Chargement de l'univers...</p>
                     </div>
                 ) : posts.length === 0 ? (
-                    <div className="text-center py-20 border-2 border-dashed rounded-xl bg-muted/30">
-                        <p className="text-xl text-muted-foreground mb-4">Aucun article pour le moment.</p>
+                    <div className="text-center py-24 border-2 border-dashed border-slate-200 rounded-[3rem] bg-slate-50/50">
+                        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <PenSquare className="w-8 h-8 text-slate-300" />
+                        </div>
+                        <p className="text-2xl font-heading text-slate-400 mb-6">Le blog est encore vide...</p>
                         <Link href="/blog/write">
-                            <Button variant="outline">Soyez le premier à écrire !</Button>
+                            <Button variant="outline" className="rounded-full border-slate-200">Soyez le premier à contribuer</Button>
                         </Link>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {posts.map((post) => (
                             <Link key={post.id} href={`/blog/${post.id}`} className="group">
-                                <Card className="h-full overflow-hidden transition-all hover:shadow-lg border-muted-foreground/10">
+                                <Card className="h-full flex flex-col overflow-hidden transition-all duration-500 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border-slate-100 rounded-[2.5rem] bg-white group-hover:-translate-y-2">
                                     {post.cover_image && (
-                                        <div className="relative aspect-video overflow-hidden">
+                                        <div className="relative aspect-[16/10] overflow-hidden">
                                             <img
                                                 src={post.cover_image}
                                                 alt={post.title}
-                                                className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                                                className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
                                             />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
                                     )}
-                                    <CardHeader className="p-4">
-                                        <CardTitle className="line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+                                    <CardHeader className="p-8 pb-4">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <span className="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-full group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                                {post.category || 'Article'}
+                                            </span>
+                                        </div>
+                                        <CardTitle className="text-2xl font-bold line-clamp-2 leading-[1.2] group-hover:text-primary transition-colors">
                                             {post.title}
                                         </CardTitle>
                                     </CardHeader>
-                                    <CardContent className="p-4 pt-0">
-                                        <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
+                                    <CardContent className="px-8 flex-grow">
+                                        <p className="text-slate-500 text-sm line-clamp-3 leading-relaxed font-medium">
                                             {post.excerpt || (post.content && post.content.substring(0, 150) + '...')}
                                         </p>
                                     </CardContent>
-                                    <CardFooter className="p-4 pt-0 flex justify-between items-center text-xs text-muted-foreground border-t border-muted/50 mt-auto">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium text-foreground">
-                                                {post.author_name || 'Anonyme'}
-                                            </span>
+                                    <CardFooter className="p-8 pt-6 flex flex-col gap-6">
+                                        <div className="w-full h-px bg-slate-50" />
+                                        <div className="flex justify-between items-center w-full">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                                                    <User className="w-4 h-4" />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-bold text-slate-900 leading-none mb-1">
+                                                        {post.author_name || 'Anonyme'}
+                                                    </span>
+                                                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold">
+                                                        <Clock className="w-3 h-3" />
+                                                        {new Date(post.created_at).toLocaleDateString('fr-FR', {
+                                                            day: 'numeric',
+                                                            month: 'short'
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white group-hover:rotate-[-45deg] transition-all duration-500">
+                                                <ChevronRight className="w-5 h-5" />
+                                            </div>
                                         </div>
-                                        <span>
-                                            {new Date(post.created_at).toLocaleDateString('fr-FR', {
-                                                day: 'numeric',
-                                                month: 'short',
-                                                year: 'numeric'
-                                            })}
-                                        </span>
                                     </CardFooter>
                                 </Card>
                             </Link>
@@ -111,3 +134,4 @@ export default function BlogPage() {
         </main>
     );
 }
+

@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { db as staticDb } from '@/lib/data';
 import { uploadResourceFile } from '@/lib/supabase';
-import { db, ref, push, set, get } from '@/lib/firebase';
+import { db, ref, push, set, get, update } from '@/lib/firebase';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,6 +24,7 @@ import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info } from 'lucide-re
 
 export default function ContributePage() {
     const router = useRouter();
+    const { user, profile } = useAuth();
     const [formData, setFormData] = useState({
         field: '',
         semester: '',
@@ -94,13 +96,26 @@ export default function ContributePage() {
                 ...formData,
                 url: resourceUrl,
                 fileName: file?.name || null,
+                authorId: user?.uid || null,
+                authorName: formData.anonymous ? 'Anonyme' : (profile?.firstName ? `${profile.firstName} ${profile.lastName}` : 'Étudiant'),
                 created_at: new Date().toISOString(),
                 unverified: true
             };
 
             const resourcesRef = ref(db, `resources/${formData.module}`);
             const newResourceRef = push(resourcesRef);
+            const resourceId = newResourceRef.key;
             await set(newResourceRef, contributionData);
+
+            if (user) {
+                // Track in user profile
+                const userActivityRef = ref(db, `users/${user.uid}/contributions/${resourceId}`);
+                await set(userActivityRef, {
+                    module: formData.module,
+                    title: formData.title,
+                    timestamp: Date.now()
+                });
+            }
 
             setMessage('Contribution envoyée avec succès ! Elle sera vérifiée sous peu.');
             setTimeout(() => router.push('/thanks'), 2000);
