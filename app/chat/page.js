@@ -134,11 +134,19 @@ export default function ChatPage() {
                             <p className="text-sm text-muted-foreground">Une nouvelle année à commencé ! En quelle année es-tu ?</p>
                         </CardHeader>
                         <CardContent className="grid grid-cols-2 gap-4 pt-4">
-                            <Button className="h-24 flex-col gap-2 font-bold" variant="outline" onClick={() => confirmLevel(1)}>
+                            <Button
+                                className={cn("h-24 flex-col gap-2 font-bold transition-all", getUserLevel(profile?.startYear) === 1 ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-primary/5")}
+                                variant={getUserLevel(profile?.startYear) === 1 ? "default" : "outline"}
+                                onClick={() => confirmLevel(1)}
+                            >
                                 <span className="text-2xl">1ère Année</span>
                                 <span className="text-[10px] uppercase opacity-60">S1 / S2</span>
                             </Button>
-                            <Button className="h-24 flex-col gap-2 font-bold bg-primary text-white" onClick={() => confirmLevel(2)}>
+                            <Button
+                                className={cn("h-24 flex-col gap-2 font-bold transition-all", getUserLevel(profile?.startYear) === 2 ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-primary/5")}
+                                variant={getUserLevel(profile?.startYear) === 2 ? "default" : "outline"}
+                                onClick={() => confirmLevel(2)}
+                            >
                                 <span className="text-2xl">2ème Année</span>
                                 <span className="text-[10px] uppercase opacity-60">S3 / S4</span>
                             </Button>

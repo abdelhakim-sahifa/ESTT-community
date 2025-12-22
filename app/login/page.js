@@ -23,30 +23,31 @@ export default function LoginPage() {
         return email.toLowerCase().endsWith('@etu.uae.ac.ma');
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setMessage('');
-
+    const handleForgotPassword = async () => {
+        if (!email) {
+            setMessage('Veuillez saisir votre adresse email pour réinitialiser votre mot de passe.');
+            return;
+        }
         if (!validateEmail(email)) {
             setMessage('Veuillez utiliser votre adresse académique @etu.uae.ac.ma.');
             return;
         }
 
         setLoading(true);
-
         try {
-            await signIn(email, password);
-            setMessage('Connexion réussie.');
-            setTimeout(() => router.push('/'), 1000);
+            const { sendPasswordResetEmail } = await import('firebase/auth');
+            const { auth } = await import('@/lib/firebase');
+            await sendPasswordResetEmail(auth, email);
+            setMessage('Un email de réinitialisation a été envoyé à votre adresse académique.');
         } catch (error) {
             console.error(error);
-            setMessage('Identifiants invalides ou erreur de connexion.');
+            setMessage('Erreur lors de l\'envoi de l\'email de réinitialisation.');
         } finally {
             setLoading(false);
         }
     };
 
-    const isSuccess = message.includes('réussie');
+    const isSuccess = message.includes('réussie') || message.includes('envoyé');
 
     return (
         <main className="container flex items-center justify-center min-h-[calc(100vh-200px)] py-12">
@@ -85,6 +86,13 @@ export default function LoginPage() {
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="password">Mot de passe</Label>
+                                <button
+                                    type="button"
+                                    onClick={handleForgotPassword}
+                                    className="text-xs text-primary hover:underline font-medium"
+                                >
+                                    Mot de passe oublié ?
+                                </button>
                             </div>
                             <Input
                                 id="password"

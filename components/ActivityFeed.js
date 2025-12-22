@@ -16,25 +16,53 @@ export default function ActivityFeed() {
         const resourcesRef = ref(db, 'resources');
         const blogRef = ref(db, 'blog_posts');
 
-        let allActivities = [];
-
         const unsubscribeResources = onValue(resourcesRef, (snapshot) => {
             const resourceData = snapshot.val() || {};
             const resourceList = [];
+            const seenIds = new Set();
 
-            Object.entries(resourceData).forEach(([module, moduleResources]) => {
-                Object.entries(moduleResources).forEach(([id, resource]) => {
-                    resourceList.push({
-                        id,
-                        type: 'resource',
-                        title: resource.title,
-                        module: resource.module,
-                        author: resource.authorName || 'Anonyme',
-                        authorId: resource.authorId,
-                        timestamp: new Date(resource.created_at).getTime(),
-                        href: `/browse?module=${module}`
+            // Flatten resources and de-duplicate
+            Object.entries(resourceData).forEach(([key, value]) => {
+                // Some resources are nested under module IDs, others are flat
+                if (typeof value === 'object' && value !== null && !value.title) {
+                    // Nested under module
+                    Object.entries(value).forEach(([id, resource]) => {
+                        if (!seenIds.has(id)) {
+                            resourceList.push({
+                                id,
+                                type: 'resource',
+                                title: resource.title,
+                                module: resource.module,
+                                semester: resource.semester,
+                                field: resource.field,
+                                author: resource.authorName || 'Anonyme',
+                                authorId: resource.authorId,
+                                timestamp: resource.createdAt || resource.created_at || Date.now(),
+                                href: resource.url || resource.link || resource.file || `/browse?module=${resource.module}`
+                            });
+                            seenIds.add(id);
+                        }
                     });
-                });
+                } else {
+                    // Flat structure
+                    const id = key;
+                    const resource = value;
+                    if (!seenIds.has(id)) {
+                        resourceList.push({
+                            id,
+                            type: 'resource',
+                            title: resource.title,
+                            module: resource.module,
+                            semester: resource.semester,
+                            field: resource.field,
+                            author: resource.authorName || 'Anonyme',
+                            authorId: resource.authorId,
+                            timestamp: resource.createdAt || resource.created_at || Date.now(),
+                            href: resource.url || resource.link || resource.file || `/browse?module=${resource.module}`
+                        });
+                        seenIds.add(id);
+                    }
+                }
             });
             updateFeed('resources', resourceList);
         });
@@ -45,9 +73,9 @@ export default function ActivityFeed() {
                 id,
                 type: 'blog',
                 title: blog.title,
-                author: blog.author_name || 'Anonyme',
-                authorId: blog.author_id,
-                timestamp: new Date(blog.created_at).getTime(),
+                author: blog.authorName || blog.author_name || 'Anonyme',
+                authorId: blog.authorId || blog.author_id,
+                timestamp: blog.createdAt || blog.created_at || Date.now(),
                 href: `/blog/${id}`
             }));
             updateFeed('blogs', blogList);
@@ -58,8 +86,21 @@ export default function ActivityFeed() {
                 const otherSource = source === 'resources' ? 'blogs' : 'resources';
                 const otherItems = prev.filter(a => a.source === otherSource);
                 const markedItems = items.map(i => ({ ...i, source }));
-                return [...otherItems, ...markedItems]
-                    .sort((a, b) => b.timestamp - a.timestamp)
+
+                // Final de-duplication across sources just in case
+                const combined = [...otherItems, ...markedItems];
+                const unique = [];
+                const seen = new Set();
+
+                combined.forEach(item => {
+                    if (!seen.has(item.id)) {
+                        unique.push(item);
+                        seen.add(item.id);
+                    }
+                });
+
+                return unique
+                    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
                     .slice(0, 6);
             });
             setLoading(false);
@@ -75,21 +116,50 @@ export default function ActivityFeed() {
 
     if (activities.length === 0) return <div className="col-span-full py-20 text-center text-muted-foreground italic">Aucune activité récente.</div>;
 
+    const getFieldColor = (field) => {
+        switch (field?.toLowerCase()) {
+            case 'ia': return 'bg-purple-100 text-purple-700 border-purple-200';
+            case 'casi': return 'bg-blue-100 text-blue-700 border-blue-200';
+            case 'insem': return 'bg-orange-100 text-orange-700 border-orange-200';
+            case 'idd': return 'bg-green-100 text-green-700 border-green-200';
+            default: return 'bg-slate-100 text-slate-700 border-slate-200';
+        }
+    };
+
+    const formatDate = (timestamp) => {
+        if (!timestamp) return 'Date inconnue';
+        const date = new Date(timestamp);
+        if (isNaN(date.getTime())) return 'Date invalide';
+        return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    };
+
     return (
         <>
             {activities.map((activity) => (
-                <Card key={activity.id} className="group hover:shadow-xl transition-all duration-300 border-muted-foreground/10 overflow-hidden relative">
+                <Card key={activity.id} className="group hover:shadow-xl transition-all duration-300 border-muted-foreground/10 overflow-hidden relative flex flex-col">
                     <div className={cn(
                         "absolute top-0 left-0 w-1 h-full",
                         activity.type === 'resource' ? "bg-primary" : "bg-blue-500"
                     )}></div>
-                    <CardContent className="p-6">
+                    <CardContent className="p-6 flex-grow">
                         <div className="flex items-center justify-between mb-4">
-                            <Badge variant="secondary" className="px-2 py-0 font-black text-[9px] uppercase tracking-widest bg-muted/50">
-                                {activity.type === 'resource' ? 'Ressource' : 'Article'}
-                            </Badge>
+                            <div className="flex gap-2">
+                                <Badge variant="secondary" className="px-2 py-0 font-black text-[9px] uppercase tracking-widest bg-muted/50">
+                                    {activity.type === 'resource' ? 'Ressource' : 'Article'}
+                                </Badge>
+                                {activity.semester && (
+                                    <Badge variant="outline" className="px-2 py-0 font-bold text-[9px] uppercase border-primary/20 text-primary">
+                                        {activity.semester}
+                                    </Badge>
+                                )}
+                                {activity.field && (
+                                    <Badge variant="outline" className={cn("px-2 py-0 font-bold text-[9px] uppercase", getFieldColor(activity.field))}>
+                                        {activity.field}
+                                    </Badge>
+                                )}
+                            </div>
                             <span className="text-[10px] text-muted-foreground font-bold">
-                                {new Date(activity.timestamp).toLocaleDateString()}
+                                {formatDate(activity.timestamp)}
                             </span>
                         </div>
 
@@ -105,21 +175,24 @@ export default function ActivityFeed() {
                                 Par {activity.author}
                             </span>
                         </div>
-
+                    </CardContent>
+                    <div className="p-6 pt-0 mt-auto">
                         <div className="flex items-center justify-between pt-4 border-t border-muted/20">
                             {activity.type === 'resource' && (
-                                <span className="text-[10px] font-black uppercase text-primary">
+                                <span className="text-[10px] font-black uppercase text-primary truncate max-w-[150px]">
                                     {activity.module}
                                 </span>
                             )}
-                            <Link
+                            <a
                                 href={activity.href}
+                                target={activity.type === 'resource' ? "_blank" : "_self"}
+                                rel={activity.type === 'resource' ? "noopener noreferrer" : ""}
                                 className="text-xs font-black uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all ml-auto hover:text-primary"
                             >
-                                Voir <ArrowRight className="w-3 h-3" />
-                            </Link>
+                                {activity.type === 'resource' ? 'Accéder' : 'Lire'} <ArrowRight className="w-3 h-3" />
+                            </a>
                         </div>
-                    </CardContent>
+                    </div>
                 </Card>
             ))}
         </>

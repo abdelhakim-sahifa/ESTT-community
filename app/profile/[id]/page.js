@@ -40,11 +40,11 @@ export default function PublicProfilePage() {
 
     const handleStar = async () => {
         if (!currentUser) {
-            alert("Connectez-vous pour starer ce profil !");
+            alert("Vous devez être connecté pour liker un profil.");
             return;
         }
         if (currentUser.uid === id) {
-            alert("Vous ne pouvez pas vous starer vous-même !");
+            alert("Vous ne pouvez pas liker votre propre profil.");
             return;
         }
 
@@ -56,14 +56,39 @@ export default function PublicProfilePage() {
                 stars: newStarCount,
                 [`starredBy/${currentUser.uid}`]: newIsStarred || null
             });
+            // The onValue listener will update the state, but we can update it locally for immediate feedback
+            setIsStarred(newIsStarred);
+            setStarCount(newStarCount);
         } catch (err) {
             console.error("Error updating star:", err);
+            alert("Une erreur est survenue lors de la mise à jour des stars.");
         }
     };
 
-    const copyProfileLink = () => {
-        navigator.clipboard.writeText(window.location.href);
-        alert("Lien du profil copié !");
+    const copyProfileLink = async () => {
+        try {
+            const url = window.location.href;
+            if (navigator.share) {
+                await navigator.share({
+                    title: `Profil de ${profile.firstName} ${profile.lastName} | ESTT Community`,
+                    url: url
+                });
+            } else {
+                await navigator.clipboard.writeText(url);
+                alert("Lien du profil copié !");
+            }
+        } catch (err) {
+            console.error("Error sharing profile:", err);
+            if (err.name !== 'AbortError') {
+                // Fallback to clipboard
+                try {
+                    await navigator.clipboard.writeText(window.location.href);
+                    alert("Lien du profil copié !");
+                } catch (e) {
+                    alert("Impossible de copier le lien.");
+                }
+            }
+        }
     };
 
     if (loading) return (

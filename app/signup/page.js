@@ -95,7 +95,7 @@ export default function SignupPage() {
         }
     };
 
-    const isSuccess = message.includes('succès') || message.includes('réussie');
+    const isSuccess = message.includes('créé') || message.includes('succès') || message.includes('réussie');
 
     return (
         <main className="container py-12 flex items-center justify-center min-h-[calc(100vh-100px)]">
@@ -112,112 +112,138 @@ export default function SignupPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-8">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {message && (
-                            <Alert variant={isSuccess ? "default" : "destructive"} className={isSuccess ? "border-green-500 bg-green-50 text-green-700" : ""}>
-                                {isSuccess ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                                <AlertDescription>{message}</AlertDescription>
-                            </Alert>
-                        )}
+                    {message && (
+                        <Alert variant={isSuccess ? "default" : "destructive"} className={cn("mb-6", isSuccess ? "border-green-500 bg-green-50 text-green-700" : "")}>
+                            {isSuccess ? <CheckCircle2 className="h-4 w-4 text-green-600" /> : <AlertCircle className="h-4 w-4" />}
+                            <AlertDescription className="font-medium">{message}</AlertDescription>
+                        </Alert>
+                    )}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {isSuccess ? (
+                        <div className="flex flex-col items-center gap-6 py-8">
+                            <div className="p-4 bg-green-100 rounded-full text-green-600">
+                                <CheckCircle2 className="w-12 h-12" />
+                            </div>
+                            <div className="text-center space-y-2">
+                                <h3 className="text-xl font-bold">Vérifiez votre boîte mail</h3>
+                                <p className="text-muted-foreground">Un lien de vérification a été envoyé à <strong>{formData.email}</strong>.</p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-4 w-full">
+                                <Button className="flex-grow h-12 text-lg" asChild>
+                                    <Link href="/">Retour à l'accueil</Link>
+                                </Button>
+                                <Button variant="outline" className="flex-grow h-12 text-lg" asChild>
+                                    <Link href="/login">Se connecter</Link>
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="firstName">Prénom</Label>
+                                    <Input
+                                        id="firstName"
+                                        placeholder="Ahmed"
+                                        value={formData.firstName}
+                                        onChange={(e) => handleChange('firstName', e.target.value)}
+                                        required
+                                        disabled={loading}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="lastName">Nom</Label>
+                                    <Input
+                                        id="lastName"
+                                        placeholder="Alami"
+                                        value={formData.lastName}
+                                        onChange={(e) => handleChange('lastName', e.target.value)}
+                                        required
+                                        disabled={loading}
+                                    />
+                                </div>
+                            </div>
+
                             <div className="space-y-2">
-                                <Label htmlFor="firstName">Prénom</Label>
+                                <Label htmlFor="email">Adresse email académique</Label>
                                 <Input
-                                    id="firstName"
-                                    placeholder="Ahmed"
-                                    value={formData.firstName}
-                                    onChange={(e) => handleChange('firstName', e.target.value)}
+                                    id="email"
+                                    type="email"
+                                    placeholder="prenom.nom@etu.uae.ac.ma"
+                                    value={formData.email}
+                                    onChange={(e) => handleChange('email', e.target.value)}
                                     required
+                                    disabled={loading}
+                                />
+                                <p className="text-[10px] text-muted-foreground">
+                                    Requis pour vérifier votre appartenance à l'UAE
+                                </p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="password">Mot de passe</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Au moins 6 caractères"
+                                    value={formData.password}
+                                    onChange={(e) => handleChange('password', e.target.value)}
+                                    required
+                                    disabled={loading}
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="lastName">Nom</Label>
-                                <Input
-                                    id="lastName"
-                                    placeholder="Alami"
-                                    value={formData.lastName}
-                                    onChange={(e) => handleChange('lastName', e.target.value)}
-                                    required
-                                />
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="filiere">Filière</Label>
+                                    <Select
+                                        value={formData.filiere}
+                                        onValueChange={(v) => handleChange('filiere', v)}
+                                        required
+                                        disabled={loading}
+                                    >
+                                        <SelectTrigger id="filiere">
+                                            <SelectValue placeholder="Sélectionnez..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {staticDb.fields.map((f) => (
+                                                <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="startYear">Année d'entrée</Label>
+                                    <Select
+                                        value={formData.startYear}
+                                        onValueChange={(v) => handleChange('startYear', v)}
+                                        required
+                                        disabled={loading}
+                                    >
+                                        <SelectTrigger id="startYear">
+                                            <SelectValue placeholder="Sélectionnez..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {years.map((year) => (
+                                                <SelectItem key={year} value={year}>{year}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Adresse email académique</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="prenom.nom@etu.uae.ac.ma"
-                                value={formData.email}
-                                onChange={(e) => handleChange('email', e.target.value)}
-                                required
-                            />
-                            <p className="text-[10px] text-muted-foreground">
-                                Requis pour vérifier votre appartenance à l'UAE
-                            </p>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Mot de passe</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="Au moins 6 caractères"
-                                value={formData.password}
-                                onChange={(e) => handleChange('password', e.target.value)}
-                                required
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <Label htmlFor="filiere">Filière</Label>
-                                <Select
-                                    value={formData.filiere}
-                                    onValueChange={(v) => handleChange('filiere', v)}
-                                    required
-                                >
-                                    <SelectTrigger id="filiere">
-                                        <SelectValue placeholder="Sélectionnez..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {staticDb.fields.map((f) => (
-                                            <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="startYear">Année d'entrée</Label>
-                                <Select
-                                    value={formData.startYear}
-                                    onValueChange={(v) => handleChange('startYear', v)}
-                                    required
-                                >
-                                    <SelectTrigger id="startYear">
-                                        <SelectValue placeholder="Sélectionnez..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {years.map((year) => (
-                                            <SelectItem key={year} value={year}>{year}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <Button type="submit" className="w-full h-12 text-lg font-medium shadow-sm transition-all hover:shadow-md" disabled={loading}>
-                            {loading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                    Création du compte...
-                                </>
-                            ) : (
-                                'Créer un compte'
-                            )}
-                        </Button>
-                    </form>
+                            <Button type="submit" className="w-full h-12 text-lg font-medium shadow-sm transition-all hover:shadow-md" disabled={loading}>
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                        Création du compte...
+                                    </>
+                                ) : (
+                                    'Créer un compte'
+                                )}
+                            </Button>
+                        </form>
+                    )}
                 </CardContent>
                 <CardFooter className="flex justify-center border-t py-6 bg-muted/20">
                     <p className="text-sm text-muted-foreground">

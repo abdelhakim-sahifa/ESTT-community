@@ -113,13 +113,13 @@ export default function ArticlePage() {
                             <UserIcon className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="font-bold text-slate-900">Par {article.author_name}</p>
+                            <p className="font-bold text-slate-900">Par {article.authorName || article.author_name || 'Anonyme'}</p>
                             <p className="text-sm text-slate-500 font-medium">
-                                {new Date(article.created_at).toLocaleDateString('fr-FR', {
+                                {article.createdAt || article.created_at ? new Date(article.createdAt || article.created_at).toLocaleDateString('fr-FR', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric'
-                                })}
+                                }) : 'Date inconnue'}
                             </p>
                         </div>
                     </div>
@@ -174,7 +174,7 @@ export default function ArticlePage() {
                                                     {comment.authorName}
                                                 </span>
                                                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                                                    {new Date(comment.timestamp).toLocaleDateString()}
+                                                    {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString('fr-FR') : 'Date inconnue'}
                                                 </span>
                                             </div>
                                             <p className="text-slate-600 text-sm bg-slate-50 p-4 rounded-2xl rounded-tl-none border border-slate-100/50">

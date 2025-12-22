@@ -19,22 +19,30 @@ export default function Home() {
         modules: 0
     });
     const [searchQuery, setSearchQuery] = useState('');
+    const [allResources, setAllResources] = useState([]);
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     useEffect(() => {
-        // Fetch stats from Firebase
-        const fetchStats = async () => {
+        // Fetch stats and all resources from Firebase
+        const fetchData = async () => {
             try {
                 const resourcesRef = ref(firebaseDb, 'resources');
                 const resourcesSnap = await get(resourcesRef);
 
                 const resourcesData = resourcesSnap.val() || {};
+                const resourcesList = Object.entries(resourcesData).map(([id, res]) => ({
+                    id,
+                    ...res,
+                    type: 'resource'
+                }));
+
+                setAllResources(resourcesList);
 
                 let verifiedCount = 0;
                 let pendingCount = 0;
 
-                Object.values(resourcesData).forEach(resource => {
+                resourcesList.forEach(resource => {
                     if (resource.unverified === true) {
                         pendingCount++;
                     } else {
@@ -52,26 +60,41 @@ export default function Home() {
                     modules: totalModules
                 });
             } catch (error) {
-                console.error('Error fetching stats:', error);
+                console.error('Error fetching data:', error);
             }
         };
 
-        fetchStats();
+        fetchData();
     }, []);
 
     useEffect(() => {
         if (searchQuery.trim().length > 1) {
+            const searchLower = searchQuery.toLowerCase();
+
+            // Search in modules
             const allModules = Object.values(staticDb.modules).flat();
-            const filtered = allModules.filter(m =>
-                m.name.toLowerCase().includes(searchQuery.toLowerCase())
-            ).slice(0, 5);
-            setSuggestions(filtered);
+            const filteredModules = allModules
+                .filter(m => m.name.toLowerCase().includes(searchLower))
+                .map(m => ({ ...m, type: 'module' }));
+
+            // Search in resources
+            const filteredResources = allResources
+                .filter(r =>
+                    r.unverified !== true &&
+                    (r.title?.toLowerCase().includes(searchLower) ||
+                        r.description?.toLowerCase().includes(searchLower))
+                )
+                .map(r => ({ ...r, type: 'resource' }));
+
+            // Combine and limit
+            const combined = [...filteredModules, ...filteredResources].slice(0, 10);
+            setSuggestions(combined);
             setShowSuggestions(true);
         } else {
             setSuggestions([]);
             setShowSuggestions(false);
         }
-    }, [searchQuery]);
+    }, [searchQuery, allResources]);
 
     const handleSearch = (e) => {
         if (e) e.preventDefault();
@@ -80,15 +103,29 @@ export default function Home() {
         }
     };
 
-    const handleSuggestionClick = (module) => {
-        setSearchQuery(module.name);
-        setShowSuggestions(false);
-        router.push(`/browse?module=${module.id}`);
+    const handleSuggestionClick = (item) => {
+        if (item.type === 'module') {
+            setSearchQuery(item.name);
+            setShowSuggestions(false);
+            router.push(`/browse?module=${item.id}`);
+        } else {
+            setSearchQuery(item.title);
+            setShowSuggestions(false);
+            // If it's a resource, we might want to go to browse with a query or directly to the resource
+            // The feedback says "when i click the card it redirect me the page with filter isn't it suppose to open the resource directly"
+            // So for suggestions, let's also try to go directly if possible, or at least to browse with the query
+            const url = item.url || item.link || item.file;
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                router.push(`/browse?q=${encodeURIComponent(item.title)}`);
+            }
+        }
     };
 
     return (
         <main className="min-h-screen">
-            <section id="hero" className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24">
+            <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24">
                 <div className="container px-4 md:px-6 flex flex-col items-center text-center">
                     <h1 className="text-4xl font-heading font-medium tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
                         Partage tes ressources — aide tes camarades, gagne du temps
@@ -126,7 +163,7 @@ export default function Home() {
                         Formats acceptés : PDF · Images · Liens · Vidéos — Anonyme possible · Modération rapide
                     </p>
 
-                    <div className="relative w-full max-w-lg mt-10">
+                    <div className="relative w-full max-w-lg mt-10 z-50">
                         <form onSubmit={handleSearch}>
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                             <input
@@ -142,18 +179,21 @@ export default function Home() {
                         </form>
 
                         {showSuggestions && suggestions.length > 0 && (
-                            <div className="absolute top-full left-0 right-0 mt-2 bg-background border rounded-2xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                                {suggestions.map((module) => (
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-background border rounded-2xl shadow-xl overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-200 max-h-[400px] overflow-y-auto">
+                                {suggestions.map((item) => (
                                     <button
-                                        key={module.id}
+                                        key={item.id}
                                         className="w-full px-5 py-3 text-left hover:bg-muted/50 flex items-center gap-3 transition-colors border-b last:border-0"
-                                        onClick={() => handleSuggestionClick(module)}
+                                        onClick={() => handleSuggestionClick(item)}
                                     >
-                                        <div className="bg-primary/10 p-2 rounded-lg text-primary">
-                                            <BookOpen className="h-4 w-4" />
+                                        <div className="bg-primary/10 p-2 rounded-lg text-primary shrink-0">
+                                            {item.type === 'module' ? <BookOpen className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
                                         </div>
-                                        <div className="flex flex-col">
-                                            <span className="font-medium text-sm">{module.name}</span>
+                                        <div className="flex flex-col min-w-0">
+                                            <span className="font-medium text-sm truncate">{item.type === 'module' ? item.name : item.title}</span>
+                                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                                                {item.type === 'module' ? 'Module' : 'Ressource'}
+                                            </span>
                                         </div>
                                     </button>
                                 ))}

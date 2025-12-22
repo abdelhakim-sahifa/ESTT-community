@@ -21,7 +21,7 @@ export default function BlogPage() {
                 const postsArray = Object.entries(data).map(([id, post]) => ({
                     id,
                     ...post
-                })).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                })).sort((a, b) => (b.createdAt || b.created_at || 0) - (a.createdAt || a.created_at || 0));
 
                 setPosts(postsArray);
             } catch (error) {
@@ -109,11 +109,11 @@ export default function BlogPage() {
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="text-xs font-bold text-slate-900 leading-none mb-1">
-                                                        {post.authorName || 'Anonyme'}
+                                                        {post.authorName || post.author_name || 'Anonyme'}
                                                     </span>
                                                     <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold">
                                                         <Clock className="w-3 h-3" />
-                                                        {post.createdAt ? new Date(post.createdAt).toLocaleDateString('fr-FR', {
+                                                        {post.createdAt || post.created_at ? new Date(post.createdAt || post.created_at).toLocaleDateString('fr-FR', {
                                                             day: 'numeric',
                                                             month: 'short'
                                                         }) : 'Date inconnue'}
