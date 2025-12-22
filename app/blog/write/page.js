@@ -59,12 +59,13 @@ export default function WriteArticlePage() {
                 coverImageUrl = uploaded.publicUrl;
             }
 
+            const timestamp = Date.now();
             const postData = {
                 ...formData,
-                cover_image: coverImageUrl,
-                created_at: new Date().toISOString(),
-                author_id: user?.uid || null,
-                author_name: profile?.firstName ? `${profile.firstName} ${profile.lastName}` : 'Anonyme',
+                coverImage: coverImageUrl,
+                createdAt: timestamp,
+                authorId: user?.uid || null,
+                authorName: profile?.firstName ? `${profile.firstName} ${profile.lastName}` : 'Anonyme',
                 likes: 0,
                 dislikes: 0,
                 comments: []

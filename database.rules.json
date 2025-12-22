@@ -1,0 +1,59 @@
+{
+    "rules": {
+        ".read": false,
+        ".write": false,
+        "metadata": {
+            ".read": true,
+            "professors": {
+                ".write": "root.child('admins').hasChild(auth.uid)"
+            },
+            "fields": {
+                ".write": "root.child('admins').hasChild(auth.uid)"
+            },
+            "modules": {
+                ".write": "root.child('admins').hasChild(auth.uid)"
+            }
+        },
+        "admins": {
+            ".read": "auth != null",
+            ".write": false
+        },
+        "users": {
+            "$uid": {
+                ".read": "auth != null && auth.uid == $uid",
+                ".write": "auth != null && auth.uid == $uid",
+                "contributions": {
+                    ".read": "auth != null && auth.uid == $uid",
+                    ".write": "auth != null && auth.uid == $uid"
+                }
+            }
+        },
+        "resources": {
+            ".read": true,
+            "$resourceId": {
+                ".write": "auth != null && (!data.exists() || root.child('admins').hasChild(auth.uid))",
+                ".validate": "newData.hasChildren(['title', 'url', 'type'])"
+            }
+        },
+        "module_resources": {
+            ".read": true,
+            "$moduleId": {
+                "$resourceId": {
+                    ".write": "auth != null && (!data.exists() || root.child('admins').hasChild(auth.uid))"
+                }
+            }
+        },
+        "blog_posts": {
+            ".read": true,
+            "$postId": {
+                ".write": "auth != null && (!data.exists() || root.child('admins').hasChild(auth.uid))",
+                "likes": {
+                    ".write": "auth != null"
+                },
+                "dislikes": {
+                    ".write": "auth != null"
+                }
+            }
+        }
+    }
+}

@@ -26,24 +26,68 @@ export default function BrowsePage() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (selectedModule) {
+        const query = searchParams.get('q');
+        if (query) {
+            handleSearch(query);
+        } else if (selectedModule) {
             fetchResources();
         }
-    }, [selectedModule]);
+    }, [selectedModule, searchParams]);
 
-    const fetchResources = async () => {
+    const handleSearch = async (query) => {
         setLoading(true);
         try {
-            const resourcesRef = ref(db, `resources/${selectedModule}`);
+            const resourcesRef = ref(db, 'resources');
             const snapshot = await get(resourcesRef);
             const data = snapshot.val() || {};
 
+            const searchLower = query.toLowerCase();
             const formattedResources = Object.entries(data)
                 .map(([id, resource]) => ({
                     id,
                     ...resource
                 }))
-                .filter(resource => resource.unverified !== true);
+                .filter(resource =>
+                    resource.unverified !== true &&
+                    (resource.title?.toLowerCase().includes(searchLower) ||
+                        resource.description?.toLowerCase().includes(searchLower) ||
+                        resource.professor?.toLowerCase().includes(searchLower))
+                );
+
+            setResources(formattedResources);
+        } catch (error) {
+            console.error('Error searching resources:', error);
+            setResources([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchResources = async () => {
+        setLoading(true);
+        try {
+            // 1. Get resource IDs for this module
+            const mappingRef = ref(db, `module_resources/${selectedModule}`);
+            const mappingSnap = await get(mappingRef);
+
+            if (!mappingSnap.exists()) {
+                setResources([]);
+                return;
+            }
+
+            const resourceIds = Object.keys(mappingSnap.val());
+
+            // 2. Fetch actual resource data
+            const resourcesRef = ref(db, 'resources');
+            const resourcesSnap = await get(resourcesRef);
+            const allResources = resourcesSnap.val() || {};
+
+            const formattedResources = resourceIds
+                .map(id => ({
+                    id,
+                    ...allResources[id]
+                }))
+                .filter(resource => resource && resource.unverified !== true);
 
             setResources(formattedResources);
         } catch (error) {

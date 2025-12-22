@@ -34,15 +34,11 @@ export default function Home() {
                 let verifiedCount = 0;
                 let pendingCount = 0;
 
-                Object.values(resourcesData).forEach(moduleResources => {
-                    if (typeof moduleResources === 'object') {
-                        Object.values(moduleResources).forEach(resource => {
-                            if (resource.unverified === true) {
-                                pendingCount++;
-                            } else {
-                                verifiedCount++;
-                            }
-                        });
+                Object.values(resourcesData).forEach(resource => {
+                    if (resource.unverified === true) {
+                        pendingCount++;
+                    } else {
+                        verifiedCount++;
                     }
                 });
 

@@ -45,7 +45,7 @@ export default function ContributePage() {
     useEffect(() => {
         const fetchProfessors = async () => {
             try {
-                const snapshot = await get(ref(db, 'professors'));
+                const snapshot = await get(ref(db, 'metadata/professors'));
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     const profList = Array.isArray(data)
@@ -92,20 +92,26 @@ export default function ContributePage() {
                 resourceUrl = uploaded.publicUrl;
             }
 
+            const timestamp = Date.now();
             const contributionData = {
                 ...formData,
                 url: resourceUrl,
                 fileName: file?.name || null,
                 authorId: user?.uid || null,
                 authorName: formData.anonymous ? 'Anonyme' : (profile?.firstName ? `${profile.firstName} ${profile.lastName}` : 'Étudiant'),
-                created_at: new Date().toISOString(),
+                createdAt: timestamp,
                 unverified: true
             };
 
-            const resourcesRef = ref(db, `resources/${formData.module}`);
+            // 1. Push to flat resources node
+            const resourcesRef = ref(db, 'resources');
             const newResourceRef = push(resourcesRef);
             const resourceId = newResourceRef.key;
             await set(newResourceRef, contributionData);
+
+            // 2. Link in module_resources mapping
+            const moduleMappingRef = ref(db, `module_resources/${formData.module}/${resourceId}`);
+            await set(moduleMappingRef, true);
 
             if (user) {
                 // Track in user profile
@@ -113,7 +119,7 @@ export default function ContributePage() {
                 await set(userActivityRef, {
                     module: formData.module,
                     title: formData.title,
-                    timestamp: Date.now()
+                    timestamp: timestamp
                 });
             }
 

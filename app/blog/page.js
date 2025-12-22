@@ -21,7 +21,7 @@ export default function BlogPage() {
                 const postsArray = Object.entries(data).map(([id, post]) => ({
                     id,
                     ...post
-                })).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                })).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
                 setPosts(postsArray);
             } catch (error) {
@@ -75,10 +75,10 @@ export default function BlogPage() {
                         {posts.map((post) => (
                             <Link key={post.id} href={`/blog/${post.id}`} className="group">
                                 <Card className="h-full flex flex-col overflow-hidden transition-all duration-500 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border-slate-100 rounded-[2.5rem] bg-white group-hover:-translate-y-2">
-                                    {post.cover_image && (
+                                    {post.coverImage && (
                                         <div className="relative aspect-[16/10] overflow-hidden">
                                             <img
-                                                src={post.cover_image}
+                                                src={post.coverImage}
                                                 alt={post.title}
                                                 className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
                                             />
@@ -109,14 +109,14 @@ export default function BlogPage() {
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="text-xs font-bold text-slate-900 leading-none mb-1">
-                                                        {post.author_name || 'Anonyme'}
+                                                        {post.authorName || 'Anonyme'}
                                                     </span>
                                                     <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold">
                                                         <Clock className="w-3 h-3" />
-                                                        {new Date(post.created_at).toLocaleDateString('fr-FR', {
+                                                        {post.createdAt ? new Date(post.createdAt).toLocaleDateString('fr-FR', {
                                                             day: 'numeric',
                                                             month: 'short'
-                                                        })}
+                                                        }) : 'Date inconnue'}
                                                     </div>
                                                 </div>
                                             </div>
