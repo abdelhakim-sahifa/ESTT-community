@@ -1,29 +1,48 @@
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { PartyPopper, ArrowLeft, PlusCircle } from 'lucide-react';
 
 export default function ThanksPage() {
     return (
-        <main className="container">
-            <section style={{ maxWidth: '720px', margin: '3rem auto 4rem', background: 'linear-gradient(180deg, #fff, #fbfdff)', borderRadius: '18px', padding: '2rem', boxShadow: 'var(--shadow-lg)', textAlign: 'center' }}>
-                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
-                <h2 style={{ color: 'var(--primary-color)', marginBottom: '0.5rem' }}>
-                    Merci pour ta contribution !
-                </h2>
-                <p style={{ color: '#33475b', marginBottom: '1rem' }}>
-                    Ta ressource a été soumise avec succès. Elle sera vérifiée par notre équipe et publiée sous peu.
-                </p>
-                <p style={{ color: '#666', fontSize: '0.95rem', marginBottom: '2rem' }}>
-                    Grâce à toi, la communauté EST Tétouan devient plus forte et solidaire.
-                </p>
-
-                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                    <Link href="/contribute" className="btn btn-primary">
-                        Contribuer une autre ressource
-                    </Link>
-                    <Link href="/" className="btn btn-outline">
-                        Retour à l'accueil
-                    </Link>
-                </div>
-            </section>
+        <main className="container flex items-center justify-center min-h-[calc(100vh-200px)] py-12">
+            <Card className="max-w-2xl w-full shadow-xl border-muted-foreground/10 overflow-hidden">
+                <div className="h-2 bg-primary w-full" />
+                <CardHeader className="text-center pt-10">
+                    <div className="flex justify-center mb-6">
+                        <div className="p-4 bg-primary/10 rounded-full text-primary">
+                            <PartyPopper className="w-12 h-12" />
+                        </div>
+                    </div>
+                    <CardTitle className="text-3xl font-bold text-primary">Merci pour votre contribution !</CardTitle>
+                    <CardDescription className="text-lg mt-2 font-medium text-foreground">
+                        Votre ressource a été soumise avec succès.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="text-center space-y-4 px-8 pb-10 border-b">
+                    <p className="text-muted-foreground leading-relaxed">
+                        Elle sera vérifiée par notre équipe de modération et publiée prochainement.
+                        Votre participation aide la communauté EST Tétouan à devenir plus forte et solidaire.
+                    </p>
+                    <p className="text-sm font-medium text-primary bg-primary/5 py-2 px-4 rounded-full inline-block">
+                        Un email de confirmation vous a été envoyé.
+                    </p>
+                </CardContent>
+                <CardFooter className="flex flex-col sm:flex-row gap-4 justify-center bg-muted/20 py-8 px-8">
+                    <Button className="w-full sm:w-auto h-11 gap-2" asChild>
+                        <Link href="/contribute">
+                            <PlusCircle className="w-4 h-4" />
+                            Contribuer à nouveau
+                        </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full sm:w-auto h-11 gap-2" asChild>
+                        <Link href="/">
+                            <ArrowLeft className="w-4 h-4" />
+                            Retour à l'accueil
+                        </Link>
+                    </Button>
+                </CardFooter>
+            </Card>
         </main>
     );
 }

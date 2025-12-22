@@ -5,7 +5,17 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { db as staticDb } from '@/lib/data';
 import { db, ref, get } from '@/lib/firebase';
-import './browse.css';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User } from 'lucide-react';
 
 export default function BrowsePage() {
     const searchParams = useSearchParams();
@@ -24,12 +34,10 @@ export default function BrowsePage() {
     const fetchResources = async () => {
         setLoading(true);
         try {
-            // Fetch directly from the specific module node
             const resourcesRef = ref(db, `resources/${selectedModule}`);
             const snapshot = await get(resourcesRef);
             const data = snapshot.val() || {};
 
-            // Convert object to array and filter out unverified resources
             const formattedResources = Object.entries(data)
                 .map(([id, resource]) => ({
                     id,
@@ -50,10 +58,8 @@ export default function BrowsePage() {
         ? staticDb.modules[`${selectedField}-${selectedSemester}`] || []
         : [];
 
-    const selectedFieldData = staticDb.fields.find(f => f.id === selectedField);
     const selectedModuleData = modules.find(m => m.id === selectedModule);
 
-    // Helper to ensure URL has protocol
     const ensureProtocol = (url) => {
         if (!url) return '';
         if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -62,167 +68,181 @@ export default function BrowsePage() {
         return `https://${url}`;
     };
 
-    // Get icon based on resource type
     const getResourceIcon = (type) => {
         switch (type) {
-            case 'pdf': return 'fa-file-pdf';
-            case 'video': return 'fa-video';
-            case 'image': return 'fa-image';
-            case 'link': return 'fa-link';
-            default: return 'fa-file-alt';
+            case 'pdf': return <FileText className="w-5 h-5" />;
+            case 'video': return <Video className="w-5 h-5" />;
+            case 'image': return <ImageIcon className="w-5 h-5" />;
+            case 'link': return <LinkIcon className="w-5 h-5" />;
+            default: return <FileText className="w-5 h-5" />;
         }
     };
 
     return (
-        <main className="browse-container">
-            <section className="browse-hero">
-                <div className="hero-content">
-                    <h1>Parcourir les ressources</h1>
-                    <p>
-                        Sélectionnez votre filière, semestre et module pour accéder aux ressources partagées par vos camarades
-                    </p>
-                </div>
+        <main className="container py-12">
+            <section className="mb-12 text-center">
+                <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl mb-4">
+                    Parcourir les ressources
+                </h1>
+                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                    Sélectionnez votre filière, semestre et module pour accéder aux ressources partagées par la communauté.
+                </p>
             </section>
 
-            <section className="filters-section">
-                <div className="filters-grid">
-                    <div className="filter-group">
-                        <label htmlFor="field">Filière</label>
-                        <select
-                            id="field"
-                            value={selectedField}
-                            onChange={(e) => {
-                                setSelectedField(e.target.value);
-                                setSelectedSemester('');
-                                setSelectedModule('');
-                                setResources([]);
-                            }}
-                            className="filter-select"
-                        >
-                            <option value="">Sélectionnez une filière</option>
+            <section className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6 bg-card p-6 rounded-xl border shadow-sm">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none">Filière</label>
+                    <Select
+                        value={selectedField}
+                        onValueChange={(value) => {
+                            setSelectedField(value);
+                            setSelectedSemester('');
+                            setSelectedModule('');
+                            setResources([]);
+                        }}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Sélectionnez une filière" />
+                        </SelectTrigger>
+                        <SelectContent>
                             {staticDb.fields.map((field) => (
-                                <option key={field.id} value={field.id}>
+                                <SelectItem key={field.id} value={field.id}>
                                     {field.name}
-                                </option>
+                                </SelectItem>
                             ))}
-                        </select>
-                    </div>
+                        </SelectContent>
+                    </Select>
+                </div>
 
-                    <div className="filter-group">
-                        <label htmlFor="semester">Semestre</label>
-                        <select
-                            id="semester"
-                            value={selectedSemester}
-                            onChange={(e) => {
-                                setSelectedSemester(e.target.value);
-                                setSelectedModule('');
-                                setResources([]);
-                            }}
-                            disabled={!selectedField}
-                            className="filter-select"
-                        >
-                            <option value="">Sélectionnez un semestre</option>
+                <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none">Semestre</label>
+                    <Select
+                        value={selectedSemester}
+                        onValueChange={(value) => {
+                            setSelectedSemester(value);
+                            setSelectedModule('');
+                            setResources([]);
+                        }}
+                        disabled={!selectedField}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Sélectionnez un semestre" />
+                        </SelectTrigger>
+                        <SelectContent>
                             {staticDb.semesters.map((sem) => (
-                                <option key={sem} value={sem}>
+                                <SelectItem key={sem} value={sem}>
                                     {sem}
-                                </option>
+                                </SelectItem>
                             ))}
-                        </select>
-                    </div>
+                        </SelectContent>
+                    </Select>
+                </div>
 
-                    <div className="filter-group">
-                        <label htmlFor="module">Module</label>
-                        <select
-                            id="module"
-                            value={selectedModule}
-                            onChange={(e) => setSelectedModule(e.target.value)}
-                            disabled={!selectedSemester}
-                            className="filter-select"
-                        >
-                            <option value="">Sélectionnez un module</option>
+                <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none">Module</label>
+                    <Select
+                        value={selectedModule}
+                        onValueChange={setSelectedModule}
+                        disabled={!selectedSemester}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Sélectionnez un module" />
+                        </SelectTrigger>
+                        <SelectContent>
                             {modules.map((mod) => (
-                                <option key={mod.id} value={mod.id}>
+                                <SelectItem key={mod.id} value={mod.id}>
                                     {mod.name}
-                                </option>
+                                </SelectItem>
                             ))}
-                        </select>
-                    </div>
+                        </SelectContent>
+                    </Select>
                 </div>
             </section>
 
             {selectedModule && (
-                <section className="resources-section">
-                    <h2 className="section-title">
-                        Ressources pour {selectedModuleData?.name}
-                    </h2>
+                <section>
+                    <div className="flex items-center justify-between mb-8 border-b pb-4">
+                        <h2 className="text-2xl font-semibold tracking-tight">
+                            Ressources : <span className="text-primary">{selectedModuleData?.name}</span>
+                        </h2>
+                        <Badge variant="outline" className="px-3 py-1">
+                            {resources.length} ressource{resources.length > 1 ? 's' : ''}
+                        </Badge>
+                    </div>
 
                     {loading ? (
-                        <div className="loading-container">
-                            <div className="spi"></div>
+                        <div className="flex flex-col items-center justify-center py-20">
+                            <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+                            <p className="text-muted-foreground">Recherche des ressources...</p>
                         </div>
                     ) : resources.length === 0 ? (
-                        <div className="empty-state">
-                            <i className="fas fa-folder-open"></i>
-                            <p>Aucune ressource disponible pour ce module.</p>
-                            <Link href="/contribute" className="btn-primary">
-                                Contribuer une ressource
-                            </Link>
-                        </div>
+                        <Card className="text-center py-16 border-dashed border-2 bg-muted/30">
+                            <CardHeader>
+                                <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                                    <FolderOpen className="w-8 h-8 text-muted-foreground" />
+                                </div>
+                                <CardTitle className="text-xl">Aucune ressource disponible</CardTitle>
+                                <CardDescription className="max-w-sm mx-auto mt-2">
+                                    Aidez vos camarades en étant le premier à partager une ressource pour ce module !
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Link href="/contribute">
+                                    <Button size="lg" className="mt-4">
+                                        Contribuer une ressource
+                                    </Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
                     ) : (
-                        <div className="resources-grid">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {resources.map((resource) => {
-                                // Check for url, link, or file fields (legacy support)
                                 const rawUrl = resource.url || resource.link || resource.file;
                                 const validUrl = rawUrl ? ensureProtocol(rawUrl) : null;
 
-                                // Render logic for clickable card vs disabled
-                                const cardContent = (
-                                    <>
-                                        <div className="resource-icon">
-                                            <i className={`fas ${getResourceIcon(resource.type)}`}></i>
-                                        </div>
-                                        <h3 className="resource-title">{resource.title}</h3>
-                                        {resource.description && (
-                                            <p className="resource-description">{resource.description}</p>
-                                        )}
-                                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                                            <span className="resource-type">
-                                                {resource.type}
-                                            </span>
-                                            {resource.professor && (
-                                                <span style={{ fontSize: '0.85rem', color: '#666', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                    <i className="fas fa-chalkboard-teacher"></i> {resource.professor}
-                                                </span>
+                                return (
+                                    <Card key={resource.id} className="flex flex-col h-full hover:shadow-md transition-shadow">
+                                        <CardHeader className="flex flex-row items-center gap-4 space-y-0">
+                                            <div className="p-3 bg-primary/10 rounded-lg text-primary">
+                                                {getResourceIcon(resource.type)}
+                                            </div>
+                                            <div className="flex flex-col overflow-hidden">
+                                                <CardTitle className="text-lg line-clamp-1">{resource.title}</CardTitle>
+                                                <Badge variant="secondary" className="w-fit text-[10px] mt-1 uppercase">
+                                                    {resource.type}
+                                                </Badge>
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent className="flex-grow pt-2">
+                                            {resource.description && (
+                                                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                                                    {resource.description}
+                                                </p>
                                             )}
-                                            <span className="resource-action" style={{ color: validUrl ? 'var(--primary-color, #007bff)' : '#ccc' }}>
-                                                {validUrl ? (
-                                                    <>Accéder <i className="fas fa-arrow-right"></i></>
-                                                ) : (
-                                                    <>Non disponible <i className="fas fa-ban"></i></>
+                                            <div className="flex flex-col gap-2 mt-2">
+                                                {resource.professor && (
+                                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                        <User className="w-3 h-3" />
+                                                        <span>{resource.professor}</span>
+                                                    </div>
                                                 )}
-                                            </span>
+                                            </div>
+                                        </CardContent>
+                                        <div className="p-6 pt-0 mt-auto border-t border-muted/50 pt-4 mt-4">
+                                            {validUrl ? (
+                                                <Button className="w-full justify-between group" asChild>
+                                                    <a href={validUrl} target="_blank" rel="noopener noreferrer">
+                                                        Accéder à la ressource
+                                                        <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                                                    </a>
+                                                </Button>
+                                            ) : (
+                                                <Button variant="ghost" className="w-full" disabled>
+                                                    Non disponible
+                                                </Button>
+                                            )}
                                         </div>
-                                    </>
-                                );
-
-                                return validUrl ? (
-                                    <a
-                                        key={resource.id}
-                                        href={validUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="resource-card"
-                                    >
-                                        {cardContent}
-                                    </a>
-                                ) : (
-                                    <div
-                                        key={resource.id}
-                                        className="resource-card"
-                                        style={{ cursor: 'not-allowed', opacity: 0.7 }}
-                                    >
-                                        {cardContent}
-                                    </div>
+                                    </Card>
                                 );
                             })}
                         </div>

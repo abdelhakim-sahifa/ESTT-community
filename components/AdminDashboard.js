@@ -4,6 +4,47 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { db, ref, get, update, remove, onValue } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import {
+    Loader2,
+    Search,
+    RefreshCw,
+    Shield,
+    CheckCircle2,
+    Clock,
+    BookOpen,
+    Star,
+    ExternalLink,
+    Pencil,
+    Trash2,
+    MoreVertical,
+    Check,
+    X,
+    User,
+    Calendar,
+    GraduationCap,
+    Inbox
+} from 'lucide-react';
 
 export default function AdminDashboard() {
     const { user, loading: authLoading } = useAuth();
@@ -19,7 +60,7 @@ export default function AdminDashboard() {
     const [modules, setModules] = useState({});
 
     // UI State
-    const [currentTab, setCurrentTab] = useState('overview'); // overview, pending, all
+    const [currentTab, setCurrentTab] = useState('overview');
     const [filters, setFilters] = useState({
         search: '',
         semester: 'all',
@@ -38,7 +79,6 @@ export default function AdminDashboard() {
         professor: ''
     });
 
-    // Check Admin Status
     // Check Admin Status
     useEffect(() => {
         if (authLoading) return;
@@ -64,7 +104,6 @@ export default function AdminDashboard() {
                 if (isUserAdmin) {
                     setIsAdmin(true);
                     fetchMetadata();
-                    // Listen to resources will be triggered after metadata or in parallel
                 } else {
                     router.push('/');
                 }
@@ -135,7 +174,6 @@ export default function AdminDashboard() {
         if (currentTab === 'pending') {
             result = result.filter(r => r.unverified === true);
         } else if (currentTab === 'all') {
-            // Status filter applies here
             if (filters.status === 'pending') {
                 result = result.filter(r => r.unverified === true);
             } else if (filters.status === 'approved') {
@@ -164,14 +202,12 @@ export default function AdminDashboard() {
         setFilteredResources(result);
     }, [resources, currentTab, filters]);
 
-
     // Actions
     const handleApprove = async (moduleId, resourceId) => {
         try {
             await update(ref(db, `resources/${moduleId}/${resourceId}`), {
                 unverified: false
             });
-            // Toast success
         } catch (error) {
             console.error('Error approving:', error);
         }
@@ -181,7 +217,6 @@ export default function AdminDashboard() {
         if (!confirm('Êtes-vous sûr de vouloir supprimer cette ressource ?')) return;
         try {
             await remove(ref(db, `resources/${moduleId}/${resourceId}`));
-            // Toast success
         } catch (error) {
             console.error('Error deleting:', error);
         }
@@ -216,10 +251,14 @@ export default function AdminDashboard() {
         }
     };
 
-    // Helper
     const getTypeIcon = (type) => {
-        const icons = { exam: '📝', td: '📋', course: '📚', video: '🎥' };
-        return icons[type] || '📄';
+        switch (type) {
+            case 'exam': return <BookOpen className="w-4 h-4" />;
+            case 'td': return <Pencil className="w-4 h-4" />;
+            case 'course': return <Star className="w-4 h-4" />;
+            case 'video': return <ExternalLink className="w-4 h-4" />;
+            default: return <BookOpen className="w-4 h-4" />;
+        }
     };
 
     const formatDate = (timestamp) => {
@@ -231,257 +270,295 @@ export default function AdminDashboard() {
         });
     };
 
-    // Stats calculation
     const stats = {
         pending: resources.filter(r => r.unverified).length,
         approved: resources.filter(r => !r.unverified).length,
         total: resources.length,
         today: resources.filter(r => {
-            if (!r.date) return false;
-            return new Date(r.date).toDateString() === new Date().toDateString();
+            if (!r.created_at) return false;
+            return new Date(r.created_at).toDateString() === new Date().toDateString();
         }).length
     };
 
-
     if (authLoading || loading) {
         return (
-            <div className="loading-screen">
-                <div className="loading-spinner"></div>
-                <p>Chargement...</p>
+            <div className="flex flex-col items-center justify-center min-h-[60vh]">
+                <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+                <p className="text-muted-foreground animate-pulse">Chargement du tableau de bord...</p>
             </div>
         );
     }
 
-    if (!isAdmin) return null; // Should have redirected
+    if (!isAdmin) return null;
 
     return (
-        <div className="admin-container">
-            <div className="dashboard-header">
-                <div className="dashboard-title">
-                    <h1><i className="fas fa-shield-alt"></i> Tableau de Bord</h1>
-                    <p className="dashboard-subtitle">Gérez les ressources et les contributions de la communauté.</p>
-                </div>
-                <div className="dashboard-actions">
-                    <button className="btn btn-outline" onClick={fetchMetadata}><i className="fas fa-sync-alt"></i> Actualiser</button>
-                </div>
-            </div>
-
-            <div className="admin-tabs">
-                <button
-                    className={`tab-btn ${currentTab === 'overview' ? 'active' : ''}`}
-                    onClick={() => setCurrentTab('overview')}
-                >
-                    Vue d'ensemble
-                </button>
-                <button
-                    className={`tab-btn ${currentTab === 'pending' ? 'active' : ''}`}
-                    onClick={() => setCurrentTab('pending')}
-                >
-                    En attente
-                    {stats.pending > 0 && <span className="badge">{stats.pending}</span>}
-                </button>
-                <button
-                    className={`tab-btn ${currentTab === 'all' ? 'active' : ''}`}
-                    onClick={() => setCurrentTab('all')}
-                >
-                    Toutes les ressources
-                </button>
-            </div>
-
-            {currentTab === 'overview' && (
-                <section className="tab-content active">
-                    <div className="stats-grid">
-                        <div className="stat-card stat-pending">
-                            <div className="stat-icon"><i className="fas fa-clock"></i></div>
-                            <div className="stat-info">
-                                <h3>{stats.pending}</h3>
-                                <p>En attente</p>
-                            </div>
-                        </div>
-                        <div className="stat-card stat-approved">
-                            <div className="stat-icon"><i className="fas fa-check-circle"></i></div>
-                            <div className="stat-info">
-                                <h3>{stats.approved}</h3>
-                                <p>Approuvées</p>
-                            </div>
-                        </div>
-                        <div className="stat-card stat-total">
-                            <div className="stat-icon"><i className="fas fa-book"></i></div>
-                            <div className="stat-info">
-                                <h3>{stats.total}</h3>
-                                <p>Total</p>
-                            </div>
-                        </div>
-                        <div className="stat-card stat-today">
-                            <div className="stat-icon"><i className="fas fa-star"></i></div>
-                            <div className="stat-info">
-                                <h3>{stats.today}</h3>
-                                <p>Aujourd'hui</p>
-                            </div>
-                        </div>
+        <div className="container py-12 max-w-7xl mx-auto">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10 pb-8 border-b">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <Shield className="w-8 h-8 text-primary" />
+                        <h1 className="text-3xl font-bold tracking-tight">Espace Administration</h1>
                     </div>
-                </section>
-            )}
+                    <p className="text-muted-foreground">Gérez le contenu communautaire et les validations.</p>
+                </div>
+                <Button variant="outline" size="lg" className="gap-2 shrink-0 h-11" onClick={fetchMetadata}>
+                    <RefreshCw className="w-4 h-4" />
+                    Actualiser les données
+                </Button>
+            </header>
 
-            {(currentTab === 'pending' || currentTab === 'all') && (
-                <section className="tab-content active">
-                    <div className="filters-section">
-                        <div className="filters-container">
-                            <div className="filter-group search-group">
-                                <i className="fas fa-search search-icon"></i>
-                                <input
-                                    type="text"
-                                    className="search-input"
-                                    placeholder="Rechercher..."
-                                    value={filters.search}
-                                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                                />
+            <Tabs defaultValue="overview" className="w-full space-y-8" onValueChange={setCurrentTab}>
+                <TabsList className="grid w-full grid-cols-3 max-w-md h-12 p-1 bg-muted/50">
+                    <TabsTrigger value="overview" className="h-full data-[state=active]:shadow-sm">Vue d'ensemble</TabsTrigger>
+                    <TabsTrigger value="pending" className="h-full relative data-[state=active]:shadow-sm">
+                        Validation
+                        {stats.pending > 0 && (
+                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground font-bold border-2 border-background">
+                                {stats.pending}
+                            </span>
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="all" className="h-full data-[state=active]:shadow-sm">Ressources</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="overview" className="space-y-8 border-none p-0 outline-none">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <Card className="shadow-sm border-orange-500/20 bg-orange-50/10">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">En attente</CardTitle>
+                                <Clock className="h-4 w-4 text-orange-600" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold text-orange-600">{stats.pending}</div>
+                                <p className="text-xs text-muted-foreground mt-1">Nécessitent une vérification</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="shadow-sm border-green-500/20 bg-green-50/10">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Approuvées</CardTitle>
+                                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold text-green-600">{stats.approved}</div>
+                                <p className="text-xs text-muted-foreground mt-1">Actuellement visibles</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="shadow-sm border-primary/20 bg-primary/5">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Total</CardTitle>
+                                <BookOpen className="h-4 w-4 text-primary" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold text-primary">{stats.total}</div>
+                                <p className="text-xs text-muted-foreground mt-1">Ressources en base</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="shadow-sm border-indigo-500/20 bg-indigo-50/10">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Aujourd'hui</CardTitle>
+                                <Star className="h-4 w-4 text-indigo-600" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold text-indigo-600">{stats.today}</div>
+                                <p className="text-xs text-muted-foreground mt-1">Nouvelles contributions</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    <Card className="border-muted-foreground/10">
+                        <CardHeader>
+                            <CardTitle>Dernières activités</CardTitle>
+                            <CardDescription>Vue rapide des ressources récemment ajoutées ou modifiées.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-center py-10 text-muted-foreground">
+                                <RefreshCw className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                                <p>Fonctionnalité d'historique bientôt disponible.</p>
                             </div>
-                            <div className="filter-group">
-                                <select
-                                    className="filter-select"
-                                    value={filters.semester}
-                                    onChange={(e) => setFilters(prev => ({ ...prev, semester: e.target.value }))}
-                                >
-                                    <option value="all">Tous les semestres</option>
-                                    {Object.entries(semesters).map(([id, val]) => (
-                                        <option key={id} value={id}>{val.name || val}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="filter-group">
-                                <select
-                                    className="filter-select"
-                                    value={filters.field}
-                                    onChange={(e) => setFilters(prev => ({ ...prev, field: e.target.value }))}
-                                >
-                                    <option value="all">Toutes les filières</option>
-                                    {Object.entries(fields).map(([id, val]) => (
-                                        <option key={id} value={id}>{val.name || val}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="filter-group">
-                                <select
-                                    className="filter-select"
-                                    value={filters.type}
-                                    onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
-                                >
-                                    <option value="all">Tous les types</option>
-                                    <option value="exam">Examen</option>
-                                    <option value="td">TD</option>
-                                    <option value="course">Cours</option>
-                                    <option value="video">Vidéo</option>
-                                </select>
-                            </div>
-                            {currentTab === 'all' && (
-                                <div className="filter-group">
-                                    <select
-                                        className="filter-select"
-                                        value={filters.status}
-                                        onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                                    >
-                                        <option value="all">Tous les statuts</option>
-                                        <option value="pending">En attente</option>
-                                        <option value="approved">Approuvées</option>
-                                    </select>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                {(currentTab === 'pending' || currentTab === 'all') && (
+                    <TabsContent value={currentTab} className="space-y-6 border-none p-0 outline-none">
+                        <section className="bg-muted/30 p-6 rounded-xl border space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div className="relative group lg:col-span-1">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <Input
+                                        placeholder="Titre, professeur..."
+                                        className="pl-9 h-10 bg-background"
+                                        value={filters.search}
+                                        onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                                    />
                                 </div>
+                                <Select value={filters.semester} onValueChange={(v) => setFilters(prev => ({ ...prev, semester: v }))}>
+                                    <SelectTrigger className="h-10 bg-background">
+                                        <SelectValue placeholder="Tous les semestres" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">Tous les semestres</SelectItem>
+                                        {Object.entries(semesters).map(([id, val]) => (
+                                            <SelectItem key={id} value={id}>{val.name || val}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <Select value={filters.field} onValueChange={(v) => setFilters(prev => ({ ...prev, field: v }))}>
+                                    <SelectTrigger className="h-10 bg-background">
+                                        <SelectValue placeholder="Toutes les filières" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">Toutes les filières</SelectItem>
+                                        {Object.entries(fields).map(([id, val]) => (
+                                            <SelectItem key={id} value={id}>{val.name || val}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <Select value={filters.type} onValueChange={(v) => setFilters(prev => ({ ...prev, type: v }))}>
+                                    <SelectTrigger className="h-10 bg-background">
+                                        <SelectValue placeholder="Tous les types" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">Tous les types</SelectItem>
+                                        <SelectItem value="exam">Examen</SelectItem>
+                                        <SelectItem value="td">TD</SelectItem>
+                                        <SelectItem value="course">Cours</SelectItem>
+                                        <SelectItem value="video">Vidéo</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </section>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredResources.length === 0 ? (
+                                <div className="col-span-full py-20 text-center flex flex-col items-center border-2 border-dashed rounded-xl bg-muted/20">
+                                    <Inbox className="w-12 h-12 text-muted-foreground mb-4 opacity-30" />
+                                    <h3 className="text-xl font-medium text-muted-foreground">Aucune ressource trouvée</h3>
+                                    <p className="text-sm text-muted-foreground mt-1">Ajustez vos filtres ou revenez plus tard.</p>
+                                </div>
+                            ) : (
+                                filteredResources.map(resource => (
+                                    <Card key={`${resource.moduleId}-${resource.resourceId}`}
+                                        className={`group relative overflow-hidden transition-all hover:shadow-md border-muted-foreground/10 ${resource.unverified ? 'ring-1 ring-orange-500/20 bg-orange-50/5' : ''}`}>
+                                        <CardHeader className="pb-4">
+                                            <div className="flex justify-between items-start">
+                                                <Badge variant={resource.unverified ? "outline" : "secondary"} className="mb-2 gap-1 uppercase text-[10px]">
+                                                    {getTypeIcon(resource.type)}
+                                                    {resource.type}
+                                                </Badge>
+                                                {resource.unverified && <Badge className="bg-orange-500 hover:bg-orange-600 border-none text-[10px]">EN ATTENTE</Badge>}
+                                            </div>
+                                            <CardTitle className="text-lg line-clamp-1 group-hover:text-primary transition-colors pr-6">
+                                                {resource.title || 'Sans titre'}
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-3 pb-6">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                    <User className="w-3.5 h-3.5" />
+                                                    <span className="line-clamp-1">{resource.professor || 'Prof. N/A'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                    <GraduationCap className="w-3.5 h-3.5" />
+                                                    <span className="line-clamp-1">{fields[resource.field]?.name || fields[resource.field] || resource.field}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                    <Calendar className="w-3.5 h-3.5" />
+                                                    <span>{formatDate(resource.created_at || resource.date)}</span>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                        <CardFooter className="pt-4 border-t gap-2 bg-muted/10">
+                                            <Button variant="ghost" size="sm" className="h-9 w-9 p-0" asChild>
+                                                <a href={resource.url || resource.link} target="_blank" rel="noopener noreferrer">
+                                                    <ExternalLink className="h-4 w-4" />
+                                                </a>
+                                            </Button>
+                                            <Button variant="ghost" size="sm" className="h-9 w-9 p-0" onClick={() => handleEditClick(resource)}>
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+
+                                            <div className="ml-auto flex gap-2">
+                                                {resource.unverified && (
+                                                    <Button variant="default" size="sm" className="h-9 px-3 gap-1 bg-green-600 hover:bg-green-700 font-medium" onClick={() => handleApprove(resource.moduleId, resource.resourceId)}>
+                                                        <Check className="h-4 w-4" />
+                                                        Approuver
+                                                    </Button>
+                                                )}
+                                                <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDelete(resource.moduleId, resource.resourceId)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </CardFooter>
+                                    </Card>
+                                ))
                             )}
                         </div>
-                    </div>
+                    </TabsContent>
+                )}
+            </Tabs>
 
-                    <div className="resources-container">
-                        {filteredResources.length === 0 ? (
-                            <div className="empty-state">
-                                <div className="empty-icon"><i className="fas fa-inbox"></i></div>
-                                <h3>Aucune ressource trouvée</h3>
-                            </div>
-                        ) : (
-                            filteredResources.map(resource => (
-                                <div key={`${resource.moduleId}-${resource.resourceId}`}
-                                    className={`resource-card ${resource.unverified ? 'pending' : 'approved'}`}>
-                                    <div className="resource-header">
-                                        <h4 className="resource-title">{resource.title || 'Sans titre'}</h4>
-                                        <span className="resource-type" title={resource.type}>{getTypeIcon(resource.type)}</span>
-                                    </div>
-                                    <div className="resource-meta">
-                                        <div className="meta-row"><i className="fas fa-user-tie"></i> <span>{resource.professor || 'Prof. N/A'}</span></div>
-                                        <div className="meta-row"><i className="fas fa-graduation-cap"></i> <span>{fields[resource.field]?.name || fields[resource.field] || resource.field}</span></div>
-                                        <div className="meta-row"><i className="fas fa-calendar"></i> <span>{formatDate(resource.date)}</span></div>
-                                        {resource.userEmail && <div className="meta-row"><i className="fas fa-user"></i> <span>{resource.userEmail}</span></div>}
-                                    </div>
-                                    <div className="resource-actions">
-                                        <a href={resource.link} target="_blank" className="btn btn-outline" rel="noopener noreferrer"><i className="fas fa-external-link-alt"></i></a>
-                                        <button className="btn btn-outline" onClick={() => handleEditClick(resource)}><i className="fas fa-pen"></i></button>
-                                        {resource.unverified && (
-                                            <button className="btn btn-success" onClick={() => handleApprove(resource.moduleId, resource.resourceId)}><i className="fas fa-check"></i></button>
-                                        )}
-                                        <button className="btn btn-danger" onClick={() => handleDelete(resource.moduleId, resource.resourceId)}><i className="fas fa-trash"></i></button>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </section>
-            )}
-
-            {isEditModalOpen && (
-                <div className="modal" style={{ display: 'flex' }} onClick={(e) => { if (e.target.className.includes('modal')) setIsEditModalOpen(false); }}>
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h2>Modifier la ressource</h2>
-                            <button className="modal-close" onClick={() => setIsEditModalOpen(false)}>&times;</button>
-                        </div>
-                        <form onSubmit={handleEditSubmit} className="edit-form">
-                            <div className="form-group">
-                                <label>Titre</label>
-                                <input
-                                    type="text"
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+                <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                        <DialogTitle>Modifier la ressource</DialogTitle>
+                        <DialogDescription>
+                            Mettez à jour les informations de la ressource. Les changements sont instantanés.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleEditSubmit} className="space-y-6 pt-4">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="edit-title">Titre</Label>
+                                <Input
+                                    id="edit-title"
                                     required
                                     value={editForm.title}
                                     onChange={e => setEditForm({ ...editForm, title: e.target.value })}
                                 />
                             </div>
-                            <div className="form-group">
-                                <label>Lien</label>
-                                <input
+                            <div className="space-y-2">
+                                <Label htmlFor="edit-link">Lien / URL</Label>
+                                <Input
+                                    id="edit-link"
                                     type="url"
                                     required
                                     value={editForm.link}
                                     onChange={e => setEditForm({ ...editForm, link: e.target.value })}
                                 />
                             </div>
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Type</label>
-                                    <select
-                                        required
-                                        value={editForm.type}
-                                        onChange={e => setEditForm({ ...editForm, type: e.target.value })}
-                                    >
-                                        <option value="exam">Examen</option>
-                                        <option value="td">TD</option>
-                                        <option value="course">Cours</option>
-                                        <option value="video">Vidéo</option>
-                                    </select>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="edit-type">Type</Label>
+                                    <Select value={editForm.type} onValueChange={(v) => setEditForm({ ...editForm, type: v })}>
+                                        <SelectTrigger id="edit-type">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="exam">Examen</SelectItem>
+                                            <SelectItem value="td">TD</SelectItem>
+                                            <SelectItem value="course">Cours</SelectItem>
+                                            <SelectItem value="video">Vidéo</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
-                                <div className="form-group">
-                                    <label>Professeur</label>
-                                    <input
-                                        type="text"
+                                <div className="space-y-2">
+                                    <Label htmlFor="edit-professor">Professeur</Label>
+                                    <Input
+                                        id="edit-professor"
                                         value={editForm.professor}
                                         onChange={e => setEditForm({ ...editForm, professor: e.target.value })}
                                     />
                                 </div>
                             </div>
-                            <div className="modal-actions">
-                                <button type="button" className="btn btn-secondary" onClick={() => setIsEditModalOpen(false)}>Annuler</button>
-                                <button type="submit" className="btn btn-primary">Enregistrer</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                        </div>
+                        <DialogFooter className="gap-2">
+                            <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)}>Annuler</Button>
+                            <Button type="submit">Enregistrer les modifications</Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

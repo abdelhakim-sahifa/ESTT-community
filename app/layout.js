@@ -1,11 +1,20 @@
-import { Outfit } from 'next/font/google';
+import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { AuthProvider } from '@/context/AuthContext';
 
-const outfit = Outfit({ subsets: ['latin'] });
+const inter = Inter({
+    subsets: ['latin'],
+    variable: '--font-inter',
+});
+
+const canela = localFont({
+    src: '../public/fonts/Canela-Medium.woff2', // Assuming this path, verified in globals.css
+    variable: '--font-canela',
+});
 
 export const metadata = {
     title: 'EST Tétouan - Ressources Étudiants',
@@ -24,7 +33,7 @@ export default function RootLayout({ children }) {
                     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
                 />
             </head>
-            <body className={outfit.className}>
+            <body className={`${inter.className} ${canela.variable} antialiased`}>
                 <AuthProvider>
                     <Header />
                     {children}

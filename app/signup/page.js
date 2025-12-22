@@ -3,8 +3,21 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { db as staticDb } from '@/lib/data';
 import { useAuth } from '@/context/AuthContext';
+import { db as staticDb } from '@/lib/data';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function SignupPage() {
     const router = useRouter();
@@ -21,17 +34,17 @@ export default function SignupPage() {
     const [loading, setLoading] = useState(false);
 
     const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+    const years = Array.from({ length: 6 }, (_, i) => (currentYear - i).toString());
 
     const validateEmail = (email) => {
         return email.toLowerCase().endsWith('@etu.uae.ac.ma');
     };
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+    const handleChange = (name, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -44,7 +57,7 @@ export default function SignupPage() {
         }
 
         if (formData.password.length < 6) {
-            setMessage('Mot de passe requis (6 caractères minimum).');
+            setMessage('Le mot de passe doit contenir au moins 6 caractères.');
             return;
         }
 
@@ -68,136 +81,149 @@ export default function SignupPage() {
                 createdAt: Date.now()
             });
 
-            setMessage('Inscription réussie — connecté.');
-            setTimeout(() => router.push('/'), 1000);
+            setMessage('Compte créé avec succès !');
+            setTimeout(() => router.push('/'), 1500);
         } catch (error) {
             console.error(error);
-            setMessage(error.message || 'Erreur lors de l\'inscription.');
+            setMessage(error.message || 'Erreur lors de la création du compte.');
         } finally {
             setLoading(false);
         }
     };
 
+    const isSuccess = message.includes('succès') || message.includes('réussie');
+
     return (
-        <main className="container">
-            <section className="contribution-section" style={{ marginTop: '3rem', maxWidth: '700px' }}>
-                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>S'inscrire</h2>
-
-                <form onSubmit={handleSubmit} className="contribution-form">
-                    {message && (
-                        <div style={{
-                            padding: '0.75rem',
-                            marginBottom: '1rem',
-                            borderRadius: '8px',
-                            background: message.includes('réussie') ? '#d4edda' : '#f8d7da',
-                            color: message.includes('réussie') ? '#155724' : '#721c24'
-                        }}>
-                            {message}
+        <main className="container py-12 flex items-center justify-center min-h-[calc(100vh-100px)]">
+            <Card className="w-full max-w-2xl shadow-xl border-muted-foreground/10">
+                <CardHeader className="space-y-1 text-center border-b pb-8">
+                    <div className="flex justify-center mb-4">
+                        <div className="p-3 bg-primary/10 rounded-full text-primary">
+                            <UserPlus className="w-8 h-8" />
                         </div>
-                    )}
-
-                    <div className="form-group">
-                        <label htmlFor="email">Adresse email académique *</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="prenom.nom@etu.uae.ac.ma"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
                     </div>
+                    <CardTitle className="text-3xl font-bold">Créer un compte</CardTitle>
+                    <CardDescription>
+                        Rejoignez la communauté ESTT pour partager et accéder aux ressources
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-8">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {message && (
+                            <Alert variant={isSuccess ? "default" : "destructive"} className={isSuccess ? "border-green-500 bg-green-50 text-green-700" : ""}>
+                                {isSuccess ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                                <AlertDescription>{message}</AlertDescription>
+                            </Alert>
+                        )}
 
-                    <div className="form-group">
-                        <label htmlFor="password">Mot de passe *</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Minimum 6 caractères"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="firstName">Prénom</Label>
+                                <Input
+                                    id="firstName"
+                                    placeholder="Ahmed"
+                                    value={formData.firstName}
+                                    onChange={(e) => handleChange('firstName', e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="lastName">Nom</Label>
+                                <Input
+                                    id="lastName"
+                                    placeholder="Alami"
+                                    value={formData.lastName}
+                                    onChange={(e) => handleChange('lastName', e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                        <div className="form-group">
-                            <label htmlFor="firstName">Prénom *</label>
-                            <input
-                                type="text"
-                                id="firstName"
-                                name="firstName"
-                                value={formData.firstName}
-                                onChange={handleChange}
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Adresse email académique</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="prenom.nom@etu.uae.ac.ma"
+                                value={formData.email}
+                                onChange={(e) => handleChange('email', e.target.value)}
+                                required
+                            />
+                            <p className="text-[10px] text-muted-foreground">
+                                Requis pour vérifier votre appartenance à l'UAE
+                            </p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="password">Mot de passe</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                placeholder="Au moins 6 caractères"
+                                value={formData.password}
+                                onChange={(e) => handleChange('password', e.target.value)}
                                 required
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="lastName">Nom *</label>
-                            <input
-                                type="text"
-                                id="lastName"
-                                name="lastName"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                required
-                            />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="filiere">Filière</Label>
+                                <Select
+                                    value={formData.filiere}
+                                    onValueChange={(v) => handleChange('filiere', v)}
+                                    required
+                                >
+                                    <SelectTrigger id="filiere">
+                                        <SelectValue placeholder="Sélectionnez..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {staticDb.fields.map((f) => (
+                                            <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="startYear">Année d'entrée</Label>
+                                <Select
+                                    value={formData.startYear}
+                                    onValueChange={(v) => handleChange('startYear', v)}
+                                    required
+                                >
+                                    <SelectTrigger id="startYear">
+                                        <SelectValue placeholder="Sélectionnez..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {years.map((year) => (
+                                            <SelectItem key={year} value={year}>{year}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <label htmlFor="filiere">Filière *</label>
-                        <select
-                            id="filiere"
-                            name="filiere"
-                            value={formData.filiere}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Sélectionnez votre filière</option>
-                            {staticDb.fields.map((field) => (
-                                <option key={field.id} value={field.id}>
-                                    {field.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="startYear">Année de début d'études *</label>
-                        <select
-                            id="startYear"
-                            name="startYear"
-                            value={formData.startYear}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Sélectionnez l'année</option>
-                            {years.map((year) => (
-                                <option key={year} value={year}>
-                                    {year}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <button type="submit" className="submit-btn" disabled={loading}>
-                        {loading ? 'Inscription...' : 'S\'inscrire'}
-                    </button>
-                </form>
-
-                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                    <p>
-                        Déjà un compte ?{' '}
-                        <Link href="/login" style={{ color: 'var(--primary-color)', fontWeight: 600 }}>
+                        <Button type="submit" className="w-full h-12 text-lg font-medium shadow-sm transition-all hover:shadow-md" disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                    Création du compte...
+                                </>
+                            ) : (
+                                'Créer un compte'
+                            )}
+                        </Button>
+                    </form>
+                </CardContent>
+                <CardFooter className="flex justify-center border-t py-6 bg-muted/20">
+                    <p className="text-sm text-muted-foreground">
+                        Vous avez déjà un compte ?{' '}
+                        <Link href="/login" className="text-primary font-semibold hover:underline">
                             Se connecter
                         </Link>
                     </p>
-                </div>
-            </section>
+                </CardFooter>
+            </Card>
         </main>
     );
 }
