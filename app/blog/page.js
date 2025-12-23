@@ -12,6 +12,8 @@ export default function BlogPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!db) return;
+
         const fetchPosts = async () => {
             try {
                 const postsRef = ref(db, 'blog_posts');
@@ -32,7 +34,8 @@ export default function BlogPage() {
         };
 
         fetchPosts();
-    }, []);
+    }, [db]);
+
 
     return (
         <main className="container py-16 px-4">

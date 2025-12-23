@@ -22,7 +22,7 @@ export default function ArticlePage() {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
-        if (!id) return;
+        if (!id || !db) return;
 
         // Fetch Article
         const articleRef = ref(db, `blog_posts/${id}`);
@@ -51,7 +51,8 @@ export default function ArticlePage() {
             unsubscribeArticle();
             unsubscribeComments();
         };
-    }, [id]);
+    }, [id, db]);
+
 
     const handleAddComment = async (e) => {
         e.preventDefault();

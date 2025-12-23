@@ -43,6 +43,8 @@ export default function ContributePage() {
     const [professors, setProfessors] = useState([]);
 
     useEffect(() => {
+        if (!db) return;
+
         const fetchProfessors = async () => {
             try {
                 const snapshot = await get(ref(db, 'metadata/professors'));
@@ -59,7 +61,8 @@ export default function ContributePage() {
         };
 
         fetchProfessors();
-    }, []);
+    }, [db]);
+
 
     const handleChange = (name, value) => {
         setFormData(prev => ({

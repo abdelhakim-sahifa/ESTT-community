@@ -24,6 +24,8 @@ export default function Home() {
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     useEffect(() => {
+        if (!firebaseDb) return;
+
         // Fetch stats and all resources from Firebase
         const fetchData = async () => {
             try {
@@ -65,7 +67,8 @@ export default function Home() {
         };
 
         fetchData();
-    }, []);
+    }, [firebaseDb]);
+
 
     useEffect(() => {
         if (searchQuery.trim().length > 1) {

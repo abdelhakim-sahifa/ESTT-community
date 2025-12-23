@@ -26,13 +26,16 @@ export default function BrowsePage() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        if (!db) return;
+
         const query = searchParams.get('q');
         if (query) {
             handleSearch(query);
         } else if (selectedModule) {
             fetchResources();
         }
-    }, [selectedModule, searchParams]);
+    }, [selectedModule, searchParams, db]);
+
 
     const handleSearch = async (query) => {
         setLoading(true);

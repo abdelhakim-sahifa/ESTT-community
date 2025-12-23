@@ -22,7 +22,7 @@ export default function ChatPage() {
 
     // 1. Sync Authentication & Level Detection
     useEffect(() => {
-        if (authLoading) return;
+        if (authLoading || !db) return;
         if (!user) {
             router.push('/login');
             return;
@@ -37,7 +37,8 @@ export default function ChatPage() {
         } else if (profile) {
             setupChat(profile.filiere, userLevel);
         }
-    }, [user, profile, authLoading]);
+    }, [user, profile, authLoading, db]);
+
 
     // 2. Chat Setup & July 1st Reset Logic
     const setupChat = async (filiere, level) => {

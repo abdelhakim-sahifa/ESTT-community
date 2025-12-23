@@ -20,6 +20,8 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!auth || !db) return;
+
         let unsubscribeProfile = null;
 
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
@@ -51,6 +53,7 @@ export const AuthProvider = ({ children }) => {
             if (unsubscribeProfile) unsubscribeProfile();
         };
     }, []);
+
 
     const signIn = (email, password) => {
         return signInWithEmailAndPassword(auth, email, password);
