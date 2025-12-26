@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { db, ref, get, set, update, onValue } from '@/lib/firebase';
+import { db, ref, get, set, update, onValue, query, orderByChild, equalTo } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star } from 'lucide-react';
+import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket } from 'lucide-react';
 import { cn, getUserLevel } from '@/lib/utils';
 
 export default function PublicProfilePage() {
@@ -18,6 +18,8 @@ export default function PublicProfilePage() {
     const [error, setError] = useState(null);
     const [isStarred, setIsStarred] = useState(false);
     const [starCount, setStarCount] = useState(0);
+    const [tickets, setTickets] = useState([]);
+    const [loadingTickets, setLoadingTickets] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -36,6 +38,32 @@ export default function PublicProfilePage() {
         });
 
         return () => unsubscribe();
+    }, [id, currentUser]);
+
+    // Fetch Tickets separate effect
+    useEffect(() => {
+        if (!id || !currentUser || currentUser.uid !== id) return;
+
+        const fetchTickets = async () => {
+            setLoadingTickets(true);
+            try {
+                const ticketsRef = ref(db, 'tickets');
+                const snap = await get(ticketsRef);
+                if (snap.exists()) {
+                    const data = snap.val();
+                    const userTickets = Object.entries(data)
+                        .map(([id, t]) => ({ id, ...t }))
+                        .filter(t => t.userId === id)
+                        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                    setTickets(userTickets);
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoadingTickets(false);
+            }
+        };
+        fetchTickets();
     }, [id, currentUser]);
 
     const handleStar = async () => {
@@ -295,6 +323,47 @@ export default function PublicProfilePage() {
                             )}
                         </div>
                     </section>
+
+                    {/* My Tickets Section - Only visible to owner */}
+                    {currentUser && currentUser.uid === id && (
+                        <section>
+                            <h2 className="text-xl font-black mb-6 flex items-center gap-2 uppercase tracking-tight text-orange-600">
+                                <Ticket className="w-5 h-5" /> Mes Tickets
+                            </h2>
+                            {loadingTickets ? (
+                                <Loader2 className="w-6 h-6 animate-spin text-orange-500 mx-auto" />
+                            ) : (
+                                <div className="grid gap-4">
+                                    {tickets.length > 0 ? (
+                                        tickets.map(ticket => (
+                                            <Card key={ticket.id} className="hover:shadow-md transition-all border-l-4 border-orange-500 bg-gradient-to-r from-orange-50/50 to-white">
+                                                <CardContent className="p-5 flex justify-between items-center">
+                                                    <div>
+                                                        <h3 className="font-bold text-lg">{ticket.eventName}</h3>
+                                                        <div className="flex items-center gap-2 mt-1">
+                                                            <Badge variant="outline" className={ticket.status === 'valid' ? "bg-green-100 text-green-700 border-green-200" : "bg-orange-100 text-orange-700 border-orange-200"}>
+                                                                {ticket.status === 'valid' ? 'Validé' : 'En attente'}
+                                                            </Badge>
+                                                            <span className="text-xs text-muted-foreground">{ticket.clubName}</span>
+                                                        </div>
+                                                    </div>
+                                                    <Button variant="ghost" size="sm" asChild>
+                                                        <a href={`/tickets/${ticket.id}`} target="_blank" rel="noopener noreferrer">
+                                                            Voir <i className="fas fa-arrow-right ml-2 text-xs"></i>
+                                                        </a>
+                                                    </Button>
+                                                </CardContent>
+                                            </Card>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-8 bg-muted/5 rounded-xl border border-dashed">
+                                            <p className="text-muted-foreground text-sm">Vous n'avez aucun ticket.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </section>
+                    )}
                 </div>
             </div>
         </main>

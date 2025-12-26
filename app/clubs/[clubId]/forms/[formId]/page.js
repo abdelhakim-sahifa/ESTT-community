@@ -1,0 +1,304 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { db, ref, get, push, set } from '@/lib/firebase';
+import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
+import { Loader2, CheckCircle2, ArrowLeft, AlertCircle, Ticket } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+export default function CustomFormPage() {
+    const params = useParams();
+    const router = useRouter();
+    const { user, profile } = useAuth();
+    const { clubId, formId } = params;
+
+    const [club, setClub] = useState(null);
+    const [form, setForm] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [ticketId, setTicketId] = useState(null);
+    const [error, setError] = useState('');
+
+    const [formData, setFormData] = useState({});
+
+    useEffect(() => {
+        if (clubId && formId) {
+            fetchData();
+        }
+    }, [clubId, formId]);
+
+    useEffect(() => {
+        // Auto-fill for logged in users
+        if ((user || profile) && form && Object.keys(formData).length === 0) {
+            const newFormData = { ...formData };
+            form.fields.forEach(field => {
+                if (field.type === 'email' && (user.email || profile?.email)) {
+                    newFormData[field.id] = user.email || profile.email;
+                }
+                if (field.type === 'text' && field.label.toLowerCase().includes('nom') && (profile?.lastName || user.displayName)) {
+                    newFormData[field.id] = profile?.lastName ? `${profile.firstName} ${profile.lastName}` : user.displayName;
+                }
+            });
+            if (Object.keys(newFormData).length > 0) {
+                setFormData(newFormData);
+            }
+        }
+    }, [user, profile, form]);
+
+    const fetchData = async () => {
+        try {
+            // Fetch Club
+            const clubRef = ref(db, `clubs/${clubId}`);
+            const clubSnap = await get(clubRef);
+            if (clubSnap.exists()) {
+                setClub(clubSnap.val());
+            }
+
+            // Fetch Form
+            const formRef = ref(db, `clubs/${clubId}/forms/${formId}`);
+            const formSnap = await get(formRef);
+
+            if (!formSnap.exists()) {
+                setError('Formulaire introuvable');
+                setLoading(false);
+                return;
+            }
+
+            setForm(formSnap.val());
+        } catch (error) {
+            console.error(error);
+            setError('Erreur de chargement');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleChange = (fieldId, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [fieldId]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        setError('');
+
+        try {
+            // Basic validation
+            for (const field of form.fields) {
+                if (field.required && !formData[field.id]) {
+                    throw new Error(`Le champ "${field.label}" est requis.`);
+                }
+            }
+
+            // Create submission
+            const submissionRef = push(ref(db, `clubs/${clubId}/formSubmissions/${formId}`));
+            const submissionId = submissionRef.key;
+
+            let generatedTicketId = null;
+
+            if (form.generateTicket) {
+                // Generate Ticket
+                const ticketsRef = push(ref(db, 'tickets'));
+                generatedTicketId = ticketsRef.key;
+
+                await set(ticketsRef, {
+                    eventId: formId,
+                    eventName: form.title,
+                    clubId: clubId,
+                    clubName: club.name,
+                    userId: user ? user.uid : 'guest',
+                    userName: formData[Object.keys(formData).find(k => form.fields.find(f => f.id == k && f.label.toLowerCase().includes('nom')))] || 'Invité',
+                    startTime: Date.now(), // Placeholder for event time
+                    status: 'pending'
+                });
+
+                setTicketId(generatedTicketId);
+            }
+
+            await set(submissionRef, {
+                data: formData,
+                userId: user ? user.uid : null,
+                submittedAt: Date.now(),
+                ticketId: generatedTicketId
+            });
+
+            setSubmitted(true);
+        } catch (error) {
+            console.error(error);
+            setError(error.message || 'Erreur lors de l\'envoi');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    if (!form || !club) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+                <p className="text-xl text-muted-foreground">{error || 'Introuvable'}</p>
+                <Button asChild>
+                    <Link href={`/clubs/${clubId}`}>Retour au club</Link>
+                </Button>
+            </div>
+        );
+    }
+
+    if (submitted) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+                <Card className="w-full max-w-md text-center">
+                    <CardHeader>
+                        <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                            <CheckCircle2 className="w-8 h-8 text-green-600" />
+                        </div>
+                        <CardTitle className="text-2xl text-green-700">Envoyé !</CardTitle>
+                        <CardDescription>
+                            Votre réponse a bien été enregistrée.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {ticketId && (
+                            <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                                <Ticket className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+                                <h3 className="font-bold text-orange-800">Ticket généré</h3>
+                                <p className="text-sm text-orange-700 mb-3">
+                                    Votre ticket est en attente de validation par les administrateurs du club.
+                                    Vous pourrez l'utiliser une fois validé.
+                                </p>
+                                <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white">
+                                    <Link href={`/tickets/${ticketId}`}>Voir mon ticket</Link>
+                                </Button>
+                            </div>
+                        )}
+                        <p className="text-muted-foreground">
+                            Merci de votre participation. Un administrateur vérifiera votre soumission prochainement.
+                        </p>
+                    </CardContent>
+                    <CardFooter className="justify-center">
+                        <Button asChild variant="outline">
+                            <Link href={`/clubs/${clubId}`}>Retourner au profil du club</Link>
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </div>
+        );
+    }
+
+    return (
+        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-12 px-4">
+            <style jsx global>{`
+                .theme-text { color: ${club.themeColor || '#64748b'}; }
+                .theme-bg { background-color: ${club.themeColor || '#64748b'}; }
+                .theme-btn { background-color: ${club.themeColor || '#64748b'}; }
+                .theme-btn:hover { opacity: 0.9; }
+                .theme-ring:focus-visible { ring-color: ${club.themeColor || '#64748b'}; }
+            `}</style>
+
+            <div className="max-w-2xl mx-auto space-y-8">
+                <Button variant="ghost" asChild className="mb-4">
+                    <Link href={`/clubs/${clubId}`} className="gap-2">
+                        <ArrowLeft className="w-4 h-4" />
+                        Retour au club
+                    </Link>
+                </Button>
+
+                <div className="text-center space-y-4">
+                    <div className="w-20 h-20 mx-auto relative rounded-xl overflow-hidden bg-white shadow-md border border-slate-100">
+                        {club.logo ? (
+                            <Image
+                                src={club.logo}
+                                alt={club.name}
+                                fill
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div
+                                className="w-full h-full flex items-center justify-center text-xl font-bold bg-muted"
+                                style={{ color: club.themeColor || '#64748b' }}
+                            >
+                                {club.name?.charAt(0)}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <Card className="border-t-4 shadow-lg" style={{ borderTopColor: club.themeColor || '#64748b' }}>
+                    <CardHeader>
+                        <CardTitle className="text-2xl">{form.title}</CardTitle>
+                        {form.description && <CardDescription>{form.description}</CardDescription>}
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {form.fields.map((field) => (
+                                <div key={field.id} className="space-y-2">
+                                    <Label htmlFor={`field-${field.id}`}>
+                                        {field.label} {field.required && <span className="text-red-500">*</span>}
+                                    </Label>
+
+                                    {field.type === 'textarea' ? (
+                                        <Textarea
+                                            id={`field-${field.id}`}
+                                            required={field.required}
+                                            value={formData[field.id] || ''}
+                                            onChange={(e) => handleChange(field.id, e.target.value)}
+                                            className="min-h-[100px] focus-visible:ring-offset-0 focus-visible:ring-1 theme-ring"
+                                        />
+                                    ) : (
+                                        <Input
+                                            id={`field-${field.id}`}
+                                            type={field.type}
+                                            required={field.required}
+                                            value={formData[field.id] || ''}
+                                            onChange={(e) => handleChange(field.id, e.target.value)}
+                                            className="focus-visible:ring-offset-0 focus-visible:ring-1 theme-ring"
+                                        />
+                                    )}
+                                </div>
+                            ))}
+
+                            {error && (
+                                <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm flex items-center gap-2">
+                                    <AlertCircle className="w-4 h-4" />
+                                    {error}
+                                </div>
+                            )}
+
+                            <Button
+                                type="submit"
+                                className="w-full theme-btn text-white transition-opacity text-base py-6 mt-4"
+                                disabled={submitting}
+                            >
+                                {submitting ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                        Envoi en cours...
+                                    </>
+                                ) : (
+                                    'Envoyer'
+                                )}
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
+        </main>
+    );
+}

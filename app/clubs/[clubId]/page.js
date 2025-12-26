@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { db, ref, get } from '@/lib/firebase';
+import { db, ref, get, query, orderByChild, equalTo } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { isClubAdmin } from '@/lib/clubUtils';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OrganizationalChart from '@/components/OrganizationalChart';
 import ClubMemberCard from '@/components/ClubMemberCard';
-import { CheckCircle2, Loader2, Settings, ArrowLeft, Users, Calendar, ChevronLeft, ChevronRight, User } from 'lucide-react';
+import { CheckCircle2, Loader2, Settings, ArrowLeft, Users, Calendar, ChevronLeft, ChevronRight, User, Ticket } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -27,6 +27,7 @@ export default function ClubProfilePage() {
     const [headerPosts, setHeaderPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [userTickets, setUserTickets] = useState([]);
 
     // Carousel state
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -42,6 +43,12 @@ export default function ClubProfilePage() {
             setIsAdmin(isClubAdmin(user.email, club));
         }
     }, [club, user]);
+
+    useEffect(() => {
+        if (user && clubId) {
+            fetchUserTickets();
+        }
+    }, [user, clubId]);
 
     // Carousel Autoplay
     useEffect(() => {
@@ -99,6 +106,27 @@ export default function ClubProfilePage() {
             console.error('Error fetching club data:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchUserTickets = async () => {
+        if (!user || !db) return;
+
+        try {
+            const ticketsRef = ref(db, 'tickets');
+            const q = query(ticketsRef, orderByChild('userId'), equalTo(user.uid));
+            const snap = await get(q);
+
+            if (snap.exists()) {
+                const data = snap.val();
+                const tickets = Object.entries(data)
+                    .map(([id, t]) => ({ id, ...t }))
+                    .filter(t => t.clubId === clubId)
+                    .sort((a, b) => b.createdAt - a.createdAt);
+                setUserTickets(tickets);
+            }
+        } catch (error) {
+            console.error('Error fetching tickets:', error);
         }
     };
 
@@ -293,6 +321,7 @@ export default function ClubProfilePage() {
                         <TabsTrigger value="activities">Actualités</TabsTrigger>
                         <TabsTrigger value="structure">Structure</TabsTrigger>
                         <TabsTrigger value="members">Membres</TabsTrigger>
+                        {userTickets.length > 0 && <TabsTrigger value="tickets">Mes Tickets</TabsTrigger>}
                     </TabsList>
 
                     {/* Activities Tab */}
@@ -412,6 +441,36 @@ export default function ClubProfilePage() {
                             </Card>
                         )}
                     </TabsContent>
+
+                    {/* Tickets Tab */}
+                    {userTickets.length > 0 && (
+                        <TabsContent value="tickets" className="space-y-6">
+                            <div className="flex items-center gap-3 mb-6">
+                                <Ticket className="w-6 h-6 theme-text" />
+                                <h2 className="text-2xl font-bold">Mes Tickets</h2>
+                            </div>
+                            <div className="grid gap-4 md:grid-cols-2">
+                                {userTickets.map(ticket => (
+                                    <Link key={ticket.id} href={`/tickets/${ticket.id}`}>
+                                        <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4" style={{ borderLeftColor: club.themeColor || '#64748b' }}>
+                                            <CardContent className="p-4 flex justify-between items-center">
+                                                <div>
+                                                    <h3 className="font-bold text-lg">{ticket.eventName}</h3>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {new Date(ticket.createdAt).toLocaleDateString('fr-FR')}
+                                                    </p>
+                                                    <Badge className="mt-2" variant={ticket.status === 'valid' ? 'default' : 'destructive'}>
+                                                        {ticket.status}
+                                                    </Badge>
+                                                </div>
+                                                <Ticket className="w-8 h-8 text-slate-300" />
+                                            </CardContent>
+                                        </Card>
+                                    </Link>
+                                ))}
+                            </div>
+                        </TabsContent>
+                    )}
                 </Tabs>
             </section>
         </main>
