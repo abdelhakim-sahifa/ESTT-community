@@ -19,7 +19,6 @@ export default function Footer() {
                         <div className="flex flex-col gap-3">
                             <h4 className="text-xs font-black uppercase tracking-widest text-slate-900">Plateforme</h4>
                             <Link href="/browse" className="text-sm text-muted-foreground hover:text-primary transition-colors">Ressources</Link>
-                            <Link href="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">Blog</Link>
                             <Link href="/chat" className="text-sm text-muted-foreground hover:text-primary transition-colors">Chat</Link>
                         </div>
                         <div className="flex flex-col gap-3">

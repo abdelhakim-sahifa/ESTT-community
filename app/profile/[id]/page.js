@@ -2,12 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
 import { db, ref, get, set, update, onValue, query, orderByChild, equalTo } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, Check, X } from 'lucide-react';
 import { cn, getUserLevel } from '@/lib/utils';
 
 export default function PublicProfilePage() {
@@ -20,6 +25,16 @@ export default function PublicProfilePage() {
     const [starCount, setStarCount] = useState(0);
     const [tickets, setTickets] = useState([]);
     const [loadingTickets, setLoadingTickets] = useState(false);
+    const [userClubs, setUserClubs] = useState([]);
+    const [loadingClubs, setLoadingClubs] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        filiere: '',
+        startYear: ''
+    });
 
     useEffect(() => {
         if (!id) return;
@@ -39,6 +54,18 @@ export default function PublicProfilePage() {
 
         return () => unsubscribe();
     }, [id, currentUser]);
+
+    // Populate form data when profile is loaded
+    useEffect(() => {
+        if (profile) {
+            setFormData({
+                firstName: profile.firstName || '',
+                lastName: profile.lastName || '',
+                filiere: profile.filiere || '',
+                startYear: profile.startYear || ''
+            });
+        }
+    }, [profile]);
 
     // Fetch Tickets separate effect
     useEffect(() => {
@@ -66,6 +93,49 @@ export default function PublicProfilePage() {
         fetchTickets();
     }, [id, currentUser]);
 
+    // Fetch Clubs where user is a member
+    useEffect(() => {
+        if (!profile || !id) return;
+
+        const fetchUserClubs = async () => {
+            setLoadingClubs(true);
+            try {
+                const clubsRef = ref(db, 'clubs');
+                const snap = await get(clubsRef);
+                if (snap.exists()) {
+                    const allClubs = snap.val();
+                    const userEmail = profile.email?.toLowerCase();
+                    const userId = id;
+
+                    const associatedClubs = Object.entries(allClubs).map(([cId, club]) => ({
+                        id: cId,
+                        ...club
+                    })).filter(club => {
+                        // Check in organizationalChart
+                        const inOrg = club.organizationalChart && Object.values(club.organizationalChart).some(member =>
+                            member?.email?.toLowerCase() === userEmail
+                        );
+
+                        // Check in members array
+                        const inMembers = club.members && Array.isArray(club.members) && club.members.some(member =>
+                            member?.email?.toLowerCase() === userEmail || member?.id === userId
+                        );
+
+                        return inOrg || inMembers;
+                    });
+
+                    setUserClubs(associatedClubs);
+                }
+            } catch (e) {
+                console.error("Error fetching user clubs:", e);
+            } finally {
+                setLoadingClubs(false);
+            }
+        };
+
+        fetchUserClubs();
+    }, [profile, id]);
+
     const handleStar = async () => {
         if (!currentUser) {
             alert("Vous devez être connecté pour liker un profil.");
@@ -90,6 +160,25 @@ export default function PublicProfilePage() {
         } catch (err) {
             console.error("Error updating star:", err);
             alert("Une erreur est survenue lors de la mise à jour des stars.");
+        }
+    };
+
+    const handleSaveProfile = async () => {
+        if (!currentUser || currentUser.uid !== id) return;
+
+        setSaving(true);
+        try {
+            const profileRef = ref(db, `users/${id}`);
+            await update(profileRef, {
+                ...formData,
+                updatedAt: Date.now()
+            });
+            setIsEditOpen(false);
+        } catch (err) {
+            console.error("Error updating profile:", err);
+            alert("Erreur lors de la mise à jour du profil.");
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -137,233 +226,272 @@ export default function PublicProfilePage() {
     const isMentor = level === 2 && contributionsCount > 5;
 
     return (
-        <main className="container py-12 max-w-5xl mx-auto px-4 md:px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Left Sidebar: Bio & Stats */}
-                <div className="space-y-6">
-                    <Card className="text-center p-6 bg-gradient-to-b from-primary/5 to-transparent shadow-sm border-muted-foreground/10 overflow-hidden relative">
-                        {isMentor && (
-                            <div className="absolute top-0 right-0 bg-yellow-400 text-white px-3 py-1 rounded-bl-xl shadow-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-1 z-10">
-                                <i className="fas fa-crown"></i> Mentor
+        <main className="min-h-screen bg-slate-50 py-12">
+            <div className="container max-w-5xl mx-auto px-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left Column: Basic Info */}
+                    <div className="space-y-6">
+                        <Card className="text-center p-8 bg-white border-slate-200 shadow-sm overflow-hidden relative">
+                            {isMentor && (
+                                <div className="absolute top-0 right-0 bg-yellow-400 text-white px-3 py-1 rounded-bl-lg shadow-sm text-[10px] font-bold uppercase tracking-wider z-10">
+                                    Mentor
+                                </div>
+                            )}
+                            <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-slate-100 shadow-sm">
+                                <User className="w-10 h-10 text-primary" />
                             </div>
-                        )}
-                        <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-background shadow-xl relative mt-4">
-                            <i className="fas fa-user text-4xl text-primary"></i>
-                        </div>
-                        <CardTitle className="text-2xl font-bold">
-                            {profile.firstName} {profile.lastName}
-                        </CardTitle>
-                        <p className="text-muted-foreground mb-4 uppercase text-[10px] tracking-[0.2em] font-black mt-2">
-                            {profile.filiere} • {level === 1 ? 'S1/S2' : 'S3/S4'}
-                        </p>
-
-                        <div className="flex justify-center gap-2 mb-6">
-                            <Button
-                                variant={isStarred ? "default" : "outline"}
-                                className={cn("gap-2 transition-all rounded-full h-11 px-6", isStarred && "bg-yellow-500 hover:bg-yellow-600 border-yellow-500 text-white shadow-lg shadow-yellow-500/20")}
-                                onClick={handleStar}
-                            >
-                                <i className={cn(isStarred ? "fas" : "far", "fa-star")}></i>
-                                <span className="font-bold">{starCount} Stars</span>
-                            </Button>
-                            <Button variant="outline" size="icon" className="rounded-full w-11 h-11" onClick={copyProfileLink}>
-                                <Share2 className="w-4 h-4" />
-                            </Button>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 border-t pt-6 bg-muted/20 rounded-2xl p-4">
-                            <div>
-                                <p className="text-2xl font-black text-primary">{contributionsCount}</p>
-                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Ressources</p>
-                            </div>
-                            <div className="border-l border-muted-foreground/10">
-                                <p className="text-2xl font-black text-primary">{Object.keys(profile.blogs || {}).length}</p>
-                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Articles</p>
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card className="shadow-sm border-muted-foreground/10">
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-black flex items-center gap-2 uppercase tracking-wider">
-                                <i className="fas fa-medal text-primary"></i> Succès
+                            <CardTitle className="text-2xl font-bold text-slate-900">
+                                {profile.firstName} {profile.lastName}
                             </CardTitle>
-                        </CardHeader>
-                        <CardContent className="pt-0 flex flex-wrap gap-2">
-                            {contributionsCount >= 1 && (
-                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 font-bold text-[10px]" title="A partagé au moins une ressource">
-                                    CONTRIBUTEUR
-                                </Badge>
-                            )}
-                            {contributionsCount >= 10 && (
-                                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 font-bold text-[10px]" title="A partagé plus de 10 ressources">
-                                    MAJOR CONTRIB
-                                </Badge>
-                            )}
-                            {starCount >= 5 && (
-                                <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 font-bold text-[10px]" title="A reçu plus de 5 stars">
-                                    POPULAIRE
-                                </Badge>
-                            )}
-                            {Object.keys(profile.blogs || {}).length >= 1 && (
-                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 font-bold text-[10px]" title="A publié au moins un article">
-                                    AUTEUR
-                                </Badge>
-                            )}
-                            {level === 2 && (
-                                <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200 font-bold text-[10px]" title="Étudiant en deuxième année">
-                                    ANCIEN
-                                </Badge>
-                            )}
-                            {contributionsCount === 0 && Object.keys(profile.blogs || {}).length === 0 && (
-                                <span className="text-[10px] text-muted-foreground italic">Aucun badge pour le moment.</span>
-                            )}
-                        </CardContent>
-                    </Card>
+                            <p className="text-muted-foreground font-medium text-sm mt-1">
+                                {profile.filiere} • {level === 1 ? 'S1/S2' : 'S3/S4'}
+                            </p>
 
-                    <Card className="shadow-sm border-muted-foreground/10">
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-black flex items-center gap-2 uppercase tracking-wider">
-                                <i className="fas fa-info-circle text-primary"></i> À propos
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4 text-sm pt-0">
-                            <div className="flex items-center gap-3 text-muted-foreground">
-                                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
-                                    <Mail className="w-4 h-4" />
-                                </div>
-                                <span className="truncate">{profile.email}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-muted-foreground">
-                                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
-                                    <GraduationCap className="w-4 h-4" />
-                                </div>
-                                <span>Promotion {profile.startYear}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-muted-foreground">
-                                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
-                                    <Calendar className="w-4 h-4" />
-                                </div>
-                                <span>Membre depuis {new Date(profile.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</span>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Right Content: Feed */}
-                <div className="md:col-span-2 space-y-8">
-                    <section>
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-black flex items-center gap-2 uppercase tracking-tight">
-                                <i className="fas fa-book-open text-primary"></i> Contributions
-                            </h2>
-                            <Badge variant="outline" className="font-bold">{contributionsCount} partages</Badge>
-                        </div>
-                        <div className="grid gap-4">
-                            {profile.contributions ? (
-                                Object.entries(profile.contributions).sort((a, b) => b[1].timestamp - a[1].timestamp).map(([id, item]) => (
-                                    <Card key={id} className="hover:shadow-md transition-all cursor-pointer border-l-4 border-primary group">
-                                        <CardContent className="p-5 flex justify-between items-center">
-                                            <div className="space-y-1">
-                                                <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{item.title}</h3>
-                                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest flex items-center gap-2">
-                                                    <span className="bg-primary/10 text-primary px-2 py-0.5 rounded">{item.module}</span>
-                                                    • {new Date(item.timestamp).toLocaleDateString()}
-                                                </p>
+                            <div className="flex justify-center gap-2 mt-6">
+                                {currentUser && currentUser.uid === id ? (
+                                    <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button className="rounded-full px-6 bg-primary hover:bg-primary/90 text-white font-semibold shadow-sm gap-2">
+                                                <Edit2 className="w-4 h-4" />
+                                                Modifier
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-md rounded-2xl">
+                                            <DialogHeader>
+                                                <DialogTitle className="text-xl font-bold">Modifier mon profil</DialogTitle>
+                                                <DialogDescription>
+                                                    Mettez à jour vos informations publiques.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="grid gap-4 py-4">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-1.5">
+                                                        <Label htmlFor="firstName">Prénom</Label>
+                                                        <Input
+                                                            id="firstName"
+                                                            value={formData.firstName}
+                                                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                                            className="rounded-lg"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        <Label htmlFor="lastName">Nom</Label>
+                                                        <Input
+                                                            id="lastName"
+                                                            value={formData.lastName}
+                                                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                                            className="rounded-lg"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <Label htmlFor="email">Email</Label>
+                                                    <Input
+                                                        id="email"
+                                                        value={profile.email}
+                                                        disabled
+                                                        className="rounded-lg bg-slate-50 text-slate-500"
+                                                    />
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-1.5">
+                                                        <Label htmlFor="filiere">Filière</Label>
+                                                        <Input
+                                                            id="filiere"
+                                                            value={formData.filiere}
+                                                            onChange={(e) => setFormData({ ...formData, filiere: e.target.value })}
+                                                            className="rounded-lg uppercase"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        <Label htmlFor="startYear">Début</Label>
+                                                        <Input
+                                                            id="startYear"
+                                                            type="number"
+                                                            value={formData.startYear}
+                                                            onChange={(e) => setFormData({ ...formData, startYear: e.target.value })}
+                                                            className="rounded-lg"
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <Button variant="ghost" size="sm" className="h-8 px-3 rounded-full text-xs font-bold gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    Ouvrir <i className="fas fa-external-link-alt text-[10px]"></i>
+                                            <DialogFooter className="flex gap-2">
+                                                <Button variant="ghost" onClick={() => setIsEditOpen(false)} className="rounded-lg">
+                                                    Annuler
                                                 </Button>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))
-                            ) : (
-                                <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed rounded-3xl bg-muted/5 text-center px-10">
-                                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                                        <i className="fas fa-folder-open text-muted-foreground text-2xl"></i>
-                                    </div>
-                                    <h3 className="font-bold text-lg mb-1">Aucune contribution</h3>
-                                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">Cet étudiant n'a pas encore partagé de ressources avec la communauté.</p>
-                                </div>
-                            )}
-                        </div>
-                    </section>
+                                                <Button onClick={handleSaveProfile} disabled={saving} className="rounded-lg bg-primary text-white">
+                                                    {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                                    Enregistrer
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+                                ) : (
+                                    <Button
+                                        variant={isStarred ? "default" : "outline"}
+                                        className={cn("rounded-full px-6 transition-all", isStarred && "bg-yellow-500 hover:bg-yellow-600 border-none text-white")}
+                                        onClick={handleStar}
+                                    >
+                                        <Star className={cn("w-4 h-4 mr-2", isStarred && "fill-current")} />
+                                        <span>{starCount}</span>
+                                    </Button>
+                                )}
+                                <Button variant="outline" size="icon" className="rounded-full" onClick={copyProfileLink}>
+                                    <Share2 className="w-4 h-4" />
+                                </Button>
+                            </div>
+                        </Card>
 
-                    <section>
-                        <h2 className="text-xl font-black mb-6 flex items-center gap-2 uppercase tracking-tight">
-                            <i className="fas fa-feather-pointed text-primary"></i> Articles de blog
-                        </h2>
-                        <div className="grid gap-4">
-                            {profile.blogs ? (
-                                Object.entries(profile.blogs).sort((a, b) => b[1].timestamp - a[1].timestamp).map(([id, item]) => (
-                                    <Card key={id} className="hover:shadow-md transition-all cursor-pointer overflow-hidden border-l-4 border-blue-500 group">
-                                        <CardContent className="p-5 flex justify-between items-center">
-                                            <div className="space-y-1">
-                                                <h3 className="font-bold text-lg group-hover:text-blue-500 transition-colors">{item.title}</h3>
-                                                <p className="text-[10px] text-muted-foreground font-bold flex items-center gap-1 uppercase tracking-widest">
-                                                    <i className="far fa-clock"></i> {new Date(item.timestamp).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-                                                </p>
-                                            </div>
-                                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all">
-                                                <i className="fas fa-chevron-right"></i>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))
-                            ) : (
-                                <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed rounded-3xl bg-muted/5 text-center px-10">
-                                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                                        <i className="fas fa-pen-nib text-muted-foreground text-2xl"></i>
-                                    </div>
-                                    <h3 className="font-bold text-lg mb-1">Pas d'articles</h3>
-                                    <p className="text-sm text-muted-foreground">Aucun article de blog publié pour le moment.</p>
+                        <Card className="p-6 bg-white border-slate-200 shadow-sm">
+                            <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
+                                <i className="fas fa-info-circle text-primary"></i> À propos
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3 text-sm text-slate-600">
+                                    <Mail className="w-4 h-4 text-slate-400" />
+                                    <span className="truncate">{profile.email}</span>
                                 </div>
-                            )}
-                        </div>
-                    </section>
+                                <div className="flex items-center gap-3 text-sm text-slate-600">
+                                    <GraduationCap className="w-4 h-4 text-slate-400" />
+                                    <span>Promotion {profile.startYear}</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-slate-600">
+                                    <Calendar className="w-4 h-4 text-slate-400" />
+                                    <span>Membre depuis {new Date(profile.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</span>
+                                </div>
+                            </div>
+                        </Card>
 
-                    {/* My Tickets Section - Only visible to owner */}
-                    {currentUser && currentUser.uid === id && (
+                        <Card className="p-6 bg-white border-slate-200 shadow-sm">
+                            <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
+                                <i className="fas fa-medal text-primary"></i> Succès
+                            </h3>
+                            <div className="flex flex-wrap gap-2">
+                                {contributionsCount >= 1 && (
+                                    <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100 border-none px-3 py-1">
+                                        Contributeur
+                                    </Badge>
+                                )}
+                                {contributionsCount >= 10 && (
+                                    <Badge variant="secondary" className="bg-orange-100 text-orange-700 hover:bg-orange-100 border-none px-3 py-1">
+                                        Major Contrib
+                                    </Badge>
+                                )}
+                                {starCount >= 5 && (
+                                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 border-none px-3 py-1">
+                                        Populaire
+                                    </Badge>
+                                )}
+                                {level === 2 && (
+                                    <Badge variant="secondary" className="bg-slate-100 text-slate-700 hover:bg-slate-100 border-none px-3 py-1">
+                                        Ancien
+                                    </Badge>
+                                )}
+                            </div>
+                        </Card>
+                    </div>
+
+                    {/* Right Column: Contributions & Clubs */}
+                    <div className="lg:col-span-2 space-y-8">
                         <section>
-                            <h2 className="text-xl font-black mb-6 flex items-center gap-2 uppercase tracking-tight text-orange-600">
-                                <Ticket className="w-5 h-5" /> Mes Tickets
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                    <i className="fas fa-book-open text-primary"></i> Contributions
+                                </h2>
+                                <Badge variant="outline">{contributionsCount}</Badge>
+                            </div>
+                            <div className="grid gap-3">
+                                {profile.contributions ? (
+                                    Object.entries(profile.contributions).sort((a, b) => b[1].timestamp - a[1].timestamp).map(([id, item]) => (
+                                        <Card key={id} className="p-4 hover:shadow-md transition-all border-slate-200 bg-white group cursor-pointer">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <h3 className="font-semibold text-slate-900 group-hover:text-primary transition-colors">{item.title}</h3>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded">{item.module}</span>
+                                                        <span className="text-xs text-slate-400">• {new Date(item.timestamp).toLocaleDateString()}</span>
+                                                    </div>
+                                                </div>
+                                                <Share2 className="w-4 h-4 text-slate-300 group-hover:text-primary transition-colors" />
+                                            </div>
+                                        </Card>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                                        <p className="text-slate-400 text-sm">Aucune contribution pour le moment.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+
+                        <section>
+                            <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                <i className="fas fa-users text-primary"></i> Mes Clubs
                             </h2>
-                            {loadingTickets ? (
-                                <Loader2 className="w-6 h-6 animate-spin text-orange-500 mx-auto" />
-                            ) : (
-                                <div className="grid gap-4">
-                                    {tickets.length > 0 ? (
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                {loadingClubs ? (
+                                    <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto col-span-full" />
+                                ) : userClubs.length > 0 ? (
+                                    userClubs.map(club => (
+                                        <Link key={club.id} href={`/clubs/${club.id}`} className="group p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md hover:border-primary/20 transition-all text-center">
+                                            <div className="relative w-12 h-12 mx-auto mb-3">
+                                                {club.logo ? (
+                                                    <Image src={club.logo} alt={club.name} fill className="object-contain" />
+                                                ) : (
+                                                    <div className="w-full h-full rounded-full flex items-center justify-center font-bold text-white text-lg" style={{ backgroundColor: club.themeColor || '#64748b' }}>
+                                                        {club.name[0]}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <p className="text-xs font-bold text-slate-800 truncate group-hover:text-primary transition-colors">{club.name}</p>
+                                        </Link>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full text-center py-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                                        <p className="text-slate-400 text-sm">Aucun club.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+
+                        {currentUser && currentUser.uid === id && (
+                            <section>
+                                <h2 className="text-xl font-bold text-orange-600 mb-4 flex items-center gap-2">
+                                    <Ticket className="w-5 h-5" /> Mes Tickets
+                                </h2>
+                                <div className="grid gap-3">
+                                    {loadingTickets ? (
+                                        <Loader2 className="w-5 h-5 animate-spin text-orange-500 mx-auto" />
+                                    ) : tickets.length > 0 ? (
                                         tickets.map(ticket => (
-                                            <Card key={ticket.id} className="hover:shadow-md transition-all border-l-4 border-orange-500 bg-gradient-to-r from-orange-50/50 to-white">
-                                                <CardContent className="p-5 flex justify-between items-center">
+                                            <Card key={ticket.id} className="p-4 border-slate-200 bg-white hover:shadow-sm transition-all border-l-4 border-l-orange-500">
+                                                <div className="flex justify-between items-center">
                                                     <div>
-                                                        <h3 className="font-bold text-lg">{ticket.eventName}</h3>
+                                                        <h3 className="font-semibold text-slate-900">{ticket.eventName}</h3>
                                                         <div className="flex items-center gap-2 mt-1">
-                                                            <Badge variant="outline" className={ticket.status === 'valid' ? "bg-green-100 text-green-700 border-green-200" : "bg-orange-100 text-orange-700 border-orange-200"}>
+                                                            <Badge variant="outline" className={ticket.status === 'valid' ? "bg-green-50 text-green-700" : "bg-orange-50 text-orange-700"}>
                                                                 {ticket.status === 'valid' ? 'Validé' : 'En attente'}
                                                             </Badge>
-                                                            <span className="text-xs text-muted-foreground">{ticket.clubName}</span>
+                                                            <span className="text-xs text-slate-400">{ticket.clubName}</span>
                                                         </div>
                                                     </div>
-                                                    <Button variant="ghost" size="sm" asChild>
+                                                    <Button variant="ghost" size="sm" asChild className="rounded-lg h-8 px-3">
                                                         <a href={`/tickets/${ticket.id}`} target="_blank" rel="noopener noreferrer">
                                                             Voir <i className="fas fa-arrow-right ml-2 text-xs"></i>
                                                         </a>
                                                     </Button>
-                                                </CardContent>
+                                                </div>
                                             </Card>
                                         ))
                                     ) : (
-                                        <div className="text-center py-8 bg-muted/5 rounded-xl border border-dashed">
-                                            <p className="text-muted-foreground text-sm">Vous n'avez aucun ticket.</p>
+                                        <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                                            <p className="text-slate-400 text-sm">Aucun ticket.</p>
                                         </div>
                                     )}
                                 </div>
-                            )}
-                        </section>
-                    )}
+                            </section>
+                        )}
+                    </div>
                 </div>
             </div>
         </main>

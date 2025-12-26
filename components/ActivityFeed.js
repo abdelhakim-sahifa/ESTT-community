@@ -12,9 +12,8 @@ export default function ActivityFeed() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // We listen to resources and blog_posts together
+        // We listen to resources
         const resourcesRef = ref(db, 'resources');
-        const blogRef = ref(db, 'blog_posts');
 
         const unsubscribeResources = onValue(resourcesRef, (snapshot) => {
             const resourceData = snapshot.val() || {};
@@ -64,51 +63,17 @@ export default function ActivityFeed() {
                     }
                 }
             });
-            updateFeed('resources', resourceList);
-        });
 
-        const unsubscribeBlogs = onValue(blogRef, (snapshot) => {
-            const blogData = snapshot.val() || {};
-            const blogList = Object.entries(blogData).map(([id, blog]) => ({
-                id,
-                type: 'blog',
-                title: blog.title,
-                author: blog.authorName || blog.author_name || 'Anonyme',
-                authorId: blog.authorId || blog.author_id,
-                timestamp: blog.createdAt || blog.created_at || Date.now(),
-                href: `/blog/${id}`
-            }));
-            updateFeed('blogs', blogList);
-        });
+            const sortedItems = resourceList
+                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                .slice(0, 6);
 
-        const updateFeed = (source, items) => {
-            setActivities(prev => {
-                const otherSource = source === 'resources' ? 'blogs' : 'resources';
-                const otherItems = prev.filter(a => a.source === otherSource);
-                const markedItems = items.map(i => ({ ...i, source }));
-
-                // Final de-duplication across sources just in case
-                const combined = [...otherItems, ...markedItems];
-                const unique = [];
-                const seen = new Set();
-
-                combined.forEach(item => {
-                    if (!seen.has(item.id)) {
-                        unique.push(item);
-                        seen.add(item.id);
-                    }
-                });
-
-                return unique
-                    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-                    .slice(0, 6);
-            });
+            setActivities(sortedItems);
             setLoading(false);
-        };
+        });
 
         return () => {
             unsubscribeResources();
-            unsubscribeBlogs();
         };
     }, []);
 

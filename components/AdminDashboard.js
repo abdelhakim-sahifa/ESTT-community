@@ -58,11 +58,9 @@ export default function AdminDashboard() {
     const [stats, setStats] = useState({
         users: 0,
         resources: 0,
-        blogs: 0,
         pending: 0
     });
     const [resources, setResources] = useState([]);
-    const [blogs, setBlogs] = useState([]);
     const [users, setUsers] = useState([]);
     const [reports, setReports] = useState([]);
     const [clubRequests, setClubRequests] = useState([]);
@@ -100,12 +98,7 @@ export default function AdminDashboard() {
             setStats(prev => ({ ...prev, resources: list.length, pending: list.filter(r => r.unverified).length }));
         });
 
-        const unsubBlogs = onValue(blogsRef, (snapshot) => {
-            const data = snapshot.val() || {};
-            const list = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-            setBlogs(list);
-            setStats(prev => ({ ...prev, blogs: list.length }));
-        });
+
 
         const unsubUsers = onValue(usersRef, (snapshot) => {
             const data = snapshot.val() || {};
@@ -142,7 +135,7 @@ export default function AdminDashboard() {
 
         return () => {
             unsubResources();
-            unsubBlogs();
+
             unsubUsers();
             unsubReports();
             unsubClubRequests();
@@ -180,16 +173,7 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleDeleteBlog = async (id) => {
-        if (confirm("Supprimer cet article ?")) {
-            try {
-                await remove(ref(db, `blog_posts/${id}`));
-                alert("Article supprimé.");
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    };
+
 
     const handleApproveClubRequest = async (requestId) => {
         if (!confirm("Approuver cette demande de club ?")) return;
@@ -296,13 +280,7 @@ export default function AdminDashboard() {
                         >
                             <FileText className="w-4 h-4" /> Ressources
                         </Button>
-                        <Button
-                            variant={activeTab === 'blogs' ? 'default' : 'ghost'}
-                            className="justify-start gap-3 h-11"
-                            onClick={() => setActiveTab('blogs')}
-                        >
-                            <MessageSquare className="w-4 h-4" /> Blog
-                        </Button>
+
                         <Button
                             variant={activeTab === 'users' ? 'default' : 'ghost'}
                             className="justify-start gap-3 h-11"
@@ -384,18 +362,7 @@ export default function AdminDashboard() {
                                         <h3 className="text-3xl font-black mt-1">{stats.resources}</h3>
                                     </CardContent>
                                 </Card>
-                                <Card className="border-none shadow-sm bg-white">
-                                    <CardContent className="p-6">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="p-2 bg-green-50 text-green-600 rounded-lg">
-                                                <MessageSquare className="w-5 h-5" />
-                                            </div>
-                                            <Badge variant="outline" className="text-[10px] border-green-100 text-green-600">+2%</Badge>
-                                        </div>
-                                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Articles</p>
-                                        <h3 className="text-3xl font-black mt-1">{stats.blogs}</h3>
-                                    </CardContent>
-                                </Card>
+
                                 <Card className="border-none shadow-sm bg-primary text-white">
                                     <CardContent className="p-6">
                                         <div className="flex items-center justify-between mb-4">
@@ -442,35 +409,7 @@ export default function AdminDashboard() {
                                     </CardContent>
                                 </Card>
 
-                                <Card className="border-none shadow-sm bg-white">
-                                    <CardHeader>
-                                        <CardTitle className="text-lg font-black uppercase tracking-tight">Derniers Articles</CardTitle>
-                                        <CardDescription>Les 5 derniers articles publiés sur le blog.</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="space-y-4">
-                                            {blogs.slice(0, 5).map((blog) => (
-                                                <div key={blog.id} className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors border border-transparent hover:border-slate-100">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
-                                                            <MessageSquare className="w-5 h-5" />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-sm font-bold truncate max-w-[200px]">{blog.title}</p>
-                                                            <p className="text-[10px] text-muted-foreground uppercase font-black">Par {blog.authorName || 'Anonyme'}</p>
-                                                        </div>
-                                                    </div>
-                                                    <Button variant="ghost" size="icon" asChild>
-                                                        <a href={`/blog/${blog.id}`} target="_blank"><ExternalLink className="w-4 h-4" /></a>
-                                                    </Button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <Button variant="ghost" className="w-full mt-4 text-xs font-bold uppercase tracking-widest text-primary" onClick={() => setActiveTab('blogs')}>
-                                            Voir tout <ArrowUpRight className="ml-2 w-3 h-3" />
-                                        </Button>
-                                    </CardContent>
-                                </Card>
+
                             </div>
                         </div>
                     )}
@@ -540,313 +479,276 @@ export default function AdminDashboard() {
                         </div>
                     )}
 
-                    {activeTab === 'blogs' && (
-                        <div className="space-y-6">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                <div>
-                                    <h1 className="text-3xl font-black tracking-tight">Gestion du Blog</h1>
-                                    <p className="text-muted-foreground">Gérez les articles publiés par les étudiants.</p>
+
+
+                    {
+                        activeTab === 'users' && (
+                            <div className="space-y-6">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div>
+                                        <h1 className="text-3xl font-black tracking-tight">Utilisateurs</h1>
+                                        <p className="text-muted-foreground">Liste des membres de la communauté.</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {blogs.map((blog) => (
-                                    <Card key={blog.id} className="border-none shadow-sm hover:shadow-md transition-all group">
-                                        <CardHeader className="pb-3">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <Badge variant="secondary" className="text-[8px] font-black uppercase tracking-widest">Article</Badge>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="w-4 h-4" /></Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem asChild>
-                                                            <a href={`/blog/${blog.id}`} target="_blank" className="flex items-center gap-2"><Eye className="w-4 h-4" /> Voir</a>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteBlog(blog.id)}>
-                                                            <Trash2 className="w-4 h-4 mr-2" /> Supprimer
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </div>
-                                            <CardTitle className="text-base font-bold line-clamp-2 group-hover:text-primary transition-colors">{blog.title}</CardTitle>
-                                            <CardDescription className="text-xs line-clamp-2 mt-2">{blog.excerpt}</CardDescription>
-                                        </CardHeader>
-                                        <CardContent className="pt-0">
-                                            <div className="flex items-center gap-2 pt-4 border-t border-slate-100">
-                                                <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                                                    <Users className="w-3 h-3" />
-                                                </div>
-                                                <span className="text-[10px] font-bold text-muted-foreground uppercase">Par {blog.authorName || 'Anonyme'}</span>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {activeTab === 'users' && (
-                        <div className="space-y-6">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                <div>
-                                    <h1 className="text-3xl font-black tracking-tight">Utilisateurs</h1>
-                                    <p className="text-muted-foreground">Liste des membres de la communauté.</p>
-                                </div>
-                            </div>
-
-                            <Card className="border-none shadow-sm overflow-hidden">
-                                <Table>
-                                    <TableHeader className="bg-slate-50">
-                                        <TableRow>
-                                            <TableHead className="font-black uppercase text-[10px] tracking-widest">Nom</TableHead>
-                                            <TableHead className="font-black uppercase text-[10px] tracking-widest">Email</TableHead>
-                                            <TableHead className="font-black uppercase text-[10px] tracking-widest">Filière</TableHead>
-                                            <TableHead className="font-black uppercase text-[10px] tracking-widest">Rôle</TableHead>
-                                            <TableHead className="text-right font-black uppercase text-[10px] tracking-widest">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {users.map((u) => (
-                                            <TableRow key={u.id} className="hover:bg-slate-50/50 transition-colors">
-                                                <TableCell className="font-bold text-sm">{u.firstName} {u.lastName}</TableCell>
-                                                <TableCell className="text-xs text-muted-foreground">{u.email}</TableCell>
-                                                <TableCell className="text-xs font-bold uppercase">{u.filiere}</TableCell>
-                                                <TableCell>
-                                                    <Badge variant={u.role === 'admin' ? 'default' : 'outline'} className="text-[8px] font-black uppercase tracking-tighter">
-                                                        {u.role || 'Étudiant'}
-                                                    </Badge>
-                                                </TableCell>
-                                                <TableCell className="text-right">
-                                                    <Button size="sm" variant="ghost" asChild>
-                                                        <a href={`/profile/${u.id}`} target="_blank"><ExternalLink className="w-4 h-4" /></a>
-                                                    </Button>
-                                                </TableCell>
+                                <Card className="border-none shadow-sm overflow-hidden">
+                                    <Table>
+                                        <TableHeader className="bg-slate-50">
+                                            <TableRow>
+                                                <TableHead className="font-black uppercase text-[10px] tracking-widest">Nom</TableHead>
+                                                <TableHead className="font-black uppercase text-[10px] tracking-widest">Email</TableHead>
+                                                <TableHead className="font-black uppercase text-[10px] tracking-widest">Filière</TableHead>
+                                                <TableHead className="font-black uppercase text-[10px] tracking-widest">Rôle</TableHead>
+                                                <TableHead className="text-right font-black uppercase text-[10px] tracking-widest">Actions</TableHead>
                                             </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {users.map((u) => (
+                                                <TableRow key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                                                    <TableCell className="font-bold text-sm">{u.firstName} {u.lastName}</TableCell>
+                                                    <TableCell className="text-xs text-muted-foreground">{u.email}</TableCell>
+                                                    <TableCell className="text-xs font-bold uppercase">{u.filiere}</TableCell>
+                                                    <TableCell>
+                                                        <Badge variant={u.role === 'admin' ? 'default' : 'outline'} className="text-[8px] font-black uppercase tracking-tighter">
+                                                            {u.role || 'Étudiant'}
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell className="text-right">
+                                                        <Button size="sm" variant="ghost" asChild>
+                                                            <a href={`/profile/${u.id}`} target="_blank"><ExternalLink className="w-4 h-4" /></a>
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </Card>
+                            </div>
+                        )
+                    }
+
+                    {
+                        activeTab === 'reports' && (
+                            <div className="space-y-6">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div>
+                                        <h1 className="text-3xl font-black tracking-tight">Signalements</h1>
+                                        <p className="text-muted-foreground">Contenu signalé par les utilisateurs.</p>
+                                    </div>
+                                </div>
+
+                                {reports.length === 0 ? (
+                                    <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
+                                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                                            <CheckCircle2 className="w-8 h-8" />
+                                        </div>
+                                        <h3 className="text-lg font-bold">Aucun signalement</h3>
+                                        <p className="text-muted-foreground text-sm">Tout semble en ordre pour le moment.</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 gap-4">
+                                        {reports.map((report) => (
+                                            <Card key={report.id} className="border-none shadow-sm">
+                                                <CardContent className="p-6 flex items-center justify-between">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="p-3 bg-destructive/10 text-destructive rounded-xl">
+                                                            <AlertCircle className="w-6 h-6" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-bold text-sm">{report.reason}</p>
+                                                            <p className="text-xs text-muted-foreground">Signalé par {report.reporterName} • {new Date(report.timestamp).toLocaleDateString()}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Button variant="outline" size="sm">Ignorer</Button>
+                                                        <Button variant="destructive" size="sm">Supprimer le contenu</Button>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
                                         ))}
-                                    </TableBody>
-                                </Table>
-                            </Card>
-                        </div>
-                    )}
-
-                    {activeTab === 'reports' && (
-                        <div className="space-y-6">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                <div>
-                                    <h1 className="text-3xl font-black tracking-tight">Signalements</h1>
-                                    <p className="text-muted-foreground">Contenu signalé par les utilisateurs.</p>
-                                </div>
-                            </div>
-
-                            {reports.length === 0 ? (
-                                <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
-                                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                                        <CheckCircle2 className="w-8 h-8" />
                                     </div>
-                                    <h3 className="text-lg font-bold">Aucun signalement</h3>
-                                    <p className="text-muted-foreground text-sm">Tout semble en ordre pour le moment.</p>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 gap-4">
-                                    {reports.map((report) => (
-                                        <Card key={report.id} className="border-none shadow-sm">
-                                            <CardContent className="p-6 flex items-center justify-between">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="p-3 bg-destructive/10 text-destructive rounded-xl">
-                                                        <AlertCircle className="w-6 h-6" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-bold text-sm">{report.reason}</p>
-                                                        <p className="text-xs text-muted-foreground">Signalé par {report.reporterName} • {new Date(report.timestamp).toLocaleDateString()}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <Button variant="outline" size="sm">Ignorer</Button>
-                                                    <Button variant="destructive" size="sm">Supprimer le contenu</Button>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {activeTab === 'clubRequests' && (
-                        <div className="space-y-6">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                <div>
-                                    <h1 className="text-3xl font-black tracking-tight">Demandes de clubs</h1>
-                                    <p className="text-muted-foreground">Approuvez ou rejetez les demandes de création de clubs.</p>
-                                </div>
+                                )}
                             </div>
+                        )
+                    }
 
-                            {clubRequests.length === 0 ? (
-                                <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
-                                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                                        <CheckCircle2 className="w-8 h-8" />
+                    {
+                        activeTab === 'clubRequests' && (
+                            <div className="space-y-6">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div>
+                                        <h1 className="text-3xl font-black tracking-tight">Demandes de clubs</h1>
+                                        <p className="text-muted-foreground">Approuvez ou rejetez les demandes de création de clubs.</p>
                                     </div>
-                                    <h3 className="text-lg font-bold">Aucune demande en attente</h3>
-                                    <p className="text-muted-foreground text-sm">Toutes les demandes ont été traitées.</p>
                                 </div>
-                            ) : (
-                                <div className="grid grid-cols-1 gap-6">
-                                    {clubRequests.map((request) => (
-                                        <Card key={request.id} className="border-none shadow-sm">
-                                            <CardHeader>
-                                                <div className="flex items-start justify-between">
+
+                                {clubRequests.length === 0 ? (
+                                    <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
+                                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                                            <CheckCircle2 className="w-8 h-8" />
+                                        </div>
+                                        <h3 className="text-lg font-bold">Aucune demande en attente</h3>
+                                        <p className="text-muted-foreground text-sm">Toutes les demandes ont été traitées.</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 gap-6">
+                                        {clubRequests.map((request) => (
+                                            <Card key={request.id} className="border-none shadow-sm">
+                                                <CardHeader>
+                                                    <div className="flex items-start justify-between">
+                                                        <div>
+                                                            <CardTitle className="text-xl">{request.clubName}</CardTitle>
+                                                            <CardDescription className="mt-2">
+                                                                Demandé par {request.requestedBy} • {new Date(request.requestedAt).toLocaleDateString('fr-FR')}
+                                                            </CardDescription>
+                                                        </div>
+                                                        <Badge variant="outline" className="text-[8px] font-black uppercase">En attente</Badge>
+                                                    </div>
+                                                </CardHeader>
+                                                <CardContent className="space-y-4">
                                                     <div>
-                                                        <CardTitle className="text-xl">{request.clubName}</CardTitle>
-                                                        <CardDescription className="mt-2">
-                                                            Demandé par {request.requestedBy} • {new Date(request.requestedAt).toLocaleDateString('fr-FR')}
-                                                        </CardDescription>
+                                                        <p className="text-sm font-bold mb-1">Description</p>
+                                                        <p className="text-sm text-muted-foreground">{request.description}</p>
                                                     </div>
-                                                    <Badge variant="outline" className="text-[8px] font-black uppercase">En attente</Badge>
-                                                </div>
-                                            </CardHeader>
-                                            <CardContent className="space-y-4">
-                                                <div>
-                                                    <p className="text-sm font-bold mb-1">Description</p>
-                                                    <p className="text-sm text-muted-foreground">{request.description}</p>
-                                                </div>
 
-                                                {request.logoUrl && (
+                                                    {request.logoUrl && (
+                                                        <div>
+                                                            <p className="text-sm font-bold mb-2">Logo</p>
+                                                            <img src={request.logoUrl} alt="Club logo" className="w-20 h-20 rounded-lg object-cover border" />
+                                                        </div>
+                                                    )}
+
                                                     <div>
-                                                        <p className="text-sm font-bold mb-2">Logo</p>
-                                                        <img src={request.logoUrl} alt="Club logo" className="w-20 h-20 rounded-lg object-cover border" />
+                                                        <p className="text-sm font-bold mb-2">Organigramme ({Object.keys(request.organizationalChart || {}).length} positions)</p>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                            {Object.entries(request.organizationalChart || {}).map(([key, member]) => (
+                                                                <div key={key} className="p-3 bg-slate-50 rounded-lg border">
+                                                                    <p className="text-xs font-bold">{member.role}</p>
+                                                                    <p className="text-xs text-muted-foreground">{member.name}</p>
+                                                                    <p className="text-[10px] text-muted-foreground">{member.email}</p>
+                                                                </div>
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                )}
 
-                                                <div>
-                                                    <p className="text-sm font-bold mb-2">Organigramme ({Object.keys(request.organizationalChart || {}).length} positions)</p>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                        {Object.entries(request.organizationalChart || {}).map(([key, member]) => (
-                                                            <div key={key} className="p-3 bg-slate-50 rounded-lg border">
-                                                                <p className="text-xs font-bold">{member.role}</p>
-                                                                <p className="text-xs text-muted-foreground">{member.name}</p>
-                                                                <p className="text-[10px] text-muted-foreground">{member.email}</p>
-                                                            </div>
-                                                        ))}
+                                                    {request.members && request.members.length > 0 && (
+                                                        <div>
+                                                            <p className="text-sm font-bold mb-2">Membres ({request.members.length})</p>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                {request.members.map(m => m.name).join(', ')}
+                                                            </p>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="flex gap-2 pt-4 border-t">
+                                                        <Button
+                                                            size="sm"
+                                                            className="gap-2"
+                                                            onClick={() => handleApproveClubRequest(request.id)}
+                                                        >
+                                                            <CheckCircle2 className="w-4 h-4" />
+                                                            Approuver
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="gap-2 text-destructive border-destructive/20"
+                                                            onClick={() => handleRejectClubRequest(request.id)}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                            Rejeter
+                                                        </Button>
                                                     </div>
-                                                </div>
-
-                                                {request.members && request.members.length > 0 && (
-                                                    <div>
-                                                        <p className="text-sm font-bold mb-2">Membres ({request.members.length})</p>
-                                                        <p className="text-xs text-muted-foreground">
-                                                            {request.members.map(m => m.name).join(', ')}
-                                                        </p>
-                                                    </div>
-                                                )}
-
-                                                <div className="flex gap-2 pt-4 border-t">
-                                                    <Button
-                                                        size="sm"
-                                                        className="gap-2"
-                                                        onClick={() => handleApproveClubRequest(request.id)}
-                                                    >
-                                                        <CheckCircle2 className="w-4 h-4" />
-                                                        Approuver
-                                                    </Button>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        className="gap-2 text-destructive border-destructive/20"
-                                                        onClick={() => handleRejectClubRequest(request.id)}
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                        Rejeter
-                                                    </Button>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {activeTab === 'clubChangeRequests' && (
-                        <div className="space-y-6">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                <div>
-                                    <h1 className="text-3xl font-black tracking-tight">Demandes de modification</h1>
-                                    <p className="text-muted-foreground">Gérez les demandes de modification des clubs.</p>
-                                </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
+                        )
+                    }
 
-                            {clubChangeRequests.length === 0 ? (
-                                <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
-                                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                                        <CheckCircle2 className="w-8 h-8" />
+                    {
+                        activeTab === 'clubChangeRequests' && (
+                            <div className="space-y-6">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div>
+                                        <h1 className="text-3xl font-black tracking-tight">Demandes de modification</h1>
+                                        <p className="text-muted-foreground">Gérez les demandes de modification des clubs.</p>
                                     </div>
-                                    <h3 className="text-lg font-bold">Aucune demande en attente</h3>
-                                    <p className="text-muted-foreground text-sm">Toutes les demandes ont été traitées.</p>
                                 </div>
-                            ) : (
-                                <div className="grid grid-cols-1 gap-6">
-                                    {clubChangeRequests.map((request) => (
-                                        <Card key={request.id} className="border-none shadow-sm">
-                                            <CardHeader>
-                                                <div className="flex items-start justify-between">
-                                                    <div>
-                                                        <CardTitle className="text-xl">{request.clubName}</CardTitle>
-                                                        <CardDescription className="mt-2">
-                                                            Demandé par {request.requestedBy} • {new Date(request.requestedAt).toLocaleDateString('fr-FR')}
-                                                        </CardDescription>
-                                                    </div>
-                                                    <Badge variant="outline" className="text-[8px] font-black uppercase">
-                                                        {request.changeType === 'name' ? 'Changement de nom' : 'Organigramme'}
-                                                    </Badge>
-                                                </div>
-                                            </CardHeader>
-                                            <CardContent className="space-y-4">
-                                                {request.changeType === 'name' && (
-                                                    <div>
-                                                        <p className="text-sm font-bold mb-1">Nouveau nom proposé</p>
-                                                        <p className="text-lg font-bold text-primary">{request.newData?.name}</p>
-                                                    </div>
-                                                )}
 
-                                                {request.changeType === 'organizationalChart' && (
-                                                    <div>
-                                                        <p className="text-sm font-bold mb-2">Nouvel organigramme</p>
-                                                        <p className="text-xs text-muted-foreground mb-2">
-                                                            Contactez l'administrateur du club pour plus de détails
-                                                        </p>
+                                {clubChangeRequests.length === 0 ? (
+                                    <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
+                                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                                            <CheckCircle2 className="w-8 h-8" />
+                                        </div>
+                                        <h3 className="text-lg font-bold">Aucune demande en attente</h3>
+                                        <p className="text-muted-foreground text-sm">Toutes les demandes ont été traitées.</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 gap-6">
+                                        {clubChangeRequests.map((request) => (
+                                            <Card key={request.id} className="border-none shadow-sm">
+                                                <CardHeader>
+                                                    <div className="flex items-start justify-between">
+                                                        <div>
+                                                            <CardTitle className="text-xl">{request.clubName}</CardTitle>
+                                                            <CardDescription className="mt-2">
+                                                                Demandé par {request.requestedBy} • {new Date(request.requestedAt).toLocaleDateString('fr-FR')}
+                                                            </CardDescription>
+                                                        </div>
+                                                        <Badge variant="outline" className="text-[8px] font-black uppercase">
+                                                            {request.changeType === 'name' ? 'Changement de nom' : 'Organigramme'}
+                                                        </Badge>
                                                     </div>
-                                                )}
+                                                </CardHeader>
+                                                <CardContent className="space-y-4">
+                                                    {request.changeType === 'name' && (
+                                                        <div>
+                                                            <p className="text-sm font-bold mb-1">Nouveau nom proposé</p>
+                                                            <p className="text-lg font-bold text-primary">{request.newData?.name}</p>
+                                                        </div>
+                                                    )}
 
-                                                <div className="flex gap-2 pt-4 border-t">
-                                                    <Button
-                                                        size="sm"
-                                                        className="gap-2"
-                                                        onClick={() => handleApproveChangeRequest(request)}
-                                                    >
-                                                        <CheckCircle2 className="w-4 h-4" />
-                                                        Approuver
-                                                    </Button>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        className="gap-2 text-destructive border-destructive/20"
-                                                        onClick={() => handleRejectChangeRequest(request.id)}
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                        Rejeter
-                                                    </Button>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </main>
-            </div>
-        </div>
+                                                    {request.changeType === 'organizationalChart' && (
+                                                        <div>
+                                                            <p className="text-sm font-bold mb-2">Nouvel organigramme</p>
+                                                            <p className="text-xs text-muted-foreground mb-2">
+                                                                Contactez l'administrateur du club pour plus de détails
+                                                            </p>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="flex gap-2 pt-4 border-t">
+                                                        <Button
+                                                            size="sm"
+                                                            className="gap-2"
+                                                            onClick={() => handleApproveChangeRequest(request)}
+                                                        >
+                                                            <CheckCircle2 className="w-4 h-4" />
+                                                            Approuver
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="gap-2 text-destructive border-destructive/20"
+                                                            onClick={() => handleRejectChangeRequest(request.id)}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                            Rejeter
+                                                        </Button>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    }
+                </main >
+            </div >
+        </div >
     );
 }
