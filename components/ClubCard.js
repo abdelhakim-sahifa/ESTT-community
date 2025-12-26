@@ -25,15 +25,23 @@ export default function ClubCard({ club }) {
                                     className="object-cover"
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-muted-foreground">
+                                <div
+                                    className="w-full h-full flex items-center justify-center text-2xl font-bold"
+                                    style={{ color: club.themeColor || '#64748b' }}
+                                >
                                     {club.name?.charAt(0).toUpperCase()}
                                 </div>
                             )}
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="flex items-start gap-2 mb-1">
-                                <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                                    {club.name}
+                                <CardTitle
+                                    className="text-lg leading-tight transition-colors line-clamp-2"
+                                    style={{ '--theme-color': club.themeColor || '#64748b' }}
+                                >
+                                    <span className="group-hover:text-[var(--theme-color)] transition-colors">
+                                        {club.name}
+                                    </span>
                                 </CardTitle>
                                 {club.verified && (
                                     <Badge variant="default" className="flex-shrink-0 gap-1 bg-blue-500 hover:bg-blue-600">

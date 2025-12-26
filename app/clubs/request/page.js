@@ -304,18 +304,26 @@ export default function ClubRequestPage() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="logo">Logo du club *</Label>
-                                    <div className="flex items-center gap-4">
-                                        <Input
-                                            id="logo"
-                                            type="file"
-                                            accept="image/jpeg,image/jpg,image/png,image/webp"
-                                            onChange={handleLogoUpload}
-                                            disabled={loading || uploadingLogo}
-                                            className="flex-1"
-                                        />
-                                        {uploadingLogo && <Loader2 className="w-5 h-5 animate-spin" />}
-                                        {formData.logoUrl && !uploadingLogo && (
-                                            <CheckCircle2 className="w-5 h-5 text-green-600" />
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex items-center gap-4">
+                                            <Input
+                                                id="logo"
+                                                type="file"
+                                                accept="image/jpeg,image/jpg,image/png,image/webp"
+                                                onChange={handleLogoUpload}
+                                                disabled={loading || uploadingLogo}
+                                                className="flex-1"
+                                            />
+                                            {uploadingLogo && <Loader2 className="w-5 h-5 animate-spin" />}
+                                        </div>
+                                        {formData.logoUrl && (
+                                            <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
+                                                <img
+                                                    src={formData.logoUrl}
+                                                    alt="Logo preview"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
                                         )}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
@@ -388,13 +396,43 @@ export default function ClubRequestPage() {
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div className="space-y-2">
                                                         <Label>Rôle/Position *</Label>
-                                                        <Input
-                                                            value={position.role}
-                                                            onChange={(e) => handleOrgChartChange(position.id, 'role', e.target.value)}
-                                                            placeholder="Président, Vice-Président, etc."
-                                                            required
+                                                        <Select
+                                                            value={['Président', 'Vice-Président', 'Secrétaire', 'Trésorier'].includes(position.role) ? position.role : (position.role ? 'Autre' : '')}
+                                                            onValueChange={(v) => {
+                                                                if (v !== 'Autre') {
+                                                                    handleOrgChartChange(position.id, 'role', v);
+                                                                } else {
+                                                                    // If switching to "Other", clear the role so the input shows empty or handle as needed
+                                                                    // For now, let's keep the old value if it was custom, or clear it if it was a standard one
+                                                                    if (['Président', 'Vice-Président', 'Secrétaire', 'Trésorier'].includes(position.role)) {
+                                                                        handleOrgChartChange(position.id, 'role', '');
+                                                                    }
+                                                                }
+                                                            }}
                                                             disabled={loading}
-                                                        />
+                                                        >
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Sélectionnez..." />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="Président">Président</SelectItem>
+                                                                <SelectItem value="Vice-Président">Vice-Président</SelectItem>
+                                                                <SelectItem value="Secrétaire">Secrétaire</SelectItem>
+                                                                <SelectItem value="Trésorier">Trésorier</SelectItem>
+                                                                <SelectItem value="Autre">Autre</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+
+                                                        {(!['Président', 'Vice-Président', 'Secrétaire', 'Trésorier'].includes(position.role) && (position.role || position.role === '')) && (
+                                                            <Input
+                                                                value={position.role}
+                                                                onChange={(e) => handleOrgChartChange(position.id, 'role', e.target.value)}
+                                                                placeholder="Précisez le rôle..."
+                                                                required
+                                                                disabled={loading}
+                                                                className="mt-2"
+                                                            />
+                                                        )}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Filière *</Label>
@@ -558,6 +596,6 @@ export default function ClubRequestPage() {
                     </CardContent>
                 </Card>
             </div>
-        </main>
+        </main >
     );
 }

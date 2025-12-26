@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { db, ref, get, push, set, update, remove } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
-import { isClubAdmin } from '@/lib/clubUtils';
+import { isClubAdmin, uploadClubImage } from '@/lib/clubUtils';
+import { db as staticDb } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +15,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, ArrowLeft, AlertCircle, CheckCircle2, FileText, Megaphone, Calendar, Edit, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, ArrowLeft, AlertCircle, CheckCircle2, FileText, Megaphone, Calendar, Edit, Trash2, Plus, Upload } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ClubAdminPage() {
@@ -31,15 +33,26 @@ export default function ClubAdminPage() {
 
     // Club info editing
     const [editingInfo, setEditingInfo] = useState(false);
-    const [clubInfo, setClubInfo] = useState({ description: '' });
+    const [clubInfo, setClubInfo] = useState({ description: '', themeColor: '#64748b' });
 
     // Post creation
     const [newPost, setNewPost] = useState({ type: 'article', title: '', content: '' });
+    const [postImage, setPostImage] = useState(null);
+    const [uploadingPostImage, setUploadingPostImage] = useState(false);
     const [submittingPost, setSubmittingPost] = useState(false);
 
     // Change request
-    const [changeRequest, setChangeRequest] = useState({ type: 'name', newName: '' });
+    const [changeRequest, setChangeRequest] = useState({ type: 'name', newName: '', newOrgChart: {} });
     const [submittingChange, setSubmittingChange] = useState(false);
+    const [orgChartItems, setOrgChartItems] = useState([]); // For editing organigram
+
+    // Members management
+    const [newMember, setNewMember] = useState({ name: '', email: '', filiere: '' });
+    const [addingMember, setAddingMember] = useState(false);
+
+    // Logo upload
+    const [logoFile, setLogoFile] = useState(null);
+    const [uploadingLogo, setUploadingLogo] = useState(false);
 
     // Posts list
     const [posts, setPosts] = useState([]);
@@ -54,6 +67,24 @@ export default function ClubAdminPage() {
         if (club && user) {
             const adminStatus = isClubAdmin(user.email, club);
             setIsAdmin(adminStatus);
+
+            // Check if president
+            const presidentKey = Object.keys(club.organizationalChart || {}).find(k =>
+                club.organizationalChart[k].role.toLowerCase() === 'président'
+            );
+            const isPresident = presidentKey && club.organizationalChart[presidentKey].email === user.email;
+
+            // Initialize org chart for editing if needed
+            if (club.organizationalChart) {
+                const items = Object.entries(club.organizationalChart).map(([key, val], idx) => ({
+                    id: idx + 1,
+                    key, // original key
+                    ...val
+                }));
+                setOrgChartItems(items);
+                // Also set initial newOrgChart
+                setChangeRequest(prev => ({ ...prev, newOrgChart: club.organizationalChart }));
+            }
 
             if (!adminStatus) {
                 setTimeout(() => {
@@ -80,7 +111,10 @@ export default function ClubAdminPage() {
 
             const clubData = { id: clubId, ...clubSnap.val() };
             setClub(clubData);
-            setClubInfo({ description: clubData.description || '' });
+            setClubInfo({
+                description: clubData.description || '',
+                themeColor: clubData.themeColor || '#64748b'
+            });
 
             // Fetch posts
             const postsRef = ref(db, `clubPosts/${clubId}`);
@@ -106,13 +140,28 @@ export default function ClubAdminPage() {
 
         try {
             const clubRef = ref(db, `clubs/${clubId}`);
-            await update(clubRef, {
-                description: clubInfo.description
-            });
+            let updates = {
+                description: clubInfo.description,
+                themeColor: clubInfo.themeColor
+            };
 
-            setClub(prev => ({ ...prev, description: clubInfo.description }));
+            if (logoFile) {
+                const logoUrl = await uploadClubImage(logoFile);
+                updates.logo = logoUrl;
+                setClub(prev => ({ ...prev, logo: logoUrl }));
+            }
+
+            await update(clubRef, updates);
+
+            setClub(prev => ({
+                ...prev,
+                description: clubInfo.description,
+                themeColor: clubInfo.themeColor
+            }));
             setMessage('Informations mises à jour avec succès');
             setEditingInfo(false);
+            setLogoFile(null);
+            setUploadingLogo(false);
         } catch (error) {
             console.error('Error updating club info:', error);
             setMessage('Erreur lors de la mise à jour');
@@ -125,11 +174,19 @@ export default function ClubAdminPage() {
         setSubmittingPost(true);
 
         try {
+            let imageUrl = '';
+            if (postImage) {
+                setUploadingPostImage(true);
+                imageUrl = await uploadClubImage(postImage);
+                setUploadingPostImage(false);
+            }
+
             const postsRef = ref(db, `clubPosts/${clubId}`);
             const newPostRef = push(postsRef);
 
             const postData = {
                 ...newPost,
+                imageUrl,
                 author: user.email,
                 createdAt: Date.now()
             };
@@ -138,10 +195,12 @@ export default function ClubAdminPage() {
 
             setPosts(prev => [{ id: newPostRef.key, ...postData }, ...prev]);
             setNewPost({ type: 'article', title: '', content: '' });
+            setPostImage(null);
             setMessage('Publication créée avec succès');
         } catch (error) {
             console.error('Error creating post:', error);
             setMessage('Erreur lors de la création de la publication');
+            setUploadingPostImage(false);
         } finally {
             setSubmittingPost(false);
         }
@@ -157,6 +216,74 @@ export default function ClubAdminPage() {
             console.error('Error deleting post:', error);
             setMessage('Erreur lors de la suppression');
         }
+    };
+
+    const handleAddMember = async (e) => {
+        e.preventDefault();
+        setMessage('');
+
+        if (!newMember.name || !newMember.email) return;
+
+        setAddingMember(true);
+        try {
+            const currentMembers = club.members || [];
+            const updatedMembers = [...currentMembers, { ...newMember, id: Date.now() }];
+
+            await update(ref(db, `clubs/${clubId}`), {
+                members: updatedMembers
+            });
+
+            setClub(prev => ({ ...prev, members: updatedMembers }));
+            setNewMember({ name: '', email: '', filiere: '' });
+            setMessage('Membre ajouté avec succès');
+        } catch (error) {
+            console.error('Error adding member:', error);
+            setMessage('Erreur lors de l\'ajout du membre');
+        } finally {
+            setAddingMember(false);
+        }
+    };
+
+    const handleRemoveMember = async (memberEmail) => {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')) return;
+
+        try {
+            const currentMembers = club.members || [];
+            const updatedMembers = currentMembers.filter(m => m.email !== memberEmail);
+
+            await update(ref(db, `clubs/${clubId}`), {
+                members: updatedMembers
+            });
+
+            setClub(prev => ({ ...prev, members: updatedMembers }));
+            setMessage('Membre supprimé avec succès');
+        } catch (error) {
+            console.error('Error removing member:', error);
+            setMessage('Erreur lors de la suppression');
+        }
+    };
+
+    // Update org chart items state handler
+    const handleOrgChartItemChange = (id, field, value) => {
+        setOrgChartItems(prev => {
+            const newItems = prev.map(item => item.id === id ? { ...item, [field]: value } : item);
+
+            // Reconstruct organizationalChart object
+            const newOrgChart = {};
+            newItems.forEach(item => {
+                const key = item.role.toLowerCase().replace(/\s+/g, '');
+                newOrgChart[key] = {
+                    name: item.name,
+                    email: item.email,
+                    role: item.role,
+                    filiere: item.filiere,
+                    photo: item.photo || ''
+                };
+            });
+            setChangeRequest(r => ({ ...r, newOrgChart }));
+
+            return newItems;
+        });
     };
 
     const handleSubmitChangeRequest = async (e) => {
@@ -268,6 +395,7 @@ export default function ClubAdminPage() {
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                     <TabsList className="grid w-full max-w-2xl grid-cols-4 mb-8">
                         <TabsTrigger value="info">Infos</TabsTrigger>
+                        <TabsTrigger value="members">Membres</TabsTrigger>
                         <TabsTrigger value="posts">Publications</TabsTrigger>
                         <TabsTrigger value="create">Créer</TabsTrigger>
                         <TabsTrigger value="changes">Modifications</TabsTrigger>
@@ -292,6 +420,37 @@ export default function ClubAdminPage() {
                                 </div>
 
                                 <div className="space-y-2">
+                                    <Label>Logo</Label>
+                                    <div className="flex items-center gap-4">
+                                        <div className="relative w-20 h-20 rounded-lg overflow-hidden border">
+                                            {logoFile ? (
+                                                <img
+                                                    src={URL.createObjectURL(logoFile)}
+                                                    alt="New logo"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={club.logo}
+                                                    alt="Current logo"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    if (e.target.files?.[0]) setLogoFile(e.target.files[0]);
+                                                }}
+                                                disabled={editingInfo}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
                                     <Label htmlFor="description">Description</Label>
                                     <Textarea
                                         id="description"
@@ -300,6 +459,28 @@ export default function ClubAdminPage() {
                                         rows={6}
                                         disabled={editingInfo}
                                     />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="themeColor">Couleur du thème</Label>
+                                    <div className="flex items-center gap-4">
+                                        <Input
+                                            type="color"
+                                            id="themeColor"
+                                            value={clubInfo.themeColor}
+                                            onChange={(e) => setClubInfo(prev => ({ ...prev, themeColor: e.target.value }))}
+                                            className="w-20 h-10 p-1 cursor-pointer"
+                                            disabled={editingInfo}
+                                        />
+                                        <div
+                                            className="w-10 h-10 rounded-full border shadow-sm"
+                                            style={{ backgroundColor: clubInfo.themeColor }}
+                                        />
+                                        <span className="text-sm text-muted-foreground font-mono">{clubInfo.themeColor}</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        Cette couleur sera utilisée comme thème pour votre page et comme fond par défaut pour les annonces sans image.
+                                    </p>
                                 </div>
 
                                 <Button onClick={handleUpdateInfo} disabled={editingInfo}>
@@ -312,6 +493,81 @@ export default function ClubAdminPage() {
                                         'Enregistrer les modifications'
                                     )}
                                 </Button>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* Members Tab */}
+                    <TabsContent value="members">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Membres du club</CardTitle>
+                                <CardDescription>Gérez les membres réguliers de votre club.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                {/* Add Member Form */}
+                                <div className="p-4 bg-slate-50 rounded-lg border">
+                                    <h3 className="text-sm font-semibold mb-3">Ajouter un membre</h3>
+                                    <form onSubmit={handleAddMember} className="grid sm:grid-cols-4 gap-3">
+                                        <Input
+                                            placeholder="Nom complet"
+                                            value={newMember.name}
+                                            onChange={(e) => setNewMember(p => ({ ...p, name: e.target.value }))}
+                                            required
+                                        />
+                                        <Input
+                                            placeholder="Email"
+                                            type="email"
+                                            value={newMember.email}
+                                            onChange={(e) => setNewMember(p => ({ ...p, email: e.target.value }))}
+                                            required
+                                        />
+                                        <Select
+                                            value={newMember.filiere}
+                                            onValueChange={(v) => setNewMember(p => ({ ...p, filiere: v }))}
+                                        >
+                                            <SelectTrigger><SelectValue placeholder="Filière" /></SelectTrigger>
+                                            <SelectContent>
+                                                {staticDb.fields.map(f => (
+                                                    <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <Button type="submit" disabled={addingMember}>
+                                            <Plus className="w-4 h-4 mr-2" /> Ajouter
+                                        </Button>
+                                    </form>
+                                </div>
+
+                                {/* Members List */}
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-semibold">Liste des membres ({club?.members?.length || 0})</h3>
+                                    {(club?.members || []).length === 0 ? (
+                                        <p className="text-sm text-muted-foreground italic">Aucun membre enregistré.</p>
+                                    ) : (
+                                        <div className="grid gap-2">
+                                            {club.members.map((member, idx) => (
+                                                <div key={idx} className="flex items-center justify-between p-3 border rounded-lg bg-white">
+                                                    <div>
+                                                        <p className="font-medium text-sm">{member.name}</p>
+                                                        <p className="text-xs text-muted-foreground">{member.email}</p>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <Badge variant="secondary" className="text-xs">{member.filiere}</Badge>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="text-destructive hover:bg-destructive/10"
+                                                            onClick={() => handleRemoveMember(member.email)}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -422,6 +678,26 @@ export default function ClubAdminPage() {
                                     </div>
 
                                     <div className="space-y-2">
+                                        <Label>Image (optionnel)</Label>
+                                        <div className="flex items-center gap-4">
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    if (e.target.files?.[0]) setPostImage(e.target.files[0]);
+                                                }}
+                                                disabled={submittingPost}
+                                            />
+                                            {postImage && (
+                                                <div className="text-sm text-green-600 flex items-center gap-2">
+                                                    <CheckCircle2 className="w-4 h-4" />
+                                                    Image sélectionnée
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
                                         <Label htmlFor="title">Titre</Label>
                                         <Input
                                             id="title"
@@ -510,11 +786,53 @@ export default function ClubAdminPage() {
                                     )}
 
                                     {changeRequest.type === 'organizationalChart' && (
-                                        <Alert>
-                                            <AlertDescription>
-                                                Pour modifier l'organigramme, veuillez contacter les administrateurs directement avec les détails des changements souhaités.
-                                            </AlertDescription>
-                                        </Alert>
+                                        <div className="space-y-4">
+                                            {(!user || !club.organizationalChart || !Object.entries(club.organizationalChart).find(([_, m]) => m.email === user.email && m.role.toLowerCase() === 'président')) ? (
+                                                <Alert variant="destructive">
+                                                    <AlertCircle className="h-4 w-4" />
+                                                    <AlertDescription>
+                                                        Seul le Président du club est autorisé à modifier l'organigramme.
+                                                    </AlertDescription>
+                                                </Alert>
+                                            ) : (
+                                                <div className="space-y-4 border p-4 rounded-lg bg-slate-50">
+                                                    <h3 className="font-medium text-sm mb-2">Modifier l'organigramme</h3>
+                                                    {orgChartItems.map((item) => (
+                                                        <div key={item.id} className="bg-white p-3 border rounded space-y-3">
+                                                            <div className="grid grid-cols-2 gap-2">
+                                                                <div className="space-y-1">
+                                                                    <Label className="text-xs">Rôle</Label>
+                                                                    <Input
+                                                                        value={item.role}
+                                                                        onChange={(e) => handleOrgChartItemChange(item.id, 'role', e.target.value)}
+                                                                        className="h-8 text-sm"
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-1">
+                                                                    <Label className="text-xs">Nom</Label>
+                                                                    <Input
+                                                                        value={item.name}
+                                                                        onChange={(e) => handleOrgChartItemChange(item.id, 'name', e.target.value)}
+                                                                        className="h-8 text-sm"
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-1">
+                                                                    <Label className="text-xs">Email</Label>
+                                                                    <Input
+                                                                        value={item.email}
+                                                                        onChange={(e) => handleOrgChartItemChange(item.id, 'email', e.target.value)}
+                                                                        className="h-8 text-sm"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    <p className="text-xs text-muted-foreground">
+                                                        Note: Cette action soumettra une demande de validation aux administrateurs.
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
                                     )}
 
                                     <Button
