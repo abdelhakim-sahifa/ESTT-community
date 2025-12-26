@@ -148,6 +148,11 @@ export default function Home() {
                                 Parcourir les ressources
                             </Link>
                         </Button>
+                        <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12" asChild>
+                            <Link href="/clubs">
+                                Découvrir les clubs
+                            </Link>
+                        </Button>
                     </div>
 
                     <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm font-medium text-muted-foreground" aria-hidden="false">
