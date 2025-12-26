@@ -38,7 +38,7 @@ export default function ClubAdminPage() {
     const [clubInfo, setClubInfo] = useState({ description: '', themeColor: '#64748b' });
 
     // Post creation
-    const [newPost, setNewPost] = useState({ type: 'article', title: '', content: '' });
+    const [newPost, setNewPost] = useState({ type: 'article', title: '', content: '', linkedFormId: '' });
     const [postImage, setPostImage] = useState(null);
     const [uploadingPostImage, setUploadingPostImage] = useState(false);
     const [submittingPost, setSubmittingPost] = useState(false);
@@ -283,7 +283,7 @@ export default function ClubAdminPage() {
             await set(newPostRef, postData);
 
             setPosts(prev => [{ id: newPostRef.key, ...postData }, ...prev]);
-            setNewPost({ type: 'article', title: '', content: '' });
+            setNewPost({ type: 'article', title: '', content: '', linkedFormId: '' });
             setPostImage(null);
             setMessage('Publication créée avec succès');
         } catch (error) {
@@ -984,6 +984,27 @@ export default function ClubAdminPage() {
                                                     required
                                                     disabled={submittingPost}
                                                 />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Lier un formulaire (Optionnel)</Label>
+                                                <Select
+                                                    value={newPost.linkedFormId}
+                                                    onValueChange={(v) => setNewPost(prev => ({ ...prev, linkedFormId: v === 'none' ? '' : v }))}
+                                                    disabled={submittingPost}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Aucun formulaire lié" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="none">Aucun formulaire</SelectItem>
+                                                        {forms.map(form => (
+                                                            <SelectItem key={form.id} value={form.id}>
+                                                                {form.title} {form.generateTicket && '(🎫 Avec Ticket)'}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
                                             </div>
 
                                             <div className="space-y-2">
