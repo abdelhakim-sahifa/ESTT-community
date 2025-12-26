@@ -7,8 +7,11 @@ import Image from 'next/image';
 import { db as staticDb } from '@/lib/data';
 import { db as firebaseDb, ref, get } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
-import { Search, BookOpen } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Search, BookOpen, Users, FileText, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import ActivityFeed from '@/components/ActivityFeed';
+import ClubCard from '@/components/ClubCard';
+import { cn } from '@/lib/utils';
 
 
 export default function Home() {
@@ -20,8 +23,13 @@ export default function Home() {
     });
     const [searchQuery, setSearchQuery] = useState('');
     const [allResources, setAllResources] = useState([]);
+    const [clubs, setClubs] = useState([]);
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [loadingClubs, setLoadingClubs] = useState(true);
+    const [announcements, setAnnouncements] = useState([]);
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [loadingAnnouncements, setLoadingAnnouncements] = useState(true);
 
     useEffect(() => {
         if (!firebaseDb) return;
@@ -61,8 +69,75 @@ export default function Home() {
                     contributions: pendingCount,
                     modules: totalModules
                 });
+
+                // Fetch clubs
+                const clubsRef = ref(firebaseDb, 'clubs');
+                const clubsSnap = await get(clubsRef);
+                let allClubs = [];
+                if (clubsSnap.exists()) {
+                    const clubsData = clubsSnap.val();
+                    allClubs = Object.entries(clubsData)
+                        .map(([id, data]) => ({ id, ...data }))
+                        .filter(club => club.verified);
+
+                    // Show only first 3 in the clubs section
+                    setClubs(allClubs.slice(0, 3));
+                }
+                setLoadingClubs(false);
+
+                // Fetch all club posts for the carousel
+                const clubPostsRef = ref(firebaseDb, 'clubPosts');
+                const clubPostsSnap = await get(clubPostsRef);
+
+                let allAnnouncements = [];
+                if (clubPostsSnap.exists()) {
+                    const allPostsData = clubPostsSnap.val();
+                    Object.entries(allPostsData).forEach(([clubId, posts]) => {
+                        const clubInfo = allClubs.find(c => c.id === clubId);
+                        Object.entries(posts).forEach(([postId, post]) => {
+                            if (['announcement', 'activity'].includes(post.type)) {
+                                allAnnouncements.push({
+                                    id: postId,
+                                    clubId,
+                                    clubName: clubInfo?.name || 'Club',
+                                    clubLogo: clubInfo?.logo,
+                                    themeColor: clubInfo?.themeColor,
+                                    ...post
+                                });
+                            }
+                        });
+                    });
+                }
+
+                // Fetch admin announcements
+                const adminAnnSnap = await get(ref(firebaseDb, 'adminAnnouncements'));
+                if (adminAnnSnap.exists()) {
+                    const adminData = adminAnnSnap.val();
+                    Object.entries(adminData).forEach(([id, ann]) => {
+                        allAnnouncements.push({
+                            id,
+                            clubName: 'EST Tétouan',
+                            clubLogo: '/favicon.ico', // Or a system logo
+                            themeColor: '#3b82f6',
+                            ...ann,
+                            isAdmin: true
+                        });
+                    });
+                }
+
+                // Sort by createdAt descending
+                allAnnouncements.sort((a, b) => b.createdAt - a.createdAt);
+
+                // Prioritize those with images
+                const withImages = allAnnouncements.filter(p => p.imageUrl);
+                const withoutImages = allAnnouncements.filter(p => !p.imageUrl);
+                setAnnouncements([...withImages, ...withoutImages].slice(0, 8));
+
+                setLoadingAnnouncements(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
+                setLoadingClubs(false);
+                setLoadingAnnouncements(false);
             }
         };
 
@@ -114,9 +189,6 @@ export default function Home() {
         } else {
             setSearchQuery(item.title);
             setShowSuggestions(false);
-            // If it's a resource, we might want to go to browse with a query or directly to the resource
-            // The feedback says "when i click the card it redirect me the page with filter isn't it suppose to open the resource directly"
-            // So for suggestions, let's also try to go directly if possible, or at least to browse with the query
             const url = item.url || item.link || item.file;
             if (url) {
                 window.open(url, '_blank');
@@ -126,8 +198,147 @@ export default function Home() {
         }
     };
 
+    // Carousel Autoplay
+    useEffect(() => {
+        if (announcements.length <= 1) return;
+
+        const interval = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % announcements.length);
+        }, 6000);
+
+        return () => clearInterval(interval);
+    }, [announcements.length]);
+
+    const nextSlide = () => {
+        setCurrentSlide((prev) => (prev + 1) % announcements.length);
+    };
+
+    const prevSlide = () => {
+        setCurrentSlide((prev) => (prev - 1 + announcements.length) % announcements.length);
+    };
+
     return (
         <main className="min-h-screen">
+            {/* Announcements Slide View */}
+            {!loadingAnnouncements && announcements.length > 0 && (
+                <section className="py-12 bg-white">
+                    <div className="container px-4 md:px-6">
+                        <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+                            <div className="text-left">
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2">Annonces</h2>
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-primary/10 p-2 rounded-lg text-primary">
+                                        <Calendar className="h-6 w-6" />
+                                    </div>
+                                    <h2 className="text-4xl font-black tracking-tight">À ne pas manquer</h2>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="relative rounded-3xl overflow-hidden bg-slate-900 aspect-[16/9] md:aspect-[21/7] shadow-2xl group">
+                            {/* Background Image/Gradient */}
+                            <div className="absolute inset-0">
+                                {announcements[currentSlide].imageUrl ? (
+                                    <div className="relative w-full h-full">
+                                        <Image
+                                            src={announcements[currentSlide].imageUrl}
+                                            alt="Announcement cover"
+                                            fill
+                                            className="object-cover opacity-60 transition-opacity duration-700 scale-105 group-hover:scale-100 transition-transform duration-1000"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
+                                    </div>
+                                ) : (
+                                    <div
+                                        className="w-full h-full"
+                                        style={{
+                                            background: `linear-gradient(135deg, ${announcements[currentSlide].themeColor || '#3b82f6'} 0%, #0f172a 100%)`
+                                        }}
+                                    />
+                                )}
+                            </div>
+
+                            {/* Content Overlay */}
+                            <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12 lg:p-16">
+                                <div className="max-w-3xl space-y-4">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        {announcements[currentSlide].clubLogo && (
+                                            <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-white shadow-sm">
+                                                <Image src={announcements[currentSlide].clubLogo} alt={announcements[currentSlide].clubName} fill className="object-cover" />
+                                            </div>
+                                        )}
+                                        <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md px-3 py-1">
+                                            {announcements[currentSlide].clubName}
+                                        </Badge>
+                                        <Badge variant="outline" className="text-white border-white/30 backdrop-blur-sm">
+                                            {announcements[currentSlide].type === 'announcement' ? 'Annonce' : 'Activité'}
+                                        </Badge>
+                                    </div>
+
+                                    {announcements[currentSlide].isAdmin ? (
+                                        <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white line-clamp-2 leading-tight">
+                                            {announcements[currentSlide].title}
+                                        </h3>
+                                    ) : (
+                                        <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`} className="block">
+                                            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white hover:text-primary transition-colors line-clamp-2 leading-tight">
+                                                {announcements[currentSlide].title}
+                                            </h3>
+                                        </Link>
+                                    )}
+
+                                    <p className="text-slate-200/90 line-clamp-2 text-base md:text-lg max-w-2xl font-medium">
+                                        {announcements[currentSlide].content}
+                                    </p>
+
+                                    <div className="flex items-center gap-4 pt-4">
+                                        {!announcements[currentSlide].isAdmin && (
+                                            <Button asChild size="lg" className="rounded-full font-bold px-8 shadow-lg shadow-primary/20">
+                                                <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`}>
+                                                    Lire la suite
+                                                </Link>
+                                            </Button>
+                                        )}
+                                        <span className="text-white/60 text-sm font-medium">
+                                            {new Date(announcements[currentSlide].createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Navigation Buttons */}
+                            <div className="absolute bottom-8 right-8 md:bottom-12 md:right-12 flex gap-3">
+                                <button
+                                    onClick={(e) => { e.preventDefault(); prevSlide(); }}
+                                    className="p-3 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 transition-all border border-white/10"
+                                >
+                                    <ChevronLeft className="w-6 h-6" />
+                                </button>
+                                <button
+                                    onClick={(e) => { e.preventDefault(); nextSlide(); }}
+                                    className="p-3 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 transition-all border border-white/10"
+                                >
+                                    <ChevronRight className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                            {/* Indicators */}
+                            <div className="absolute top-8 right-8 md:top-12 md:right-12 flex gap-2">
+                                {announcements.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setCurrentSlide(idx)}
+                                        className={cn(
+                                            "h-1.5 rounded-full transition-all duration-500",
+                                            idx === currentSlide ? "bg-white w-8" : "bg-white/30 w-4 hover:bg-white/50"
+                                        )}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
             <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24">
                 <div className="container px-4 md:px-6 flex flex-col items-center text-center">
                     <h1 className="text-4xl font-heading font-medium tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
@@ -217,6 +428,7 @@ export default function Home() {
                 </div>
             </section>
 
+
             {/* Banners for main programs */}
             <section id="program-banners" className="py-16 container">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="banners-container">
@@ -262,6 +474,49 @@ export default function Home() {
                                 <div className="text-muted-foreground font-medium">{stat.label}</div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Clubs Section */}
+            <section id="clubs-section" className="py-20 bg-slate-50/50">
+                <div className="container">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                        <div className="text-left">
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2">Vie Étudiante</h2>
+                            <div className="flex items-center gap-3">
+                                <div className="bg-primary/10 p-2 rounded-lg text-primary">
+                                    <Users className="h-6 w-6" />
+                                </div>
+                                <h2 className="text-4xl font-black tracking-tight">Nos Clubs</h2>
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                            <p className="text-muted-foreground max-w-sm text-sm text-right">
+                                Rejoignez l'un de nos nombreux clubs et développez vos compétences.
+                            </p>
+                            <Link href="/clubs" className="text-primary text-sm font-bold hover:underline">
+                                Voir tous les clubs →
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {!loadingClubs ? (
+                            clubs.length > 0 ? (
+                                clubs.map((club) => (
+                                    <ClubCard key={club.id} club={club} />
+                                ))
+                            ) : (
+                                <div className="col-span-full text-center py-10 text-muted-foreground">
+                                    Aucun club vérifié à afficher pour le moment.
+                                </div>
+                            )
+                        ) : (
+                            Array(3).fill(0).map((_, i) => (
+                                <div key={i} className="h-48 rounded-xl bg-muted animate-pulse" />
+                            ))
+                        )}
                     </div>
                 </div>
             </section>
