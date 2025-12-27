@@ -2,8 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { AlertCircle } from 'lucide-react';
+import Script from 'next/script';
+import { AlertCircle, Carrot, TrendingUp, Eye, Sparkles } from 'lucide-react';
 import { db, ref, set, get, push, onValue } from '@/lib/firebase';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function ViewAds() {
   const [donationCount, setDonationCount] = useState(0);
@@ -59,57 +64,126 @@ export default function ViewAds() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Monétisation - Regarder les Annonces</h1>
-      <p className="text-gray-600 mb-2">Découvrez nos annonces les plus intéressantes</p>
-      <p className="text-gray-700 mb-8 bg-blue-50 p-4 rounded-lg border border-blue-200 flex items-start gap-3">
-        <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-        <span>
-          <strong>Comment ça marche?</strong> En regardant et interagissant avec les annonces ci-dessous, vous aidez à générer des revenus pour soutenir le développement de cette plateforme. Chaque vue et chaque clic contribue à maintenir Moniti gratuit et accessible pour tous les étudiants.
-        </span>
-      </p>
-
-      {/* Stats Section */}
-      <div className="mb-8 grid grid-cols-2 gap-4">
-        <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-          <p className="text-gray-600 text-sm">Total des Carottes Données</p>
-          <p className="text-3xl font-bold text-orange-600">{donationCount}</p>
-        </div>
-        <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-          <p className="text-gray-600 text-sm">Fois Cette Page a Été Ouverte</p>
-          <p className="text-3xl font-bold text-blue-600">{pageOpenCount}</p>
-        </div>
-      </div>
-
-      {/* Carrot Donation Section */}
-      <div className="mb-8 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-        <p className="text-orange-900 mb-4 flex items-center gap-2">
-          Soutenez les développeurs avec une carotte!
-        </p>
-        <button
-          onClick={handleDonation}
-          className="flex items-center gap-2 bg-orange-100 text-orange-700 font-bold py-3 px-6 rounded-lg border-2 border-orange-300 hover:bg-orange-200 transition-colors"
-        >
-          <i className="fa-solid fa-carrot text-xl" style={{color: '#ea580c'}}></i>
-          Donner une Carotte aux Développeurs ({donationCount})
-        </button>
-      </div>
-
-      <script
+    <div className="min-h-screen bg-[#fafafa]">
+      <Script
         async
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8145062068015821"
-        crossOrigin="anonymous"
-      ></script>
+        crossorigin="anonymous"
+        strategy="afterInteractive"
+      />
 
-      <ins
-        className="adsbygoogle"
-        style={{
-          display: 'block',
-        }}
-        data-ad-format="autorelaxed"
-        data-ad-client="ca-pub-8145062068015821"
-        data-ad-slot="6636305857"
-      ></ins>
+      {/* Hero Section */}
+      <div className="bg-gradient-to-b from-blue-600 to-indigo-700 text-white py-16 mb-8">
+        <div className="container mx-auto px-4 text-center">
+          <Badge className="mb-4 bg-blue-400/30 text-white border-none hover:bg-blue-400/40 backdrop-blur-sm">
+            Supportez la Plateforme
+          </Badge>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+            Monétisation & Soutien
+          </h1>
+          <p className="text-blue-100 text-lg max-w-2xl mx-auto">
+            Aidez-nous à garder ESTT.community gratuit et accessible pour tous les étudiants en interagissant avec nos partenaires.
+          </p>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 pb-16">
+        <Alert className="mb-8 border-blue-200 bg-blue-50/50 backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <Sparkles className="h-5 w-5 text-blue-600" />
+            <div>
+              <AlertTitle className="text-blue-900 font-semibold">Comment ça marche?</AlertTitle>
+              <AlertDescription className="text-blue-800">
+                En regardant et interagissant avec les annonces, vous générez des revenus directs pour le développement.
+                Chque clic nous aide à améliorer vos outils quotidiens.
+              </AlertDescription>
+            </div>
+          </div>
+        </Alert>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <Card className="border-none shadow-sm bg-white overflow-hidden group hover:shadow-md transition-shadow">
+            <div className="h-1 w-full bg-orange-500" />
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Carrot className="w-4 h-4 text-orange-500" />
+                    Total des Carottes Données
+                  </p>
+                  <p className="text-4xl font-bold mt-2 text-orange-600 tabular-nums">
+                    {donationCount}
+                  </p>
+                </div>
+                <div className="p-3 bg-orange-50 rounded-xl group-hover:scale-110 transition-transform">
+                  <TrendingUp className="w-6 h-6 text-orange-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-none shadow-sm bg-white overflow-hidden group hover:shadow-md transition-shadow">
+            <div className="h-1 w-full bg-blue-500" />
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Eye className="w-4 h-4 text-blue-500" />
+                    Vues de la Page
+                  </p>
+                  <p className="text-4xl font-bold mt-2 text-blue-600 tabular-nums">
+                    {pageOpenCount}
+                  </p>
+                </div>
+                <div className="p-3 bg-blue-50 rounded-xl group-hover:scale-110 transition-transform">
+                  <Eye className="w-6 h-6 text-blue-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Donation Section */}
+        <Card className="mb-12 border-orange-100 bg-gradient-to-r from-orange-50 to-amber-50 shadow-sm border-2">
+          <CardContent className="p-8 flex flex-col items-center text-center">
+            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4 border border-orange-100">
+              <Carrot className="w-8 h-8 text-orange-500" />
+            </div>
+            <h3 className="text-xl font-bold text-orange-900 mb-2">
+              Soutien Direct aux Développeurs
+            </h3>
+            <p className="text-orange-800/80 mb-6 max-w-md">
+              Vous aimez la plateforme ? Envoyez-nous une "Carotte" virtuelle pour nous motiver !
+            </p>
+            <Button
+              size="lg"
+              onClick={handleDonation}
+              className="bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 border-2 border-orange-200 px-10 h-14 rounded-full text-lg font-bold shadow-sm transition-all duration-500 active:opacity-70"
+            >
+              <Carrot className="w-6 h-6 mr-2" />
+              Donner une Carotte ({donationCount})
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* AdSense Unit */}
+        <div className="ad-container max-w-4xl mx-auto bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+          <p className="text-[10px] text-gray-400 uppercase tracking-widest text-center mb-4">Annonce Recommandée</p>
+          <div className="min-h-[250px] w-full bg-gray-50/50 rounded-xl overflow-hidden border border-dashed border-gray-200 block">
+            <ins
+              className="adsbygoogle"
+              style={{ display: 'block', width: '100%', minWidth: '250px' }}
+              data-ad-format="autorelaxed"
+              data-ad-client="ca-pub-8145062068015821"
+              data-ad-slot="6636305857"
+            ></ins>
+            <Script id="adsbygoogle-init">
+              {`(adsbygoogle = window.adsbygoogle || []).push({});`}
+            </Script>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
