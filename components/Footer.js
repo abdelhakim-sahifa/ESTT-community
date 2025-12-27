@@ -1,14 +1,35 @@
+'use client';
+
 import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Heart, Github, Globe } from 'lucide-react';
 
 export default function Footer() {
+    const pathname = usePathname();
+    const isAdsPage = pathname === '/view-ads';
+
     return (
         <footer className="w-full py-12 bg-slate-50 border-t border-slate-200">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
                     <div className="flex flex-col items-center md:items-start">
-                        <Link href="/" className="text-2xl font-black tracking-tighter text-primary mb-2">
-                            ESTT<span className="text-slate-400">.community</span>
+                        <Link href="/" className="flex items-center gap-3 mb-4 group">
+                            {!isAdsPage && (
+                                <>
+                                    <Image
+                                        src="/assets/images/logo__five.svg"
+                                        alt="EST Tétouan"
+                                        width={120}
+                                        height={40}
+                                        className="h-8 w-auto opacity-80 group-hover:opacity-100 transition-opacity"
+                                    />
+                                    <div className="h-6 w-[1px] bg-slate-200 hidden md:block" />
+                                </>
+                            )}
+                            <span className="text-xl font-black tracking-tighter text-primary">
+                                ESTT<span className="text-slate-400">.community</span>
+                            </span>
                         </Link>
                         <p className="text-sm text-muted-foreground max-w-xs text-center md:text-left">
                             La plateforme collaborative pour les étudiants de l'École Supérieure de Technologie de Tétouan.
