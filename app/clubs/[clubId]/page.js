@@ -190,7 +190,7 @@ export default function ClubProfilePage() {
                         <div className="flex flex-col lg:flex-row gap-8 items-start">
                             {/* Left: Club Brand */}
                             <div className="flex flex-col items-center md:items-start gap-4 flex-shrink-0 lg:w-1/3">
-                                <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-white border-4 border-white shadow-lg mx-auto md:mx-0">
+                                <div className="relative w-28 h-28 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-white border-4 border-white shadow-lg mx-auto md:mx-0 shrink-0">
                                     {club.logo ? (
                                         <Image
                                             src={club.logo}
@@ -208,15 +208,16 @@ export default function ClubProfilePage() {
                                     )}
                                 </div>
                                 <div className="text-center md:text-left space-y-2">
-                                    <div className="flex items-center justify-center md:justify-start gap-2">
-                                        <h1 className="text-3xl font-bold">{club.name}</h1>
+                                    <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
+                                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight leading-tight">{club.name}</h1>
                                         {club.verified && (
-                                            <Badge className="bg-blue-500 hover:bg-blue-600">
-                                                <CheckCircle2 className="w-3 h-3 mr-1" /> Verified
+                                            <Badge className="bg-blue-500 hover:bg-blue-600 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1.5 border-0">
+                                                <i className="fa-solid fa-circle-check text-[10px]"></i>
+                                                <span className="text-[10px] font-bold uppercase tracking-wider">Vérifié</span>
                                             </Badge>
                                         )}
                                     </div>
-                                    <p className="text-muted-foreground">{club.description}</p>
+                                    <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto md:mx-0 leading-relaxed font-medium">{club.description}</p>
 
                                     {club.socialLinks && Object.values(club.socialLinks).some(link => link) && (
                                         <div className="flex flex-wrap gap-3 pt-2 justify-center md:justify-start">
@@ -285,9 +286,9 @@ export default function ClubProfilePage() {
                             </div>
 
                             {/* Right: Announcements Carousel */}
-                            <div className="flex-1 w-full lg:w-2/3">
+                            <div className="flex-1 w-full lg:w-2/3 min-h-0">
                                 {headerPosts.length > 0 ? (
-                                    <div className="relative rounded-2xl overflow-hidden bg-slate-900 aspect-[16/9] md:aspect-[21/9] shadow-xl group">
+                                    <div className="relative rounded-2xl overflow-hidden bg-slate-900 aspect-[4/5] sm:aspect-[16/9] md:aspect-[21/9] shadow-xl group">
                                         {/* Background Image/Gradient */}
                                         <div className="absolute inset-0">
                                             {headerPosts[currentSlide].imageUrl ? (
@@ -308,20 +309,20 @@ export default function ClubProfilePage() {
                                         </div>
 
                                         {/* Content Overlay */}
-                                        <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                                            <Badge className="mb-3 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm">
+                                        <div className="absolute inset-x-0 bottom-0 p-5 md:p-8 bg-gradient-to-t from-black/95 via-black/60 to-transparent">
+                                            <Badge className="mb-2 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm px-2 py-0.5 text-[10px] md:text-xs">
                                                 {headerPosts[currentSlide].type === 'announcement' ? 'Annonce' : 'Activité'}
                                             </Badge>
                                             <Link href={`/clubs/${clubId}/posts/${headerPosts[currentSlide].id}`} className="block group-hover:underline decoration-white/50 underline-offset-4">
-                                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 line-clamp-1">
+                                                <h3 className="text-xl md:text-3xl font-bold text-white mb-2 line-clamp-2 md:line-clamp-1 leading-tight">
                                                     {headerPosts[currentSlide].title}
                                                 </h3>
                                             </Link>
-                                            <p className="text-slate-200 line-clamp-2 text-sm md:text-base mb-4 max-w-2xl">
+                                            <p className="text-slate-200 line-clamp-2 text-xs md:text-base mb-3 max-w-2xl font-medium">
                                                 {headerPosts[currentSlide].content}
                                             </p>
-                                            <div className="flex items-center gap-2 text-white/80 text-xs">
-                                                <span>Publié par {getAuthorInfo(headerPosts[currentSlide].author).name}</span>
+                                            <div className="flex items-center gap-2 text-white/70 text-[10px] md:text-xs">
+                                                <span className="truncate max-w-[120px] md:max-w-none">Par {getAuthorInfo(headerPosts[currentSlide].author).name}</span>
                                                 <span>•</span>
                                                 <span>{new Date(headerPosts[currentSlide].createdAt).toLocaleDateString('fr-FR')}</span>
                                             </div>
@@ -332,25 +333,25 @@ export default function ClubProfilePage() {
                                             <>
                                                 <button
                                                     onClick={prevSlide}
-                                                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 text-white backdrop-blur-sm hover:bg-black/40 transition-colors opacity-0 group-hover:opacity-100"
+                                                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-1.5 md:p-2 rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/40 transition-colors opacity-100 md:opacity-0 group-hover:opacity-100 z-20"
                                                 >
-                                                    <ChevronLeft className="w-6 h-6" />
+                                                    <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
                                                 </button>
                                                 <button
                                                     onClick={nextSlide}
-                                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 text-white backdrop-blur-sm hover:bg-black/40 transition-colors opacity-0 group-hover:opacity-100"
+                                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-1.5 md:p-2 rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/40 transition-colors opacity-100 md:opacity-0 group-hover:opacity-100 z-20"
                                                 >
-                                                    <ChevronRight className="w-6 h-6" />
+                                                    <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
                                                 </button>
 
                                                 {/* Dots */}
-                                                <div className="absolute top-4 right-4 flex gap-1.5">
+                                                <div className="absolute top-3 right-3 md:top-4 md:right-4 flex gap-1.5">
                                                     {headerPosts.map((_, idx) => (
                                                         <div
                                                             key={idx}
                                                             className={cn(
-                                                                "w-2 h-2 rounded-full transition-all shadow-sm",
-                                                                idx === currentSlide ? "bg-white w-4" : "bg-white/40"
+                                                                "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-all shadow-sm",
+                                                                idx === currentSlide ? "bg-white w-4 md:w-4" : "bg-white/40"
                                                             )}
                                                         />
                                                     ))}
@@ -372,11 +373,11 @@ export default function ClubProfilePage() {
             {/* Main Content */}
             <section className="container py-12 px-4 md:px-6">
                 <Tabs defaultValue="activities" className="w-full">
-                    <TabsList className="grid w-full max-w-md grid-cols-3 mb-8">
-                        <TabsTrigger value="activities">Actualités</TabsTrigger>
-                        <TabsTrigger value="structure">Structure</TabsTrigger>
-                        <TabsTrigger value="members">Membres</TabsTrigger>
-                        {userTickets.length > 0 && <TabsTrigger value="tickets">Mes Tickets</TabsTrigger>}
+                    <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:max-w-md md:grid-cols-3 mb-8 no-scrollbar bg-slate-100 p-1 rounded-xl">
+                        <TabsTrigger value="activities" className="whitespace-nowrap px-6 py-2">Actualités</TabsTrigger>
+                        <TabsTrigger value="structure" className="whitespace-nowrap px-6 py-2">Structure</TabsTrigger>
+                        <TabsTrigger value="members" className="whitespace-nowrap px-6 py-2">Membres</TabsTrigger>
+                        {userTickets.length > 0 && <TabsTrigger value="tickets" className="whitespace-nowrap px-6 py-2">Mes Tickets</TabsTrigger>}
                     </TabsList>
 
                     {/* Activities Tab */}

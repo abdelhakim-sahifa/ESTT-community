@@ -223,7 +223,7 @@ export default function Home() {
 
             <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24">
                 <div className="container px-4 md:px-6 flex flex-col items-center text-center">
-                    <h1 className="text-4xl font-heading font-medium tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
+                    <h1 className="text-3xl font-heading font-black tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl leading-tight">
                         Partage tes ressources — aide tes camarades, gagne du temps
                     </h1>
                     <p className="mx-auto mt-6 max-w-[700px] text-lg text-muted-foreground md:text-xl">
@@ -248,15 +248,15 @@ export default function Home() {
                         </Button>
                     </div>
 
-                    <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm font-medium text-muted-foreground" aria-hidden="false">
-                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border">
-                            <strong className="text-primary text-lg" id="hero-stat-resources">{stats.resources}</strong> ressources
+                    <div className="mt-10 flex flex-wrap justify-center gap-3 md:gap-6 text-sm font-medium text-muted-foreground" aria-hidden="false">
+                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border whitespace-nowrap">
+                            <strong className="text-primary text-base md:text-lg" id="hero-stat-resources">{stats.resources}</strong> ressources
                         </div>
-                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border">
-                            <strong className="text-primary text-lg" id="hero-stat-contributions">{stats.contributions}</strong> contributions en attente
+                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border whitespace-nowrap">
+                            <strong className="text-primary text-base md:text-lg" id="hero-stat-contributions">{stats.contributions}</strong> contributions
                         </div>
-                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border">
-                            <strong className="text-primary text-lg" id="hero-stat-modules">{stats.modules}</strong> modules
+                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border whitespace-nowrap">
+                            <strong className="text-primary text-base md:text-lg" id="hero-stat-modules">{stats.modules}</strong> modules
                         </div>
                     </div>
 
@@ -331,7 +331,7 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="relative rounded-3xl overflow-hidden bg-slate-900 aspect-[16/9] md:aspect-[21/7] shadow-2xl group">
+                        <div className="relative rounded-3xl overflow-hidden bg-slate-900 aspect-[4/5] sm:aspect-[16/9] md:aspect-[21/7] shadow-2xl group">
                             {/* Background Image/Gradient */}
                             <div className="absolute inset-0">
                                 {announcements[currentSlide].imageUrl ? (
@@ -356,18 +356,18 @@ export default function Home() {
                             </div>
 
                             {/* Content Overlay */}
-                            <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12 lg:p-16">
+                            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-16 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent">
                                 <div className="max-w-3xl space-y-4">
-                                    <div className="flex items-center gap-3 mb-2">
+                                    <div className="flex flex-wrap items-center gap-2 mb-2">
                                         {announcements[currentSlide].clubLogo && (
-                                            <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-white shadow-sm">
+                                            <div className="relative w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden border border-white/20 bg-white shadow-sm">
                                                 <Image src={announcements[currentSlide].clubLogo} alt={announcements[currentSlide].clubName} fill sizes={IMAGE_SIZES.CLUB_LOGO_SM} className="object-cover" />
                                             </div>
                                         )}
-                                        <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md px-3 py-1">
+                                        <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md px-2 md:px-3 py-0.5 md:py-1 text-[10px] md:text-xs">
                                             {announcements[currentSlide].clubName}
                                         </Badge>
-                                        <Badge variant="outline" className="text-white border-white/30 backdrop-blur-sm">
+                                        <Badge variant="outline" className="text-white border-white/30 backdrop-blur-sm text-[10px] md:text-xs px-2 py-0.5">
                                             {announcements[currentSlide].type === 'announcement' ? 'Annonce' : 'Activité'}
                                         </Badge>
                                     </div>
@@ -378,25 +378,32 @@ export default function Home() {
                                         </h3>
                                     ) : (
                                         <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`} className="block">
-                                            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white hover:text-primary transition-colors line-clamp-2 leading-tight">
+                                            <h3 className="text-xl md:text-4xl lg:text-5xl font-black text-white hover:text-primary transition-colors line-clamp-2 md:line-clamp-3 leading-[1.1]">
                                                 {announcements[currentSlide].title}
                                             </h3>
                                         </Link>
                                     )}
 
-                                    <p className="text-slate-200/90 line-clamp-2 text-base md:text-lg max-w-2xl font-medium">
+                                    <p className="text-slate-200/90 line-clamp-2 text-sm md:text-lg max-w-2xl font-medium">
                                         {announcements[currentSlide].content}
                                     </p>
 
-                                    <div className="flex items-center gap-4 pt-4">
+                                    <div className="flex flex-wrap items-center gap-3 pt-4 md:pt-6">
                                         {!announcements[currentSlide].isAdmin && (
-                                            <Button asChild size="lg" className="rounded-full font-bold px-8 shadow-lg shadow-primary/20">
+                                            <Button asChild size="sm" className="md:hidden rounded-full font-bold px-6 shadow-lg shadow-primary/20">
+                                                <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`}>
+                                                    Accéder
+                                                </Link>
+                                            </Button>
+                                        )}
+                                        {!announcements[currentSlide].isAdmin && (
+                                            <Button asChild size="lg" className="hidden md:flex rounded-full font-bold px-8 shadow-lg shadow-primary/20">
                                                 <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`}>
                                                     Lire la suite
                                                 </Link>
                                             </Button>
                                         )}
-                                        <span className="text-white/60 text-sm font-medium">
+                                        <span className="text-white/60 text-[10px] md:text-sm font-medium">
                                             {new Date(announcements[currentSlide].createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
                                         </span>
                                     </div>
@@ -404,30 +411,30 @@ export default function Home() {
                             </div>
 
                             {/* Navigation Buttons */}
-                            <div className="absolute bottom-8 right-8 md:bottom-12 md:right-12 flex gap-3">
+                            <div className="absolute bottom-4 right-4 md:bottom-12 md:right-12 flex gap-2">
                                 <button
                                     onClick={(e) => { e.preventDefault(); prevSlide(); }}
-                                    className="p-3 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 transition-all border border-white/10"
+                                    className="p-2 md:p-3 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 transition-all border border-white/10"
                                 >
-                                    <ChevronLeft className="w-6 h-6" />
+                                    <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
                                 </button>
                                 <button
                                     onClick={(e) => { e.preventDefault(); nextSlide(); }}
-                                    className="p-3 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 transition-all border border-white/10"
+                                    className="p-2 md:p-3 rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 transition-all border border-white/10"
                                 >
-                                    <ChevronRight className="w-6 h-6" />
+                                    <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
                                 </button>
                             </div>
 
                             {/* Indicators */}
-                            <div className="absolute top-8 right-8 md:top-12 md:right-12 flex gap-2">
+                            <div className="absolute top-4 right-4 md:top-12 md:right-12 flex gap-1.5 md:gap-2">
                                 {announcements.map((_, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setCurrentSlide(idx)}
                                         className={cn(
-                                            "h-1.5 rounded-full transition-all duration-500",
-                                            idx === currentSlide ? "bg-white w-8" : "bg-white/30 w-4 hover:bg-white/50"
+                                            "h-1 md:h-1.5 rounded-full transition-all duration-500",
+                                            idx === currentSlide ? "bg-white w-6 md:w-8" : "bg-white/30 w-3 md:w-4 hover:bg-white/50"
                                         )}
                                     />
                                 ))}
@@ -549,25 +556,6 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Fields Grid */}
-            <section id="fields-grid" className="py-20 container">
-                <h2 className="text-3xl font-heading font-medium mb-10 text-center">Nos Filières</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="fields-container">
-                    {staticDb.fields.map((field) => (
-                        <Link
-                            key={field.id}
-                            href={`/browse?field=${field.id}`}
-                            className="group flex flex-col items-center text-center p-6 rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:translate-y-[-4px] hover:shadow-lg hover:border-primary/20"
-                        >
-                            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-3xl text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                                <i className={`fas ${field.icon}`}></i>
-                            </div>
-                            <h3 className="text-xl font-semibold mb-2">{field.name}</h3>
-                            <p className="text-sm text-muted-foreground">{field.description}</p>
-                        </Link>
-                    ))}
-                </div>
-            </section>
         </main>
     );
 }

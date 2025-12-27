@@ -111,207 +111,151 @@ export default function PostDetailPage() {
     const author = getAuthorInfo(post.author);
 
     return (
-        <main className="min-h-screen bg-white">
-            {/* Top Navigation / Breadcrumbs */}
-            <div className="border-b bg-slate-50/50">
-                <div className="container px-4 md:px-6 py-4 max-w-6xl mx-auto flex items-center justify-between">
-                    <Button variant="ghost" size="sm" asChild className="gap-2 text-slate-600 hover:text-slate-900 transition-colors">
+        <main className="min-h-screen bg-white pb-20">
+            {/* Top Navigation */}
+            <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b">
+                <div className="container px-4 h-16 max-w-4xl mx-auto flex items-center justify-between">
+                    <Button variant="ghost" size="sm" asChild className="gap-2 -ml-2 text-slate-500 hover:text-slate-900 transition-colors">
                         <Link href={`/clubs/${clubId}`}>
                             <ArrowLeft className="w-4 h-4" />
-                            Retour au club
+                            <span className="hidden sm:inline">Retour au club</span>
                         </Link>
                     </Button>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                         <Badge
-                            className="text-white border-0 shadow-sm px-3 py-1"
+                            className="text-white border-0 shadow-sm px-3 py-1 text-[10px] md:text-xs font-bold uppercase tracking-wider"
                             style={{ backgroundColor: club.themeColor || '#64748b' }}
                         >
                             {post.type === 'announcement' ? 'Annonce' : post.type === 'article' ? 'Article' : 'Activité'}
                         </Badge>
                     </div>
                 </div>
-            </div>
+            </nav>
 
-            {/* Post Header Section */}
-            <header className="py-12 md:py-20 border-b bg-gradient-to-b from-white to-slate-50/30">
-                <div className="container px-4 md:px-6 max-w-4xl mx-auto text-center space-y-6">
-                    <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
+            <div className="container px-4 max-w-4xl mx-auto py-12 md:py-16">
+                {/* Header Content */}
+                <div className="space-y-6 mb-10 text-center">
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-[1.2] tracking-tight mx-auto max-w-3xl">
                         {post.title}
                     </h1>
 
-                    <div className="flex flex-wrap items-center justify-center gap-6 text-slate-500 font-medium">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm">
-                                <User className="w-5 h-5 text-slate-500" />
+                    <div className="flex items-center justify-center gap-4 py-6">
+                        <div className="flex items-center gap-3 text-left">
+                            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
+                                <User className="w-5 h-5 text-slate-400" />
                             </div>
-                            <div className="text-left">
-                                <p className="text-sm text-slate-900 font-bold leading-none mb-1">{author.name}</p>
-                                <p className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">{author.role || 'Auteur'}</p>
+                            <div>
+                                <p className="font-bold text-slate-900 text-sm leading-none mb-1">{author.name}</p>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{author.role || 'Membre'}</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-slate-100">
-                            <Calendar className="w-4 h-4 text-primary" style={{ color: club.themeColor || '#64748b' }} />
-                            <span className="text-sm">{new Date(post.createdAt).toLocaleDateString('fr-FR', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                            })}</span>
+                        <div className="h-8 w-px bg-slate-200 mx-2 hidden sm:block"></div>
+                        <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 font-medium">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>{new Date(post.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                         </div>
                     </div>
                 </div>
-            </header>
 
-            <div className="container px-4 md:px-6 max-w-6xl mx-auto py-12 md:py-16">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    {/* Main Content Column */}
-                    <div className="lg:col-span-8 space-y-10">
-                        {/* Featured Image */}
-                        {post.imageUrl && (
-                            <div className="group relative aspect-[16/9] md:aspect-[21/9] rounded-[2rem] overflow-hidden shadow-2xl shadow-slate-200 ring-1 ring-slate-200">
-                                <Image
-                                    src={post.imageUrl}
-                                    alt={post.title}
-                                    fill
-                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                    priority
-                                />
-                                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-[2rem]" />
-                            </div>
-                        )}
-
-                        {/* Article Content */}
-                        <article className="prose prose-slate prose-lg max-w-none">
-                            <div className="whitespace-pre-wrap text-slate-700 leading-relaxed text-lg md:text-xl font-medium opacity-90">
-                                {post.content}
-                            </div>
-                        </article>
-
-                        {/* Interaction Section */}
-                        <div className="pt-10 border-t flex flex-wrap items-center justify-between gap-4">
-                            <div className="flex items-center gap-3">
-                                <Button
-                                    variant={post.likes ? "default" : "outline"}
-                                    size="lg"
-                                    className={cn(
-                                        "rounded-full px-6 gap-2 transition-all hover:scale-105",
-                                        post.likes ? "bg-pink-500 hover:bg-pink-600 border-pink-500 text-white shadow-lg shadow-pink-200" : ""
-                                    )}
-                                    onClick={handleLike}
-                                    disabled={liking || !user}
-                                >
-                                    <Heart className={cn("w-5 h-5", post.likes ? "fill-current" : "")} />
-                                    <span className="font-bold">{post.likes || 0}</span>
-                                    <span className="text-xs opacity-80 uppercase tracking-widest ml-1">J'aime</span>
-                                </Button>
-
-                                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 bg-slate-50 hover:bg-slate-100 text-slate-500">
-                                    <Share2 className="w-5 h-5" />
-                                </Button>
-                            </div>
-
-                            <div className="text-sm text-slate-400 font-medium italic">
-                                La communauté ESTT apprécie votre soutien
-                            </div>
+                {/* Featured Image */}
+                {post.imageUrl && (
+                    <div className="max-w-2xl mx-auto mb-12 px-4 md:px-0">
+                        <div className="relative aspect-video md:aspect-[21/9] rounded-2xl md:rounded-[1.5rem] overflow-hidden shadow-lg border border-slate-100">
+                            <Image
+                                src={post.imageUrl}
+                                alt={post.title}
+                                fill
+                                className="object-cover"
+                                priority
+                                sizes="(max-width: 768px) 100vw, 800px"
+                            />
                         </div>
                     </div>
+                )}
 
-                    {/* Sidebar / Context Column */}
-                    <aside className="lg:col-span-4 space-y-8">
-                        {/* Participation CTA Card */}
-                        {linkedForm && (
-                            <Card className="border-none shadow-2xl shadow-slate-200 rounded-3xl overflow-hidden ring-1 ring-slate-100">
-                                <CardContent className="p-0">
-                                    <div
-                                        className="h-3 w-full"
-                                        style={{ backgroundColor: club.themeColor || '#64748b' }}
-                                    />
-                                    <div className="p-8 space-y-6">
-                                        <div className="flex items-center gap-4">
-                                            <div
-                                                className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-inner"
-                                                style={{ backgroundColor: `${club.themeColor || '#64748b'}15` }}
-                                            >
-                                                <ClipboardList className="w-6 h-6" style={{ color: club.themeColor || '#64748b' }} />
-                                            </div>
-                                            <div>
-                                                <h3 className="font-black text-xl text-slate-900 leading-tight">Participer</h3>
-                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Action requise</p>
-                                            </div>
-                                        </div>
+                {/* Main Article */}
+                <article className="prose prose-slate prose-lg max-w-3xl mx-auto mb-20">
+                    <div className="whitespace-pre-wrap text-slate-700 leading-relaxed text-lg md:text-xl opacity-90">
+                        {post.content}
+                    </div>
 
-                                        <div className="space-y-4">
-                                            <p className="text-slate-600 leading-relaxed font-medium">
-                                                {linkedForm.description || "Rejoignez l'événement ou l'activité en complétant ce formulaire de participation."}
-                                            </p>
+                    <div className="mt-12 flex items-center justify-center gap-4">
+                        <Button
+                            variant="ghost"
+                            size="lg"
+                            onClick={handleLike}
+                            disabled={liking || !user}
+                            className={cn(
+                                "rounded-full gap-3 px-8 h-12 border border-slate-100 hover:border-pink-200 hover:bg-pink-50 transition-all",
+                                post.likes ? "text-pink-600 bg-pink-50/50 border-pink-100 shadow-sm" : "text-slate-500"
+                            )}
+                        >
+                            <Heart className={cn("w-5 h-5", post.likes ? "fill-current" : "")} />
+                            <span className="font-bold text-lg">{post.likes || 0}</span>
+                            <span className="text-xs uppercase tracking-widest font-black ml-1">J'aime</span>
+                        </Button>
+                    </div>
+                </article>
 
-                                            <Button
-                                                className="w-full h-14 text-white text-lg font-bold rounded-2xl shadow-xl transition-all hover:-translate-y-1 active:scale-[0.98]"
-                                                style={{
-                                                    backgroundColor: club.themeColor || '#64748b',
-                                                    boxShadow: `0 10px 25px -5px ${club.themeColor || '#64748b'}40`
-                                                }}
-                                                asChild
-                                            >
-                                                <Link href={`/clubs/${clubId}/forms/${linkedForm.id}`}>
-                                                    Remplir le formulaire
-                                                </Link>
-                                            </Button>
-
-                                            {linkedForm.generateTicket && (
-                                                <div className="flex items-center justify-center gap-2 py-3 px-4 bg-yellow-50 rounded-xl border border-yellow-100">
-                                                    <span className="text-yellow-700 font-bold text-xs flex items-center gap-1.5 uppercase tracking-tighter">
-                                                        🎫 Inclus un ticket numérique
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )}
-
-                        {/* Club Identity Card */}
-                        <Card className="border-none shadow-xl shadow-slate-200 rounded-3xl overflow-hidden ring-1 ring-slate-100 bg-white group">
-                            <CardContent className="p-8">
-                                <Link href={`/clubs/${clubId}`} className="flex items-center gap-5 mb-6 group/club">
-                                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-lg border-2 border-white transition-transform duration-500 group-hover/club:scale-105">
-                                        {club.logo ? (
-                                            <Image
-                                                src={club.logo}
-                                                alt={club.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div
-                                                className="w-full h-full flex items-center justify-center font-black text-2xl text-white"
-                                                style={{ backgroundColor: club.themeColor || '#64748b' }}
-                                            >
-                                                {club.name[0]}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                        <h3 className="font-black text-xl text-slate-900 leading-tight group-hover/club:text-primary transition-colors">{club.name}</h3>
-                                        {club.verified && (
-                                            <Badge variant="secondary" className="w-fit bg-blue-50 text-blue-600 border-blue-100 text-[10px] font-bold uppercase tracking-tight py-0.5">
-                                                <CheckCircle2 className="w-3 h-3 mr-1" />
-                                                Officiel
-                                            </Badge>
-                                        )}
-                                    </div>
-                                </Link>
-
-                                <p className="text-slate-500 text-sm leading-relaxed mb-6 font-medium italic">
-                                    "{club.description || "Découvrez nos activités et rejoignez la communauté."}"
+                {/* Bottom Section: Forms & Club Detail */}
+                <div className="space-y-8 max-w-2xl mx-auto">
+                    {/* Participation Form Block */}
+                    {linkedForm && (
+                        <div className="bg-slate-50 rounded-3xl p-8 border-2 border-dashed border-slate-200 text-center space-y-6">
+                            <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center mx-auto ring-1 ring-slate-100">
+                                <ClipboardList className="w-8 h-8" style={{ color: club.themeColor || '#64748b' }} />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-slate-900 inline-flex items-center gap-2">
+                                    Participer
+                                    {linkedForm.generateTicket && <span title="Ticket inclus">🎫</span>}
+                                </h3>
+                                <p className="text-slate-600 mt-2 font-medium">
+                                    {linkedForm.description || "Inscrivez-vous pour participer à cet événement."}
                                 </p>
+                            </div>
+                            <Button
+                                className="w-full sm:w-auto px-12 h-14 text-lg font-bold rounded-2xl text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+                                style={{ backgroundColor: club.themeColor || '#64748b' }}
+                                asChild
+                            >
+                                <Link href={`/clubs/${clubId}/forms/${linkedForm.id}`}>
+                                    Répondre au formulaire
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
 
-                                <Button variant="secondary" className="w-full h-12 rounded-xl font-bold text-slate-600 hover:bg-slate-100 border border-slate-200" asChild>
-                                    <Link href={`/clubs/${clubId}`}>Visiter l'espace club</Link>
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </aside>
+                    {/* Simple Club Footer */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 p-8 bg-white rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+                        <div className="flex items-center gap-4 text-center sm:text-left">
+                            <div className="relative w-14 h-14 rounded-2xl overflow-hidden shadow-sm bg-slate-50 border shrink-0">
+                                {club.logo ? (
+                                    <Image src={club.logo} alt={club.name} fill className="object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center font-bold text-xl text-white" style={{ backgroundColor: club.themeColor || '#64748b' }}>
+                                        {club.name[0]}
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <h4 className="font-black text-lg text-slate-900 leading-none mb-1">{club.name}</h4>
+                                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-none">Espace Club Officiel</p>
+                            </div>
+                        </div>
+                        <Button variant="outline" className="rounded-xl font-bold h-11 px-6 text-slate-600 hover:bg-slate-50 border-slate-200" asChild>
+                            <Link href={`/clubs/${clubId}`}>Voir le profil complet</Link>
+                        </Button>
+                    </div>
+
+                    <div className="flex justify-center pt-8">
+                        <Button variant="ghost" className="text-slate-400 hover:text-slate-600 gap-2 font-bold uppercase tracking-[.2em] text-[10px]" asChild>
+                            <Link href={`/clubs/${clubId}`}>
+                                <ArrowLeft className="w-3 h-3" />
+                                Retourner au club
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
             </div>
         </main>

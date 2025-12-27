@@ -44,9 +44,9 @@ export default function ClubCard({ club }) {
                                     </span>
                                 </CardTitle>
                                 {club.verified && (
-                                    <Badge variant="default" className="flex-shrink-0 gap-1 bg-blue-500 hover:bg-blue-600">
-                                        <CheckCircle2 className="w-3 h-3" />
-                                        Vérifié
+                                    <Badge variant="default" className="flex-shrink-0 gap-1 bg-blue-500 hover:bg-blue-600 px-2 py-0.5 rounded-full border-0 shadow-sm">
+                                        <i className="fa-solid fa-circle-check text-[10px]"></i>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">Vérifié</span>
                                     </Badge>
                                 )}
                             </div>
