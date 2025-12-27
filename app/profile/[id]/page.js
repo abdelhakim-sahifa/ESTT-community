@@ -427,7 +427,7 @@ export default function PublicProfilePage() {
 
                         <section>
                             <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                <i className="fas fa-users text-primary"></i> Mes Clubs
+                                <i className="fas fa-users text-primary"></i>Clubs
                             </h2>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                 {loadingClubs ? (
