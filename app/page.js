@@ -373,12 +373,12 @@ export default function Home() {
                                     </div>
 
                                     {announcements[currentSlide].isAdmin ? (
-                                        <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white line-clamp-2 leading-tight">
+                                        <h3 className="text-3xl md:text-4xl lg:text-4xl font-black text-white line-clamp-2 leading-tight">
                                             {announcements[currentSlide].title}
                                         </h3>
                                     ) : (
                                         <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`} className="block">
-                                            <h3 className="text-xl md:text-4xl lg:text-5xl font-black text-white hover:text-primary transition-colors line-clamp-2 md:line-clamp-3 leading-[1.1]">
+                                            <h3 className="text-xl md:text-4xl lg:text-4xl font-black text-white hover:text-primary transition-colors line-clamp-2 md:line-clamp-3 leading-[1.1]">
                                                 {announcements[currentSlide].title}
                                             </h3>
                                         </Link>
