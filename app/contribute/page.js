@@ -96,8 +96,19 @@ export default function ContributePage() {
             }
 
             const timestamp = Date.now();
+
+            // Get module info for short name and full name
+            const moduleId = formData.module;
+            const moduleObj = staticDb.modules[`${formData.field}-${formData.semester}`]?.find(m => m.id === moduleId);
+            const fullModuleName = moduleObj ? moduleObj.name : moduleId;
+            const firstWord = fullModuleName.trim().split(/\s+/)[0];
+            const shortModuleName = `${firstWord}... - ${formData.semester}`;
+
             const contributionData = {
                 ...formData,
+                module: shortModuleName, // Store "ShortName - Semester"
+                fullModuleName: fullModuleName, // Store full name
+                moduleId: moduleId, // Store original ID for mapping and indexing
                 url: resourceUrl,
                 fileName: file?.name || null,
                 authorId: user?.uid || null,
@@ -112,17 +123,18 @@ export default function ContributePage() {
             const resourceId = newResourceRef.key;
             await set(newResourceRef, contributionData);
 
-            // 2. Link in module_resources mapping
-            const moduleMappingRef = ref(db, `module_resources/${formData.module}/${resourceId}`);
+            // 2. Link in module_resources mapping using the ID
+            const moduleMappingRef = ref(db, `module_resources/${moduleId}/${resourceId}`);
             await set(moduleMappingRef, true);
 
             if (user) {
                 // Track in user profile
                 const userActivityRef = ref(db, `users/${user.uid}/contributions/${resourceId}`);
                 await set(userActivityRef, {
-                    module: formData.module,
+                    module: shortModuleName,
                     title: formData.title,
-                    timestamp: timestamp
+                    timestamp: timestamp,
+                    unverified: true
                 });
             }
 

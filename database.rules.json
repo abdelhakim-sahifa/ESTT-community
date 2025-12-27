@@ -1,6 +1,7 @@
 {
     "rules": {
         "users": {
+            ".read": "root.child('users').child(auth.uid).child('role').val() === 'admin'",
             "$uid": {
                 ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
                 ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
@@ -17,7 +18,7 @@
             ],
             "$resourceId": {
                 ".write": "auth != null",
-                ".validate": "newData.hasChildren(['title', 'type', 'createdAt'])"
+                ".validate": "newData.hasChildren(['title', 'type', 'createdAt', 'module', 'fullModuleName', 'moduleId'])"
             }
         },
         "module_resources": {
@@ -85,6 +86,10 @@
                 "clubId",
                 "status"
             ]
+        },
+        "metadata": {
+            ".read": true,
+            ".write": "root.child('users').child(auth.uid).child('role').val() === 'admin'"
         }
     }
 }

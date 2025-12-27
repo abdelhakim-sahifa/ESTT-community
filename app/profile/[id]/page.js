@@ -403,20 +403,23 @@ export default function PublicProfilePage() {
                             </div>
                             <div className="grid gap-3">
                                 {profile.contributions ? (
-                                    Object.entries(profile.contributions).sort((a, b) => b[1].timestamp - a[1].timestamp).map(([id, item]) => (
-                                        <Card key={id} className="p-4 hover:shadow-md transition-all border-slate-200 bg-white group cursor-pointer">
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <h3 className="font-semibold text-slate-900 group-hover:text-primary transition-colors">{item.title}</h3>
-                                                    <div className="flex items-center gap-2 mt-1">
-                                                        <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded">{item.module}</span>
-                                                        <span className="text-xs text-slate-400">• {new Date(item.timestamp).toLocaleDateString()}</span>
+                                    Object.entries(profile.contributions)
+                                        .filter(([_, item]) => !item.unverified) // Filter unverified
+                                        .sort((a, b) => b[1].timestamp - a[1].timestamp)
+                                        .map(([id, item]) => (
+                                            <Card key={id} className="p-4 hover:shadow-md transition-all border-slate-200 bg-white group cursor-pointer">
+                                                <div className="flex justify-between items-center">
+                                                    <div>
+                                                        <h3 className="font-semibold text-slate-900 group-hover:text-primary transition-colors">{item.title}</h3>
+                                                        <div className="flex items-center gap-2 mt-1">
+                                                            <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded">{item.module || 'Ressource'}</span>
+                                                            <span className="text-xs text-slate-400">• {new Date(item.timestamp).toLocaleDateString()}</span>
+                                                        </div>
                                                     </div>
+                                                    <Share2 className="w-4 h-4 text-slate-300 group-hover:text-primary transition-colors" />
                                                 </div>
-                                                <Share2 className="w-4 h-4 text-slate-300 group-hover:text-primary transition-colors" />
-                                            </div>
-                                        </Card>
-                                    ))
+                                            </Card>
+                                        ))
                                 ) : (
                                     <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
                                         <p className="text-slate-400 text-sm">Aucune contribution pour le moment.</p>

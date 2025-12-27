@@ -27,6 +27,31 @@ export default function ActivityFeed() {
                     // Nested under module
                     Object.entries(value).forEach(([id, resource]) => {
                         if (!seenIds.has(id)) {
+                            // Only add if NOT unverified
+                            if (!resource.unverified) {
+                                resourceList.push({
+                                    id,
+                                    type: 'resource',
+                                    title: resource.title,
+                                    module: resource.module,
+                                    semester: resource.semester,
+                                    field: resource.field,
+                                    author: resource.authorName || 'Anonyme',
+                                    authorId: resource.authorId,
+                                    timestamp: resource.createdAt || resource.created_at || Date.now(),
+                                    href: resource.url || resource.link || resource.file || `/browse?module=${resource.module}`
+                                });
+                                seenIds.add(id);
+                            }
+                        }
+                    });
+                } else {
+                    // Flat structure
+                    const id = key;
+                    const resource = value;
+                    if (!seenIds.has(id)) {
+                        // Only add if NOT unverified
+                        if (!resource.unverified) {
                             resourceList.push({
                                 id,
                                 type: 'resource',
@@ -41,25 +66,6 @@ export default function ActivityFeed() {
                             });
                             seenIds.add(id);
                         }
-                    });
-                } else {
-                    // Flat structure
-                    const id = key;
-                    const resource = value;
-                    if (!seenIds.has(id)) {
-                        resourceList.push({
-                            id,
-                            type: 'resource',
-                            title: resource.title,
-                            module: resource.module,
-                            semester: resource.semester,
-                            field: resource.field,
-                            author: resource.authorName || 'Anonyme',
-                            authorId: resource.authorId,
-                            timestamp: resource.createdAt || resource.created_at || Date.now(),
-                            href: resource.url || resource.link || resource.file || `/browse?module=${resource.module}`
-                        });
-                        seenIds.add(id);
                     }
                 }
             });
@@ -119,7 +125,7 @@ export default function ActivityFeed() {
                                 )}
                                 {activity.field && (
                                     <Badge variant="outline" className={cn("px-2 py-0 font-bold text-[9px] uppercase", getFieldColor(activity.field))}>
-                                        {activity.field }
+                                        {activity.field}
                                     </Badge>
                                 )}
                             </div>

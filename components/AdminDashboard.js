@@ -99,10 +99,10 @@ export default function AdminDashboard() {
             Object.entries(data).forEach(([key, value]) => {
                 if (typeof value === 'object' && value !== null && !value.title) {
                     Object.entries(value).forEach(([id, res]) => {
-                        list.push({ id, ...res, moduleId: key });
+                        list.push({ id, ...res, moduleId: key, _isNested: true });
                     });
                 } else {
-                    list.push({ id: key, ...value });
+                    list.push({ id: key, ...value, _isNested: false });
                 }
             });
             setResources(list);
@@ -166,12 +166,19 @@ export default function AdminDashboard() {
 
     const handleApproveResource = async (resource) => {
         try {
-            // Determine the path based on how it's stored
+            // Determine the path based on the flag we set in the listener
             let path = `resources/${resource.id}`;
-            if (resource.moduleId) {
+            if (resource._isNested && resource.moduleId) {
                 path = `resources/${resource.moduleId}/${resource.id}`;
             }
             await update(ref(db, path), { unverified: null });
+
+            // Sync with user profile if authorId exists
+            if (resource.authorId) {
+                const profileContribPath = `users/${resource.authorId}/contributions/${resource.id}`;
+                await update(ref(db, profileContribPath), { unverified: null });
+            }
+
             alert("Ressource approuvée !");
         } catch (err) {
             console.error(err);
@@ -183,10 +190,17 @@ export default function AdminDashboard() {
         if (confirm("Supprimer cette ressource ?")) {
             try {
                 let path = `resources/${resource.id}`;
-                if (resource.moduleId) {
+                if (resource._isNested && resource.moduleId) {
                     path = `resources/${resource.moduleId}/${resource.id}`;
                 }
                 await remove(ref(db, path));
+
+                // Sync with user profile if authorId exists
+                if (resource.authorId) {
+                    const profileContribPath = `users/${resource.authorId}/contributions/${resource.id}`;
+                    await remove(ref(db, profileContribPath));
+                }
+
                 alert("Ressource supprimée.");
             } catch (err) {
                 console.error(err);
