@@ -109,7 +109,7 @@ export default function ActivityFeed() {
                     <CardContent className="p-6 flex-grow">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex gap-2">
-                                <Badge variant="secondary" className="px-2 py-0 font-black text-[9px] uppercase tracking-widest bg-muted/50">
+                                <Badge variant="secondary" className=" px-2 py-0 font-bold text-[9px] uppercase">
                                     {activity.type === 'resource' ? 'Ressource' : 'Article'}
                                 </Badge>
                                 {activity.semester && (
@@ -119,7 +119,7 @@ export default function ActivityFeed() {
                                 )}
                                 {activity.field && (
                                     <Badge variant="outline" className={cn("px-2 py-0 font-bold text-[9px] uppercase", getFieldColor(activity.field))}>
-                                        {activity.field}
+                                        {activity.field }
                                     </Badge>
                                 )}
                             </div>

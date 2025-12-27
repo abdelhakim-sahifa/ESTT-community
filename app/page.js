@@ -219,7 +219,102 @@ export default function Home() {
 
     return (
         <main className="min-h-screen">
-            {/* Announcements Slide View */}
+   
+            <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24">
+                <div className="container px-4 md:px-6 flex flex-col items-center text-center">
+                    <h1 className="text-4xl font-heading font-medium tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
+                        Partage tes ressources — aide tes camarades, gagne du temps
+                    </h1>
+                    <p className="mx-auto mt-6 max-w-[700px] text-lg text-muted-foreground md:text-xl">
+                        Tu as un cours, un TD, un exercice ou une vidéo utile ? Contribue en moins de 2 minutes.
+                    </p>
+
+                    <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                        <Button size="lg" className="rounded-full px-8 text-lg h-12" asChild>
+                            <Link href="/contribute">
+                                Contribuer une ressource
+                            </Link>
+                        </Button>
+                        <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12" asChild>
+                            <Link href="/browse">
+                                Parcourir les ressources
+                            </Link>
+                        </Button>
+                        <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12" asChild>
+                            <Link href="/clubs">
+                                Découvrir les clubs
+                            </Link>
+                        </Button>
+                    </div>
+
+                    <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm font-medium text-muted-foreground" aria-hidden="false">
+                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border">
+                            <strong className="text-primary text-lg" id="hero-stat-resources">{stats.resources}</strong> ressources
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border">
+                            <strong className="text-primary text-lg" id="hero-stat-contributions">{stats.contributions}</strong> contributions en attente
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border">
+                            <strong className="text-primary text-lg" id="hero-stat-modules">{stats.modules}</strong> modules
+                        </div>
+                    </div>
+
+                    <p className="mt-8 text-sm text-muted-foreground/80">
+                        Formats acceptés : PDF · Images · Liens · Vidéos — Anonyme possible · Modération rapide
+                    </p>
+
+
+
+
+
+
+                    <div className="relative w-full max-w-lg mt-10 z-50">
+                        <form onSubmit={handleSearch}>
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                            <input
+                                type="text"
+                                id="global-search"
+                                className="w-full h-14 pl-12 pr-4 rounded-full border border-input bg-background shadow-md ring-offset-background transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                placeholder="Rechercher un module, un cours..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onFocus={() => searchQuery.trim().length > 1 && setShowSuggestions(true)}
+                                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                            />
+                        </form>
+
+                        {showSuggestions && suggestions.length > 0 && (
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-background border rounded-2xl shadow-xl overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-200 max-h-[400px] overflow-y-auto">
+                                {suggestions.map((item) => (
+                                    <button
+                                        key={item.id}
+                                        className="w-full px-5 py-3 text-left hover:bg-muted/50 flex items-center gap-3 transition-colors border-b last:border-0"
+                                        onClick={() => handleSuggestionClick(item)}
+                                    >
+                                        <div className="bg-primary/10 p-2 rounded-lg text-primary shrink-0">
+                                            {item.type === 'module' ? <BookOpen className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
+                                        </div>
+                                        <div className="flex flex-col min-w-0">
+                                            <span className="font-medium text-sm truncate">{item.type === 'module' ? item.name : item.title}</span>
+                                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                                                {item.type === 'module' ? 'Module' : 'Ressource'}
+                                            </span>
+                                        </div>
+                                    </button>
+                                ))}
+                                <button
+                                    className="w-full px-5 py-3 text-left hover:bg-muted/50 text-primary text-sm font-medium transition-colors"
+                                    onClick={() => handleSearch()}
+                                >
+                                    Voir tous les résultats pour "{searchQuery}"
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </section>
+
+                     {/* Announcements Slide View */}
             {!loadingAnnouncements && announcements.length > 0 && (
                 <section className="py-12 bg-white">
                     <div className="container px-4 md:px-6">
@@ -339,94 +434,6 @@ export default function Home() {
                     </div>
                 </section>
             )}
-            <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24">
-                <div className="container px-4 md:px-6 flex flex-col items-center text-center">
-                    <h1 className="text-4xl font-heading font-medium tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
-                        Partage tes ressources — aide tes camarades, gagne du temps
-                    </h1>
-                    <p className="mx-auto mt-6 max-w-[700px] text-lg text-muted-foreground md:text-xl">
-                        Tu as un cours, un TD, un exercice ou une vidéo utile ? Contribue en moins de 2 minutes.
-                    </p>
-
-                    <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                        <Button size="lg" className="rounded-full px-8 text-lg h-12" asChild>
-                            <Link href="/contribute">
-                                Contribuer une ressource
-                            </Link>
-                        </Button>
-                        <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12" asChild>
-                            <Link href="/browse">
-                                Parcourir les ressources
-                            </Link>
-                        </Button>
-                        <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12" asChild>
-                            <Link href="/clubs">
-                                Découvrir les clubs
-                            </Link>
-                        </Button>
-                    </div>
-
-                    <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm font-medium text-muted-foreground" aria-hidden="false">
-                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border">
-                            <strong className="text-primary text-lg" id="hero-stat-resources">{stats.resources}</strong> ressources
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border">
-                            <strong className="text-primary text-lg" id="hero-stat-contributions">{stats.contributions}</strong> contributions en attente
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border">
-                            <strong className="text-primary text-lg" id="hero-stat-modules">{stats.modules}</strong> modules
-                        </div>
-                    </div>
-
-                    <p className="mt-8 text-sm text-muted-foreground/80">
-                        Formats acceptés : PDF · Images · Liens · Vidéos — Anonyme possible · Modération rapide
-                    </p>
-
-                    <div className="relative w-full max-w-lg mt-10 z-50">
-                        <form onSubmit={handleSearch}>
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                            <input
-                                type="text"
-                                id="global-search"
-                                className="w-full h-14 pl-12 pr-4 rounded-full border border-input bg-background shadow-md ring-offset-background transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                                placeholder="Rechercher un module, un cours..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onFocus={() => searchQuery.trim().length > 1 && setShowSuggestions(true)}
-                                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                            />
-                        </form>
-
-                        {showSuggestions && suggestions.length > 0 && (
-                            <div className="absolute top-full left-0 right-0 mt-2 bg-background border rounded-2xl shadow-xl overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-200 max-h-[400px] overflow-y-auto">
-                                {suggestions.map((item) => (
-                                    <button
-                                        key={item.id}
-                                        className="w-full px-5 py-3 text-left hover:bg-muted/50 flex items-center gap-3 transition-colors border-b last:border-0"
-                                        onClick={() => handleSuggestionClick(item)}
-                                    >
-                                        <div className="bg-primary/10 p-2 rounded-lg text-primary shrink-0">
-                                            {item.type === 'module' ? <BookOpen className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
-                                        </div>
-                                        <div className="flex flex-col min-w-0">
-                                            <span className="font-medium text-sm truncate">{item.type === 'module' ? item.name : item.title}</span>
-                                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                                                {item.type === 'module' ? 'Module' : 'Ressource'}
-                                            </span>
-                                        </div>
-                                    </button>
-                                ))}
-                                <button
-                                    className="w-full px-5 py-3 text-left hover:bg-muted/50 text-primary text-sm font-medium transition-colors"
-                                    onClick={() => handleSearch()}
-                                >
-                                    Voir tous les résultats pour "{searchQuery}"
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </section>
 
 
             {/* Banners for main programs */}
