@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
 import { Loader2, CheckCircle2, ArrowLeft, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
@@ -29,8 +31,10 @@ export default function ClubJoinPage() {
         name: '',
         email: '',
         phone: '',
-        reason: ''
+        reason: '',
+        answers: {} // For custom questions
     });
+    const [joinFormQuestions, setJoinFormQuestions] = useState([]);
 
     useEffect(() => {
         if (clubId) {
@@ -62,6 +66,13 @@ export default function ClubJoinPage() {
             }
 
             setClub({ id: clubId, ...clubSnap.val() });
+
+            // Fetch custom questions
+            const questionsRef = ref(db, `clubs/${clubId}/joinFormQuestions`);
+            const questionsSnap = await get(questionsRef);
+            if (questionsSnap.exists()) {
+                setJoinFormQuestions(questionsSnap.val() || []);
+            }
         } catch (error) {
             console.error('Error fetching club:', error);
             setError('Failed to load club data');
@@ -78,6 +89,16 @@ export default function ClubJoinPage() {
         }));
     };
 
+    const handleAnswerChange = (questionId, value) => {
+        setFormData(prev => ({
+            ...prev,
+            answers: {
+                ...prev.answers,
+                [questionId]: value
+            }
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
@@ -86,6 +107,13 @@ export default function ClubJoinPage() {
         try {
             if (!formData.name || !formData.email || !formData.reason) {
                 throw new Error('Veuillez remplir tous les champs obligatoires');
+            }
+
+            // Check custom required questions
+            for (const q of joinFormQuestions) {
+                if (q.required && !formData.answers[q.id]) {
+                    throw new Error(`Le champ "${q.label}" est obligatoire`);
+                }
             }
 
             // Create join request
@@ -260,6 +288,109 @@ export default function ClubJoinPage() {
                                 />
                             </div>
 
+                            {joinFormQuestions.length > 0 && (
+                                <div className="space-y-6 pt-4 border-t border-slate-100">
+                                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Informations complémentaires</h3>
+                                    {joinFormQuestions.map((q) => (
+                                        <div key={q.id} className="space-y-2">
+                                            <Label htmlFor={`q-${q.id}`}>
+                                                {q.label} {q.required && '*'}
+                                            </Label>
+                                            {q.type === 'textarea' ? (
+                                                <Textarea
+                                                    id={`q-${q.id}`}
+                                                    value={formData.answers[q.id] || ''}
+                                                    onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                                                    required={q.required}
+                                                    placeholder="Votre réponse..."
+                                                    className="min-h-[100px] focus-visible:ring-offset-0 focus-visible:ring-1 theme-ring"
+                                                />
+                                            ) : q.type === 'select' ? (
+                                                <Select
+                                                    onValueChange={(v) => handleAnswerChange(q.id, v)}
+                                                    value={formData.answers[q.id] || ''}
+                                                    required={q.required}
+                                                >
+                                                    <SelectTrigger className="focus-visible:ring-offset-0 focus-visible:ring-1 theme-ring">
+                                                        <SelectValue placeholder="Sélectionnez une option" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {(q.options || '').split(',').map(opt => opt.trim()).filter(Boolean).map(opt => (
+                                                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            ) : q.type === 'radio' ? (
+                                                <div className="space-y-2 mt-2">
+                                                    {(q.options || '').split(',').map(opt => opt.trim()).filter(Boolean).map(opt => (
+                                                        <div key={opt} className="flex items-center space-x-2">
+                                                            <input
+                                                                type="radio"
+                                                                id={`q-${q.id}-${opt}`}
+                                                                name={`q-${q.id}`}
+                                                                required={q.required}
+                                                                checked={formData.answers[q.id] === opt}
+                                                                onChange={() => handleAnswerChange(q.id, opt)}
+                                                                className="w-4 h-4 text-primary focus:ring-primary border-slate-300"
+                                                            />
+                                                            <Label htmlFor={`q-${q.id}-${opt}`} className="font-normal cursor-pointer">
+                                                                {opt}
+                                                            </Label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : q.type === 'checkbox' ? (
+                                                <div className="space-y-2 mt-2">
+                                                    {(q.options || '').split(',').map(opt => opt.trim()).filter(Boolean).map(opt => (
+                                                        <div key={opt} className="flex items-center space-x-2">
+                                                            <Checkbox
+                                                                id={`q-${q.id}-${opt}`}
+                                                                checked={(formData.answers[q.id] || '').split(', ').includes(opt)}
+                                                                onCheckedChange={(checked) => {
+                                                                    const currentValues = formData.answers[q.id] ? formData.answers[q.id].split(', ') : [];
+                                                                    let newValues;
+                                                                    if (checked) {
+                                                                        newValues = [...currentValues, opt];
+                                                                    } else {
+                                                                        newValues = currentValues.filter(v => v !== opt);
+                                                                    }
+                                                                    handleAnswerChange(q.id, newValues.join(', '));
+                                                                }}
+                                                            />
+                                                            <Label htmlFor={`q-${q.id}-${opt}`} className="font-normal cursor-pointer">
+                                                                {opt}
+                                                            </Label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : q.type === 'boolean' ? (
+                                                <div className="flex items-center space-x-2 mt-2">
+                                                    <Checkbox
+                                                        id={`q-${q.id}`}
+                                                        checked={!!formData.answers[q.id]}
+                                                        onCheckedChange={(checked) => handleAnswerChange(q.id, checked)}
+                                                        required={q.required}
+                                                    />
+                                                    <Label htmlFor={`q-${q.id}`} className="font-normal cursor-pointer">
+                                                        Oui / Valider
+                                                    </Label>
+                                                </div>
+                                            ) : (
+                                                <Input
+                                                    id={`q-${q.id}`}
+                                                    type={q.type}
+                                                    value={formData.answers[q.id] || ''}
+                                                    onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                                                    required={q.required}
+                                                    placeholder="Votre réponse..."
+                                                    className="focus-visible:ring-offset-0 focus-visible:ring-1 theme-ring"
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             {error && (
                                 <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm flex items-center gap-2">
                                     <AlertCircle className="w-4 h-4" />
@@ -285,6 +416,6 @@ export default function ClubJoinPage() {
                     </CardContent>
                 </Card>
             </div>
-        </main>
+        </main >
     );
 }

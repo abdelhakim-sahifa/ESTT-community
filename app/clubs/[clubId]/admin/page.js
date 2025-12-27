@@ -35,7 +35,7 @@ export default function ClubAdminPage() {
 
     // Club info editing
     const [editingInfo, setEditingInfo] = useState(false);
-    const [clubInfo, setClubInfo] = useState({ description: '', themeColor: '#64748b' });
+    const [clubInfo, setClubInfo] = useState({ description: '', themeColor: '#64748b', socialLinks: {} });
 
     // Post creation
     const [newPost, setNewPost] = useState({ type: 'article', title: '', content: '', linkedFormId: '' });
@@ -61,6 +61,7 @@ export default function ClubAdminPage() {
 
     // Join Requests
     const [joinRequests, setJoinRequests] = useState([]);
+    const [joinFormQuestions, setJoinFormQuestions] = useState([]); // Custom questions for join form
 
     // Tickets
     const [tickets, setTickets] = useState([]);
@@ -136,7 +137,8 @@ export default function ClubAdminPage() {
             setClub(clubData);
             setClubInfo({
                 description: clubData.description || '',
-                themeColor: clubData.themeColor || '#64748b'
+                themeColor: clubData.themeColor || '#64748b',
+                socialLinks: clubData.socialLinks || {}
             });
 
             // Fetch posts
@@ -162,6 +164,15 @@ export default function ClubAdminPage() {
                 setJoinRequests(requestsArray);
             } else {
                 setJoinRequests([]);
+            }
+
+            // Fetch join form questions
+            const joinQuestionsRef = ref(db, `clubs/${clubId}/joinFormQuestions`);
+            const joinQuestionsSnap = await get(joinQuestionsRef);
+            if (joinQuestionsSnap.exists()) {
+                setJoinFormQuestions(joinQuestionsSnap.val() || []);
+            } else {
+                setJoinFormQuestions([]);
             }
 
             // Fetch forms
@@ -231,7 +242,8 @@ export default function ClubAdminPage() {
             const clubRef = ref(db, `clubs/${clubId}`);
             let updates = {
                 description: clubInfo.description,
-                themeColor: clubInfo.themeColor
+                themeColor: clubInfo.themeColor,
+                socialLinks: clubInfo.socialLinks
             };
 
             if (logoFile) {
@@ -370,7 +382,7 @@ export default function ClubAdminPage() {
             ...prev,
             fields: [
                 ...prev.fields,
-                { id: Date.now(), label: '', type: 'text', required: false }
+                { id: Date.now(), label: '', type: 'text', required: false, options: '' }
             ]
         }));
     };
@@ -446,6 +458,31 @@ export default function ClubAdminPage() {
         } catch (error) {
             console.error('Error deleting post:', error);
             setMessage('Erreur lors de la suppression');
+        }
+    };
+
+    const handleAddJoinQuestion = () => {
+        setJoinFormQuestions(prev => [
+            ...prev,
+            { id: Date.now(), label: '', type: 'text', required: false, options: '' }
+        ]);
+    };
+
+    const handleRemoveJoinQuestion = (id) => {
+        setJoinFormQuestions(prev => prev.filter(q => q.id !== id));
+    };
+
+    const handleUpdateJoinQuestion = (id, field, value) => {
+        setJoinFormQuestions(prev => prev.map(q => q.id === id ? { ...q, [field]: value } : q));
+    };
+
+    const handleSaveJoinQuestions = async () => {
+        try {
+            await set(ref(db, `clubs/${clubId}/joinFormQuestions`), joinFormQuestions);
+            setMessage('Questions du formulaire mises à jour !');
+        } catch (error) {
+            console.error(error);
+            setMessage('Erreur lors de la sauvegarde des questions');
         }
     };
 
@@ -760,6 +797,47 @@ export default function ClubAdminPage() {
                                             </p>
                                         </div>
 
+                                        <div className="space-y-4 pt-4 border-t">
+                                            <h3 className="font-semibold text-lg flex items-center gap-2">
+                                                <Share2 className="w-5 h-5" /> Réseaux Sociaux
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground">Ajoutez les liens vers vos réseaux sociaux pour les afficher sur votre profil.</p>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {[
+                                                    { id: 'instagram', label: 'Instagram', icon: 'fa-brands fa-instagram' },
+                                                    { id: 'facebook', label: 'Facebook', icon: 'fa-brands fa-facebook' },
+                                                    { id: 'linkedin', label: 'LinkedIn', icon: 'fa-brands fa-linkedin' },
+                                                    { id: 'reddit', label: 'Reddit', icon: 'fa-brands fa-reddit' },
+                                                    { id: 'youtube', label: 'YouTube', icon: 'fa-brands fa-youtube' },
+                                                    { id: 'github', label: 'GitHub', icon: 'fa-brands fa-github' },
+                                                    { id: 'other', label: 'Autre site', icon: 'fa-solid fa-globe' }
+                                                ].map((platform) => (
+                                                    <div key={platform.id} className="space-y-2">
+                                                        <Label htmlFor={`social-${platform.id}`} className="flex items-center gap-2">
+                                                            <i className={platform.icon}></i> {platform.label}
+                                                        </Label>
+                                                        <Input
+                                                            id={`social-${platform.id}`}
+                                                            placeholder={platform.id === 'other' ? "https://votre-site.com" : `Lien ${platform.label}`}
+                                                            value={clubInfo.socialLinks?.[platform.id] || ''}
+                                                            onChange={(e) => {
+                                                                const val = e.target.value;
+                                                                setClubInfo(prev => ({
+                                                                    ...prev,
+                                                                    socialLinks: {
+                                                                        ...prev.socialLinks,
+                                                                        [platform.id]: val
+                                                                    }
+                                                                }));
+                                                            }}
+                                                            disabled={editingInfo}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
                                         <Button onClick={handleUpdateInfo} disabled={editingInfo}>
                                             {editingInfo ? (
                                                 <>
@@ -1067,6 +1145,96 @@ export default function ClubAdminPage() {
                                             </div>
                                         </div>
 
+                                        {/* Custom Questions Management */}
+                                        <div className="space-y-4 border p-4 rounded-lg bg-slate-50">
+                                            <div className="flex items-center justify-between">
+                                                <div className="space-y-1">
+                                                    <h3 className="font-semibold">Questions personnalisées</h3>
+                                                    <p className="text-sm text-muted-foreground">Ajoutez des questions spécifiques pour votre formulaire d'adhésion.</p>
+                                                </div>
+                                                <Button variant="outline" size="sm" onClick={handleAddJoinQuestion}>
+                                                    <Plus className="w-4 h-4 mr-2" /> Ajouter une question
+                                                </Button>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <div className="bg-white p-3 border rounded-md space-y-2 opacity-60">
+                                                    <Badge variant="outline">Questions standard (fixes)</Badge>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                                                        <div className="flex items-center gap-2 p-2 border rounded bg-slate-50">Nom complet</div>
+                                                        <div className="flex items-center gap-2 p-2 border rounded bg-slate-50">Email</div>
+                                                        <div className="flex items-center gap-2 p-2 border rounded bg-slate-50">Téléphone</div>
+                                                        <div className="flex items-center gap-2 p-2 border rounded bg-slate-50">Motivation</div>
+                                                    </div>
+                                                </div>
+
+                                                {joinFormQuestions.map((q) => (
+                                                    <div key={q.id} className="flex gap-2 items-start bg-white p-3 border rounded-md shadow-sm">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1">
+                                                            <Input
+                                                                placeholder="Votre question"
+                                                                value={q.label}
+                                                                onChange={e => handleUpdateJoinQuestion(q.id, 'label', e.target.value)}
+                                                            />
+                                                            <div className="flex items-center gap-4">
+                                                                <Select
+                                                                    value={q.type}
+                                                                    onValueChange={v => handleUpdateJoinQuestion(q.id, 'type', v)}
+                                                                >
+                                                                    <SelectTrigger className="w-full">
+                                                                        <SelectValue />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="text">Texte court</SelectItem>
+                                                                        <SelectItem value="textarea">Paragraphe</SelectItem>
+                                                                        <SelectItem value="number">Nombre</SelectItem>
+                                                                        <SelectItem value="email">Email</SelectItem>
+                                                                        <SelectItem value="tel">Téléphone</SelectItem>
+                                                                        <SelectItem value="select">Liste déroulante</SelectItem>
+                                                                        <SelectItem value="radio">Choix unique (Radio)</SelectItem>
+                                                                        <SelectItem value="checkbox">Choix multiples (Cocher)</SelectItem>
+                                                                        <SelectItem value="boolean">Case à cocher (Oui/Non)</SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                                <div className="flex items-center gap-2 shrink-0">
+                                                                    <Label className="text-xs">Requis</Label>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={q.required}
+                                                                        onChange={e => handleUpdateJoinQuestion(q.id, 'required', e.target.checked)}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            {['select', 'radio', 'checkbox'].includes(q.type) && (
+                                                                <div className="md:col-span-2 space-y-1">
+                                                                    <Label className="text-xs">Options (séparées par des virgules)</Label>
+                                                                    <Input
+                                                                        placeholder="Option 1, Option 2, Option 3"
+                                                                        value={q.options || ''}
+                                                                        onChange={e => handleUpdateJoinQuestion(q.id, 'options', e.target.value)}
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="text-destructive hover:bg-red-50"
+                                                            onClick={() => handleRemoveJoinQuestion(q.id)}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            <div className="pt-2 border-t">
+                                                <Button size="sm" onClick={handleSaveJoinQuestions}>
+                                                    Enregistrer les questions
+                                                </Button>
+                                            </div>
+                                        </div>
+
                                         <div className="space-y-4">
                                             {joinRequests.length === 0 ? (
                                                 <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50/50">
@@ -1084,6 +1252,32 @@ export default function ClubAdminPage() {
                                                                     <p className="mt-2 text-slate-800 bg-slate-100 p-2 rounded text-xs italic">
                                                                         "{req.reason}"
                                                                     </p>
+
+                                                                    {req.answers && Object.keys(req.answers).length > 0 && (
+                                                                        <div className="mt-3 space-y-2 pt-2 border-t border-slate-200">
+                                                                            <p className="text-xs font-semibold text-primary">Réponses complémentaires :</p>
+                                                                            {joinFormQuestions.map(q => req.answers[q.id] && (
+                                                                                <div key={q.id} className="text-xs">
+                                                                                    <span className="font-medium text-slate-600">{q.label} : </span>
+                                                                                    <span className="text-slate-700">
+                                                                                        {typeof req.answers[q.id] === 'boolean'
+                                                                                            ? (req.answers[q.id] ? 'Oui' : 'Non')
+                                                                                            : req.answers[q.id]}
+                                                                                    </span>
+                                                                                </div>
+                                                                            ))}
+                                                                            {/* If question was deleted but answer exists */}
+                                                                            {Object.entries(req.answers).map(([qid, ans]) => (
+                                                                                !joinFormQuestions.find(jq => jq.id.toString() === qid.toString()) && (
+                                                                                    <div key={qid} className="text-xs italic opacity-70">
+                                                                                        <span className="font-medium">Ancienne question ({qid}) : </span>
+                                                                                        <span>{ans}</span>
+                                                                                    </div>
+                                                                                )
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+
                                                                     <p className="text-xs">
                                                                         Reçu le {new Date(req.submittedAt).toLocaleDateString('fr-FR')} à {new Date(req.submittedAt).toLocaleTimeString('fr-FR')}
                                                                     </p>
@@ -1160,7 +1354,9 @@ export default function ClubAdminPage() {
                                                                     </td>
                                                                     {selectedForm.fields.map(field => (
                                                                         <td key={field.id} className="p-4">
-                                                                            {sub.data?.[field.id] || '-'}
+                                                                            {typeof sub.data?.[field.id] === 'boolean'
+                                                                                ? (sub.data[field.id] ? 'Oui' : 'Non')
+                                                                                : (sub.data?.[field.id] || '-')}
                                                                         </td>
                                                                     ))}
                                                                     {selectedForm.generateTicket && (
@@ -1258,9 +1454,13 @@ export default function ClubAdminPage() {
                                                                         <SelectContent>
                                                                             <SelectItem value="text">Texte court</SelectItem>
                                                                             <SelectItem value="textarea">Paragraphe</SelectItem>
+                                                                            <SelectItem value="number">Nombre</SelectItem>
                                                                             <SelectItem value="email">Email</SelectItem>
                                                                             <SelectItem value="tel">Téléphone</SelectItem>
-                                                                            <SelectItem value="number">Nombre</SelectItem>
+                                                                            <SelectItem value="select">Liste déroulante</SelectItem>
+                                                                            <SelectItem value="radio">Choix unique (Radio)</SelectItem>
+                                                                            <SelectItem value="checkbox">Choix multiples (Cocher)</SelectItem>
+                                                                            <SelectItem value="boolean">Case à cocher (Oui/Non)</SelectItem>
                                                                         </SelectContent>
                                                                     </Select>
                                                                     <div className="flex items-center gap-2">
@@ -1271,6 +1471,17 @@ export default function ClubAdminPage() {
                                                                             onChange={e => handleUpdateField(field.id, 'required', e.target.checked)}
                                                                         />
                                                                     </div>
+                                                                    {['select', 'radio', 'checkbox'].includes(field.type) && (
+                                                                        <div className="col-span-full space-y-1 mt-1">
+                                                                            <Label className="text-xs font-semibold">Options (séparées par des virgules)</Label>
+                                                                            <Input
+                                                                                placeholder="Option 1, Option 2, Option 3"
+                                                                                value={field.options || ''}
+                                                                                onChange={e => handleUpdateField(field.id, 'options', e.target.value)}
+                                                                                className="h-8"
+                                                                            />
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                                 <Button
                                                                     type="button"

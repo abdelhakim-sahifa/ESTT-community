@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { IMAGE_SIZES } from '@/lib/image-constants';
 import { db as staticDb } from '@/lib/data';
 import { db as firebaseDb, ref, get } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -219,7 +220,7 @@ export default function Home() {
 
     return (
         <main className="min-h-screen">
-   
+
             <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24">
                 <div className="container px-4 md:px-6 flex flex-col items-center text-center">
                     <h1 className="text-4xl font-heading font-medium tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
@@ -314,7 +315,7 @@ export default function Home() {
                 </div>
             </section>
 
-                     {/* Announcements Slide View */}
+            {/* Announcements Slide View */}
             {!loadingAnnouncements && announcements.length > 0 && (
                 <section className="py-12 bg-white">
                     <div className="container px-4 md:px-6">
@@ -339,6 +340,7 @@ export default function Home() {
                                             src={announcements[currentSlide].imageUrl}
                                             alt="Announcement cover"
                                             fill
+                                            sizes={IMAGE_SIZES.ANNOUNCEMENT_HERO}
                                             className="object-cover opacity-60 transition-opacity duration-700 scale-105 group-hover:scale-100 transition-transform duration-1000"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
@@ -359,7 +361,7 @@ export default function Home() {
                                     <div className="flex items-center gap-3 mb-2">
                                         {announcements[currentSlide].clubLogo && (
                                             <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-white shadow-sm">
-                                                <Image src={announcements[currentSlide].clubLogo} alt={announcements[currentSlide].clubName} fill className="object-cover" />
+                                                <Image src={announcements[currentSlide].clubLogo} alt={announcements[currentSlide].clubName} fill sizes={IMAGE_SIZES.CLUB_LOGO_SM} className="object-cover" />
                                             </div>
                                         )}
                                         <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md px-3 py-1">

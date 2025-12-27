@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { IMAGE_SIZES } from '@/lib/image-constants';
 import { db, ref, get, set, update, onValue, query, orderByChild, equalTo } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -436,7 +437,7 @@ export default function PublicProfilePage() {
                                         <Link key={club.id} href={`/clubs/${club.id}`} className="group p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md hover:border-primary/20 transition-all text-center">
                                             <div className="relative w-12 h-12 mx-auto mb-3">
                                                 {club.logo ? (
-                                                    <Image src={club.logo} alt={club.name} fill className="object-contain" />
+                                                    <Image src={club.logo} alt={club.name} fill sizes={IMAGE_SIZES.CLUB_LOGO_MD} className="object-contain" />
                                                 ) : (
                                                     <div className="w-full h-full rounded-full flex items-center justify-center font-bold text-white text-lg" style={{ backgroundColor: club.themeColor || '#64748b' }}>
                                                         {club.name[0]}

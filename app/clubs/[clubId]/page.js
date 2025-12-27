@@ -218,6 +218,61 @@ export default function ClubProfilePage() {
                                     </div>
                                     <p className="text-muted-foreground">{club.description}</p>
 
+                                    {club.socialLinks && Object.values(club.socialLinks).some(link => link) && (
+                                        <div className="flex flex-wrap gap-3 pt-2 justify-center md:justify-start">
+                                            {Object.entries(club.socialLinks).map(([platform, url]) => {
+                                                if (!url) return null;
+
+                                                const standardPlatforms = {
+                                                    instagram: 'fa-brands fa-instagram',
+                                                    facebook: 'fa-brands fa-facebook',
+                                                    linkedin: 'fa-brands fa-linkedin',
+                                                    reddit: 'fa-brands fa-reddit',
+                                                    youtube: 'fa-brands fa-youtube',
+                                                    github: 'fa-brands fa-github'
+                                                };
+
+                                                const iconClass = standardPlatforms[platform];
+                                                const fullUrl = url.startsWith('http') ? url : `https://${url}`;
+
+                                                let hostname = '';
+                                                try {
+                                                    hostname = new URL(fullUrl).hostname;
+                                                } catch (e) {
+                                                    hostname = fullUrl;
+                                                }
+
+                                                return (
+                                                    <a
+                                                        key={platform}
+                                                        href={fullUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-600 hover:text-white transition-all theme-hover-bg shadow-sm hover:shadow-md"
+                                                        title={platform.charAt(0).toUpperCase() + platform.slice(1)}
+                                                    >
+                                                        {iconClass ? (
+                                                            <i className={`${iconClass} text-lg`}></i>
+                                                        ) : (
+                                                            <>
+                                                                <img
+                                                                    src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
+                                                                    alt={platform}
+                                                                    className="w-5 h-5"
+                                                                    onError={(e) => {
+                                                                        e.target.style.display = 'none';
+                                                                        if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
+                                                                    }}
+                                                                />
+                                                                <i className="fa-solid fa-globe text-lg" style={{ display: 'none' }}></i>
+                                                            </>
+                                                        )}
+                                                    </a>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+
                                     {isAdmin && (
                                         <Button asChild variant="outline" className="gap-2 mt-4">
                                             <Link href={`/clubs/${clubId}/admin`}>

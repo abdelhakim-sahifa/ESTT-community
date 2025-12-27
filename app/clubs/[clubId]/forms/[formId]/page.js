@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
-import { Loader2, CheckCircle2, ArrowLeft, AlertCircle, Ticket } from 'lucide-react';
+import { Loader2, CheckCircle2, ArrowLeft, AlertCircle, Ticket, Check } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -261,6 +263,76 @@ export default function CustomFormPage() {
                                             onChange={(e) => handleChange(field.id, e.target.value)}
                                             className="min-h-[100px] focus-visible:ring-offset-0 focus-visible:ring-1 theme-ring"
                                         />
+                                    ) : field.type === 'select' ? (
+                                        <Select
+                                            onValueChange={(v) => handleChange(field.id, v)}
+                                            value={formData[field.id] || ''}
+                                            required={field.required}
+                                        >
+                                            <SelectTrigger className="focus-visible:ring-offset-0 focus-visible:ring-1 theme-ring">
+                                                <SelectValue placeholder="Sélectionnez une option" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {(field.options || '').split(',').map(opt => opt.trim()).filter(Boolean).map(opt => (
+                                                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    ) : field.type === 'radio' ? (
+                                        <div className="space-y-2 mt-2">
+                                            {(field.options || '').split(',').map(opt => opt.trim()).filter(Boolean).map(opt => (
+                                                <div key={opt} className="flex items-center space-x-2">
+                                                    <input
+                                                        type="radio"
+                                                        id={`field-${field.id}-${opt}`}
+                                                        name={`field-${field.id}`}
+                                                        required={field.required}
+                                                        checked={formData[field.id] === opt}
+                                                        onChange={() => handleChange(field.id, opt)}
+                                                        className="w-4 h-4 text-primary focus:ring-primary border-slate-300"
+                                                    />
+                                                    <Label htmlFor={`field-${field.id}-${opt}`} className="font-normal cursor-pointer">
+                                                        {opt}
+                                                    </Label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : field.type === 'checkbox' ? (
+                                        <div className="space-y-2 mt-2">
+                                            {(field.options || '').split(',').map(opt => opt.trim()).filter(Boolean).map(opt => (
+                                                <div key={opt} className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id={`field-${field.id}-${opt}`}
+                                                        checked={(formData[field.id] || '').split(', ').includes(opt)}
+                                                        onCheckedChange={(checked) => {
+                                                            const currentValues = formData[field.id] ? formData[field.id].split(', ') : [];
+                                                            let newValues;
+                                                            if (checked) {
+                                                                newValues = [...currentValues, opt];
+                                                            } else {
+                                                                newValues = currentValues.filter(v => v !== opt);
+                                                            }
+                                                            handleChange(field.id, newValues.join(', '));
+                                                        }}
+                                                    />
+                                                    <Label htmlFor={`field-${field.id}-${opt}`} className="font-normal cursor-pointer">
+                                                        {opt}
+                                                    </Label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : field.type === 'boolean' ? (
+                                        <div className="flex items-center space-x-2 mt-2">
+                                            <Checkbox
+                                                id={`field-${field.id}`}
+                                                checked={!!formData[field.id]}
+                                                onCheckedChange={(checked) => handleChange(field.id, checked)}
+                                                required={field.required}
+                                            />
+                                            <Label htmlFor={`field-${field.id}`} className="font-normal cursor-pointer">
+                                                Oui / Valider
+                                            </Label>
+                                        </div>
                                     ) : (
                                         <Input
                                             id={`field-${field.id}`}
