@@ -27,6 +27,7 @@ import {
     Building2,
     Edit3,
     Megaphone,
+    Settings,
     Plus
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -68,7 +69,13 @@ export default function AdminDashboard() {
     const [clubRequests, setClubRequests] = useState([]);
     const [clubChangeRequests, setClubChangeRequests] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [activeTab, setActiveTab] = useState('overview');
+    const [activeTab, setActiveTab] = useState('overview'); // overview, resources, users, reports, clubRequests, clubChangeRequests, announcements, settings
+    // Notification Settings
+    const [notificationSettings, setNotificationSettings] = useState({
+        enabled: true,
+        email: 'thevcercle@gmail.com'
+    });
+    const [savingSettings, setSavingSettings] = useState(false);
     const [adminAnnouncements, setAdminAnnouncements] = useState([]);
     const [announcementForm, setAnnouncementForm] = useState({
         title: '',
@@ -87,6 +94,7 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         if (authLoading || !user || profile?.role !== 'admin') return;
+        if (!db) return;
 
         const resourcesRef = ref(db, 'resources');
         const blogsRef = ref(db, 'blog_posts');
@@ -95,14 +103,21 @@ export default function AdminDashboard() {
 
         const unsubResources = onValue(resourcesRef, (snapshot) => {
             const data = snapshot.val() || {};
-            const list = [];
-            Object.entries(data).forEach(([key, value]) => {
-                if (typeof value === 'object' && value !== null && !value.title) {
-                    Object.entries(value).forEach(([id, res]) => {
-                        list.push({ id, ...res, moduleId: key, _isNested: true });
-                    });
-                } else {
-                    list.push({ id: key, ...value, _isNested: false });
+            // Helper to flatten nested and determine nature
+            let list = [];
+            Object.entries(data).forEach(([key, val]) => {
+                if (val.unverified === true) {
+                    // Check if it's a direct resource or a module container
+                    if (val.type) { // It has a type, likely a resource
+                        list.push({ id: key, ...val });
+                    } else {
+                        // Likely a module container, check children
+                        Object.entries(val).forEach(([childKey, childVal]) => {
+                            if (childVal.unverified === true) {
+                                list.push({ id: childKey, ...childVal, _isNested: true, moduleId: key });
+                            }
+                        });
+                    }
                 }
             });
             setResources(list);
@@ -151,18 +166,151 @@ export default function AdminDashboard() {
             setAdminAnnouncements(list);
         });
 
+        // Fetch settings
+        const settingsRef = ref(db, 'adminSettings/notifications');
+        const unsubSettings = onValue(settingsRef, (snapshot) => {
+            if (snapshot.exists()) {
+                setNotificationSettings(snapshot.val());
+            } else {
+                // Set default if not exists
+                update(ref(db, 'adminSettings/notifications'), {
+                    enabled: true,
+                    email: 'thevcercle@gmail.com'
+                });
+            }
+        });
+
         setLoading(false);
 
         return () => {
             unsubResources();
-
             unsubUsers();
             unsubReports();
             unsubClubRequests();
             unsubClubChangeRequests();
             unsubAdminAnnouncements();
+            unsubSettings();
         };
     }, [user, profile, authLoading]);
+
+    const handleSaveSettings = async (e) => {
+        e.preventDefault();
+        setSavingSettings(true);
+        try {
+            await update(ref(db, 'adminSettings/notifications'), notificationSettings);
+            alert("Paramètres de notification mis à jour !");
+        } catch (err) {
+            console.error(err);
+            alert("Erreur lors de la sauvegarde.");
+        } finally {
+            setSavingSettings(false);
+        }
+    };
+
+    const openRejectionModal = (type, item) => {
+        setItemToReject({ type, data: item });
+        setRejectionReason('');
+        setRejectionModalOpen(true);
+    };
+
+    const handleConfirmRejection = async () => {
+        if (!itemToReject) return;
+        setRejecting(true);
+
+        try {
+            if (itemToReject.type === 'resource') {
+                await executeResourceRejection(itemToReject.data, rejectionReason);
+            } else if (itemToReject.type === 'club') {
+                await executeClubRejection(itemToReject.data, rejectionReason);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Une erreur est survenue lors du rejet.");
+        } finally {
+            setRejecting(false);
+            setRejectionModalOpen(false);
+            setItemToReject(null);
+        }
+    };
+
+    const executeResourceRejection = async (resource, reason) => {
+        try {
+            let path = `resources/${resource.id}`;
+            if (resource._isNested && resource.moduleId) {
+                path = `resources/${resource.moduleId}/${resource.id}`;
+            }
+
+            await remove(ref(db, path));
+
+            // Sync with user profile if authorId exists
+            if (resource.authorId) {
+                const profileContribPath = `users/${resource.authorId}/contributions/${resource.id}`;
+                await remove(ref(db, profileContribPath));
+
+                // Send Resource Rejected Email
+                try {
+                    // Fetch user email first
+                    const userSnap = await get(ref(db, `users/${resource.authorId}`));
+                    if (userSnap.exists()) {
+                        const userData = userSnap.val();
+                        if (userData.email) {
+                            const { resourceRejectedEmail } = await import('@/lib/email-templates');
+                            const html = resourceRejectedEmail(userData.firstName || 'Étudiant', resource.title, reason);
+
+                            await fetch('/api/send-email', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    to: userData.email,
+                                    subject: 'Mise à jour concernant ta contribution',
+                                    html: html
+                                })
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.error("Failed to send resource rejection email:", err);
+                }
+            }
+            // toast success?
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    };
+
+    const executeClubRejection = async (request, reason) => {
+        try {
+            await update(ref(db, `clubRequests/${request.id}`), {
+                status: 'rejected',
+                rejectedAt: Date.now(),
+                rejectionReason: reason
+            });
+
+            // Send Rejection Email
+            if (request && request.requestedBy) {
+                try {
+                    const { clubRequestRejectedEmail } = await import('@/lib/email-templates');
+                    const html = clubRequestRejectedEmail(request.clubName, reason);
+
+                    await fetch('/api/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: request.requestedBy,
+                            subject: `Mise à jour demande de club : ${request.clubName}`,
+                            html: html
+                        })
+                    });
+                } catch (emailErr) {
+                    console.error("Failed to send rejection email:", emailErr);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    };
 
     const handleApproveResource = async (resource) => {
         try {
@@ -177,6 +325,32 @@ export default function AdminDashboard() {
             if (resource.authorId) {
                 const profileContribPath = `users/${resource.authorId}/contributions/${resource.id}`;
                 await update(ref(db, profileContribPath), { unverified: null });
+
+                // Send Resource Approved Email
+                try {
+                    // Fetch user email first
+                    const userSnap = await get(ref(db, `users/${resource.authorId}`));
+                    if (userSnap.exists()) {
+                        const userData = userSnap.val();
+                        if (userData.email) {
+                            const { resourceApprovedEmail } = await import('@/lib/email-templates');
+                            const resourceUrl = `https://estt-community.vercel.app/resources/${resource.id}`;
+                            const html = resourceApprovedEmail(userData.firstName || 'Étudiant', resource.title, resourceUrl);
+
+                            await fetch('/api/send-email', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    to: userData.email,
+                                    subject: 'Ta ressource est en ligne !',
+                                    html: html
+                                })
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.error("Failed to send resource approval email:", err);
+                }
             }
 
             alert("Ressource approuvée !");
@@ -186,26 +360,8 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleDeleteResource = async (resource) => {
-        if (confirm("Supprimer cette ressource ?")) {
-            try {
-                let path = `resources/${resource.id}`;
-                if (resource._isNested && resource.moduleId) {
-                    path = `resources/${resource.moduleId}/${resource.id}`;
-                }
-                await remove(ref(db, path));
-
-                // Sync with user profile if authorId exists
-                if (resource.authorId) {
-                    const profileContribPath = `users/${resource.authorId}/contributions/${resource.id}`;
-                    await remove(ref(db, profileContribPath));
-                }
-
-                alert("Ressource supprimée.");
-            } catch (err) {
-                console.error(err);
-            }
-        }
+    const handleDeleteResource = (resource) => {
+        openRejectionModal('resource', resource);
     };
 
 
@@ -223,19 +379,8 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleRejectClubRequest = async (requestId) => {
-        if (!confirm("Rejeter cette demande de club ?")) return;
-
-        try {
-            await update(ref(db, `clubRequests/${requestId}`), {
-                status: 'rejected',
-                rejectedAt: Date.now()
-            });
-            alert("Demande rejetée.");
-        } catch (err) {
-            console.error(err);
-            alert("Erreur lors du rejet.");
-        }
+    const handleRejectClubRequest = (request) => {
+        openRejectionModal('club', request);
     };
 
     const handleApproveChangeRequest = async (request) => {
@@ -318,6 +463,34 @@ export default function AdminDashboard() {
     if (authLoading || loading) return (
         <div className="flex items-center justify-center min-h-screen">
             <Loader2 className="w-10 h-10 animate-spin text-primary" />
+            {/* Rejection Modal */}
+            <Dialog open={rejectionModalOpen} onOpenChange={setRejectionModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Motif du rejet</DialogTitle>
+                        <DialogDescription>
+                            Veuillez indiquer la raison pour laquelle vous rejetez cet élément. Cette raison sera envoyée par email à l'utilisateur.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <textarea
+                            className="w-full min-h-[100px] p-3 rounded-md border text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                            placeholder="Ex: Le fichier est illisible..."
+                            value={rejectionReason}
+                            onChange={(e) => setRejectionReason(e.target.value)}
+                        />
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setRejectionModalOpen(false)} disabled={rejecting}>
+                            Annuler
+                        </Button>
+                        <Button variant="destructive" onClick={handleConfirmRejection} disabled={!rejectionReason.trim() || rejecting}>
+                            {rejecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                            Confirmer le rejet
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 
@@ -395,6 +568,13 @@ export default function AdminDashboard() {
                             onClick={() => setActiveTab('announcements')}
                         >
                             <Megaphone className="w-4 h-4" /> Annonces Globales
+                        </Button>
+                        <Button
+                            variant={activeTab === 'settings' ? 'default' : 'ghost'}
+                            className="justify-start gap-3 h-11"
+                            onClick={() => setActiveTab('settings')}
+                        >
+                            <Settings className="w-4 h-4" /> Paramètres
                         </Button>
                     </nav>
 
@@ -733,15 +913,7 @@ export default function AdminDashboard() {
                                                             <CheckCircle2 className="w-4 h-4" />
                                                             Approuver
                                                         </Button>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                            className="gap-2 text-destructive border-destructive/20"
-                                                            onClick={() => handleRejectClubRequest(request.id)}
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                            Rejeter
-                                                        </Button>
+                                                        <Button size="sm" variant="destructive" onClick={() => handleRejectClubRequest(request)}>Refuser</Button>
                                                     </div>
                                                 </CardContent>
                                             </Card>
@@ -930,6 +1102,70 @@ export default function AdminDashboard() {
                                     )}
                                 </div>
                             </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'settings' && (
+                        <div className="space-y-8">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                <div>
+                                    <h1 className="text-3xl font-black tracking-tight">Paramètres</h1>
+                                    <p className="text-muted-foreground">Configurez les notifications et autres préférences.</p>
+                                </div>
+                            </div>
+
+                            <Card className="max-w-2xl border-none shadow-sm">
+                                <CardHeader>
+                                    <CardTitle>Notifications par Email</CardTitle>
+                                    <CardDescription>
+                                        Recevez un email lorsque de nouvelles données nécessitent votre attention (nouvelles ressources, demandes de clubs, etc.).
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <form onSubmit={handleSaveSettings} className="space-y-6">
+                                        <div className="flex items-center space-x-2 border p-4 rounded-md bg-slate-50">
+                                            <input
+                                                type="checkbox"
+                                                id="notifEnabled"
+                                                checked={notificationSettings.enabled}
+                                                onChange={(e) => setNotificationSettings(p => ({ ...p, enabled: e.target.checked }))}
+                                                className="w-4 h-4"
+                                            />
+                                            <div className="grid gap-1.5 leading-none">
+                                                <label
+                                                    htmlFor="notifEnabled"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    Activer les notifications
+                                                </label>
+                                                <p className="text-[0.8rem] text-muted-foreground">
+                                                    Si désactivé, vous ne recevrez aucun email automatique d'alerte.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Email de réception</label>
+                                            <Input
+                                                type="email"
+                                                value={notificationSettings.email}
+                                                onChange={(e) => setNotificationSettings(p => ({ ...p, email: e.target.value }))}
+                                                placeholder="exemple@email.com"
+                                                required={notificationSettings.enabled}
+                                                disabled={!notificationSettings.enabled}
+                                            />
+                                            <p className="text-xs text-muted-foreground">
+                                                Par défaut : thevcercle@gmail.com
+                                            </p>
+                                        </div>
+
+                                        <Button type="submit" disabled={savingSettings}>
+                                            {savingSettings && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                                            Sauvegarder les préférences
+                                        </Button>
+                                    </form>
+                                </CardContent>
+                            </Card>
                         </div>
                     )}
                 </main >

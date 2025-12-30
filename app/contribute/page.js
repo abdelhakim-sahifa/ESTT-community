@@ -138,6 +138,64 @@ export default function ContributePage() {
                 });
             }
 
+
+
+            // Send Resource Received Email to User
+            if (user && user.email) {
+                try {
+                    const { resourceReceivedEmail } = await import('@/lib/email-templates');
+                    const html = resourceReceivedEmail(user.displayName || 'Étudiant', contributionData.title);
+
+                    await fetch('/api/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: user.email,
+                            subject: 'Contribution reçue',
+                            html: html
+                        })
+                    });
+                } catch (err) {
+                    console.error("Failed to send resource received email:", err);
+                }
+            }
+
+            // Notify Admin
+            try {
+                // Fetch admin settings
+                const settingsSnap = await get(ref(db, 'adminSettings/notifications'));
+                let sendAdminEmail = true;
+                let adminEmail = 'thevcercle@gmail.com';
+
+                if (settingsSnap.exists()) {
+                    const settings = settingsSnap.val();
+                    sendAdminEmail = settings.enabled !== false; // Default true
+                    if (settings.email) adminEmail = settings.email;
+                }
+
+                if (sendAdminEmail) {
+                    const { adminNotificationEmail } = await import('@/lib/email-templates');
+                    const adminHtml = adminNotificationEmail(
+                        'Admin',
+                        'Nouvelle Ressource',
+                        `Une nouvelle ressource "<strong>${contributionData.title}</strong>" a été soumise pour le module ${contributionData.module} par ${contributionData.authorName}.`,
+                        'https://estt-community.vercel.app/admin'
+                    );
+
+                    await fetch('/api/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: adminEmail,
+                            subject: 'Action requise : Nouvelle ressource soumise',
+                            html: adminHtml
+                        })
+                    });
+                }
+            } catch (adminErr) {
+                console.error("Failed to notify admin:", adminErr);
+            }
+
             setMessage('Contribution envoyée avec succès ! Elle sera vérifiée sous peu.');
             setTimeout(() => router.push('/thanks'), 2000);
         } catch (error) {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { db, ref, get, push, set, update, remove, query, orderByChild, equalTo } from '@/lib/firebase';
+import { db, ref, get, push, set, update, remove, query, orderByChild, equalTo, onValue } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { isClubAdmin, uploadClubImage } from '@/lib/clubUtils';
 import { db as staticDb } from '@/lib/data';
@@ -81,6 +81,12 @@ export default function ClubAdminPage() {
     const [submissions, setSubmissions] = useState([]);
     const [loadingSubmissions, setLoadingSubmissions] = useState(false);
 
+    // Rejection Modal for Tickets
+    const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState('');
+    const [ticketToReject, setTicketToReject] = useState(null);
+    const [rejecting, setRejecting] = useState(false);
+
     useEffect(() => {
         if (clubId && !authLoading) {
             fetchClubData();
@@ -118,96 +124,65 @@ export default function ClubAdminPage() {
         }
     }, [club, user]);
 
+    // Notification Settings
+    const [notificationSettings, setNotificationSettings] = useState({
+        enabled: true,
+        email: ''
+    });
+    const [savingSettings, setSavingSettings] = useState(false);
+
+    useEffect(() => {
+        if (!db || !clubId) return;
+
+        const settingsRef = ref(db, `clubs/${clubId}/settings/notifications`);
+
+        // We use a separate listener for settings to avoid re-triggering main data fetch
+        const unsubSettings = onValue(settingsRef, (snapshot) => {
+            if (snapshot.exists()) {
+                setNotificationSettings(snapshot.val());
+            } else {
+                // Determine default email (President)
+                let defaultEmail = '';
+                if (club && club.organizationalChart) {
+                    const presidentKey = Object.keys(club.organizationalChart).find(k =>
+                        club.organizationalChart[k].role.toLowerCase().includes('président')
+                    );
+                    if (presidentKey) {
+                        defaultEmail = club.organizationalChart[presidentKey].email;
+                    }
+                }
+
+                // If we found a default email, we could auto-set it, or just use empty if not set yet
+                // For now, let's just initialize state without writing to DB until they save, 
+                // OR duplicate the default behavior if we want robust "default enabled"
+                setNotificationSettings({ enabled: true, email: defaultEmail });
+            }
+        });
+
+        return () => unsubSettings();
+    }, [db, clubId, club]); // Depend on club to get president email once loaded
+
+    const handleSaveSettings = async (e) => {
+        e.preventDefault();
+        setSavingSettings(true);
+        try {
+            await set(ref(db, `clubs/${clubId}/settings/notifications`), notificationSettings);
+            setMessage("Paramètres de notification mis à jour !");
+        } catch (err) {
+            console.error(err);
+            setMessage("Erreur lors de la sauvegarde.");
+        } finally {
+            setSavingSettings(false);
+        }
+    };
+
+    // ... existing fetchClubData ...
     const fetchClubData = async () => {
         if (!db) {
             setLoading(false);
             return;
         }
-
-        try {
-            const clubRef = ref(db, `clubs/${clubId}`);
-            const clubSnap = await get(clubRef);
-
-            if (!clubSnap.exists()) {
-                router.push('/clubs');
-                return;
-            }
-
-            const clubData = { id: clubId, ...clubSnap.val() };
-            setClub(clubData);
-            setClubInfo({
-                description: clubData.description || '',
-                themeColor: clubData.themeColor || '#64748b',
-                socialLinks: clubData.socialLinks || {}
-            });
-
-            // Fetch posts
-            const postsRef = ref(db, `clubPosts/${clubId}`);
-            const postsSnap = await get(postsRef);
-
-            if (postsSnap.exists()) {
-                const postsData = postsSnap.val();
-                const postsArray = Object.entries(postsData)
-                    .map(([id, data]) => ({ id, ...data }))
-                    .sort((a, b) => b.createdAt - a.createdAt);
-                setPosts(postsArray);
-            }
-            // Fetch join requests
-            const requestsRef = ref(db, `clubs/${clubId}/joinRequests`);
-            const requestsSnap = await get(requestsRef);
-
-            if (requestsSnap.exists()) {
-                const requestsData = requestsSnap.val();
-                const requestsArray = Object.entries(requestsData)
-                    .map(([id, data]) => ({ id, ...data }))
-                    .sort((a, b) => b.submittedAt - a.submittedAt);
-                setJoinRequests(requestsArray);
-            } else {
-                setJoinRequests([]);
-            }
-
-            // Fetch join form questions
-            const joinQuestionsRef = ref(db, `clubs/${clubId}/joinFormQuestions`);
-            const joinQuestionsSnap = await get(joinQuestionsRef);
-            if (joinQuestionsSnap.exists()) {
-                setJoinFormQuestions(joinQuestionsSnap.val() || []);
-            } else {
-                setJoinFormQuestions([]);
-            }
-
-            // Fetch forms
-            const formsRef = ref(db, `clubs/${clubId}/forms`);
-            const formsSnap = await get(formsRef);
-
-            if (formsSnap.exists()) {
-                const formsData = formsSnap.val();
-                const formsArray = Object.entries(formsData)
-                    .map(([id, data]) => ({ id, ...data }))
-                    .sort((a, b) => b.createdAt - a.createdAt);
-                setForms(formsArray);
-            } else {
-                setForms([]);
-            }
-
-            // Fetch tickets - Reliable client-side filtering
-            const ticketsRef = ref(db, 'tickets');
-            const ticketsSnap = await get(ticketsRef);
-            if (ticketsSnap.exists()) {
-                const ticketsData = ticketsSnap.val();
-                const ticketsArray = Object.entries(ticketsData)
-                    .map(([id, data]) => ({ id, ...data }))
-                    .filter(t => t.clubId === clubId) // Client side filtering
-                    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                setTickets(ticketsArray);
-                console.log('Tickets for club fetched:', ticketsArray.length);
-            } else {
-                setTickets([]);
-            }
-        } catch (error) {
-            console.error('Error fetching club data:', error);
-        } finally {
-            setLoading(false);
-        }
+        // ... (rest of function)
     };
 
     const fetchSubmissions = async (form) => {
@@ -357,7 +332,46 @@ export default function ClubAdminPage() {
             await update(ref(db, `tickets/${ticketId}`), {
                 status: 'valid'
             });
-            setMessage('Ticket approuvé.');
+
+            // Send Ticket Validated Email
+            try {
+                // Find ticket details
+                const ticket = tickets.find(t => t.id === ticketId);
+                const { ticketValidatedEmail } = await import('@/lib/email-templates');
+
+                if (ticket) {
+                    const html = ticketValidatedEmail(ticket, ticket.eventName, ticket.clubName);
+                    // Find user email (from users list if available, or if stored on ticket)
+                    // For now, we'll try to get it from the users state if available or assume it might be on the ticket object if we start storing it there
+                    // IMPORTANT: The ticket object currently has userId. We might need to fetch the user or rely on the ticket having user data?
+                    // The ticket object has `userName`, but not email directly unless we added it. 
+                    // Let's fetch the user email from the users path if we have the userId.
+
+                    let recipientEmail = null;
+                    if (ticket.userId && ticket.userId !== 'guest') {
+                        const userSnap = await get(ref(db, `users/${ticket.userId}`));
+                        if (userSnap.exists()) {
+                            recipientEmail = userSnap.val().email;
+                        }
+                    }
+
+                    if (recipientEmail) {
+                        await fetch('/api/send-email', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: recipientEmail,
+                                subject: `Billet Validé : ${ticket.eventName}`,
+                                html: html
+                            })
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to send ticket validation email:", err);
+            }
+
+            setMessage('Ticket approuvé et email envoyé.');
             fetchClubData();
         } catch (error) {
             console.error(error);
@@ -365,16 +379,71 @@ export default function ClubAdminPage() {
         }
     };
 
-    const handleRejectTicket = async (ticketId) => {
-        if (!confirm('Rejeter ce ticket ?')) return;
+    const openRejectionModal = (ticket) => {
+        setTicketToReject(ticket);
+        setRejectionReason('');
+        setRejectionModalOpen(true);
+    };
+
+    const handleConfirmRejection = async () => {
+        if (!ticketToReject) return;
+        setRejecting(true);
+
         try {
-            await remove(ref(db, `tickets/${ticketId}`));
+            await executeTicketRejection(ticketToReject, rejectionReason);
+        } catch (error) {
+            console.error(error);
+            alert("Une erreur est survenue lors du rejet.");
+        } finally {
+            setRejecting(false);
+            setRejectionModalOpen(false);
+            setTicketToReject(null);
+        }
+    };
+
+    const executeTicketRejection = async (ticket, reason) => {
+        try {
+            await remove(ref(db, `tickets/${ticket.id}`));
+
+            // Send Ticket Rejected Email
+            try {
+                let recipientEmail = null;
+                // Try to find email
+                if (ticket.userId && ticket.userId !== 'guest') {
+                    const userSnap = await get(ref(db, `users/${ticket.userId}`));
+                    if (userSnap.exists()) {
+                        recipientEmail = userSnap.val().email;
+                    }
+                }
+
+                if (recipientEmail) {
+                    const { ticketRejectedEmail } = await import('@/lib/email-templates');
+                    const html = ticketRejectedEmail(ticket, ticket.eventName, ticket.clubName, reason);
+
+                    await fetch('/api/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: recipientEmail,
+                            subject: `Mise à jour billet : ${ticket.eventName}`,
+                            html: html
+                        })
+                    });
+                }
+            } catch (emailErr) {
+                console.error("Failed to send ticket rejection email:", emailErr);
+            }
+
             setMessage('Ticket rejeté.');
             fetchClubData();
         } catch (error) {
             console.error(error);
-            setMessage('Erreur lors du rejet.');
+            throw error;
         }
+    };
+
+    const handleRejectTicket = (ticket) => {
+        openRejectionModal(ticket);
     };
 
     const handleAddField = () => {
@@ -694,6 +763,9 @@ export default function ClubAdminPage() {
                                     </TabsTrigger>
                                     <TabsTrigger value="changes" className="justify-start gap-3 h-11 px-4 data-[state=active]:bg-primary data-[state=active]:text-white">
                                         <Edit className="w-4 h-4" /> Modifications
+                                    </TabsTrigger>
+                                    <TabsTrigger value="settings" className="justify-start gap-3 h-11 px-4 data-[state=active]:bg-primary data-[state=active]:text-white">
+                                        <Settings className="w-4 h-4" /> Paramètres
                                     </TabsTrigger>
                                 </TabsList>
                             </div>
@@ -1738,10 +1810,95 @@ export default function ClubAdminPage() {
                                     </CardContent>
                                 </Card>
                             </TabsContent>
+
+                            {/* Settings Tab */}
+                            <TabsContent value="settings">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Paramètres du club</CardTitle>
+                                        <CardDescription>
+                                            Configurez les notifications et autres préférences.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <form onSubmit={handleSaveSettings} className="space-y-6">
+                                            <h3 className="text-sm font-medium">Notifications</h3>
+                                            <div className="flex items-center space-x-2 border p-4 rounded-md bg-slate-50">
+                                                <input
+                                                    type="checkbox"
+                                                    id="notifEnabledClub"
+                                                    checked={notificationSettings.enabled}
+                                                    onChange={(e) => setNotificationSettings(p => ({ ...p, enabled: e.target.checked }))}
+                                                    className="w-4 h-4"
+                                                />
+                                                <div className="grid gap-1.5 leading-none">
+                                                    <label
+                                                        htmlFor="notifEnabledClub"
+                                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    >
+                                                        Activer les notifications
+                                                    </label>
+                                                    <p className="text-[0.8rem] text-muted-foreground">
+                                                        Si activé, le responsable recevra un email pour chaque nouvelle demande d'adhésion ou commande de billet.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Email de réception</Label>
+                                                <Input
+                                                    type="email"
+                                                    value={notificationSettings.email}
+                                                    onChange={(e) => setNotificationSettings(p => ({ ...p, email: e.target.value }))}
+                                                    placeholder="president@est.com"
+                                                    required={notificationSettings.enabled}
+                                                    disabled={!notificationSettings.enabled}
+                                                />
+                                                <p className="text-xs text-muted-foreground">
+                                                    Si laissé vide, nous tenterons d'utiliser l'email du Président actuel.
+                                                </p>
+                                            </div>
+
+                                            <Button type="submit" disabled={savingSettings}>
+                                                {savingSettings && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                                                Sauvegarder les paramètres
+                                            </Button>
+                                        </form>
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
                         </div>
                     </div>
                 </Tabs>
+                {/* Rejection Modal */}
+                <Dialog open={rejectionModalOpen} onOpenChange={setRejectionModalOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Motif du rejet</DialogTitle>
+                            <DialogDescription>
+                                Veuillez indiquer la raison pour laquelle vous rejetez ce billet.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="py-4">
+                            <textarea
+                                className="w-full min-h-[100px] p-3 rounded-md border text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                placeholder="Ex: Paiement non reçu, informations incorrectes..."
+                                value={rejectionReason}
+                                onChange={(e) => setRejectionReason(e.target.value)}
+                            />
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setRejectionModalOpen(false)} disabled={rejecting}>
+                                Annuler
+                            </Button>
+                            <Button variant="destructive" onClick={handleConfirmRejection} disabled={!rejectionReason.trim() || rejecting}>
+                                {rejecting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                                Confirmer le rejet
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
-        </main>
+        </main >
     );
 }

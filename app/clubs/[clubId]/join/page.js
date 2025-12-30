@@ -126,6 +126,51 @@ export default function ClubJoinPage() {
             });
 
             setSubmitted(true);
+
+            // Trigger Notification to Club Admin
+            try {
+                // Check settings
+                const settingsRef = ref(db, `clubs/${clubId}/settings/notifications`);
+                const settingsSnap = await get(settingsRef);
+                let sendNotif = true;
+                let recipient = '';
+
+                if (settingsSnap.exists()) {
+                    const settings = settingsSnap.val();
+                    sendNotif = settings.enabled !== false;
+                    recipient = settings.email || '';
+                }
+
+                // Fallback recipient if enabled but no email set
+                if (sendNotif && !recipient && club.organizationalChart) {
+                    const president = Object.values(club.organizationalChart).find(m =>
+                        m.role && m.role.toLowerCase() === 'président'
+                    );
+                    if (president) recipient = president.email;
+                }
+
+                if (sendNotif && recipient) {
+                    const { adminNotificationEmail } = await import('@/lib/email-templates');
+                    const notifHtml = adminNotificationEmail(
+                        'Admin Club',
+                        'Nouvelle Adhésion',
+                        `Une nouvelle demande d'adhésion a été reçue de <strong>${formData.name}</strong> (${formData.email}). <br/>Raison: "<em>${formData.reason}</em>"`,
+                        `https://estt-community.vercel.app/clubs/${clubId}/admin`
+                    );
+
+                    await fetch('/api/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: recipient,
+                            subject: `Nouvelle demande d'adhésion - ${club.name}`,
+                            html: notifHtml
+                        })
+                    });
+                }
+            } catch (notifErr) {
+                console.error('Failed to notify club admin:', notifErr);
+            }
         } catch (err) {
             console.error('Error submitting form:', err);
             setError(err.message || 'Une erreur est survenue');

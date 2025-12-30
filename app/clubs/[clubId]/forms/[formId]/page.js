@@ -126,6 +126,51 @@ export default function CustomFormPage() {
                 });
 
                 setTicketId(generatedTicketId);
+
+                // Notify Admin about new ticket
+                try {
+                    // Check settings
+                    const settingsRef = ref(db, `clubs/${clubId}/settings/notifications`);
+                    const settingsSnap = await get(settingsRef);
+                    let sendNotif = true;
+                    let recipient = '';
+
+                    if (settingsSnap.exists()) {
+                        const settings = settingsSnap.val();
+                        sendNotif = settings.enabled !== false;
+                        recipient = settings.email || '';
+                    }
+
+                    // Fallback recipient
+                    if (sendNotif && !recipient && club.organizationalChart) {
+                        const president = Object.values(club.organizationalChart).find(m =>
+                            m.role && m.role.toLowerCase() === 'président'
+                        );
+                        if (president) recipient = president.email;
+                    }
+
+                    if (sendNotif && recipient) {
+                        const { adminNotificationEmail } = await import('@/lib/email-templates');
+                        const notifHtml = adminNotificationEmail(
+                            'Admin Club',
+                            'Nouveau Billet',
+                            `Un nouveau billet pour l'événement "<strong>${form.title}</strong>" a été commandé par ${user ? user.displayName || user.email : 'un invité'}. Statut: En attente de validation.`,
+                            `https://estt-community.vercel.app/clubs/${clubId}/admin`
+                        );
+
+                        await fetch('/api/send-email', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: recipient,
+                                subject: `Nouveau Billet - ${form.title}`,
+                                html: notifHtml
+                            })
+                        });
+                    }
+                } catch (notifErr) {
+                    console.error('Failed to notify club admin about ticket:', notifErr);
+                }
             }
 
             await set(submissionRef, {
@@ -134,6 +179,64 @@ export default function CustomFormPage() {
                 submittedAt: Date.now(),
                 ticketId: generatedTicketId
             });
+
+            // Send Confirmation Email if ticket was generated
+            if (generatedTicketId) {
+                try {
+                    const { ticketConfirmationEmail } = await import('@/lib/email-templates');
+
+                    const ticketData = {
+                        id: generatedTicketId,
+                        firstName: user ? (profile?.firstName || user.displayName?.split(' ')[0] || 'Participant') : 'Invité',
+                        lastName: user ? (profile?.lastName || user.displayName?.split(' ').slice(1).join(' ') || '') : '',
+                        type: 'Standard'
+                    };
+
+                    const html = ticketConfirmationEmail(ticketData, form.title, club.name);
+
+                    // Use form field for email if available, otherwise user email
+                    const emailFieldId = form.fields.find(f => f.type === 'email')?.id;
+                    const recipientEmail = emailFieldId ? formData[emailFieldId] : (user?.email);
+
+                    if (recipientEmail) {
+                        await fetch('/api/send-email', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: recipientEmail,
+                                subject: `Votre billet pour ${form.title}`,
+                                html: html
+                            })
+                        });
+                    }
+                } catch (err) {
+                    console.error("Failed to send ticket confirmation email:", err);
+                }
+            } else {
+                // Send General Form Submission Receipt
+                try {
+                    const { formSubmissionReceivedEmail } = await import('@/lib/email-templates');
+                    const html = formSubmissionReceivedEmail(form.title, club.name);
+
+                    // Use form field for email if available, otherwise user email
+                    const emailFieldId = form.fields.find(f => f.type === 'email')?.id;
+                    const recipientEmail = emailFieldId ? formData[emailFieldId] : (user?.email);
+
+                    if (recipientEmail) {
+                        await fetch('/api/send-email', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: recipientEmail,
+                                subject: `Réception : ${form.title}`,
+                                html: html
+                            })
+                        });
+                    }
+                } catch (err) {
+                    console.error("Failed to send form submission email:", err);
+                }
+            }
 
             setSubmitted(true);
         } catch (error) {

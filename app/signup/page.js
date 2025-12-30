@@ -85,6 +85,24 @@ export default function SignupPage() {
             // Send verification email
             await sendVerification(user);
 
+            // Send welcome email via API
+            try {
+                const { welcomeEmail } = await import('@/lib/email-templates');
+                const html = welcomeEmail(formData.firstName);
+
+                await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: formData.email,
+                        subject: 'Bienvenue sur ESTT Community !',
+                        html: html
+                    })
+                });
+            } catch (err) {
+                console.error("Failed to send welcome email:", err);
+            }
+
             setMessage('Compte créé ! Un email de vérification a été envoyé à votre adresse académique. Veuillez vérifier votre boîte de réception avant de vous connecter.');
             // We don't redirect immediately to let them read the message
             // setTimeout(() => router.push('/login'), 5000);
