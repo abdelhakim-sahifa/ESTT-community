@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { db, ref, push, set } from '@/lib/firebase';
+import { db, ref, push, set, get } from '@/lib/firebase';
 import { uploadClubImage, validateClubRequest } from '@/lib/clubUtils';
 import { db as staticDb } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -186,6 +186,44 @@ export default function ClubRequestPage() {
             setTimeout(() => {
                 router.push('/clubs');
             }, 2000);
+
+            // Notify Admin (Background - Fire and Forget)
+            (async () => {
+                try {
+                    // Fetch admin settings
+                    const settingsSnap = await get(ref(db, 'adminSettings/notifications'));
+                    let sendAdminEmail = true;
+                    let adminEmail = 'thevcercle@gmail.com';
+
+                    if (settingsSnap.exists()) {
+                        const settings = settingsSnap.val();
+                        sendAdminEmail = settings.enabled !== false; // Default true
+                        if (settings.email) adminEmail = settings.email;
+                    }
+
+                    if (sendAdminEmail) {
+                        const { adminNotificationEmail } = await import('@/lib/email-templates');
+                        const adminHtml = adminNotificationEmail(
+                            'Admin',
+                            'Nouvelle Demande de Club',
+                            `Une nouvelle demande de club "<strong>${requestData.clubName}</strong>" a été soumise par ${requestData.requestedBy}.`,
+                            'https://estt-community.vercel.app/admin'
+                        );
+
+                        await fetch('/api/send-email', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: adminEmail,
+                                subject: 'Action requise : Nouvelle demande de club',
+                                html: adminHtml
+                            })
+                        });
+                    }
+                } catch (adminErr) {
+                    console.error("Failed to notify admin:", adminErr);
+                }
+            })();
         } catch (error) {
             console.error('Error submitting club request:', error);
             setMessage(error.message || 'Erreur lors de la soumission de la demande');

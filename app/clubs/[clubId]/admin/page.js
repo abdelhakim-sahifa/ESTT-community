@@ -182,7 +182,90 @@ export default function ClubAdminPage() {
             setLoading(false);
             return;
         }
-        // ... (rest of function)
+
+        try {
+            // 1. Fetch Club Details
+            const clubRef = ref(db, `clubs/${clubId}`);
+            const clubSnap = await get(clubRef);
+
+            if (!clubSnap.exists()) {
+                router.push('/clubs');
+                return;
+            }
+
+            const clubData = { id: clubId, ...clubSnap.val() };
+            setClub(clubData);
+
+            // Initialize club info state for editing
+            setClubInfo({
+                description: clubData.description || '',
+                themeColor: clubData.themeColor || '#64748b',
+                socialLinks: clubData.socialLinks || {}
+            });
+
+            setJoinFormQuestions(clubData.joinFormQuestions || []);
+
+            // Set Join Requests
+            if (clubData.joinRequests) {
+                const requests = Object.entries(clubData.joinRequests).map(([id, req]) => ({
+                    id,
+                    ...req
+                }));
+                setJoinRequests(requests);
+            } else {
+                setJoinRequests([]);
+            }
+
+            // Set Forms
+            if (clubData.forms) {
+                const formsList = Object.entries(clubData.forms).map(([id, f]) => ({
+                    id,
+                    ...f
+                }));
+                setForms(formsList);
+            } else {
+                setForms([]);
+            }
+
+            // 2. Fetch Posts
+            const postsRef = ref(db, `clubPosts/${clubId}`);
+            const postsSnap = await get(postsRef);
+            if (postsSnap.exists()) {
+                const postsList = Object.entries(postsSnap.val())
+                    .map(([id, p]) => ({ id, ...p }))
+                    .sort((a, b) => b.createdAt - a.createdAt);
+                setPosts(postsList);
+            } else {
+                setPosts([]);
+            }
+
+            // 3. Fetch Tickets (for validation)
+            const ticketsRef = ref(db, 'tickets');
+            // We can't query by clubId directly easily unless indexed, so we fetch all and filter or ensure index
+            // Assuming we might not have index on clubId for tickets yet, let's fetch all (careful with scale) 
+            // OR better: use the existing tickets approach if possible. 
+            // In the other file we used: query(ticketsRef, orderByChild('userId')...)
+            // Here we want ALL tickets for THIS club.
+            // Let's try to query by clubId if possible, or just fetch all and filter if dataset is small.
+            // Given the previous user context "Fixing Firebase Indexing Error" for tickets, maybe we can assume index exists or just do client filter for now.
+            // Let's use get(ticketsRef) and filter for safety until we are sure about indexes.
+            const ticketsSnap = await get(ticketsRef);
+            if (ticketsSnap.exists()) {
+                const ticketsList = Object.entries(ticketsSnap.val())
+                    .map(([id, t]) => ({ id, ...t }))
+                    .filter(t => t.clubId === clubId)
+                    .sort((a, b) => b.createdAt - a.createdAt);
+                setTickets(ticketsList);
+            } else {
+                setTickets([]);
+            }
+
+        } catch (error) {
+            console.error("Error fetching club admin data:", error);
+            setMessage("Erreur lors du chargement des données.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const fetchSubmissions = async (form) => {
@@ -333,46 +416,43 @@ export default function ClubAdminPage() {
                 status: 'valid'
             });
 
-            // Send Ticket Validated Email
-            try {
-                // Find ticket details
-                const ticket = tickets.find(t => t.id === ticketId);
-                const { ticketValidatedEmail } = await import('@/lib/email-templates');
+            setMessage('Ticket approuvé.');
+            fetchClubData();
 
-                if (ticket) {
-                    const html = ticketValidatedEmail(ticket, ticket.eventName, ticket.clubName);
-                    // Find user email (from users list if available, or if stored on ticket)
-                    // For now, we'll try to get it from the users state if available or assume it might be on the ticket object if we start storing it there
-                    // IMPORTANT: The ticket object currently has userId. We might need to fetch the user or rely on the ticket having user data?
-                    // The ticket object has `userName`, but not email directly unless we added it. 
-                    // Let's fetch the user email from the users path if we have the userId.
+            // Background Email
+            (async () => {
+                try {
+                    // Find ticket details
+                    const ticket = tickets.find(t => t.id === ticketId);
+                    const { ticketValidatedEmail } = await import('@/lib/email-templates');
 
-                    let recipientEmail = null;
-                    if (ticket.userId && ticket.userId !== 'guest') {
-                        const userSnap = await get(ref(db, `users/${ticket.userId}`));
-                        if (userSnap.exists()) {
-                            recipientEmail = userSnap.val().email;
+                    if (ticket) {
+                        const html = ticketValidatedEmail(ticket, ticket.eventName, ticket.clubName);
+
+                        let recipientEmail = null;
+                        if (ticket.userId && ticket.userId !== 'guest') {
+                            const userSnap = await get(ref(db, `users/${ticket.userId}`));
+                            if (userSnap.exists()) {
+                                recipientEmail = userSnap.val().email;
+                            }
+                        }
+
+                        if (recipientEmail) {
+                            await fetch('/api/send-email', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    to: recipientEmail,
+                                    subject: `Billet Validé : ${ticket.eventName}`,
+                                    html: html
+                                })
+                            });
                         }
                     }
-
-                    if (recipientEmail) {
-                        await fetch('/api/send-email', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                to: recipientEmail,
-                                subject: `Billet Validé : ${ticket.eventName}`,
-                                html: html
-                            })
-                        });
-                    }
+                } catch (err) {
+                    console.error("Failed to send ticket validation email:", err);
                 }
-            } catch (err) {
-                console.error("Failed to send ticket validation email:", err);
-            }
-
-            setMessage('Ticket approuvé et email envoyé.');
-            fetchClubData();
+            })();
         } catch (error) {
             console.error(error);
             setMessage('Erreur lors de l\'approbation.');
@@ -405,37 +485,39 @@ export default function ClubAdminPage() {
         try {
             await remove(ref(db, `tickets/${ticket.id}`));
 
-            // Send Ticket Rejected Email
-            try {
-                let recipientEmail = null;
-                // Try to find email
-                if (ticket.userId && ticket.userId !== 'guest') {
-                    const userSnap = await get(ref(db, `users/${ticket.userId}`));
-                    if (userSnap.exists()) {
-                        recipientEmail = userSnap.val().email;
-                    }
-                }
-
-                if (recipientEmail) {
-                    const { ticketRejectedEmail } = await import('@/lib/email-templates');
-                    const html = ticketRejectedEmail(ticket, ticket.eventName, ticket.clubName, reason);
-
-                    await fetch('/api/send-email', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            to: recipientEmail,
-                            subject: `Mise à jour billet : ${ticket.eventName}`,
-                            html: html
-                        })
-                    });
-                }
-            } catch (emailErr) {
-                console.error("Failed to send ticket rejection email:", emailErr);
-            }
-
             setMessage('Ticket rejeté.');
             fetchClubData();
+
+            // Background Email
+            (async () => {
+                try {
+                    let recipientEmail = null;
+                    // Try to find email
+                    if (ticket.userId && ticket.userId !== 'guest') {
+                        const userSnap = await get(ref(db, `users/${ticket.userId}`));
+                        if (userSnap.exists()) {
+                            recipientEmail = userSnap.val().email;
+                        }
+                    }
+
+                    if (recipientEmail) {
+                        const { ticketRejectedEmail } = await import('@/lib/email-templates');
+                        const html = ticketRejectedEmail(ticket, ticket.eventName, ticket.clubName, reason);
+
+                        await fetch('/api/send-email', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: recipientEmail,
+                                subject: `Mise à jour billet : ${ticket.eventName}`,
+                                html: html
+                            })
+                        });
+                    }
+                } catch (emailErr) {
+                    console.error("Failed to send ticket rejection email:", emailErr);
+                }
+            })();
         } catch (error) {
             console.error(error);
             throw error;
@@ -841,7 +923,7 @@ export default function ClubAdminPage() {
                                             <Textarea
                                                 id="description"
                                                 value={clubInfo.description}
-                                                onChange={(e) => setClubInfo({ description: e.target.value })}
+                                                onChange={(e) => setClubInfo(prev => ({ ...prev, description: e.target.value }))}
                                                 rows={6}
                                                 disabled={editingInfo}
                                             />
