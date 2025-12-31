@@ -1,6 +1,6 @@
 import { db as staticDb } from '@/lib/data';
 
-// This will be called at build time or on-demand in production
+// This should be in app/sitemap.js or app/sitemap.ts
 export default async function sitemap() {
     const baseUrl = 'https://estt-community.vercel.app';
 
@@ -15,7 +15,7 @@ export default async function sitemap() {
         '/politique-de-confidentialite',
     ].map((route) => ({
         url: `${baseUrl}${route}`,
-        lastModified: new Date(),
+        lastModified: new Date().toISOString(),
         changeFrequency: route === '' ? 'daily' : 'weekly',
         priority: route === '' ? 1 : 0.8,
     }));
@@ -25,17 +25,14 @@ export default async function sitemap() {
     Object.entries(staticDb.modules).forEach(([key, modules]) => {
         const [field, semester] = key.split('-');
         modules.forEach((module) => {
-            // Build URL with proper XML encoding
             const params = new URLSearchParams({
                 field: field,
                 semester: semester,
                 module: module.id
             });
-            // Manually replace & with &amp; for XML compatibility
-            const xmlSafeUrl = `${baseUrl}/browse?${params.toString()}`.replace(/&/g, '&amp;');
             moduleRoutes.push({
-                url: xmlSafeUrl,
-                lastModified: new Date(),
+                url: `${baseUrl}/browse?${params.toString()}`,
+                lastModified: new Date().toISOString(),
                 changeFrequency: 'weekly',
                 priority: 0.7,
             });
@@ -45,7 +42,7 @@ export default async function sitemap() {
     // Generate URLs for all fields
     const fieldRoutes = staticDb.fields.map((field) => ({
         url: `${baseUrl}/browse?field=${field.id}`,
-        lastModified: new Date(),
+        lastModified: new Date().toISOString(),
         changeFrequency: 'weekly',
         priority: 0.8,
     }));
@@ -53,7 +50,6 @@ export default async function sitemap() {
     // Fetch clubs from Firebase (if available)
     let clubRoutes = [];
     try {
-        // Dynamic import to avoid issues if firebase is not initialized
         const { db: firebaseDb, ref, get } = await import('@/lib/firebase');
 
         if (firebaseDb) {
@@ -66,7 +62,7 @@ export default async function sitemap() {
                     .filter(([_, club]) => club.verified)
                     .map(([id, club]) => ({
                         url: `${baseUrl}/clubs/${id}`,
-                        lastModified: new Date(club.createdAt || Date.now()),
+                        lastModified: new Date(club.createdAt || Date.now()).toISOString(),
                         changeFrequency: 'weekly',
                         priority: 0.9,
                     }));
