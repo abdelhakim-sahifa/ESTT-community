@@ -25,14 +25,16 @@ export default async function sitemap() {
     Object.entries(staticDb.modules).forEach(([key, modules]) => {
         const [field, semester] = key.split('-');
         modules.forEach((module) => {
-            // Build URL with proper encoding
+            // Build URL with proper XML encoding
             const params = new URLSearchParams({
                 field: field,
                 semester: semester,
                 module: module.id
             });
+            // Manually replace & with &amp; for XML compatibility
+            const xmlSafeUrl = `${baseUrl}/browse?${params.toString()}`.replace(/&/g, '&amp;');
             moduleRoutes.push({
-                url: `${baseUrl}/browse?${params.toString()}`,
+                url: xmlSafeUrl,
                 lastModified: new Date(),
                 changeFrequency: 'weekly',
                 priority: 0.7,
