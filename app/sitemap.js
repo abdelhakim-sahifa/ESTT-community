@@ -25,8 +25,14 @@ export default async function sitemap() {
     Object.entries(staticDb.modules).forEach(([key, modules]) => {
         const [field, semester] = key.split('-');
         modules.forEach((module) => {
+            // Build URL with proper encoding
+            const params = new URLSearchParams({
+                field: field,
+                semester: semester,
+                module: module.id
+            });
             moduleRoutes.push({
-                url: `${baseUrl}/browse?field=${field}&semester=${semester}&module=${module.id}`,
+                url: `${baseUrl}/browse?${params.toString()}`,
                 lastModified: new Date(),
                 changeFrequency: 'weekly',
                 priority: 0.7,
