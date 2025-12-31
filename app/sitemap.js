@@ -1,72 +1,61 @@
 import { db as staticDb } from '@/lib/data';
 
-// Valid changeFrequency values according to sitemap protocol
-const CHANGE_FREQ = {
-    DAILY: 'daily',
-    WEEKLY: 'weekly',
-    MONTHLY: 'monthly',
-};
-
-// This should be in app/sitemap.js or app/sitemap.ts
 export default async function sitemap() {
     const baseUrl = 'https://estt-community.vercel.app';
     const currentDate = new Date().toISOString();
 
-    // Static routes
     const staticRoutes = [
         {
             url: `${baseUrl}`,
             lastModified: currentDate,
-            changeFrequency: CHANGE_FREQ.DAILY,
+            changeFrequency: 'daily',
             priority: 1.0,
         },
         {
             url: `${baseUrl}/browse`,
             lastModified: currentDate,
-            changeFrequency: CHANGE_FREQ.WEEKLY,
+            changeFrequency: 'weekly',
             priority: 0.8,
         },
         {
             url: `${baseUrl}/contribute`,
             lastModified: currentDate,
-            changeFrequency: CHANGE_FREQ.WEEKLY,
+            changeFrequency: 'weekly',
             priority: 0.8,
         },
         {
             url: `${baseUrl}/clubs`,
             lastModified: currentDate,
-            changeFrequency: CHANGE_FREQ.WEEKLY,
+            changeFrequency: 'weekly',
             priority: 0.8,
         },
         {
             url: `${baseUrl}/search`,
             lastModified: currentDate,
-            changeFrequency: CHANGE_FREQ.WEEKLY,
+            changeFrequency: 'weekly',
             priority: 0.8,
         },
         {
             url: `${baseUrl}/conditions-d-utilisation`,
             lastModified: currentDate,
-            changeFrequency: CHANGE_FREQ.MONTHLY,
+            changeFrequency: 'monthly',
             priority: 0.5,
         },
         {
             url: `${baseUrl}/politique-de-confidentialite`,
             lastModified: currentDate,
-            changeFrequency: CHANGE_FREQ.MONTHLY,
+            changeFrequency: 'monthly',
             priority: 0.5,
         },
     ];
 
-    // Generate URLs for all fields
     const fieldRoutes = staticDb.fields.map((field) => ({
         url: `${baseUrl}/browse?field=${encodeURIComponent(field.id)}`,
         lastModified: currentDate,
-        changeFrequency: CHANGE_FREQ.WEEKLY,
+        changeFrequency: 'weekly',
         priority: 0.8,
     }));
 
-    // Generate URLs for all modules
     const moduleRoutes = [];
     Object.entries(staticDb.modules).forEach(([key, modules]) => {
         const [field, semester] = key.split('-');
@@ -75,13 +64,12 @@ export default async function sitemap() {
             moduleRoutes.push({
                 url: url,
                 lastModified: currentDate,
-                changeFrequency: CHANGE_FREQ.WEEKLY,
+                changeFrequency: 'weekly',
                 priority: 0.7,
             });
         });
     });
 
-    // Fetch clubs from Firebase (if available)
     let clubRoutes = [];
     try {
         const { db: firebaseDb, ref, get } = await import('@/lib/firebase');
@@ -97,7 +85,6 @@ export default async function sitemap() {
                     .map(([id, club]) => {
                         let lastMod = currentDate;
 
-                        // Safely parse the createdAt date
                         if (club.createdAt) {
                             try {
                                 const parsedDate = new Date(club.createdAt);
@@ -112,7 +99,7 @@ export default async function sitemap() {
                         return {
                             url: `${baseUrl}/clubs/${encodeURIComponent(id)}`,
                             lastModified: lastMod,
-                            changeFrequency: CHANGE_FREQ.WEEKLY,
+                            changeFrequency: 'weekly',
                             priority: 0.9,
                         };
                     });
