@@ -52,7 +52,33 @@ export default function SignupPage() {
         e.preventDefault();
         setMessage('');
 
-        if (!validateEmail(formData.email)) {
+        const email = formData.email;
+        let isAllowed = false;
+
+        // 1. Check if academic email
+        if (validateEmail(email)) {
+            isAllowed = true;
+        }
+        // 2. Check if Gmail and in exceptions
+        else if (email.toLowerCase().endsWith('@gmail.com')) {
+            try {
+                const { db } = await import('@/lib/firebase');
+                const { ref, get } = await import('firebase/database');
+                const snapshot = await get(ref(db, 'emailExceptions'));
+
+                if (snapshot.exists()) {
+                    const exceptions = snapshot.val();
+                    const allowedEmails = Object.values(exceptions);
+                    if (allowedEmails.includes(email.trim())) {
+                        isAllowed = true;
+                    }
+                }
+            } catch (err) {
+                console.error("Error checking email exceptions:", err);
+            }
+        }
+
+        if (!isAllowed) {
             setMessage('Veuillez utiliser votre adresse académique @etu.uae.ac.ma.');
             return;
         }
@@ -104,8 +130,6 @@ export default function SignupPage() {
             }
 
             setMessage('Compte créé ! Un email de vérification a été envoyé à votre adresse académique. Veuillez vérifier votre boîte de réception avant de vous connecter.');
-            // We don't redirect immediately to let them read the message
-            // setTimeout(() => router.push('/login'), 5000);
         } catch (error) {
             console.error(error);
             setMessage(error.message || 'Erreur lors de la création du compte.');

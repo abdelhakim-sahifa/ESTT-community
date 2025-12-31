@@ -16,7 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, ArrowLeft, AlertCircle, CheckCircle2, FileText, Megaphone, Calendar, Edit, Trash2, Plus, Upload, Ticket, Users, LayoutDashboard, Settings, LineChart, Menu, X, Share2, ClipboardList } from 'lucide-react';
+import { Loader2, ArrowLeft, AlertCircle, CheckCircle2, FileText, Megaphone, Calendar, Edit, Trash2, Plus, Upload, Ticket, Users, LayoutDashboard, Settings, LineChart, Menu, X, Share2, ClipboardList, Scan } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -72,8 +72,24 @@ export default function ClubAdminPage() {
     const [newForm, setNewForm] = useState({
         title: '',
         description: '',
-        generateTicket: false,
-        fields: [{ id: 1, label: '', type: 'text', required: true }] // Initial field
+        fields: [{ id: Date.now(), label: '', type: 'text', required: true }] // Improved initial ID
+    });
+
+    // Events Management
+    const [events, setEvents] = useState([]);
+    const [creatingEvent, setCreatingEvent] = useState(false);
+    const [newEvent, setNewEvent] = useState({
+        title: '',
+        description: '',
+        date: '',
+        time: '',
+        location: '',
+        maxCapacity: '',
+        status: 'published',
+        fields: [
+            { id: 'name', label: 'Nom complet', type: 'text', required: true },
+            { id: 'email', label: 'Email', type: 'email', required: true }
+        ]
     });
 
     // Form Submissions
@@ -260,6 +276,18 @@ export default function ClubAdminPage() {
                 setTickets([]);
             }
 
+            // 4. Fetch Events
+            const eventsRef = ref(db, `clubs/${clubId}/events`);
+            const eventsSnap = await get(eventsRef);
+            if (eventsSnap.exists()) {
+                const eventsList = Object.entries(eventsSnap.val())
+                    .map(([id, e]) => ({ id, ...e }))
+                    .sort((a, b) => b.createdAt - a.createdAt);
+                setEvents(eventsList);
+            } else {
+                setEvents([]);
+            }
+
         } catch (error) {
             console.error("Error fetching club admin data:", error);
             setMessage("Erreur lors du chargement des données.");
@@ -429,11 +457,14 @@ export default function ClubAdminPage() {
                     if (ticket) {
                         const html = ticketValidatedEmail(ticket, ticket.eventName, ticket.clubName);
 
-                        let recipientEmail = null;
-                        if (ticket.userId && ticket.userId !== 'guest') {
-                            const userSnap = await get(ref(db, `users/${ticket.userId}`));
-                            if (userSnap.exists()) {
-                                recipientEmail = userSnap.val().email;
+                        let recipientEmail = ticket.userEmail;
+
+                        if (!recipientEmail || recipientEmail === 'N/A') {
+                            if (ticket.userId && ticket.userId !== 'guest') {
+                                const userSnap = await get(ref(db, `users/${ticket.userId}`));
+                                if (userSnap.exists()) {
+                                    recipientEmail = userSnap.val().email;
+                                }
                             }
                         }
 
@@ -491,12 +522,15 @@ export default function ClubAdminPage() {
             // Background Email
             (async () => {
                 try {
-                    let recipientEmail = null;
-                    // Try to find email
-                    if (ticket.userId && ticket.userId !== 'guest') {
-                        const userSnap = await get(ref(db, `users/${ticket.userId}`));
-                        if (userSnap.exists()) {
-                            recipientEmail = userSnap.val().email;
+                    let recipientEmail = ticket.userEmail;
+
+                    if (!recipientEmail || recipientEmail === 'N/A') {
+                        // Try to find email from user node if missing in ticket (legacy)
+                        if (ticket.userId && ticket.userId !== 'guest') {
+                            const userSnap = await get(ref(db, `users/${ticket.userId}`));
+                            if (userSnap.exists()) {
+                                recipientEmail = userSnap.val().email;
+                            }
                         }
                     }
 
@@ -559,6 +593,7 @@ export default function ClubAdminPage() {
             if (!newForm.title) throw new Error("Le titre est requis");
             if (newForm.fields.length === 0) throw new Error("Au moins un champ est requis");
 
+
             setCreatingForm(true);
 
             const formsRef = ref(db, `clubs/${clubId}/forms`);
@@ -573,7 +608,6 @@ export default function ClubAdminPage() {
             setNewForm({
                 title: '',
                 description: '',
-                generateTicket: false,
                 fields: [{ id: Date.now(), label: '', type: 'text', required: true }]
             });
             fetchClubData();
@@ -593,6 +627,84 @@ export default function ClubAdminPage() {
             // Optionally remove submissions
             // await remove(ref(db, `clubs/${clubId}/formSubmissions/${formId}`));
             setMessage('Formulaire supprimé');
+            fetchClubData();
+        } catch (e) {
+            console.error(e);
+            setMessage('Erreur de suppression');
+        }
+    };
+
+    // Event Management Functions
+    const handleAddEventField = () => {
+        setNewEvent(prev => ({
+            ...prev,
+            fields: [
+                ...prev.fields,
+                { id: Date.now(), label: '', type: 'text', required: false, options: '' }
+            ]
+        }));
+    };
+
+    const handleRemoveEventField = (id) => {
+        setNewEvent(prev => ({
+            ...prev,
+            fields: prev.fields.filter(f => f.id !== id)
+        }));
+    };
+
+    const handleUpdateEventField = (id, key, value) => {
+        setNewEvent(prev => ({
+            ...prev,
+            fields: prev.fields.map(f => f.id === id ? { ...f, [key]: value } : f)
+        }));
+    };
+
+    const handleCreateEvent = async (e) => {
+        e.preventDefault();
+        setMessage('');
+
+        try {
+            if (!newEvent.title || !newEvent.date) throw new Error("Le titre et la date sont requis");
+
+            setCreatingEvent(true);
+            const eventsRef = ref(db, `clubs/${clubId}/events`);
+            const newEventRef = push(eventsRef);
+
+            await set(newEventRef, {
+                ...newEvent,
+                registrationCount: 0,
+                createdAt: Date.now()
+            });
+
+            setMessage('Événement créé avec succès');
+            setNewEvent({
+                title: '',
+                description: '',
+                date: '',
+                time: '',
+                location: '',
+                maxCapacity: '',
+                status: 'published',
+                fields: [
+                    { id: 'name', label: 'Nom complet', type: 'text', required: true },
+                    { id: 'email', label: 'Email', type: 'email', required: true }
+                ]
+            });
+            fetchClubData();
+        } catch (error) {
+            console.error(error);
+            setMessage(error.message || 'Erreur lors de la création');
+        } finally {
+            setCreatingEvent(false);
+        }
+    };
+
+    const handleDeleteEvent = async (eventId) => {
+        if (!confirm('Êtes-vous sûr ? Les tickets associés resteront en base mais ne seront plus liés à un événement actif.')) return;
+
+        try {
+            await remove(ref(db, `clubs/${clubId}/events/${eventId}`));
+            setMessage('Événement supprimé');
             fetchClubData();
         } catch (e) {
             console.error(e);
@@ -830,10 +942,20 @@ export default function ClubAdminPage() {
                                         <ClipboardList className="w-4 h-4" /> Demandes
                                         {joinRequests.length > 0 && <Badge className="ml-auto bg-red-500 text-white h-5 w-5 p-0 flex items-center justify-center rounded-full text-[10px]">{joinRequests.length}</Badge>}
                                     </TabsTrigger>
+                                    <TabsTrigger value="events" className="justify-start gap-3 h-11 px-4 data-[state=active]:bg-primary data-[state=active]:text-white">
+                                        <Calendar className="w-4 h-4" /> Événements
+                                        {events.length > 0 && <Badge className="ml-auto bg-blue-500 text-white h-5 w-5 p-0 flex items-center justify-center rounded-full text-[10px]">{events.length}</Badge>}
+                                    </TabsTrigger>
                                     <TabsTrigger value="tickets" className="justify-start gap-3 h-11 px-4 data-[state=active]:bg-primary data-[state=active]:text-white">
                                         <Ticket className="w-4 h-4" /> Billetterie
                                         {tickets.filter(t => t.status === 'pending').length > 0 && <Badge className="ml-auto bg-orange-500 text-white h-5 w-5 p-0 flex items-center justify-center rounded-full text-[10px]">{tickets.filter(t => t.status === 'pending').length}</Badge>}
                                     </TabsTrigger>
+                                    <Link
+                                        href={`/clubs/${clubId}/admin/scanner`}
+                                        className="flex items-center gap-3 h-11 px-4 text-sm font-medium rounded-md hover:bg-slate-100 transition-colors text-primary"
+                                    >
+                                        <Scan className="w-4 h-4" /> Ouvrir le Scanneur
+                                    </Link>
                                     <TabsTrigger value="forms" className="justify-start gap-3 h-11 px-4 data-[state=active]:bg-primary data-[state=active]:text-white">
                                         <FileText className="w-4 h-4" /> Formulaires
                                     </TabsTrigger>
@@ -1004,6 +1126,207 @@ export default function ClubAdminPage() {
                                         </Button>
                                     </CardContent>
                                 </Card>
+                            </TabsContent>
+
+                            {/* Events Management Tab */}
+                            <TabsContent value="events">
+                                <div className="space-y-6">
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle>Créer un Événement</CardTitle>
+                                            <CardDescription>
+                                                Un événement dédié avec formulaire d'inscription et tickets automatiques.
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <form onSubmit={handleCreateEvent} className="space-y-6">
+                                                <div className="grid md:grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <Label>Titre de l'événement</Label>
+                                                        <Input
+                                                            value={newEvent.title}
+                                                            onChange={e => setNewEvent(p => ({ ...p, title: e.target.value }))}
+                                                            placeholder="Ex: Conférence Tech"
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Lieu</Label>
+                                                        <Input
+                                                            value={newEvent.location}
+                                                            onChange={e => setNewEvent(p => ({ ...p, location: e.target.value }))}
+                                                            placeholder="Ex: Amphi A"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Date</Label>
+                                                        <Input
+                                                            type="date"
+                                                            value={newEvent.date}
+                                                            onChange={e => setNewEvent(p => ({ ...p, date: e.target.value }))}
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Heure</Label>
+                                                        <Input
+                                                            type="time"
+                                                            value={newEvent.time}
+                                                            onChange={e => setNewEvent(p => ({ ...p, time: e.target.value }))}
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Capacité maximale (0 pour illimité)</Label>
+                                                        <Input
+                                                            type="number"
+                                                            value={newEvent.maxCapacity}
+                                                            onChange={e => setNewEvent(p => ({ ...p, maxCapacity: e.target.value }))}
+                                                            placeholder="200"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label>Description</Label>
+                                                    <Textarea
+                                                        value={newEvent.description}
+                                                        onChange={e => setNewEvent(p => ({ ...p, description: e.target.value }))}
+                                                        placeholder="Détails de l'événement..."
+                                                        rows={3}
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-4 border p-4 rounded-md bg-slate-50/50">
+                                                    <div className="flex items-center justify-between">
+                                                        <Label className="font-bold">Champs du formulaire d'inscription</Label>
+                                                        <Button type="button" variant="outline" size="sm" onClick={handleAddEventField}>
+                                                            <Plus className="w-4 h-4 mr-2" /> Ajouter un champ
+                                                        </Button>
+                                                    </div>
+
+                                                    <div className="space-y-3">
+                                                        {newEvent.fields.map((field) => (
+                                                            <div key={field.id} className="flex gap-2 items-start bg-white p-2 rounded-md border shadow-sm">
+                                                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 flex-1">
+                                                                    <Input
+                                                                        placeholder="Nom du champ"
+                                                                        value={field.label}
+                                                                        onChange={e => handleUpdateEventField(field.id, 'label', e.target.value)}
+                                                                        required
+                                                                        disabled={['name', 'email'].includes(field.id)}
+                                                                    />
+                                                                    <Select
+                                                                        value={field.type}
+                                                                        onValueChange={v => handleUpdateEventField(field.id, 'type', v)}
+                                                                        disabled={['name', 'email'].includes(field.id)}
+                                                                    >
+                                                                        <SelectTrigger>
+                                                                            <SelectValue />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="text">Texte court</SelectItem>
+                                                                            <SelectItem value="textarea">Paragraphe</SelectItem>
+                                                                            <SelectItem value="number">Nombre</SelectItem>
+                                                                            <SelectItem value="email">Email</SelectItem>
+                                                                            <SelectItem value="tel">Téléphone</SelectItem>
+                                                                            <SelectItem value="select">Liste déroulante</SelectItem>
+                                                                            <SelectItem value="radio">Choix unique (Radio)</SelectItem>
+                                                                            <SelectItem value="checkbox">Choix multiples (Cocher)</SelectItem>
+                                                                            <SelectItem value="boolean">Case à cocher (Oui/Non)</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <Label className="text-xs">Requis ?</Label>
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={field.required}
+                                                                            onChange={e => handleUpdateEventField(field.id, 'required', e.target.checked)}
+                                                                            disabled={['name', 'email'].includes(field.id)}
+                                                                        />
+                                                                    </div>
+                                                                    {['select', 'radio', 'checkbox'].includes(field.type) && (
+                                                                        <div className="col-span-full space-y-1 mt-1">
+                                                                            <Label className="text-xs font-semibold">Options (séparées par des virgules)</Label>
+                                                                            <Input
+                                                                                placeholder="Option 1, Option 2, Option 3"
+                                                                                value={field.options || ''}
+                                                                                onChange={e => handleUpdateEventField(field.id, 'options', e.target.value)}
+                                                                                className="h-8"
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="text-destructive"
+                                                                    onClick={() => handleRemoveEventField(field.id)}
+                                                                    disabled={['name', 'email'].includes(field.id)}
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </Button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                <Button type="submit" disabled={creatingEvent} className="w-full">
+                                                    {creatingEvent ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+                                                    Créer l'Événement & Activer la Billetterie
+                                                </Button>
+                                            </form>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle>Événements en cours</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            {events.length === 0 ? (
+                                                <p className="text-center text-muted-foreground py-8 italic">Aucun événement créé.</p>
+                                            ) : (
+                                                <div className="grid gap-4">
+                                                    {events.map((event) => (
+                                                        <div key={event.id} className="p-4 border rounded-lg flex flex-col md:flex-row justify-between gap-4">
+                                                            <div className="space-y-1">
+                                                                <div className="flex items-center gap-2">
+                                                                    <h3 className="font-bold text-lg">{event.title}</h3>
+                                                                    <Badge variant={event.status === 'published' ? 'default' : 'secondary'}>
+                                                                        {event.status === 'published' ? 'Actif' : 'Brouillon'}
+                                                                    </Badge>
+                                                                </div>
+                                                                <div className="text-sm text-muted-foreground flex flex-wrap gap-x-4">
+                                                                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(event.date).toLocaleDateString()}</span>
+                                                                    <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {event.registrationCount || 0} / {event.maxCapacity || '∞'}</span>
+                                                                    <span className="flex items-center gap-1"><Ticket className="w-3 h-3" /> Billetterie active</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <Button variant="outline" size="sm" asChild>
+                                                                    <Link href={`/clubs/${clubId}/events/${event.id}/registration`} target="_blank">
+                                                                        <Share2 className="w-4 h-4 mr-2" /> Lien
+                                                                    </Link>
+                                                                </Button>
+                                                                <Button variant="outline" size="sm" onClick={() => {
+                                                                    // TODO: View participants
+                                                                    setActiveTab('tickets');
+                                                                    // Filter logic would go here
+                                                                }}>
+                                                                    Voir Participants
+                                                                </Button>
+                                                                <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handleDeleteEvent(event.id)}>
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                </div>
                             </TabsContent>
 
                             {/* Members Tab */}
@@ -1232,7 +1555,7 @@ export default function ClubAdminPage() {
                                                         <SelectItem value="none">Aucun formulaire</SelectItem>
                                                         {forms.map(form => (
                                                             <SelectItem key={form.id} value={form.id}>
-                                                                {form.title} {form.generateTicket && '(🎫 Avec Ticket)'}
+                                                                {form.title}
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>
@@ -1497,7 +1820,6 @@ export default function ClubAdminPage() {
                                                                 {selectedForm.fields.map(field => (
                                                                     <th key={field.id} className="p-4 min-w-[150px]">{field.label}</th>
                                                                 ))}
-                                                                {selectedForm.generateTicket && <th className="p-4">Ticket</th>}
                                                             </tr>
                                                         </thead>
                                                         <tbody className="divide-y">
@@ -1513,13 +1835,6 @@ export default function ClubAdminPage() {
                                                                                 : (sub.data?.[field.id] || '-')}
                                                                         </td>
                                                                     ))}
-                                                                    {selectedForm.generateTicket && (
-                                                                        <td className="p-4">
-                                                                            {sub.ticketId ? (
-                                                                                <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">Généré</Badge>
-                                                                            ) : '-'}
-                                                                        </td>
-                                                                    )}
                                                                 </tr>
                                                             ))}
                                                         </tbody>
@@ -1560,26 +1875,6 @@ export default function ClubAdminPage() {
                                                         </div>
                                                     </div>
 
-                                                    <div className="flex items-center space-x-2 border p-3 rounded-md bg-slate-50">
-                                                        <input
-                                                            type="checkbox"
-                                                            id="generateTicket"
-                                                            checked={newForm.generateTicket}
-                                                            onChange={e => setNewForm(p => ({ ...p, generateTicket: e.target.checked }))}
-                                                            className="w-4 h-4"
-                                                        />
-                                                        <div className="grid gap-1.5 leading-none">
-                                                            <label
-                                                                htmlFor="generateTicket"
-                                                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                            >
-                                                                Générer un ticket après soumission
-                                                            </label>
-                                                            <p className="text-[0.8rem] text-muted-foreground">
-                                                                Si coché, un ticket QR code sera généré pour l'utilisateur. (Paiement à venir)
-                                                            </p>
-                                                        </div>
-                                                    </div>
 
                                                     <div className="space-y-3 border p-4 rounded-md">
                                                         <div className="flex items-center justify-between">
@@ -1674,7 +1969,6 @@ export default function ClubAdminPage() {
                                                                     <div>
                                                                         <h3 className="font-bold flex items-center gap-2">
                                                                             {form.title}
-                                                                            {form.generateTicket && <Badge variant="secondary">Ticket</Badge>}
                                                                         </h3>
                                                                         <p className="text-sm text-muted-foreground">{form.description}</p>
                                                                         <div className="flex gap-2 mt-2">
@@ -1740,7 +2034,9 @@ export default function ClubAdminPage() {
                                                             <div className="flex justify-between items-start">
                                                                 <div>
                                                                     <div className="flex items-center gap-2 mb-1">
-                                                                        <h3 className="font-bold">{ticket.userName}</h3>
+                                                                        <h3 className="font-bold">
+                                                                            {ticket.firstName ? `${ticket.firstName} ${ticket.lastName || ''}` : (ticket.userName || ticket.userEmail || 'Participant')}
+                                                                        </h3>
                                                                         <Badge variant={ticket.status === 'valid' ? 'default' : 'secondary'} className={ticket.status === 'pending' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-600 hover:bg-green-700'}>
                                                                             {ticket.status === 'valid' ? 'Validé' : 'En attente'}
                                                                         </Badge>
@@ -1762,7 +2058,7 @@ export default function ClubAdminPage() {
                                                                         size="sm"
                                                                         variant="destructive"
                                                                         className="h-8"
-                                                                        onClick={() => handleRejectTicket(ticket.id)}
+                                                                        onClick={() => handleRejectTicket(ticket)}
                                                                     >
                                                                         <Trash2 className="w-4 h-4" />
                                                                     </Button>

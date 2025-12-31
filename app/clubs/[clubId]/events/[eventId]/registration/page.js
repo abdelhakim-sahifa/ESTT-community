@@ -1,0 +1,354 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { db, ref, get, push, set, update, increment } from '@/lib/firebase';
+import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Loader2, ArrowLeft, CheckCircle2, Calendar, MapPin, Users, Ticket, AlertCircle, Clock } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
+
+export default function EventRegistrationPage() {
+    const params = useParams();
+    const router = useRouter();
+    const { user, profile } = useAuth();
+    const { clubId, eventId } = params;
+
+    const [club, setClub] = useState(null);
+    const [event, setEvent] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState('');
+    const [formData, setFormData] = useState({});
+    const [generatedTicketId, setGeneratedTicketId] = useState('');
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!db || !clubId || !eventId) return;
+
+            try {
+                // Fetch Club
+                const clubSnap = await get(ref(db, `clubs/${clubId}`));
+                if (clubSnap.exists()) {
+                    setClub(clubSnap.val());
+                }
+
+                // Fetch Event
+                const eventSnap = await get(ref(db, `clubs/${clubId}/events/${eventId}`));
+                if (eventSnap.exists()) {
+                    const eventData = eventSnap.val();
+                    setEvent(eventData);
+
+                    // Initialize form data with user info if available
+                    const initialData = {};
+                    eventData.fields.forEach(f => {
+                        if (f.id === 'name') initialData[f.id] = profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : (user?.displayName || '');
+                        if (f.id === 'email') initialData[f.id] = user?.email || '';
+                    });
+                    setFormData(initialData);
+                } else {
+                    setError("Événement introuvable");
+                }
+            } catch (err) {
+                console.error(err);
+                setError("Erreur lors du chargement");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [clubId, eventId, db, user, profile]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (submitting) return;
+
+        setSubmitting(true);
+        setError('');
+
+        try {
+            // 1. Check Capacity
+            if (event.maxCapacity > 0 && event.registrationCount >= event.maxCapacity) {
+                throw new Error("L'événement est complet !");
+            }
+
+            // 2. Extract Name and Email
+            const recipientEmail = formData['email'] || user?.email;
+            const fullName = formData['name'] || user?.displayName || 'Participant';
+            const [firstName, ...lastNameParts] = fullName.split(' ');
+            const lastName = lastNameParts.join(' ');
+
+            if (!recipientEmail) throw new Error("L'adresse email est requise");
+
+            // 3. Create Ticket
+            const ticketRef = push(ref(db, 'tickets'));
+            const ticketId = ticketRef.key;
+
+            const ticketData = {
+                id: ticketId,
+                eventId: eventId,
+                eventName: event.title,
+                clubId: clubId,
+                clubName: club.name,
+                userId: user?.uid || 'guest',
+                userEmail: recipientEmail,
+                firstName: firstName || 'Participant',
+                lastName: lastName || '',
+                status: 'pending',
+                createdAt: Date.now(),
+                formData: formData,
+                eventDate: event.date,
+                eventTime: event.time || '',
+                eventLocation: event.location || ''
+            };
+
+            await set(ticketRef, ticketData);
+
+            // 4. Update Registration Count
+            const eventRef = ref(db, `clubs/${clubId}/events/${eventId}`);
+            await update(eventRef, {
+                registrationCount: increment(1)
+            });
+
+            // 5. Send Confirmation Email
+            try {
+                const { ticketConfirmationEmail } = await import('@/lib/email-templates');
+                const html = ticketConfirmationEmail(ticketData, event.title, club.name);
+
+                await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: recipientEmail,
+                        subject: `Confirmation d'inscription : ${event.title}`,
+                        html: html
+                    })
+                });
+            } catch (emailErr) {
+                console.error("Email sending failed but registration succeeded:", emailErr);
+            }
+
+            setGeneratedTicketId(ticketId);
+            setSuccess(true);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (err) {
+            console.error(err);
+            setError(err.message || "Une erreur est survenue lors de l'inscription.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <Loader2 className="w-8 h-8 animate-spin text-slate-200" />
+            </div>
+        );
+    }
+
+    const themeColor = club?.themeColor || '#0ea5e9';
+    const isFull = event.maxCapacity > 0 && event.registrationCount >= event.maxCapacity;
+
+    if (success) {
+        return (
+            <div className="min-h-screen bg-white flex items-center justify-center p-6 text-center">
+                <div className="max-w-sm w-full space-y-10 animate-in fade-in zoom-in duration-500">
+                    <div className="space-y-6">
+                        <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mx-auto border border-slate-100 shadow-sm">
+                            <CheckCircle2 className="w-8 h-8 text-green-500" />
+                        </div>
+                        <div className="space-y-2">
+                            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Inscription validée !</h1>
+                            <p className="text-slate-400 font-medium text-sm">
+                                Votre place pour <span className="text-slate-900 font-semibold">{event.title}</span> est confirmée.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100 flex items-center gap-4 text-left">
+                        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-slate-200 shrink-0">
+                            <Ticket className="w-5 h-5 text-slate-400" />
+                        </div>
+                        <div className="space-y-0.5">
+                            <p className="text-xs font-bold text-slate-900 leading-tight">Ticket QR disponible</p>
+                            <p className="text-[10px] text-slate-500 leading-relaxed font-medium">Un email de confirmation a été envoyé à {formData.email || user?.email}.</p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-3 pt-4">
+                        <Button asChild className="w-full h-12 rounded-xl text-sm font-bold transition-all shadow-sm text-white" style={{ backgroundColor: themeColor }}>
+                            <Link href={`/tickets/${generatedTicketId}`}>
+                                Voir mon Ticket 🎉
+                            </Link>
+                        </Button>
+                        <Button variant="ghost" asChild className="text-slate-400 hover:text-slate-900 text-xs font-semibold rounded-xl">
+                            <Link href={`/clubs/${clubId}`}>Fermer</Link>
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-white font-sans selection:bg-slate-100">
+            {/* Subtle Top Branding */}
+            <div className="w-full h-1.5 sticky top-0 z-50 transition-all duration-300 opacity-80" style={{ backgroundColor: themeColor }} />
+
+            <div className="container max-w-2xl mx-auto px-6 py-12">
+                {/* Back Button */}
+                <Button variant="ghost" asChild className="mb-12 text-slate-400 hover:text-slate-900 transition-colors rounded-lg group -ml-2">
+                    <Link href={`/clubs/${clubId}`} className="flex items-center gap-2">
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        <span>Retour</span>
+                    </Link>
+                </Button>
+
+                <div className="space-y-12">
+                    {/* Simplified Header */}
+                    <div className="flex flex-col items-center text-center space-y-6">
+                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm">
+                            {club?.logo ? (
+                                <Image src={club.logo} alt={club.name} fill className="object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center font-bold text-2xl text-white" style={{ backgroundColor: themeColor }}>
+                                    {club?.name?.charAt(0)}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="space-y-3">
+                            <p className="text-sm font-semibold tracking-wide text-slate-400 uppercase">
+                                {club?.name} présente
+                            </p>
+                            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
+                                {event.title}
+                            </h1>
+                        </div>
+                    </div>
+
+                    {/* Compact Event Details */}
+                    <div className="bg-slate-50/50 rounded-2xl border border-slate-100 p-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            {[
+                                { icon: Calendar, label: 'Date', value: new Date(event.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) },
+                                { icon: Clock, label: 'Heure', value: event.time || 'TBD' },
+                                { icon: MapPin, label: 'Lieu', value: event.location || 'Campus' },
+                                { icon: Users, label: 'Statut', value: isFull ? 'Complet' : 'Ouvert' }
+                            ].map((item, i) => (
+                                <div key={i} className="space-y-1">
+                                    <div className="flex items-center gap-2 text-slate-400">
+                                        <item.icon className="w-3.5 h-3.5" />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">{item.label}</span>
+                                    </div>
+                                    <p className="text-sm font-semibold text-slate-900 truncate">{item.value}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Description (if exists) */}
+                    {event.description && (
+                        <div className="max-w-none border-l-2 border-slate-100 pl-6 py-1">
+                            <p className="text-slate-500 leading-relaxed text-sm">
+                                {event.description}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Registration Form */}
+                    <div className="space-y-8 pt-4">
+                        <div className="space-y-1">
+                            <h2 className="text-2xl font-bold text-slate-900">Inscription</h2>
+                            <p className="text-sm text-slate-400 font-medium">Réservez votre billet digital en quelques secondes.</p>
+                        </div>
+
+                        {error && (
+                            <Alert variant="destructive" className="rounded-xl border-none bg-red-50 text-red-600 py-3">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertDescription className="text-sm font-semibold">{error}</AlertDescription>
+                            </Alert>
+                        )}
+
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {event.fields.map((field) => (
+                                <div key={field.id} className="space-y-2.5">
+                                    <Label className="text-xs font-bold text-slate-600 ml-1">
+                                        {field.label} {field.required && <span className="text-red-500">*</span>}
+                                    </Label>
+
+                                    {field.type === 'textarea' ? (
+                                        <Textarea
+                                            required={field.required}
+                                            value={formData[field.id] || ''}
+                                            onChange={e => setFormData(p => ({ ...p, [field.id]: e.target.value }))}
+                                            className="min-h-[100px] rounded-xl border-slate-200 bg-white focus:ring-0 focus:border-slate-900 transition-all text-sm p-4 placeholder:text-slate-300"
+                                            placeholder="..."
+                                        />
+                                    ) : field.type === 'select' ? (
+                                        <Select
+                                            onValueChange={v => setFormData(p => ({ ...p, [field.id]: v }))}
+                                            value={formData[field.id] || ''}
+                                            required={field.required}
+                                        >
+                                            <SelectTrigger className="h-12 rounded-xl border-slate-200 bg-white focus:ring-0 focus:border-slate-900 px-4 text-sm">
+                                                <SelectValue placeholder="Sélectionner..." />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-xl border-slate-200 shadow-lg">
+                                                {field.options?.split(',').map(opt => (
+                                                    <SelectItem key={opt.trim()} value={opt.trim()} className="text-sm">{opt.trim()}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    ) : (
+                                        <Input
+                                            type={field.type}
+                                            required={field.required}
+                                            value={formData[field.id] || ''}
+                                            onChange={e => setFormData(p => ({ ...p, [field.id]: e.target.value }))}
+                                            className="h-12 rounded-xl border-slate-200 bg-white focus:ring-0 focus:border-slate-900 transition-all px-4 text-sm placeholder:text-slate-300"
+                                            placeholder={field.label}
+                                        />
+                                    )}
+                                </div>
+                            ))}
+
+                            <div className="pt-8">
+                                <Button
+                                    type="submit"
+                                    disabled={submitting || isFull}
+                                    className="w-full h-14 rounded-xl text-base font-bold transition-all hover:opacity-90 active:scale-[0.98] shadow-sm text-white"
+                                    style={{
+                                        backgroundColor: themeColor
+                                    }}
+                                >
+                                    {submitting ? (
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                    ) : isFull ? (
+                                        'Événement Complet'
+                                    ) : (
+                                        'Obtenir mon billet'
+                                    )}
+                                </Button>
+                                <p className="text-[10px] text-slate-400 font-medium text-center mt-4 tracking-tight uppercase">
+                                    Ticket digital envoyé par email instantanément
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

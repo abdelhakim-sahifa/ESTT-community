@@ -48,16 +48,42 @@ export default function LoginPage() {
     };
 
     const isSuccess = message.includes('réussie') || message.includes('envoyé');
-   const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage('');
+        setLoading(true); // Start loading immediately for UX
 
-        if (!validateEmail(email)) {
-            setMessage('Veuillez utiliser votre adresse académique @etu.uae.ac.ma.');
-            return;
+        let isAllowed = false;
+
+        // 1. Check if academic email
+        if (validateEmail(email)) {
+            isAllowed = true;
+        }
+        // 2. Check if Gmail and in exceptions
+        else if (email.toLowerCase().endsWith('@gmail.com')) {
+            try {
+                const { db, ref, get } = await import('@/lib/firebase');
+                const snapshot = await get(ref(db, 'emailExceptions'));
+
+                if (snapshot.exists()) {
+                    const exceptions = snapshot.val();
+                    // Check if email exists in values (array or object)
+                    const allowedEmails = Object.values(exceptions);
+                    if (allowedEmails.includes(email.trim())) {
+                        isAllowed = true;
+                    }
+                }
+            } catch (err) {
+                console.error("Error checking email exceptions:", err);
+                // Fail safe: deny if error
+            }
         }
 
-        setLoading(true);
+        if (!isAllowed) {
+            setMessage('Veuillez utiliser votre adresse académique @etu.uae.ac.ma.');
+            setLoading(false);
+            return;
+        }
 
         try {
             await signIn(email, password);
@@ -66,11 +92,10 @@ export default function LoginPage() {
         } catch (error) {
             console.error(error);
             setMessage('Identifiants invalides ou erreur de connexion.');
-        } finally {
             setLoading(false);
         }
     };
-    
+
     return (
         <main className="container flex items-center justify-center min-h-[calc(100vh-200px)] py-12">
             <Card className="w-full max-w-md shadow-xl border-muted-foreground/10">
