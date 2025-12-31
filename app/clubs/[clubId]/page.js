@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OrganizationalChart from '@/components/OrganizationalChart';
 import ClubMemberCard from '@/components/ClubMemberCard';
+import StructuredData from '@/components/StructuredData';
 import { CheckCircle2, Loader2, Settings, ArrowLeft, Users, Calendar, ChevronLeft, ChevronRight, User, Ticket } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -166,9 +167,22 @@ export default function ClubProfilePage() {
 
     if (!club) return null;
 
+    const clubStructuredData = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": club.name,
+        "description": club.description,
+        "url": `https://estt-community.vercel.app/clubs/${clubId}`,
+        "logo": club.logo,
+        "parentOrganization": {
+            "@type": "EducationalOrganization",
+            "name": "EST Tétouan"
+        }
+    };
+
     return (
         <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-            <style jsx global>{`
+            <StructuredData data={clubStructuredData} />            <style jsx global>{`
                 .theme-text { color: ${club.themeColor || '#64748b'}; }
                 .theme-bg { background-color: ${club.themeColor || '#64748b'}; }
                 .theme-border { border-color: ${club.themeColor || '#64748b'}; }

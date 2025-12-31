@@ -17,20 +17,60 @@ const canela = localFont({
 });
 
 export const metadata = {
-    title: 'EST Tétouan - Ressources Étudiants',
-    description: 'Plateforme de partage de ressources pour les étudiants de l\'EST Tétouan',
+    metadataBase: new URL('https://estt-community.vercel.app'),
+    title: {
+        default: 'EST Tétouan - Ressources Étudiants',
+        template: '%s | EST Tétouan',
+    },
+    description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'École Supérieure de Technologie de Tétouan. Accédez à des cours, TD, exercices et vidéos pour toutes les filières : IA, Cybersécurité, Industrie Navale, et Développement Digital.',
+    keywords: ['EST Tétouan', 'ressources étudiants', 'cours', 'TD', 'exercices', 'Intelligence Artificielle', 'Cybersécurité', 'CASI', 'INSEM', 'IDD', 'université', 'Maroc'],
+    authors: [{ name: 'EST Tétouan Community' }],
+    creator: 'EST Tétouan Community',
+    publisher: 'EST Tétouan',
+    formatDetection: {
+        email: false,
+        address: false,
+        telephone: false,
+    },
     icons: {
         icon: '/assets/images/favicon.jpg',
+    },
+    openGraph: {
+        type: 'website',
+        locale: 'fr_FR',
+        url: 'https://estt-community.vercel.app',
+        siteName: 'EST Tétouan Community',
+        title: 'EST Tétouan - Ressources Étudiants',
+        description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
+        images: [
+            {
+                url: '/assets/images/favicon.jpg',
+                width: 1200,
+                height: 630,
+                alt: 'EST Tétouan Community',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'EST Tétouan - Ressources Étudiants',
+        description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
+        images: ['/assets/images/favicon.jpg'],
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+        },
     },
     other: {
         'google-adsense-account': 'ca-pub-8145062068015821',
     },
-    link: [
-        {
-            rel: 'stylesheet',
-            href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-        },
-    ],
 };
 
 export default function RootLayout({ children }) {

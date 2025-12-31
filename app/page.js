@@ -13,6 +13,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Search, BookOpen, Users, FileText, ChevronLeft, ChevronRight, Calendar, Sparkles } from 'lucide-react';
 import ActivityFeed from '@/components/ActivityFeed';
 import ClubCard from '@/components/ClubCard';
+import StructuredData from '@/components/StructuredData';
 import { cn } from '@/lib/utils';
 
 
@@ -206,6 +207,21 @@ export default function Home() {
 
     return (
         <main className="min-h-screen">
+            <StructuredData data={{
+                "@context": "https://schema.org",
+                "@type": "EducationalOrganization",
+                "name": "EST Tétouan Community",
+                "alternateName": "École Supérieure de Technologie de Tétouan",
+                "url": "https://estt-community.vercel.app",
+                "logo": "https://estt-community.vercel.app/assets/images/favicon.jpg",
+                "description": "Plateforme collaborative de partage de ressources académiques pour les étudiants de l'École Supérieure de Technologie de Tétouan",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Tétouan",
+                    "addressCountry": "MA"
+                },
+                "sameAs": []
+            }} />
 
             <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24">
                 <div className="container px-4 md:px-6 flex flex-col items-center text-center">
