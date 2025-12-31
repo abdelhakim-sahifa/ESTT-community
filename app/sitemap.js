@@ -6,18 +6,56 @@ export default async function sitemap() {
 
     // Static routes
     const staticRoutes = [
-        '',
-        '/browse',
-        '/contribute',
-        '/clubs',
-        '/search',
-        '/conditions-d-utilisation',
-        '/politique-de-confidentialite',
-    ].map((route) => ({
-        url: `${baseUrl}${route}`,
+        {
+            url: `${baseUrl}`,
+            lastModified: new Date().toISOString(),
+            changeFrequency: 'daily',
+            priority: 1,
+        },
+        {
+            url: `${baseUrl}/browse`,
+            lastModified: new Date().toISOString(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/contribute`,
+            lastModified: new Date().toISOString(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/clubs`,
+            lastModified: new Date().toISOString(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/search`,
+            lastModified: new Date().toISOString(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/conditions-d-utilisation`,
+            lastModified: new Date().toISOString(),
+            changeFrequency: 'monthly',
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/politique-de-confidentialite`,
+            lastModified: new Date().toISOString(),
+            changeFrequency: 'monthly',
+            priority: 0.5,
+        },
+    ];
+
+    // Generate URLs for all fields
+    const fieldRoutes = staticDb.fields.map((field) => ({
+        url: `${baseUrl}/browse?field=${encodeURIComponent(field.id)}`,
         lastModified: new Date().toISOString(),
-        changeFrequency: route === '' ? 'daily' : 'weekly',
-        priority: route === '' ? 1 : 0.8,
+        changeFrequency: 'weekly',
+        priority: 0.8,
     }));
 
     // Generate URLs for all modules
@@ -25,27 +63,16 @@ export default async function sitemap() {
     Object.entries(staticDb.modules).forEach(([key, modules]) => {
         const [field, semester] = key.split('-');
         modules.forEach((module) => {
-            const params = new URLSearchParams({
-                field: field,
-                semester: semester,
-                module: module.id
-            });
+            // Properly encode each parameter
+            const url = `${baseUrl}/browse?field=${encodeURIComponent(field)}&semester=${encodeURIComponent(semester)}&module=${encodeURIComponent(module.id)}`;
             moduleRoutes.push({
-                url: `${baseUrl}/browse?${params.toString()}`,
+                url: url,
                 lastModified: new Date().toISOString(),
                 changeFrequency: 'weekly',
                 priority: 0.7,
             });
         });
     });
-
-    // Generate URLs for all fields
-    const fieldRoutes = staticDb.fields.map((field) => ({
-        url: `${baseUrl}/browse?field=${field.id}`,
-        lastModified: new Date().toISOString(),
-        changeFrequency: 'weekly',
-        priority: 0.8,
-    }));
 
     // Fetch clubs from Firebase (if available)
     let clubRoutes = [];
@@ -59,10 +86,12 @@ export default async function sitemap() {
             if (clubsSnap.exists()) {
                 const clubsData = clubsSnap.val();
                 clubRoutes = Object.entries(clubsData)
-                    .filter(([_, club]) => club.verified)
+                    .filter(([_, club]) => club?.verified)
                     .map(([id, club]) => ({
-                        url: `${baseUrl}/clubs/${id}`,
-                        lastModified: new Date(club.createdAt || Date.now()).toISOString(),
+                        url: `${baseUrl}/clubs/${encodeURIComponent(id)}`,
+                        lastModified: club.createdAt
+                            ? new Date(club.createdAt).toISOString()
+                            : new Date().toISOString(),
                         changeFrequency: 'weekly',
                         priority: 0.9,
                     }));
@@ -70,6 +99,7 @@ export default async function sitemap() {
         }
     } catch (error) {
         console.error('Error fetching clubs for sitemap:', error);
+        // Continue without clubs if there's an error
     }
 
     return [
