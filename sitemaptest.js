@@ -8,6 +8,7 @@ export default async function sitemap() {
     const staticRoutes = [
         '',
         '/browse',
+        '/contribute',
         '/clubs',
         '/search',
         '/conditions-d-utilisation',
@@ -19,7 +20,35 @@ export default async function sitemap() {
         priority: route === '' ? 1 : 0.8,
     }));
 
+    // Generate URLs for all modules
+    const moduleRoutes = [];
+    Object.entries(staticDb.modules).forEach(([key, modules]) => {
+        const [field, semester] = key.split('-');
+        modules.forEach((module) => {
+            // Build URL with proper XML encoding
+            const params = new URLSearchParams({
+                field: field,
+                semester: semester,
+                module: module.id
+            });
+            // Manually replace & with &amp; for XML compatibility
+            const xmlSafeUrl = `${baseUrl}/browse?${params.toString()}`.replace(/&/g, '&amp;');
+            moduleRoutes.push({
+                url: xmlSafeUrl,
+                lastModified: new Date(),
+                changeFrequency: 'weekly',
+                priority: 0.7,
+            });
+        });
+    });
 
+    // Generate URLs for all fields
+    const fieldRoutes = staticDb.fields.map((field) => ({
+        url: `${baseUrl}/browse?field=${field.id}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+    }));
 
     // Fetch clubs from Firebase (if available)
     let clubRoutes = [];
@@ -49,6 +78,8 @@ export default async function sitemap() {
 
     return [
         ...staticRoutes,
+        ...fieldRoutes,
+        ...moduleRoutes,
         ...clubRoutes,
     ];
 }
