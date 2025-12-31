@@ -22,11 +22,8 @@ export default function Home() {
         contributions: 0,
         modules: 0
     });
-    const [searchQuery, setSearchQuery] = useState('');
     const [allResources, setAllResources] = useState([]);
     const [clubs, setClubs] = useState([]);
-    const [suggestions, setSuggestions] = useState([]);
-    const [showSuggestions, setShowSuggestions] = useState(false);
     const [loadingClubs, setLoadingClubs] = useState(true);
     const [announcements, setAnnouncements] = useState([]);
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -146,57 +143,9 @@ export default function Home() {
     }, [firebaseDb]);
 
 
-    useEffect(() => {
-        if (searchQuery.trim().length > 1) {
-            const searchLower = searchQuery.toLowerCase();
-
-            // Search in modules
-            const allModules = Object.values(staticDb.modules).flat();
-            const filteredModules = allModules
-                .filter(m => m.name.toLowerCase().includes(searchLower))
-                .map(m => ({ ...m, type: 'module' }));
-
-            // Search in resources
-            const filteredResources = allResources
-                .filter(r =>
-                    r.unverified !== true &&
-                    (r.title?.toLowerCase().includes(searchLower) ||
-                        r.description?.toLowerCase().includes(searchLower))
-                )
-                .map(r => ({ ...r, type: 'resource' }));
-
-            // Combine and limit
-            const combined = [...filteredModules, ...filteredResources].slice(0, 10);
-            setSuggestions(combined);
-            setShowSuggestions(true);
-        } else {
-            setSuggestions([]);
-            setShowSuggestions(false);
-        }
-    }, [searchQuery, allResources]);
-
-    const handleSearch = (e) => {
-        if (e) e.preventDefault();
-        if (searchQuery.trim()) {
-            router.push(`/browse?q=${encodeURIComponent(searchQuery)}`);
-        }
-    };
-
-    const handleSuggestionClick = (item) => {
-        if (item.type === 'module') {
-            setSearchQuery(item.name);
-            setShowSuggestions(false);
-            router.push(`/browse?module=${item.id}`);
-        } else {
-            setSearchQuery(item.title);
-            setShowSuggestions(false);
-            const url = item.url || item.link || item.file;
-            if (url) {
-                window.open(url, '_blank');
-            } else {
-                router.push(`/browse?q=${encodeURIComponent(item.title)}`);
-            }
-        }
+    // Simplified Search Redirect
+    const handleSearchClick = () => {
+        router.push('/search');
     };
 
     // Carousel Autoplay
@@ -269,48 +218,26 @@ export default function Home() {
 
 
 
-                    <div className="relative w-full max-w-lg mt-10 z-50">
-                        <form onSubmit={handleSearch}>
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                            <input
-                                type="text"
-                                id="global-search"
-                                className="w-full h-14 pl-12 pr-4 rounded-full border border-input bg-background shadow-md ring-offset-background transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                                placeholder="Rechercher un module, un cours..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onFocus={() => searchQuery.trim().length > 1 && setShowSuggestions(true)}
-                                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                            />
-                        </form>
-
-                        {showSuggestions && suggestions.length > 0 && (
-                            <div className="absolute top-full left-0 right-0 mt-2 bg-background border rounded-2xl shadow-xl overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-200 max-h-[400px] overflow-y-auto">
-                                {suggestions.map((item) => (
-                                    <button
-                                        key={item.id}
-                                        className="w-full px-5 py-3 text-left hover:bg-muted/50 flex items-center gap-3 transition-colors border-b last:border-0"
-                                        onClick={() => handleSuggestionClick(item)}
-                                    >
-                                        <div className="bg-primary/10 p-2 rounded-lg text-primary shrink-0">
-                                            {item.type === 'module' ? <BookOpen className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
-                                        </div>
-                                        <div className="flex flex-col min-w-0">
-                                            <span className="font-medium text-sm truncate">{item.type === 'module' ? item.name : item.title}</span>
-                                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                                                {item.type === 'module' ? 'Module' : 'Ressource'}
-                                            </span>
-                                        </div>
-                                    </button>
-                                ))}
-                                <button
-                                    className="w-full px-5 py-3 text-left hover:bg-muted/50 text-primary text-sm font-medium transition-colors"
-                                    onClick={() => handleSearch()}
-                                >
-                                    Voir tous les résultats pour "{searchQuery}"
-                                </button>
+                    <div className="relative w-full max-w-2xl mt-10 z-50">
+                        <div
+                            onClick={handleSearchClick}
+                            className="group relative cursor-pointer"
+                        >
+                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground group-hover:text-primary transition-colors">
+                                <Search className="h-6 w-6" />
                             </div>
-                        )}
+                            <div className="w-full h-16 pl-16 pr-6 rounded-full border-2 border-slate-200/60 bg-white/80 backdrop-blur-sm shadow-xl flex items-center text-slate-400 group-hover:border-primary/20 group-hover:shadow-primary/5 transition-all text-sm md:text-lg font-medium">
+                                Rechercher un module, un cours ou une filière...
+                            </div>
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                <Button size="sm" className="rounded-full px-6 font-bold shadow-lg shadow-primary/20 hidden sm:flex">
+                                    Rechercher
+                                </Button>
+                                <Button size="icon" className="rounded-full sm:hidden shadow-lg shadow-primary/20">
+                                    <Search className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

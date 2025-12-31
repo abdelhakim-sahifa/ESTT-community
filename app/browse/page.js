@@ -15,82 +15,97 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User } from 'lucide-react';
+import { Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User } from 'lucide-react';
 
 export default function BrowsePage() {
     const searchParams = useSearchParams();
-    const [selectedField, setSelectedField] = useState(searchParams.get('field') || '');
+    const [selectedField, setSelectedField] = useState('');
     const [selectedSemester, setSelectedSemester] = useState('');
     const [selectedModule, setSelectedModule] = useState('');
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        // Initialize from URL params
+        const fieldParam = searchParams.get('field');
+        const semesterParam = searchParams.get('semester');
+        const moduleParam = searchParams.get('module');
+
+        if (fieldParam) setSelectedField(fieldParam);
+        if (semesterParam) setSelectedSemester(semesterParam);
+
+        // If only module is provided, try to find the field and semester
+        if (moduleParam && !fieldParam) {
+            let found = false;
+            Object.entries(staticDb.modules).forEach(([key, mods]) => {
+                if (!found && mods.find(m => m.id === moduleParam)) {
+                    const [f, s] = key.split('-');
+                    setSelectedField(f);
+                    setSelectedSemester(s);
+                    setSelectedModule(moduleParam);
+                    found = true;
+                }
+            });
+        } else if (moduleParam) {
+            setSelectedModule(moduleParam);
+        }
+    }, [searchParams]);
+
+    useEffect(() => {
         if (!db) return;
-
-        const query = searchParams.get('q');
-        if (query) {
-            handleSearch(query);
-        } else if (selectedModule) {
+        if (selectedModule) {
             fetchResources();
-        }
-    }, [selectedModule, searchParams, db]);
-
-
-    const handleSearch = async (query) => {
-        setLoading(true);
-        try {
-            const resourcesRef = ref(db, 'resources');
-            const snapshot = await get(resourcesRef);
-            const data = snapshot.val() || {};
-
-            const searchLower = query.toLowerCase();
-            const formattedResources = Object.entries(data)
-                .map(([id, resource]) => ({
-                    id,
-                    ...resource
-                }))
-                .filter(resource =>
-                    resource.unverified !== true &&
-                    (resource.title?.toLowerCase().includes(searchLower) ||
-                        resource.description?.toLowerCase().includes(searchLower) ||
-                        resource.professor?.toLowerCase().includes(searchLower))
-                );
-
-            setResources(formattedResources);
-        } catch (error) {
-            console.error('Error searching resources:', error);
+        } else {
             setResources([]);
-        } finally {
-            setLoading(false);
         }
-    };
+    }, [selectedModule, db]);
 
     const fetchResources = async () => {
         setLoading(true);
         try {
-            // 1. Get resource IDs for this module
+            // 1. Try fetching from mapping first (efficient)
             const mappingRef = ref(db, `module_resources/${selectedModule}`);
             const mappingSnap = await get(mappingRef);
 
-            if (!mappingSnap.exists()) {
-                setResources([]);
-                return;
+            let resourceIds = [];
+            if (mappingSnap.exists()) {
+                resourceIds = Object.keys(mappingSnap.val());
             }
-
-            const resourceIds = Object.keys(mappingSnap.val());
 
             // 2. Fetch actual resource data
             const resourcesRef = ref(db, 'resources');
             const resourcesSnap = await get(resourcesRef);
             const allResources = resourcesSnap.val() || {};
 
-            const formattedResources = resourceIds
-                .map(id => ({
-                    id,
-                    ...allResources[id]
-                }))
-                .filter(resource => resource && resource.unverified !== true);
+            let formattedResources = [];
+
+            if (resourceIds.length > 0) {
+                // If mapping exists, use it
+                formattedResources = resourceIds
+                    .map(id => ({
+                        id,
+                        ...allResources[id]
+                    }))
+                    .filter(resource =>
+                        resource &&
+                        resource.unverified !== true &&
+                        (resource.url || resource.link || resource.file) &&
+                        resource.title
+                    );
+            }
+
+            // 3. Fallback: Search all resources for this module ID if no results or mismatch
+            // This handles cases where mapping might be missing but resource has the module field
+            if (formattedResources.length === 0) {
+                formattedResources = Object.entries(allResources)
+                    .map(([id, res]) => ({ id, ...res }))
+                    .filter(res =>
+                        res.unverified !== true &&
+                        (res.module === selectedModule || res.moduleId === selectedModule) &&
+                        (res.url || res.link || res.file) &&
+                        res.title
+                    );
+            }
 
             setResources(formattedResources);
         } catch (error) {
@@ -299,4 +314,3 @@ export default function BrowsePage() {
         </main>
     );
 }
-

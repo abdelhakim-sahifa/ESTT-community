@@ -126,6 +126,12 @@ export default function AdminResources({ resources }) {
                     console.error("Failed to send resource rejection email:", err);
                 }
             }
+
+            // Cleanup Keywords
+            if (resource.field) {
+                const keywordPath = `metadata/keywords/${resource.field}/${resource.id}`;
+                await remove(ref(db, keywordPath));
+            }
             // toast success?
         } catch (err) {
             console.error(err);

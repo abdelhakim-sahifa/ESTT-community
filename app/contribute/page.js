@@ -127,6 +127,13 @@ export default function ContributePage() {
             const moduleMappingRef = ref(db, `module_resources/${moduleId}/${resourceId}`);
             await set(moduleMappingRef, true);
 
+            // 3. Store keywords for matching search
+            const keywordRef = ref(db, `metadata/keywords/${formData.field}/${resourceId}`);
+            await set(keywordRef, {
+                title: formData.title,
+                resourceId: resourceId
+            });
+
             if (user) {
                 // Track in user profile
                 const userActivityRef = ref(db, `users/${user.uid}/contributions/${resourceId}`);

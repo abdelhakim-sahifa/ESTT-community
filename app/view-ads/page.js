@@ -14,9 +14,14 @@ export default function ViewAds() {
   const [donationCount, setDonationCount] = useState(0);
   const [pageOpenCount, setPageOpenCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isLocalhost, setIsLocalhost] = useState(false);
+  const [adError, setAdError] = useState(false);
 
   // Track page opens and fetch counts on mount
   useEffect(() => {
+    // Check if we are on localhost
+    setIsLocalhost(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
     const trackPageOpen = async () => {
       try {
         // Record page open with timestamp
@@ -51,6 +56,18 @@ export default function ViewAds() {
     trackPageOpen();
   }, []);
 
+  // Initialize ads
+  useEffect(() => {
+    if (!isLocalhost && !loading) {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (err) {
+        console.error('AdSense initialization error:', err);
+        setAdError(true);
+      }
+    }
+  }, [isLocalhost, loading]);
+
   // Handle donation button click
   const handleDonation = async () => {
     try {
@@ -68,7 +85,6 @@ export default function ViewAds() {
       <Script
         async
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8145062068015821"
-        crossorigin="anonymous"
         strategy="afterInteractive"
       />
 
@@ -95,7 +111,7 @@ export default function ViewAds() {
               <AlertTitle className="text-blue-900 font-semibold">Comment ça marche?</AlertTitle>
               <AlertDescription className="text-blue-800">
                 En regardant et interagissant avec les annonces, vous générez des revenus directs pour le développement.
-                Chque clic nous aide à améliorer vos outils quotidiens.
+                Chaque clic nous aide à améliorer vos outils quotidiens.
               </AlertDescription>
             </div>
           </div>
@@ -170,18 +186,27 @@ export default function ViewAds() {
         {/* AdSense Unit */}
         <div className="ad-container max-w-4xl mx-auto bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
           <p className="text-[10px] text-gray-400 uppercase tracking-widest text-center mb-4">Annonce Recommandée</p>
-          <div className="min-h-[250px] w-full bg-gray-50/50 rounded-xl overflow-hidden border border-dashed border-gray-200 block">
-            <ins
-              className="adsbygoogle"
-              style={{ display: 'block', width: '100%', minWidth: '250px' }}
-              data-ad-format="autorelaxed"
-              data-ad-client="ca-pub-8145062068015821"
-              data-ad-slot="6636305857"
-            ></ins>
-            <Script id="adsbygoogle-init">
-              {`(adsbygoogle = window.adsbygoogle || []).push({});`}
-            </Script>
-          </div>
+
+          {isLocalhost ? (
+            <div className="min-h-[250px] w-full bg-slate-50 rounded-xl flex flex-col items-center justify-center p-8 border border-dashed border-slate-200">
+              <AlertCircle className="w-8 h-8 text-slate-400 mb-3" />
+              <p className="text-slate-600 font-medium text-center">Mode Développement</p>
+              <p className="text-slate-400 text-sm text-center max-w-xs mt-1">
+                Les publicités Google AdSense ne sont pas affichées sur localhost.
+                Elles apparaîtront une fois le site déployé sur un domaine approuvé.
+              </p>
+            </div>
+          ) : (
+            <div className="min-h-[250px] w-full bg-gray-50/50 rounded-xl overflow-hidden border border-dashed border-gray-200 block">
+              <ins
+                className="adsbygoogle"
+                style={{ display: 'block', width: '100%', minWidth: '250px' }}
+                data-ad-format="autorelaxed"
+                data-ad-client="ca-pub-8145062068015821"
+                data-ad-slot="6636305857"
+              ></ins>
+            </div>
+          )}
         </div>
       </div>
     </div>

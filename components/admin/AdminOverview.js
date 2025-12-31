@@ -1,8 +1,12 @@
+import { useState } from 'react';
+import { db, ref, set } from '@/lib/firebase';
 import {
     Users,
     FileText,
     AlertCircle,
-    ArrowUpRight
+    ArrowUpRight,
+    Search as SearchIcon,
+    Loader2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +14,33 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
 export default function AdminOverview({ stats, resources, setActiveTab }) {
+    const [rebuilding, setRebuilding] = useState(false);
+
+    const handleRebuildIndex = async () => {
+        if (!confirm("Voulez-vous vraiment reconstruire l'index de recherche ? Cela indexera toutes les ressources existantes.")) return;
+
+        setRebuilding(true);
+        try {
+            let count = 0;
+            for (const res of resources) {
+                if (res.field && res.title && !res.unverified) {
+                    const keywordRef = ref(db, `metadata/keywords/${res.field}/${res.id}`);
+                    await set(keywordRef, {
+                        title: res.title,
+                        resourceId: res.id
+                    });
+                    count++;
+                }
+            }
+            alert(`Index reconstruit avec succès ! ${count} ressources indexées.`);
+        } catch (error) {
+            console.error("Error rebuilding index:", error);
+            alert("Erreur lors de la reconstruction de l'index.");
+        } finally {
+            setRebuilding(false);
+        }
+    };
+
     return (
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -18,6 +49,16 @@ export default function AdminOverview({ stats, resources, setActiveTab }) {
                     <p className="text-muted-foreground">Bienvenue dans votre espace d'administration.</p>
                 </div>
                 <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 text-primary border-primary/20 hover:bg-primary/5"
+                        onClick={handleRebuildIndex}
+                        disabled={rebuilding}
+                    >
+                        {rebuilding ? <Loader2 className="w-4 h-4 animate-spin" /> : <SearchIcon className="w-4 h-4" />}
+                        Reconstruire l'index
+                    </Button>
                     <Button variant="outline" size="sm" className="gap-2">
                         <ArrowUpRight className="w-4 h-4" /> Exporter
                     </Button>
