@@ -154,7 +154,7 @@ export default function Home() {
                     content: ad.description,
                     imageUrl: ad.url,
                     clubName: 'Opportunité',
-                    clubLogo: 'https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/Ads.png',
+                    clubLogo: 'https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/adsavatar.png',
                     themeColor: '#10b981', // emerald-500
                     isAd: true,
                     link: ad.link,
