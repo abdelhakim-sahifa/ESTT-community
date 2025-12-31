@@ -15,7 +15,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User } from 'lucide-react';
+import { Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User, Sparkles } from 'lucide-react';
+import { Image } from 'next/image'; // Check if this is needed or if global Image is fine
 
 export default function BrowsePage() {
     const searchParams = useSearchParams();
@@ -23,6 +24,7 @@ export default function BrowsePage() {
     const [selectedSemester, setSelectedSemester] = useState('');
     const [selectedModule, setSelectedModule] = useState('');
     const [resources, setResources] = useState([]);
+    const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -55,10 +57,26 @@ export default function BrowsePage() {
         if (!db) return;
         if (selectedModule) {
             fetchResources();
+            fetchAds();
         } else {
             setResources([]);
+            setAds([]);
         }
     }, [selectedModule, db]);
+
+    const fetchAds = async () => {
+        const adsRef = ref(db, 'studentAds');
+        const snapshot = await get(adsRef);
+        if (snapshot.exists()) {
+            const now = new Date();
+            const adsData = Object.entries(snapshot.val())
+                .map(([id, data]) => ({ id, ...data }))
+                .filter(ad => ad.status === 'live' && (!ad.expirationDate || new Date(ad.expirationDate) > now))
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 1);
+            setAds(adsData);
+        }
+    };
 
     const fetchResources = async () => {
         setLoading(true);
@@ -258,6 +276,33 @@ export default function BrowsePage() {
                         </Card>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {/* Student Ad Card */}
+                            {ads.length > 0 && (
+                                <Card className="flex flex-col h-full border-blue-100 bg-blue-50/20 overflow-hidden group">
+                                    <div className="relative aspect-video overflow-hidden">
+                                        <img src={ads[0].url} alt="" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                        <div className="absolute top-4 left-4">
+                                            <Badge className="bg-blue-600 text-white border-none shadow-sm font-black uppercase text-[10px]">Focus Étudiant</Badge>
+                                        </div>
+                                    </div>
+                                    <CardHeader className="p-6">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <Sparkles className="w-4 h-4 text-blue-600" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-600/60">Sponsorisé</span>
+                                        </div>
+                                        <CardTitle className="text-xl line-clamp-1">{ads[0].title}</CardTitle>
+                                        <CardDescription className="line-clamp-2 text-sm mt-3">{ads[0].description}</CardDescription>
+                                    </CardHeader>
+                                    <div className="p-6 pt-0 mt-auto">
+                                        <Button className="w-full bg-blue-600 hover:bg-blue-700 font-bold rounded-xl" asChild>
+                                            <a href={ads[0].link} target="_blank" rel="noopener noreferrer">
+                                                Découvrir le projet
+                                            </a>
+                                        </Button>
+                                    </div>
+                                </Card>
+                            )}
+
                             {resources.map((resource) => {
                                 const rawUrl = resource.url || resource.link || resource.file;
                                 const validUrl = rawUrl ? ensureProtocol(rawUrl) : null;

@@ -3,13 +3,14 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { db as staticDb } from '@/lib/data';
 import { db, ref, get } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, Search as SearchIcon, User, BookOpen } from 'lucide-react';
+import { Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, Search as SearchIcon, User, BookOpen, Sparkles } from 'lucide-react';
 
 function SearchContent() {
     const searchParams = useSearchParams();
@@ -18,7 +19,7 @@ function SearchContent() {
     const fieldParam = searchParams.get('field') || '';
 
     const [selectedField, setSelectedField] = useState(fieldParam);
-    const [results, setResults] = useState({ modules: [], resources: [] });
+    const [results, setResults] = useState({ modules: [], resources: [], ads: [] });
     const [loading, setLoading] = useState(false);
     const [searchInputValue, setSearchInputValue] = useState(query);
 
@@ -33,7 +34,7 @@ function SearchContent() {
         if (query.trim() && selectedField) {
             performSearch(query, selectedField);
         } else {
-            setResults({ modules: [], resources: [] });
+            setResults({ modules: [], resources: [], ads: [] });
         }
     }, [query, selectedField]);
 
@@ -80,11 +81,29 @@ function SearchContent() {
 
             setResults({
                 modules: filteredModules,
-                resources: fetchedResources.filter(r => r !== null)
+                resources: fetchedResources.filter(r => r !== null),
+                ads: [] // Placeholder, will fill below
             });
+
+            // 4. Fetch Student Ads
+            const adsRef = ref(db, 'studentAds');
+            const adsSnap = await get(adsRef);
+            if (adsSnap.exists()) {
+                const now = new Date();
+                const adsData = Object.entries(adsSnap.val())
+                    .map(([id, data]) => ({ id, ...data }))
+                    .filter(ad =>
+                        ad.status === 'live' &&
+                        (!ad.expirationDate || new Date(ad.expirationDate) > now)
+                    )
+                    .sort(() => Math.random() - 0.5) // Randomize for variety
+                    .slice(0, 2); // Show max 2 ads
+
+                setResults(prev => ({ ...prev, ads: adsData }));
+            }
         } catch (error) {
             console.error('Error performing search:', error);
-            setResults({ modules: [], resources: [] });
+            setResults({ modules: [], resources: [], ads: [] });
         } finally {
             setLoading(false);
         }
@@ -209,6 +228,41 @@ function SearchContent() {
                                                     </CardHeader>
                                                 </Card>
                                             </Link>
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {/* Student Ads Section */}
+                            {results.ads.length > 0 && (
+                                <section className="bg-blue-50/50 p-8 rounded-[2.5rem] border border-blue-100/50">
+                                    <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-blue-900">
+                                        <Sparkles className="w-5 h-5 text-blue-600" />
+                                        Opportunités Étudiantes
+                                    </h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {results.ads.map((ad) => (
+                                            <Card key={ad.id} className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row bg-white rounded-2xl">
+                                                <div className="w-full sm:w-32 aspect-video sm:aspect-square relative overflow-hidden flex-shrink-0 bg-slate-100">
+                                                    {ad.type === 'video' ? (
+                                                        <video src={ad.url} className="w-full h-full object-cover" muted />
+                                                    ) : (
+                                                        <Image src={ad.url} alt="" fill className="object-cover" />
+                                                    )}
+                                                </div>
+                                                <CardContent className="p-4 flex flex-col justify-between flex-grow">
+                                                    <div>
+                                                        <div className="flex items-center justify-between mb-1">
+                                                            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none text-[8px] uppercase font-black">Sponsorisé</Badge>
+                                                        </div>
+                                                        <h3 className="font-bold text-slate-900 line-clamp-1">{ad.title}</h3>
+                                                        <p className="text-xs text-slate-500 line-clamp-2 mt-1">{ad.description}</p>
+                                                    </div>
+                                                    <Button variant="outline" size="sm" className="w-full mt-4 rounded-xl border-blue-200 text-blue-600 hover:bg-blue-50 font-bold text-xs" asChild>
+                                                        <a href={ad.link} target="_blank" rel="noopener noreferrer">Découvrir</a>
+                                                    </Button>
+                                                </CardContent>
+                                            </Card>
                                         ))}
                                     </div>
                                 </section>

@@ -9,7 +9,8 @@ import { db as staticDb } from '@/lib/data';
 import { db as firebaseDb, ref, get } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, BookOpen, Users, FileText, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Search, BookOpen, Users, FileText, ChevronLeft, ChevronRight, Calendar, Sparkles } from 'lucide-react';
 import ActivityFeed from '@/components/ActivityFeed';
 import ClubCard from '@/components/ClubCard';
 import { cn } from '@/lib/utils';
@@ -28,6 +29,8 @@ export default function Home() {
     const [announcements, setAnnouncements] = useState([]);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [loadingAnnouncements, setLoadingAnnouncements] = useState(true);
+    const [studentAds, setStudentAds] = useState([]);
+    const [loadingAds, setLoadingAds] = useState(true);
 
     useEffect(() => {
         if (!firebaseDb) return;
@@ -115,7 +118,7 @@ export default function Home() {
                         allAnnouncements.push({
                             id,
                             clubName: 'EST Tétouan',
-                            clubLogo: '/favicon.ico', // Or a system logo
+                            clubLogo: 'https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/info.png',
                             themeColor: '#3b82f6',
                             ...ann,
                             isAdmin: true
@@ -126,16 +129,50 @@ export default function Home() {
                 // Sort by createdAt descending
                 allAnnouncements.sort((a, b) => b.createdAt - a.createdAt);
 
+                // Fetch student ads
+                const adsRef = ref(firebaseDb, 'studentAds');
+                const adsSnap = await get(adsRef);
+                const now = new Date();
+                let liveAds = [];
+
+                if (adsSnap.exists()) {
+                    liveAds = Object.entries(adsSnap.val()).map(([id, data]) => ({
+                        id,
+                        ...data
+                    }))
+                        .filter(ad => ad.status === 'live' && (!ad.expirationDate || new Date(ad.expirationDate) > now));
+
+                    setStudentAds(liveAds.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6));
+                }
+                setLoadingAds(false);
+
+                // Inject ads into carousel (limit to top 3 ads in carousel)
+                const adSlides = liveAds.slice(0, 3).map(ad => ({
+                    id: ad.id,
+                    title: ad.title,
+                    content: ad.description,
+                    imageUrl: ad.url,
+                    clubName: 'Opportunité',
+                    clubLogo: 'https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/Ads.png',
+                    themeColor: '#10b981', // emerald-500
+                    isAd: true,
+                    link: ad.link,
+                    createdAt: new Date(ad.createdAt).getTime()
+                }));
+
+                const combinedSlides = [...allAnnouncements, ...adSlides].sort((a, b) => b.createdAt - a.createdAt);
+
                 // Prioritize those with images
-                const withImages = allAnnouncements.filter(p => p.imageUrl);
-                const withoutImages = allAnnouncements.filter(p => !p.imageUrl);
-                setAnnouncements([...withImages, ...withoutImages].slice(0, 8));
+                const withImages = combinedSlides.filter(p => p.imageUrl);
+                const withoutImages = combinedSlides.filter(p => !p.imageUrl);
+                setAnnouncements([...withImages, ...withoutImages].slice(0, 10));
 
                 setLoadingAnnouncements(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setLoadingClubs(false);
                 setLoadingAnnouncements(false);
+                setLoadingAds(false);
             }
         };
 
@@ -316,22 +353,32 @@ export default function Home() {
                                     </p>
 
                                     <div className="flex flex-wrap items-center gap-3 pt-4 md:pt-6">
-                                        {!announcements[currentSlide].isAdmin && (
-                                            <Button asChild size="sm" className="md:hidden rounded-full font-bold px-6 shadow-lg shadow-primary/20">
-                                                <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`}>
-                                                    Accéder
-                                                </Link>
+                                        {announcements[currentSlide].isAd ? (
+                                            <Button asChild size="lg" className="rounded-full font-bold px-8 bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-500/20">
+                                                <a href={announcements[currentSlide].link} target="_blank" rel="noopener noreferrer">
+                                                    Découvrir le projet
+                                                </a>
                                             </Button>
-                                        )}
-                                        {!announcements[currentSlide].isAdmin && (
-                                            <Button asChild size="lg" className="hidden md:flex rounded-full font-bold px-8 shadow-lg shadow-primary/20">
-                                                <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`}>
-                                                    Lire la suite
-                                                </Link>
-                                            </Button>
+                                        ) : (
+                                            <>
+                                                {!announcements[currentSlide].isAdmin && (
+                                                    <Button asChild size="sm" className="md:hidden rounded-full font-bold px-6 shadow-lg shadow-primary/20">
+                                                        <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`}>
+                                                            Accéder
+                                                        </Link>
+                                                    </Button>
+                                                )}
+                                                {!announcements[currentSlide].isAdmin && (
+                                                    <Button asChild size="lg" className="hidden md:flex rounded-full font-bold px-8 shadow-lg shadow-primary/20">
+                                                        <Link href={`/clubs/${announcements[currentSlide].clubId}/posts/${announcements[currentSlide].id}`}>
+                                                            Lire la suite
+                                                        </Link>
+                                                    </Button>
+                                                )}
+                                            </>
                                         )}
                                         <span className="text-white/60 text-[10px] md:text-sm font-medium">
-                                            {new Date(announcements[currentSlide].createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                                            {announcements[currentSlide].isAd ? 'Sponsorisé' : new Date(announcements[currentSlide].createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
                                         </span>
                                     </div>
                                 </div>
@@ -463,6 +510,88 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* Ads/Partners Section */}
+            {studentAds.length > 0 && (
+                <section id="student-ads" className="py-20 bg-white">
+                    <div className="container">
+                        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                            <div className="text-left">
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-2">Opportunités</h2>
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-blue-50 p-2 rounded-lg text-blue-600">
+                                        <Sparkles className="h-6 w-6" />
+                                    </div>
+                                    <h2 className="text-4xl font-black tracking-tight">Projets & Partenaires</h2>
+                                </div>
+                            </div>
+                            <div className="flex flex-col items-end gap-2">
+                                <p className="text-muted-foreground max-w-sm text-sm text-right">
+                                    Soutenez les initiatives et services créés par vos camarades de l'ESTT.
+                                </p>
+                                <Link href="/view-ads" className="text-blue-600 text-sm font-bold hover:underline decoration-2 underline-offset-4">
+                                    Toutes les annonces →
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {studentAds.map((ad) => (
+                                <Card key={ad.id} className="group overflow-hidden border-none shadow-sm hover:shadow-2xl transition-all duration-500 rounded-3xl bg-slate-50/50">
+                                    <div className="relative aspect-video overflow-hidden bg-slate-200">
+                                        {ad.type === 'video' ? (
+                                            <video
+                                                src={ad.url}
+                                                className="w-full h-full object-cover"
+                                                muted
+                                                loop
+                                                onMouseOver={(e) => e.target.play()}
+                                                onMouseOut={(e) => e.target.pause()}
+                                            />
+                                        ) : (
+                                            <Image
+                                                src={ad.url}
+                                                alt={ad.title}
+                                                fill
+                                                className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                            />
+                                        )}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <div className="absolute top-4 left-4">
+                                            <Badge className="bg-white/90 backdrop-blur-md text-slate-900 border-none shadow-sm uppercase text-[10px] font-bold">
+                                                {ad.type === 'video' ? 'Vidéo' : 'Focus'}
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                    <CardContent className="p-6">
+                                        <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 line-clamp-1">
+                                            {ad.title}
+                                        </h3>
+                                        <p className="text-slate-500 text-sm line-clamp-2 mb-4 leading-relaxed">
+                                            {ad.description}
+                                        </p>
+                                        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-[10px] font-bold">
+                                                    {ad.publisherEmail?.charAt(0).toUpperCase()}
+                                                </div>
+                                                <span className="text-[10px] font-medium text-slate-400">Communauté</span>
+                                            </div>
+                                            {ad.link && (
+                                                <Button variant="ghost" size="sm" asChild className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-full h-8 px-3 text-xs font-bold">
+                                                    <a href={ad.link} target="_blank" rel="noopener noreferrer">
+                                                        Découvrir
+                                                    </a>
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* Activity Feed Section */}
             <section id="activity-feed" className="py-20 bg-white">

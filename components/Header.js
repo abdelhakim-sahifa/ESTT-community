@@ -26,6 +26,7 @@ export default function Header() {
 
     const navItems = [
         { href: '/', label: 'Accueil' },
+        { href: '/view-ads', label: 'Annonces' },
         { href: '/contribute', label: 'Contribuer' },
     ];
 
@@ -39,18 +40,16 @@ export default function Header() {
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-16 items-center justify-between">
                 <div className="flex items-center gap-2">
-                    {pathname !== '/view-ads' && (
-                        <Link href="/" className="flex items-center space-x-2">
-                            <Image
-                                src="/assets/images/logo__five.svg"
-                                alt="EST Tétouan Logo"
-                                className="h-10 w-auto"
-                                width={150}
-                                height={50}
-                                priority
-                            />
-                        </Link>
-                    )}
+                    <Link href="/" className="flex items-center space-x-2">
+                        <Image
+                            src="/assets/images/logo__five.svg"
+                            alt="EST Tétouan Logo"
+                            className="h-10 w-auto"
+                            width={150}
+                            height={50}
+                            priority
+                        />
+                    </Link>
                 </div>
 
                 {/* Desktop Nav */}

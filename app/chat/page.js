@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, Send, Users, Info, Flame, AlertTriangle } from 'lucide-react';
+import { Loader2, Send, Users, Info, Flame, AlertTriangle, Sparkles } from 'lucide-react';
 import { cn, getUserLevel, getAcademicYear } from '@/lib/utils';
 
 export default function ChatPage() {
@@ -18,6 +18,7 @@ export default function ChatPage() {
     const [loading, setLoading] = useState(true);
     const [levelPrompt, setLevelPrompt] = useState(false);
     const [chatRoom, setChatRoom] = useState(null);
+    const [ads, setAds] = useState([]);
     const scrollRef = useRef(null);
 
     // 1. Sync Authentication & Level Detection
@@ -32,12 +33,29 @@ export default function ChatPage() {
         const userLevel = profile?.academicOverride?.[currentAcadYear] || getUserLevel(profile?.startYear);
 
         // If user hasn't confirmed their level for this year, show prompt
-        if (profile && !profile.academicOverride?.[currentAcadYear]) {
-            setLevelPrompt(true);
-        } else if (profile) {
-            setupChat(profile.filiere, userLevel);
+        if (profile) {
+            if (!profile.academicOverride?.[currentAcadYear]) {
+                setLevelPrompt(true);
+            } else {
+                setupChat(profile.filiere, userLevel);
+            }
+            fetchAds();
         }
     }, [user, profile, authLoading, db]);
+
+    const fetchAds = async () => {
+        const adsRef = ref(db, 'studentAds');
+        const snapshot = await get(adsRef);
+        if (snapshot.exists()) {
+            const now = new Date();
+            const adsData = Object.entries(snapshot.val())
+                .map(([id, data]) => ({ id, ...data }))
+                .filter(ad => ad.status === 'live' && (!ad.expirationDate || new Date(ad.expirationDate) > now))
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 1); // Single ad in sidebar
+            setAds(adsData);
+        }
+    };
 
 
     // 2. Chat Setup & July 1st Reset Logic
@@ -175,7 +193,7 @@ export default function ChatPage() {
                         <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-4 flex items-center justify-between">
                             Membres du groupe <span className="bg-primary/10 text-primary px-1.5 rounded-full text-[8px]">En ligne</span>
                         </h3>
-                        <div className="space-y-3">
+                        <div className="space-y-3 mb-8">
                             <div className="flex items-center gap-2 group cursor-default">
                                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-[10px]">
                                     <i className="fas fa-user text-primary"></i>
@@ -185,8 +203,29 @@ export default function ChatPage() {
                                     <p className="text-[8px] uppercase text-muted-foreground font-black">Étudiant</p>
                                 </div>
                             </div>
-                            {/* Placeholder for other members */}
                         </div>
+
+                        {ads.length > 0 && (
+                            <div className="mt-auto pt-6 border-t">
+                                <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-4">Focus Étudiant</h3>
+                                {ads.map(ad => (
+                                    <a key={ad.id} href={ad.link} target="_blank" rel="noopener noreferrer" className="block group">
+                                        <Card className="overflow-hidden border-none bg-slate-50 hover:bg-slate-100 transition-colors">
+                                            <div className="relative aspect-video">
+                                                <img src={ad.url} alt="" className="w-full h-full object-cover" />
+                                                <div className="absolute top-2 left-2">
+                                                    <Badge className="bg-white/90 text-blue-600 border-none text-[8px] px-1 font-black">PUB</Badge>
+                                                </div>
+                                            </div>
+                                            <div className="p-3">
+                                                <h4 className="text-[10px] font-bold text-slate-900 group-hover:text-primary transition-colors truncate">{ad.title}</h4>
+                                                <p className="text-[9px] text-slate-500 line-clamp-1 mt-0.5">{ad.description}</p>
+                                            </div>
+                                        </Card>
+                                    </a>
+                                ))}
+                            </div>
+                        )}
                     </Card>
                 </aside>
 

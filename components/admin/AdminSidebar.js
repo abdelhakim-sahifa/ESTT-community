@@ -6,6 +6,7 @@ import {
     Building2,
     Edit3,
     Megaphone,
+    CreditCard,
     Settings,
     ShieldCheck
 } from 'lucide-react';
@@ -75,6 +76,13 @@ export default function AdminSidebar({ activeTab, setActiveTab, profile, stats =
                     onClick={() => setActiveTab('announcements')}
                 >
                     <Megaphone className="w-4 h-4" /> Annonces Globales
+                </Button>
+                <Button
+                    variant={activeTab === 'ads' ? 'default' : 'ghost'}
+                    className="justify-start gap-3 h-11"
+                    onClick={() => setActiveTab('ads')}
+                >
+                    <CreditCard className="w-4 h-4" /> Annonces Étudiants
                 </Button>
                 <Button
                     variant={activeTab === 'settings' ? 'default' : 'ghost'}

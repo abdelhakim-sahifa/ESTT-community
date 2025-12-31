@@ -17,6 +17,7 @@ import AdminReports from './admin/AdminReports';
 import AdminClubRequests from './admin/AdminClubRequests';
 import AdminClubChanges from './admin/AdminClubChanges';
 import AdminAnnouncements from './admin/AdminAnnouncements';
+import AdminAds from './admin/AdminAds';
 import AdminSettings from './admin/AdminSettings';
 
 export default function AdminDashboard() {
@@ -201,6 +202,10 @@ export default function AdminDashboard() {
                             announcements={adminAnnouncements}
                             userEmail={user?.email}
                         />
+                    )}
+
+                    {activeTab === 'ads' && (
+                        <AdminAds />
                     )}
 
                     {activeTab === 'settings' && (

@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, Check, X } from 'lucide-react';
+import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, Check, X, Megaphone } from 'lucide-react';
 import { cn, getUserLevel } from '@/lib/utils';
 
 export default function PublicProfilePage() {
@@ -257,6 +257,16 @@ export default function PublicProfilePage() {
                                                 Modifier
                                             </Button>
                                         </DialogTrigger>
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            className="rounded-full px-6 border-blue-200 text-blue-600 hover:bg-blue-50 font-semibold gap-2 shadow-sm"
+                                        >
+                                            <Link href="/view-ads/dashboard">
+                                                <Megaphone className="w-4 h-4" />
+                                                Annonces
+                                            </Link>
+                                        </Button>
                                         <DialogContent className="sm:max-w-md rounded-2xl">
                                             <DialogHeader>
                                                 <DialogTitle className="text-xl font-bold">Modifier mon profil</DialogTitle>
