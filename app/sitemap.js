@@ -1,77 +1,59 @@
 import { db as staticDb } from '@/lib/data';
 
+// This will be called at build time or on-demand in production
 export default async function sitemap() {
     const baseUrl = 'https://estt-community.vercel.app';
-    const currentDate = new Date().toISOString();
 
+    // Static routes
     const staticRoutes = [
-        {
-            url: `${baseUrl}`,
-            lastModified: currentDate,
-            changeFrequency: 'daily',
-            priority: 1.0,
-        },
-        {
-            url: `${baseUrl}/browse`,
-            lastModified: currentDate,
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/contribute`,
-            lastModified: currentDate,
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/clubs`,
-            lastModified: currentDate,
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/search`,
-            lastModified: currentDate,
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/conditions-d-utilisation`,
-            lastModified: currentDate,
-            changeFrequency: 'monthly',
-            priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/politique-de-confidentialite`,
-            lastModified: currentDate,
-            changeFrequency: 'monthly',
-            priority: 0.5,
-        },
-    ];
-
-    const fieldRoutes = staticDb.fields.map((field) => ({
-        url: `${baseUrl}/browse?field=${encodeURIComponent(field.id)}`,
-        lastModified: currentDate,
-        changeFrequency: 'weekly',
-        priority: 0.8,
+        '',
+        '/browse',
+        '/contribute',
+        '/clubs',
+        '/search',
+        '/conditions-d-utilisation',
+        '/politique-de-confidentialite',
+    ].map((route) => ({
+        url: `${baseUrl}${route}`,
+        lastModified: new Date(),
+        changeFrequency: route === '' ? 'daily' : 'weekly',
+        priority: route === '' ? 1 : 0.8,
     }));
 
+    // Generate URLs for all modules
     const moduleRoutes = [];
     Object.entries(staticDb.modules).forEach(([key, modules]) => {
         const [field, semester] = key.split('-');
         modules.forEach((module) => {
-            const url = `${baseUrl}/browse?field=${encodeURIComponent(field)}&semester=${encodeURIComponent(semester)}&module=${encodeURIComponent(module.id)}`;
+            // Build URL with proper XML encoding
+            const params = new URLSearchParams({
+                field: field,
+                semester: semester,
+                module: module.id
+            });
+            // Manually replace & with &amp; for XML compatibility
+            const xmlSafeUrl = `${baseUrl}/browse?${params.toString()}`.replace(/&/g, '&amp;');
             moduleRoutes.push({
-                url: url,
-                lastModified: currentDate,
+                url: xmlSafeUrl,
+                lastModified: new Date(),
                 changeFrequency: 'weekly',
                 priority: 0.7,
             });
         });
     });
 
+    // Generate URLs for all fields
+    const fieldRoutes = staticDb.fields.map((field) => ({
+        url: `${baseUrl}/browse?field=${field.id}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+    }));
+
+    // Fetch clubs from Firebase (if available)
     let clubRoutes = [];
     try {
+        // Dynamic import to avoid issues if firebase is not initialized
         const { db: firebaseDb, ref, get } = await import('@/lib/firebase');
 
         if (firebaseDb) {
@@ -81,28 +63,13 @@ export default async function sitemap() {
             if (clubsSnap.exists()) {
                 const clubsData = clubsSnap.val();
                 clubRoutes = Object.entries(clubsData)
-                    .filter(([_, club]) => club?.verified === true)
-                    .map(([id, club]) => {
-                        let lastMod = currentDate;
-
-                        if (club.createdAt) {
-                            try {
-                                const parsedDate = new Date(club.createdAt);
-                                if (!isNaN(parsedDate.getTime())) {
-                                    lastMod = parsedDate.toISOString();
-                                }
-                            } catch (e) {
-                                // Use current date if parsing fails
-                            }
-                        }
-
-                        return {
-                            url: `${baseUrl}/clubs/${encodeURIComponent(id)}`,
-                            lastModified: lastMod,
-                            changeFrequency: 'weekly',
-                            priority: 0.9,
-                        };
-                    });
+                    .filter(([_, club]) => club.verified)
+                    .map(([id, club]) => ({
+                        url: `${baseUrl}/clubs/${id}`,
+                        lastModified: new Date(club.createdAt || Date.now()),
+                        changeFrequency: 'weekly',
+                        priority: 0.9,
+                    }));
             }
         }
     } catch (error) {
