@@ -1,25 +1,46 @@
-import { db as staticDb } from '@/lib/data';
-
 // This will be called at build time or on-demand in production
 export default async function sitemap() {
     const baseUrl = 'https://estt-community.vercel.app';
 
     // Static routes
     const staticRoutes = [
-        '',
-        '/browse',
-        '/clubs',
-        '/search',
-        '/conditions-d-utilisation',
-        '/politique-de-confidentialite',
-    ].map((route) => ({
-        url: `${baseUrl}${route}`,
-        lastModified: new Date(),
-        changeFrequency: route === '' ? 'daily' : 'weekly',
-        priority: route === '' ? 1 : 0.8,
-    }));
-
-
+        {
+            url: baseUrl,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 1,
+        },
+        {
+            url: `${baseUrl}/browse`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/clubs`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/search`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/conditions-d-utilisation`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/politique-de-confidentialite`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+    ];
 
     // Fetch clubs from Firebase (if available)
     let clubRoutes = [];
