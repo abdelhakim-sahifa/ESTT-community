@@ -149,6 +149,9 @@ export default function LoginPage() {
                                 required
                                 className="h-11"
                             />
+                            <p className="text-[10px] text-muted-foreground">
+                                    Pas forcément le mot de passe de l’e-mail académique
+                                </p>
                         </div>
                         <Button type="submit" className="w-full h-11 text-base font-medium" disabled={loading}>
                             {loading ? (

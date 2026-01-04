@@ -234,6 +234,9 @@ export default function SignupPage() {
                                     required
                                     disabled={loading}
                                 />
+                                <p className="text-[10px] text-muted-foreground">
+                                    Pas forcément le mot de passe de l’e-mail académique
+                                </p>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

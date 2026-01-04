@@ -148,11 +148,11 @@ export default function ClubJoinPage() {
                     );
                     if (president) recipient = president.email;
                 }
-
+a
                 if (sendNotif && recipient) {
                     const { adminNotificationEmail } = await import('@/lib/email-templates');
                     const notifHtml = adminNotificationEmail(
-                        'Admin Club',
+                        'Admin Club', // The Club admin name 
                         'Nouvelle Adhésion',
                         `Une nouvelle demande d'adhésion a été reçue de <strong>${formData.name}</strong> (${formData.email}). <br/>Raison: "<em>${formData.reason}</em>"`,
                         `https://estt-community.vercel.app/clubs/${clubId}/admin`
