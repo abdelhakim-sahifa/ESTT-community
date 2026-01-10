@@ -79,6 +79,22 @@ const nextConfig = {
         destination: '/theme',
         permanent: true,
       },
+      // New redirects for reorganization
+      {
+        source: '/view-ads/:path*',
+        destination: '/ads-portal/:path*',
+        permanent: true,
+      },
+      {
+        source: '/conditions-d-utilisation',
+        destination: '/terms',
+        permanent: true,
+      },
+      {
+        source: '/politique-de-confidentialite',
+        destination: '/privacy',
+        permanent: true,
+      },
     ];
   },
 };

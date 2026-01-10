@@ -29,13 +29,13 @@ export default async function sitemap() {
             priority: 0.8,
         },
         {
-            url: `${baseUrl}/conditions-d-utilisation`,
+            url: `${baseUrl}/terms`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.8,
         },
         {
-            url: `${baseUrl}/politique-de-confidentialite`,
+            url: `${baseUrl}/privacy`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.8,

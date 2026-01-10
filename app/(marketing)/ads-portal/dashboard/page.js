@@ -50,7 +50,7 @@ export default function UserAdsDashboard() {
 
     useEffect(() => {
         if (!user) {
-            router.push('/login?redirect=/view-ads/dashboard');
+            router.push('/login?redirect=/ads-portal/dashboard');
             return;
         }
 
@@ -104,7 +104,7 @@ export default function UserAdsDashboard() {
                         <p className="text-slate-500 mt-2">Gérez vos campagnes publicitaires et suivez leur performance.</p>
                     </div>
                     <Button
-                        onClick={() => router.push('/view-ads/submit')}
+                        onClick={() => router.push('/ads-portal/submit')}
                         className="h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 px-8 font-bold shadow-xl shadow-slate-200 transition-all hover:scale-105"
                     >
                         <Plus className="w-5 h-5 mr-3" />
@@ -127,7 +127,7 @@ export default function UserAdsDashboard() {
                         <p className="text-slate-500 max-w-sm mx-auto mb-8">
                             Partagez votre première annonce dès aujourd'hui pour gagner en visibilité auprès de la communauté.
                         </p>
-                        <Button variant="outline" onClick={() => router.push('/view-ads/submit')} className="rounded-full h-12 px-8">
+                        <Button variant="outline" onClick={() => router.push('/ads-portal/submit')} className="rounded-full h-12 px-8">
                             Publier ma première annonce
                         </Button>
                     </div>

@@ -56,7 +56,7 @@ export default function AdPlatformLanding() {
               size="lg"
               className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-blue-600 hover:bg-blue-500 text-lg font-bold shadow-2xl shadow-blue-500/20 transition-all hover:scale-105"
             >
-              <Link href="/view-ads/submit">
+              <Link href="/ads-portal/submit">
                 <PlusCircle className="mr-2 w-5 h-5" />
                 Lancer une Campagne
               </Link>
@@ -67,7 +67,7 @@ export default function AdPlatformLanding() {
               size="lg"
               className="w-full sm:w-auto h-16 px-10 rounded-2xl border-slate-200 text-slate-900 hover:bg-slate-50 text-lg font-bold"
             >
-              <Link href="/view-ads/dashboard">
+              <Link href="/ads-portal/dashboard">
                 <LayoutDashboard className="mr-2 w-5 h-5" />
                 Mon Dashboard
               </Link>
@@ -144,7 +144,7 @@ export default function AdPlatformLanding() {
               <h2 className="text-3xl md:text-5xl font-black text-slate-950 mb-4 tracking-tight">Tarifs adaptés à votre budget</h2>
               <p className="text-slate-500 mb-0">Choisissez la durée qui correspond le mieux à vos objectifs de communication.</p>
             </div>
-            <Link href="/view-ads/dashboard" className="text-blue-600 font-bold flex items-center group">
+            <Link href="/ads-portal/dashboard" className="text-blue-600 font-bold flex items-center group">
               Gérer mes abonnements <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -180,7 +180,7 @@ export default function AdPlatformLanding() {
                   asChild
                   className={`w-full h-14 rounded-2xl font-black text-lg ${i === 1 ? 'bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/40' : 'bg-slate-900 hover:bg-slate-800 shadow-xl shadow-slate-200'}`}
                 >
-                  <Link href="/view-ads/submit">Choisir ce Plan</Link>
+                  <Link href="/ads-portal/submit">Choisir ce Plan</Link>
                 </Button>
               </Card>
             ))}
@@ -232,7 +232,7 @@ export default function AdPlatformLanding() {
                 size="lg"
                 className="h-16 px-12 rounded-2xl bg-white text-blue-600 hover:bg-slate-50 text-xl font-black shadow-2xl transition-all hover:scale-105"
               >
-                <Link href="/view-ads/submit">Publier mon annonce maintenant</Link>
+                <Link href="/ads-portal/submit">Publier mon annonce maintenant</Link>
               </Button>
             </div>
           </div>

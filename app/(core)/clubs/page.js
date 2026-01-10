@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { db, ref, get } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import ClubCard from '@/components/ClubCard';
+import ClubCard from '@/components/features/clubs/ClubCard';
 import { Search, Plus, Loader2, SearchX } from 'lucide-react';
 import Link from 'next/link';
 

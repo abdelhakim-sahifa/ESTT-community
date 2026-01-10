@@ -37,7 +37,7 @@ export default function SubmitAdPage() {
 
     useEffect(() => {
         if (!user) {
-            router.push('/login?redirect=/view-ads/submit');
+            router.push('/login?redirect=/ads-portal/submit');
         }
     }, [user, router]);
 
@@ -115,7 +115,7 @@ export default function SubmitAdPage() {
                 alert("Brouillon enregistré.");
             }
 
-            router.push('/view-ads/dashboard');
+            router.push('/ads-portal/dashboard');
         } catch (error) {
             console.error("Submission error:", error);
             alert("Erreur: " + error.message);
@@ -131,7 +131,7 @@ export default function SubmitAdPage() {
             <div className="container max-w-5xl mx-auto px-4">
                 <Button
                     variant="ghost"
-                    onClick={() => router.push('/view-ads')}
+                    onClick={() => router.push('/ads-portal')}
                     className="mb-8 hover:bg-slate-100 rounded-full"
                 >
                     <ChevronLeft className="w-4 h-4 mr-2" />

@@ -262,7 +262,7 @@ export default function PublicProfilePage() {
                                             variant="outline"
                                             className="rounded-full px-6 border-blue-200 text-blue-600 hover:bg-blue-50 font-semibold gap-2 shadow-sm"
                                         >
-                                            <Link href="/view-ads/dashboard">
+                                            <Link href="/ads-portal/dashboard">
                                                 <Megaphone className="w-4 h-4" />
                                                 Annonces
                                             </Link>
