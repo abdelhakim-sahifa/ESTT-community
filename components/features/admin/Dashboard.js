@@ -19,6 +19,8 @@ import AdminClubChanges from './AdminClubChanges';
 import AdminAnnouncements from './AdminAnnouncements';
 import AdminAds from './AdminAds';
 import AdminSettings from './AdminSettings';
+import AdminNotifications from './AdminNotifications';
+
 
 export default function AdminDashboard() {
     const { user, profile, loading: authLoading } = useAuth();
@@ -145,6 +147,12 @@ export default function AdminDashboard() {
         };
     }, [user, profile, authLoading]);
 
+    // Handle tab change from outside (e.g. sidebar)
+    const handleTabChange = (status) => {
+        setActiveTab(status);
+    };
+
+
     if (authLoading || loading) return (
         <div className="flex items-center justify-center min-h-screen">
             <Loader2 className="w-10 h-10 animate-spin text-primary" />
@@ -214,7 +222,12 @@ export default function AdminDashboard() {
                             setSettings={setNotificationSettings}
                         />
                     )}
+
+                    {activeTab === 'notifications' && (
+                        <AdminNotifications users={users} />
+                    )}
                 </main>
+
             </div>
         </div>
     );

@@ -130,7 +130,6 @@ const firebaseConfig = {
     measurementId: "G-SQVSELPERE"
 };
 ```
-
 ### Supabase Configuration
 - **URL**: `https://fnaiedociknutdxoezhn.supabase.co`
 - **Anon Key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuYWllZG9jaWtudXRkeG9lemhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1MjE2NTMsImV4cCI6MjA4MDA5NzY1M30.ydJoZcnBWZUAWKnpq0rdGdqxHvo2fw-61HDJHfavZnk`

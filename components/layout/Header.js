@@ -7,14 +7,45 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Bell } from 'lucide-react';
+import { db, ref, onValue } from '@/lib/firebase';
+import { useEffect } from 'react';
+import { Badge } from '@/components/ui/badge';
+
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { user, profile, signOut } = useAuth();
     const pathname = usePathname();
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        if (!user || !db) return;
+
+        // Listen for private notifications
+        const privateNotifRef = ref(db, `notifications/private/${user.uid}`);
+        const unsubPrivate = onValue(privateNotifRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            const unreadPrivate = Object.values(data).filter(n => !n.read).length;
+
+            // Listen for global notifications
+            const globalNotifRef = ref(db, 'notifications/global');
+            onValue(globalNotifRef, (gSnapshot) => {
+                const globalData = gSnapshot.val() || {};
+                const lastOpenedGlobal = profile?.notifications?.meta?.lastOpenedGlobalAt || 0;
+                const unreadGlobal = Object.values(globalData).filter(n => n.createdAt > lastOpenedGlobal).length;
+
+                setUnreadCount(unreadPrivate + unreadGlobal);
+            }, { onlyOnce: true });
+        });
+
+        return () => {
+            unsubPrivate();
+        };
+    }, [user, profile, db]);
 
     const handleSignOut = async () => {
+
         try {
             await signOut();
         } catch (error) {
@@ -90,9 +121,19 @@ export default function Header() {
                                     )}
                                 </span>
 
+                                <Link href="/notifications" className="relative p-2 text-muted-foreground hover:text-primary transition-colors">
+                                    <Bell className="h-5 w-5" />
+                                    {unreadCount > 0 && (
+                                        <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white">
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </span>
+                                    )}
+                                </Link>
+
                                 <Button variant="outline" onClick={handleSignOut}>
                                     Se déconnecter
                                 </Button>
+
                             </>
                         )}
                     </div>

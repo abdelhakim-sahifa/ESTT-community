@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Search, CheckCircle2, Eye, Trash2 } from 'lucide-react';
 import RejectionDialog from './RejectionDialog';
+import { sendPrivateNotification, NOTIF_TYPES } from '@/lib/notifications';
+
 
 export default function AdminResources({ resources }) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -66,7 +68,17 @@ export default function AdminResources({ resources }) {
                 } catch (err) {
                     console.error("Failed to send resource approval email:", err);
                 }
+
+                // Send in-app notification
+                await sendPrivateNotification(resource.authorId, {
+                    type: NOTIF_TYPES.RESOURCE,
+                    title: 'Ressource Approuvée 🎉',
+                    message: `Votre contribution "${resource.title}" a été validée et est maintenant en ligne.`,
+                    icon: 'book-open',
+                    action: { type: 'navigate', target: `/resources/${resource.id}` }
+                });
             }
+
 
             alert("Ressource approuvée !");
         } catch (err) {
@@ -125,7 +137,17 @@ export default function AdminResources({ resources }) {
                 } catch (err) {
                     console.error("Failed to send resource rejection email:", err);
                 }
+
+                // Send in-app notification
+                await sendPrivateNotification(resource.authorId, {
+                    type: NOTIF_TYPES.RESOURCE,
+                    title: 'Mise à jour contribution',
+                    message: `Votre ressource "${resource.title}" n'a pas pu être acceptée. Raison: ${reason}`,
+                    icon: 'x-circle',
+                    priority: 'high'
+                });
             }
+
 
             // Cleanup Keywords
             if (resource.field) {

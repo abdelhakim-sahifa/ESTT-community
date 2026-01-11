@@ -8,8 +8,10 @@ import {
     Megaphone,
     CreditCard,
     Settings,
-    ShieldCheck
+    ShieldCheck,
+    Bell
 } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -84,6 +86,14 @@ export default function AdminSidebar({ activeTab, setActiveTab, profile, stats =
                 >
                     <CreditCard className="w-4 h-4" /> Annonces Étudiants
                 </Button>
+                <Button
+                    variant={activeTab === 'notifications' ? 'default' : 'ghost'}
+                    className="justify-start gap-3 h-11"
+                    onClick={() => setActiveTab('notifications')}
+                >
+                    <Bell className="w-4 h-4" /> Notifications
+                </Button>
+
                 <Button
                     variant={activeTab === 'settings' ? 'default' : 'ghost'}
                     className="justify-start gap-3 h-11"

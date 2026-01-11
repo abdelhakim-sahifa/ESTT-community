@@ -26,6 +26,8 @@ import {
 } from 'lucide-react';
 import { AD_STATUSES } from '@/lib/ad-constants';
 import { adNotifications } from '@/lib/ad-notifications';
+import { sendPrivateNotification, NOTIF_TYPES } from '@/lib/notifications';
+
 
 export default function AdminAds() {
     const [ads, setAds] = useState([]);
@@ -73,7 +75,18 @@ export default function AdminAds() {
                 duration: selectedAd.duration,
                 price: selectedAd.price
             });
+            // Send in-app notification
+            if (selectedAd.publisherId) {
+                await sendPrivateNotification(selectedAd.publisherId, {
+                    type: NOTIF_TYPES.AD,
+                    title: 'Annonce Approuvée !',
+                    message: `Votre annonce "${selectedAd.title}" a été approuvée. Veuillez procéder au paiement.`,
+                    icon: 'credit-card',
+                    action: { type: 'navigate', target: '/ads-portal/dashboard' }
+                });
+            }
             setShowApproveModal(false);
+
             setSelectedAd(null);
         } catch (error) {
             alert("Erreur lors de l'approbation");
@@ -88,7 +101,18 @@ export default function AdminAds() {
                 adminNote: rejectReason
             });
             adNotifications.sendRejectionNotice(selectedAd.publisherEmail, selectedAd.title, rejectReason);
+            // Send in-app notification
+            if (selectedAd.publisherId) {
+                await sendPrivateNotification(selectedAd.publisherId, {
+                    type: NOTIF_TYPES.AD,
+                    title: 'Annonce Refusée',
+                    message: `Votre annonce "${selectedAd.title}" a été refusée. Raison: ${rejectReason}`,
+                    icon: 'alert-triangle',
+                    action: { type: 'navigate', target: '/ads-portal/dashboard' }
+                });
+            }
             setShowRejectModal(false);
+
             setSelectedAd(null);
             setRejectReason('');
         } catch (error) {
@@ -113,8 +137,18 @@ export default function AdminAds() {
             });
 
             adNotifications.sendInvoice(selectedAd.publisherEmail, selectedAd.title, selectedAd.price, invoiceId);
-
+            // Send in-app notification
+            if (selectedAd.publisherId) {
+                await sendPrivateNotification(selectedAd.publisherId, {
+                    type: NOTIF_TYPES.AD,
+                    title: 'Annonce en Ligne !',
+                    message: `Votre annonce "${selectedAd.title}" est désormais visible par tous.`,
+                    icon: 'check-circle',
+                    action: { type: 'navigate', target: '/ads-portal' }
+                });
+            }
             setShowPaidModal(false);
+
             setSelectedAd(null);
         } catch (error) {
             alert("Erreur lors du marquage comme payé");
