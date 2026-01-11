@@ -19,6 +19,8 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, ArrowLeft, AlertCircle, CheckCircle2, FileText, Megaphone, Calendar, Edit, Trash2, Plus, Upload, Ticket, Users, LayoutDashboard, Settings, LineChart, Menu, X, Share2, ClipboardList, Scan } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { sendPrivateNotification, NOTIF_TYPES } from '@/lib/notifications';
+
 
 export default function ClubAdminPage() {
     const params = useParams();
@@ -91,6 +93,9 @@ export default function ClubAdminPage() {
             { id: 'email', label: 'Email', type: 'email', required: true }
         ]
     });
+    const [eventImage, setEventImage] = useState(null);
+    const [uploadingEventImage, setUploadingEventImage] = useState(false);
+
 
     // Form Submissions
     const [selectedForm, setSelectedForm] = useState(null);
@@ -447,14 +452,29 @@ export default function ClubAdminPage() {
             setMessage('Ticket approuvé.');
             fetchClubData();
 
-            // Background Email
+            // Background Email and Notification
             (async () => {
                 try {
                     // Find ticket details
                     const ticket = tickets.find(t => t.id === ticketId);
-                    const { ticketValidatedEmail } = await import('@/lib/email-templates');
 
                     if (ticket) {
+                        // Send In-App Notification
+                        if (ticket.userId && ticket.userId !== 'guest') {
+                            await sendPrivateNotification(ticket.userId, {
+                                type: NOTIF_TYPES.SYSTEM,
+                                title: "Billet validé !",
+                                message: `Votre billet pour "${ticket.eventName}" a été validé par ${club?.name || 'le club'}.`,
+                                icon: 'ticket',
+                                action: {
+                                    type: 'navigate',
+                                    target: `/tickets/${ticketId}`
+                                }
+                            });
+                        }
+
+                        // Send Email
+                        const { ticketValidatedEmail } = await import('@/lib/email-templates');
                         const html = ticketValidatedEmail(ticket, ticket.eventName, ticket.clubName);
 
                         let recipientEmail = ticket.userEmail;
@@ -667,11 +687,20 @@ export default function ClubAdminPage() {
             if (!newEvent.title || !newEvent.date) throw new Error("Le titre et la date sont requis");
 
             setCreatingEvent(true);
+
+            let imageUrl = '';
+            if (eventImage) {
+                setUploadingEventImage(true);
+                imageUrl = await uploadClubImage(eventImage);
+                setUploadingEventImage(false);
+            }
+
             const eventsRef = ref(db, `clubs/${clubId}/events`);
             const newEventRef = push(eventsRef);
 
             await set(newEventRef, {
                 ...newEvent,
+                imageUrl,
                 registrationCount: 0,
                 createdAt: Date.now()
             });
@@ -690,6 +719,7 @@ export default function ClubAdminPage() {
                     { id: 'email', label: 'Email', type: 'email', required: true }
                 ]
             });
+            setEventImage(null);
             fetchClubData();
         } catch (error) {
             console.error(error);
@@ -1184,6 +1214,24 @@ export default function ClubAdminPage() {
                                                             placeholder="200"
                                                         />
                                                     </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Image de couverture (Optionnel)</Label>
+                                                        <div className="flex items-center gap-4">
+                                                            <Input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                onChange={(e) => {
+                                                                    if (e.target.files?.[0]) setEventImage(e.target.files[0]);
+                                                                }}
+                                                                className="flex-1"
+                                                            />
+                                                            {eventImage && (
+                                                                <div className="w-10 h-10 border rounded bg-slate-50 flex items-center justify-center">
+                                                                    <Upload className="w-4 h-4 text-slate-400" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <div className="space-y-2">
@@ -1290,17 +1338,24 @@ export default function ClubAdminPage() {
                                                 <div className="grid gap-4">
                                                     {events.map((event) => (
                                                         <div key={event.id} className="p-4 border rounded-lg flex flex-col md:flex-row justify-between gap-4">
-                                                            <div className="space-y-1">
-                                                                <div className="flex items-center gap-2">
-                                                                    <h3 className="font-bold text-lg">{event.title}</h3>
-                                                                    <Badge variant={event.status === 'published' ? 'default' : 'secondary'}>
-                                                                        {event.status === 'published' ? 'Actif' : 'Brouillon'}
-                                                                    </Badge>
-                                                                </div>
-                                                                <div className="text-sm text-muted-foreground flex flex-wrap gap-x-4">
-                                                                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(event.date).toLocaleDateString()}</span>
-                                                                    <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {event.registrationCount || 0} / {event.maxCapacity || '∞'}</span>
-                                                                    <span className="flex items-center gap-1"><Ticket className="w-3 h-3" /> Billetterie active</span>
+                                                            <div className="flex gap-4">
+                                                                {event.imageUrl && (
+                                                                    <div className="w-16 h-16 rounded-md overflow-hidden border shrink-0">
+                                                                        <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+                                                                    </div>
+                                                                )}
+                                                                <div className="space-y-1">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <h3 className="font-bold text-lg">{event.title}</h3>
+                                                                        <Badge variant={event.status === 'published' ? 'default' : 'secondary'}>
+                                                                            {event.status === 'published' ? 'Actif' : 'Brouillon'}
+                                                                        </Badge>
+                                                                    </div>
+                                                                    <div className="text-sm text-muted-foreground flex flex-wrap gap-x-4">
+                                                                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(event.date).toLocaleDateString()}</span>
+                                                                        <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {event.registrationCount || 0} / {event.maxCapacity || '∞'}</span>
+                                                                        <span className="flex items-center gap-1"><Ticket className="w-3 h-3" /> Billetterie active</span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div className="flex items-center gap-2">

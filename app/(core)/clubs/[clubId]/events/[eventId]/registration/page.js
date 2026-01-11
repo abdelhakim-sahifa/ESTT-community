@@ -215,6 +215,12 @@ export default function EventRegistrationPage() {
                     </Link>
                 </Button>
 
+                {event.imageUrl && (
+                    <div className="w-full h-48 md:h-64 rounded-3xl overflow-hidden relative mb-12 border shadow-sm">
+                        <Image src={event.imageUrl} alt={event.title} fill className="object-cover" />
+                    </div>
+                )}
+
                 <div className="space-y-12">
                     {/* Simplified Header */}
                     <div className="flex flex-col items-center text-center space-y-6">
@@ -348,7 +354,7 @@ export default function EventRegistrationPage() {
                         </form>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
