@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, GraduationCap, AlertCircle, CheckCircle2 } from 'lucide-react';
 
+
+
 export default function LoginPage() {
     const router = useRouter();
     const { signIn } = useAuth();
@@ -150,8 +152,8 @@ export default function LoginPage() {
                                 className="h-11"
                             />
                             <p className="text-[10px] text-muted-foreground">
-                                    Pas forcément le mot de passe de l’e-mail académique
-                                </p>
+                                Pas forcément le mot de passe de l’e-mail académique
+                            </p>
                         </div>
                         <Button type="submit" className="w-full h-11 text-base font-medium" disabled={loading}>
                             {loading ? (
