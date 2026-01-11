@@ -77,14 +77,22 @@ export default function NotificationsPage() {
             }
         }
 
-        if (notif.action) {
+        if (notif.action && notif.action.target) {
+            // Support dynamic parameters
+            let finalTarget = notif.action.target
+                .replace(/{uid}/g, user?.uid || '')
+                .replace(/{email}/g, user?.email || '')
+                .replace(/{firstName}/g, profile?.firstName || '')
+                .replace(/{lastName}/g, profile?.lastName || '');
+
             if (notif.action.type === 'navigate') {
-                router.push(notif.action.target);
+                router.push(finalTarget);
             } else if (notif.action.type === 'external_link') {
-                window.open(notif.action.target, '_blank');
+                window.open(finalTarget, '_blank');
             }
         }
     };
+
 
     const getIcon = (iconName) => {
         switch (iconName) {

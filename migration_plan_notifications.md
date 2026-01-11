@@ -41,11 +41,39 @@ const unreadGlobal = globalList.filter(n => n.createdAt > lastOpenedGlobalAt).le
 const totalUnread = unreadPrivate + unreadGlobal;
 ```
 
-### C. Triggering Actions
-- **Navigate**: Mapping the `target` (e.g., `/welcome`) to a specific screen in your React Navigation or Expo Router configuration.
-- **External link**: Use a library like `expo-linking` or `react-native-linking` to open URLs.
+### C. Triggering Actions (Handling the `action` object)
+When a user clicks a notification in the mobile app, implement a handler similar to this:
 
-### D. Marking as Read
+```javascript
+const handleNotificationPress = (notif) => {
+  if (!notif.action || !notif.action.target) return;
+
+  // 1. Process Dynamic Parameters
+  const finalTarget = notif.action.target
+    .replace(/{uid}/g, currentUser.uid)
+    .replace(/{email}/g, currentUser.email)
+    .replace(/{firstName}/g, userProfile.firstName);
+
+  // 2. Execute Action
+  if (notif.action.type === 'navigate') {
+    // React Navigation Example
+    navigation.navigate(finalTarget.replace('/', '')); 
+    // OR if using Expo Router:
+    // router.push(finalTarget);
+  } else if (notif.action.type === 'external_link') {
+    Linking.openURL(finalTarget);
+  }
+};
+```
+
+### D. Deep Linking Recommendation
+To make the `navigate` actions even more powerful:
+1. Define a `linking` configuration in your React Navigation container.
+2. Map the targets sent from the admin panel (like `/profile` or `/ads-portal`) to your app's internal screen names.
+3. This allows the same target paths to work for both the Web and Mobile ecosystems.
+
+
+### E. Marking as Read
 - **Private**: Update the specific notification node: `update(ref(db, 'notifications/private/USER_ID/NOTIF_ID'), { read: true })`.
 - **Global**: Update the user's meta timestamp: `set(ref(db, 'users/USER_ID/notifications/meta/lastOpenedGlobalAt'), serverTimestamp())`.
 

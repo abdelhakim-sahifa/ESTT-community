@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Bell, Send, User, Loader2, Info } from 'lucide-react';
+import { Search, Bell, Send, User, Loader2, Info, Link as LinkIcon, ExternalLink, MousePointer2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function AdminNotifications({ users }) {
@@ -15,14 +15,18 @@ export default function AdminNotifications({ users }) {
         title: '',
         message: '',
         priority: NOTIF_PRIORITY.NORMAL,
-        icon: 'bell'
+        icon: 'bell',
+        actionType: 'none',
+        actionTarget: ''
     });
     const [privateForm, setPrivateForm] = useState({
         userId: '',
         title: '',
         message: '',
         priority: NOTIF_PRIORITY.NORMAL,
-        icon: 'bell'
+        icon: 'bell',
+        actionType: 'none',
+        actionTarget: ''
     });
     const [isSubmittingGlobal, setIsSubmittingGlobal] = useState(false);
     const [isSubmittingPrivate, setIsSubmittingPrivate] = useState(false);
@@ -39,11 +43,23 @@ export default function AdminNotifications({ users }) {
         if (!globalForm.title || !globalForm.message) return;
         setIsSubmittingGlobal(true);
         try {
+            const action = globalForm.actionType !== 'none' ? {
+                type: globalForm.actionType,
+                target: globalForm.actionTarget
+            } : null;
+
             await sendGlobalNotification({
                 ...globalForm,
-                action: null // Can be extended later
+                action
             });
-            setGlobalForm({ title: '', message: '', priority: NOTIF_PRIORITY.NORMAL, icon: 'bell' });
+            setGlobalForm({
+                title: '',
+                message: '',
+                priority: NOTIF_PRIORITY.NORMAL,
+                icon: 'bell',
+                actionType: 'none',
+                actionTarget: ''
+            });
             alert("Notification globale envoyée !");
         } catch (err) {
             console.error(err);
@@ -61,12 +77,25 @@ export default function AdminNotifications({ users }) {
         }
         setIsSubmittingPrivate(true);
         try {
+            const action = privateForm.actionType !== 'none' ? {
+                type: privateForm.actionType,
+                target: privateForm.actionTarget
+            } : null;
+
             await sendPrivateNotification(privateForm.userId, {
                 type: NOTIF_TYPES.SYSTEM,
                 ...privateForm,
-                action: null
+                action
             });
-            setPrivateForm({ userId: '', title: '', message: '', priority: NOTIF_PRIORITY.NORMAL, icon: 'bell' });
+            setPrivateForm({
+                userId: '',
+                title: '',
+                message: '',
+                priority: NOTIF_PRIORITY.NORMAL,
+                icon: 'bell',
+                actionType: 'none',
+                actionTarget: ''
+            });
             setUserSearch('');
             alert("Notification privée envoyée !");
         } catch (err) {
@@ -150,6 +179,46 @@ export default function AdminNotifications({ users }) {
                                     </Select>
                                 </div>
                             </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-50">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                                        <MousePointer2 className="w-3 h-3" /> Action
+                                    </label>
+                                    <Select
+                                        value={globalForm.actionType}
+                                        onValueChange={(val) => setGlobalForm({ ...globalForm, actionType: val })}
+                                    >
+                                        <SelectTrigger className="rounded-xl">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">Aucune</SelectItem>
+                                            <SelectItem value="navigate">Navigation Interne</SelectItem>
+                                            <SelectItem value="external_link">Lien Externe</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                {globalForm.actionType !== 'none' && (
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                                            <LinkIcon className="w-3 h-3" /> Cible / URL
+                                        </label>
+                                        <Input
+                                            placeholder={globalForm.actionType === 'navigate' ? "/profile" : "https://..."}
+                                            value={globalForm.actionTarget}
+                                            onChange={(e) => setGlobalForm({ ...globalForm, actionTarget: e.target.value })}
+                                            required
+                                        />
+
+                                        <p className="text-[10px] text-muted-foreground mt-1">
+                                            Utilisez <code className="bg-slate-100 px-1 rounded">{"{uid}"}</code>, <code className="bg-slate-100 px-1 rounded">{"{email}"}</code> pour des liens dynamiques.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
+
                             <Button type="submit" className="w-full gap-2 rounded-xl" disabled={isSubmittingGlobal}>
                                 {isSubmittingGlobal ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                                 Envoyer à tout le monde
@@ -218,6 +287,46 @@ export default function AdminNotifications({ users }) {
                                     required
                                 />
                             </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-50">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                                        <MousePointer2 className="w-3 h-3" /> Action
+                                    </label>
+                                    <Select
+                                        value={privateForm.actionType}
+                                        onValueChange={(val) => setPrivateForm({ ...privateForm, actionType: val })}
+                                    >
+                                        <SelectTrigger className="rounded-xl">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">Aucune</SelectItem>
+                                            <SelectItem value="navigate">Navigation Interne</SelectItem>
+                                            <SelectItem value="external_link">Lien Externe</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                {privateForm.actionType !== 'none' && (
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                                            <LinkIcon className="w-3 h-3" /> Cible / URL
+                                        </label>
+                                        <Input
+                                            placeholder={privateForm.actionType === 'navigate' ? "/ads-portal" : "https://..."}
+                                            value={privateForm.actionTarget}
+                                            onChange={(e) => setPrivateForm({ ...privateForm, actionTarget: e.target.value })}
+                                            required
+                                        />
+
+                                        <p className="text-[10px] text-muted-foreground mt-1">
+                                            Placeholders: <code className="bg-slate-100 px-1 rounded">{"{uid}"}</code>, <code className="bg-slate-100 px-1 rounded">{"{email}"}</code>, <code className="bg-slate-100 px-1 rounded">{"{firstName}"}</code>
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
+
                             <Button type="submit" className="w-full gap-2 rounded-xl" variant="outline" disabled={isSubmittingPrivate}>
                                 {isSubmittingPrivate ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                                 Envoyer la notification
