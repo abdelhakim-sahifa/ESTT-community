@@ -1,4 +1,10 @@
 {
+  "adminSettings": {
+    "notifications": {
+      "email": "thevcercle@gmail.com",
+      "enabled": true
+    }
+  },
   "admins": [
     "sahifa.abdelhakim@etu.uae.ac.ma"
   ],
@@ -12,11 +18,20 @@
       "metadata": {
         "lastReset": "2025"
       }
-    },
-    "undefined_year1": {
-      "metadata": {
-        "lastReset": "2025"
-      }
+    }
+  },
+  "clubChangeRequests": {
+    "-Oi0nXTZoBORxmaJQoqH": {
+      "changeType": "name",
+      "clubId": "-OhlcLjhwujh0yd1T8gF",
+      "clubName": "CyberClub",
+      "newData": {
+        "name": "cyberLock"
+      },
+      "rejectedAt": 1767409411595,
+      "requestedAt": 1767409329744,
+      "requestedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "rejected"
     }
   },
   "clubPosts": {
@@ -35,7 +50,10 @@
         "content": "TorchCoder, notre nouveau club de programmation, est en cours de lancement ! Nous voulons que VOUS participiez à sa construction dès le départ.\n\nVous avez des idées pour des ateliers, des défis de codage, des projets ou des événements ? Ou des suggestions sur la meilleure façon dont notre club peut soutenir les passionnés de code ?\n\nSoumettez vos idées et aidez-nous à faire de TorchCoder la communauté de codage ultime ! Vos suggestions façonneront les activités, événements et expériences d’apprentissage pour tous les membres.",
         "createdAt": 1766764205830,
         "imageUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/idereClubeAnImg.png",
-        "likes": 1,
+        "likeCount": 1,
+        "likes": {
+          "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+        },
         "linkedFormId": "-OhQLJfPt8rJMh3onE9I",
         "title": "Participez à la création de TorchCoder – Donnez vos idées !",
         "type": "announcement"
@@ -61,80 +79,33 @@
       "requestedAt": 1766757527020,
       "requestedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
       "status": "approved"
+    },
+    "-Oi0qGUHfcIaOfhOE3Zb": {
+      "approvedAt": 1768154307554,
+      "clubId": "-OiiCOWV5k8Uf7pdBpgN",
+      "clubName": "Robotic",
+      "description": "une club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de robotics",
+      "logoUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1767409925854_Gear-icon-blue.png",
+      "organizationalChart": {
+        "président": {
+          "email": "its.yaleem@etu.uae.ac.ma",
+          "filiere": "idd",
+          "name": "abdelhakim",
+          "photo": "",
+          "role": "Président"
+        }
+      },
+      "rejectedAt": 1767410157736,
+      "rejectionReason": "utilser une autre logo svp and renvoi la demmande",
+      "requestedAt": 1767410046425,
+      "requestedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "approved"
     }
   },
   "clubs": {
     "-OhPxD3gb3t5ApR1Xwwt": {
       "createdAt": 1766757556509,
       "description": "Notre mission est d’allumer la passion pour la programmation et le développement logiciel chez les étudiants et les passionnés de technologie. Nous organisons des ateliers, des hackathons et des projets collaboratifs pour permettre à nos membres d’améliorer leurs compétences en codage, de découvrir de nouvelles technologies et de créer des solutions innovantes. Que vous soyez débutant ou programmeur expérimenté, TorchCoder est l’endroit idéal pour apprendre, partager et progresser ensemble.",
-      "formSubmissions": {
-        "-OhQ7zW-G0Cs2TJnSOcb": {
-          "-OhQ89XmYZKVHtROMOpp": {
-            "data": {
-              "1": "alamin ",
-              "1766760634699": "alamin@etu.uae.ac.ma"
-            },
-            "submittedAt": 1766760687880,
-            "ticketId": "-OhQ89Xn0idZdphPlizK",
-            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
-          }
-        },
-        "-OhQAtCluszam8cTNU5P": {
-          "-OhQB-GyCjrIw5N6kgPd": {
-            "data": {
-              "1": "alami ahmed",
-              "1766761390958": "alami.ahmed@etu.uae.ac.ma"
-            },
-            "submittedAt": 1766761432277,
-            "ticketId": "-OhQB-GyCjrIw5N6kgPe",
-            "userId": "gNwwgivy8oRPY2QcK0ni8tVy41e2"
-          },
-          "-OhQCwB6pKQ_2iunbxK8": {
-            "data": {
-              "1": "alamin ahmed",
-              "1766761390958": "alami.ahmed@etu.uae.ac.ma"
-            },
-            "submittedAt": 1766761939821,
-            "ticketId": "-OhQCwB6pKQ_2iunbxK9",
-            "userId": "gNwwgivy8oRPY2QcK0ni8tVy41e2"
-          }
-        },
-        "-OhQDK8ufrnZ6RkEM6Ih": {
-          "-OhQDPM25YSuJJ7zAmGp": {
-            "data": [
-              null,
-              "ahmed"
-            ],
-            "submittedAt": 1766762063395,
-            "ticketId": "-OhQDPM25YSuJJ7zAmGq",
-            "userId": "gNwwgivy8oRPY2QcK0ni8tVy41e2"
-          }
-        },
-        "-OhQLJfPt8rJMh3onE9I": {
-          "-OhW6C7dgnJ-9xxTZ94S": {
-            "data": {
-              "1": "Abdelhakim",
-              "1766764078745": "",
-              "1766764088723": "sounds good"
-            },
-            "submittedAt": 1766860835816
-          },
-          "-OhW6MNILci_IGhXUaz_": {
-            "data": {
-              "1": "abdelhakim",
-              "1766764088723": "sounds goood"
-            },
-            "submittedAt": 1766860877766
-          },
-          "-Oh_7Foy2gYEVibwHK-k": {
-            "data": {
-              "1": "hakeem",
-              "1766764088723": "good job"
-            },
-            "submittedAt": 1766928221412
-          }
-        }
-      },
       "forms": {
         "-OhQLJfPt8rJMh3onE9I": {
           "createdAt": 1766764137154,
@@ -217,8 +188,55 @@
       },
       "themeColor": "#512d6d",
       "verified": true
+    },
+    "-OiiCOWV5k8Uf7pdBpgN": {
+      "createdAt": 1768154307368,
+      "description": "une club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de robotics",
+      "events": {
+        "-OiiDO4ApVISqEx9rham": {
+          "createdAt": 1768154567706,
+          "date": "2026-01-11",
+          "description": "test",
+          "fields": [
+            {
+              "id": "name",
+              "label": "Nom complet",
+              "required": true,
+              "type": "text"
+            },
+            {
+              "id": "email",
+              "label": "Email",
+              "required": true,
+              "type": "email"
+            }
+          ],
+          "location": "amphi1",
+          "maxCapacity": "10",
+          "registrationCount": 0,
+          "status": "published",
+          "time": "19:04",
+          "title": "events"
+        }
+      },
+      "logo": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1767409925854_Gear-icon-blue.png",
+      "name": "Robotic",
+      "organizationalChart": {
+        "président": {
+          "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+          "filiere": "idd",
+          "name": "abdelhakim",
+          "photo": "",
+          "role": "Président"
+        }
+      },
+      "themeColor": "#1289c4",
+      "verified": true
     }
   },
+  "emailExceptions": [
+    "thevcercle@gmail.com"
+  ],
   "metadata": {
     "fields": {
       "casi": {
@@ -244,6 +262,30 @@
         "icon": "fa-ship",
         "id": "insem",
         "name": "Industrie Navale : Systèmes Électriques et Maintenance"
+      }
+    },
+    "keywords": {
+      "ia": {
+        "-Oh5cSufyu6Y7YNOXq27": {
+          "resourceId": "-Oh5cSufyu6Y7YNOXq27",
+          "title": "Groupes, Anneaux, Corps et Espaces Vectoriels"
+        },
+        "-OhWSqRva3_irsedJyhd": {
+          "resourceId": "-OhWSqRva3_irsedJyhd",
+          "title": "Algorithmes"
+        },
+        "-OhlFKsghVNExmgRYF8F": {
+          "resourceId": "-OhlFKsghVNExmgRYF8F",
+          "title": "Cours Module Réseau Chaiptre 1,2,3 et 4 "
+        },
+        "-OhwOTntRw47JOXZS4Dz": {
+          "resourceId": "-OhwOTntRw47JOXZS4Dz",
+          "title": "Série TD"
+        },
+        "-Oi0oBvQTF6ti_pirTSP": {
+          "resourceId": "-Oi0oBvQTF6ti_pirTSP",
+          "title": "Tests d’hypothèses"
+        }
       }
     },
     "modules": {
@@ -786,10 +828,15 @@
       "sample_res_1": true
     },
     "ia_m2": {
-      "-OhWSqRva3_irsedJyhd": true
+      "-OhWSqRva3_irsedJyhd": true,
+      "-OieSNgWegZZWqBC1Qbq": true
     },
     "ia_m3": {
-      "-Oh5cSufyu6Y7YNOXq27": true
+      "-Oh5cSufyu6Y7YNOXq27": true,
+      "-OhwOTntRw47JOXZS4Dz": true
+    },
+    "ia_m5": {
+      "-Oi0oBvQTF6ti_pirTSP": true
     }
   },
   "monetization": {
@@ -1077,6 +1124,45 @@
       },
       "-OhgJ4h4GyVLgqPfGX4J": {
         "timestamp": "2025-12-29T22:52:42.626Z"
+      },
+      "-Ohp7Tnf4eb0Ck9LZtwT": {
+        "timestamp": "2025-12-31T15:58:35.471Z"
+      },
+      "-Ohp7Tnf4eb0Ck9LZtwU": {
+        "timestamp": "2025-12-31T15:58:35.474Z"
+      },
+      "-Ohp7sjBiUSas31BczHP": {
+        "timestamp": "2025-12-31T16:00:22.479Z"
+      },
+      "-Ohp7sjDrtmfwJc2JDGF": {
+        "timestamp": "2025-12-31T16:00:22.492Z"
+      },
+      "-Ohp8RgHyRYkmoMZUC47": {
+        "timestamp": "2025-12-31T16:02:49.752Z"
+      },
+      "-Ohp8RgMuEOXllVJ8eYV": {
+        "timestamp": "2025-12-31T16:02:49.760Z"
+      },
+      "-Ohp8SU5jvGO_qnwZjbm": {
+        "timestamp": "2025-12-31T16:02:52.220Z"
+      },
+      "-Ohp8SUCTOFy_UoWxqGv": {
+        "timestamp": "2025-12-31T16:02:52.225Z"
+      },
+      "-Ohp8Tc8pJUvDnSAhkxq": {
+        "timestamp": "2025-12-31T16:02:57.676Z"
+      },
+      "-Ohp8TcA-m3vAxDS39bD": {
+        "timestamp": "2025-12-31T16:02:57.696Z"
+      },
+      "-Ohp8zAU2w1GhVTXzq2_": {
+        "timestamp": "2025-12-31T16:05:10.212Z"
+      },
+      "-OhpAM30WdNFmYlmB09j": {
+        "timestamp": "2025-12-31T16:11:10.181Z"
+      },
+      "-OhpM-rC_DU_UMBoaWHr": {
+        "timestamp": "2025-12-31T17:02:05.018Z"
       }
     }
   },
@@ -1125,11 +1211,133 @@
       "professor": "Pr. Mohammed MAHFOUDI",
       "semester": "S1",
       "title": "Cours Module Réseau Chaiptre 1,2,3 et 4 ",
-      "type": "link",
+      "type": "pdf",
       "url": "https://drive.google.com/file/d/1ULtTUK7--lfnim7bTiefAizdnxD7hV-V/view"
+    },
+    "-OhwOTntRw47JOXZS4Dz": {
+      "anonymous": false,
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1767318612831,
+      "description": "",
+      "field": "ia",
+      "fileName": "Série TD Maths pour l'IA.pdf",
+      "fullModuleName": "Mathématiques pour l'apprentissage automatique",
+      "module": "Mathématiques... - S1",
+      "moduleId": "ia_m3",
+      "professor": "Pr. Soufiane MEZROUI",
+      "semester": "S1",
+      "title": "Série TD",
+      "type": "pdf",
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1767318611712_S_rie_TD_Maths_pour_l_IA.pdf"
+    },
+    "-Oi0oBvQTF6ti_pirTSP": {
+      "anonymous": false,
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1767409503459,
+      "description": "",
+      "field": "ia",
+      "fileName": "Tests d’hypothèses.pdf",
+      "fullModuleName": "Probabilités & Statistiques pour Data Science",
+      "likeCount": 1,
+      "likes": {
+        "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+      },
+      "module": "Probabilités... - S1",
+      "moduleId": "ia_m5",
+      "professor": "Pr. El Mahdi",
+      "semester": "S1",
+      "title": "Tests d’hypothèses",
+      "type": "pdf",
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1767409501793_Tests_d_hypothe_ses.pdf"
+    }
+  },
+  "studentAds": {
+    "-OhpNRFVuk_cX1Zj1ug0": {
+      "category": "service",
+      "createdAt": "2025-12-31T17:08:19.296Z",
+      "description": "Le moyen le plus simple et le plus efficace pour atteindre des milliers d'étudiants chaque jour. Services, projets ou événements : soyez visible là où ça compte.\n\n",
+      "duration": 7,
+      "expirationDate": "2026-01-07T17:13:59.309Z",
+      "invoiceId": "INV-E7UTHYFZQ",
+      "link": "https://estt-community.vercel.app/view-ads",
+      "paymentDate": "2025-12-31T17:13:59.310Z",
+      "paymentStatus": "paid",
+      "price": 7,
+      "publisher": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "publisherEmail": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "live",
+      "title": "Propulsez votre projet au cœur de l'EST Tétouan",
+      "type": "image",
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1766757181217_principal.jpeg",
+      "whatsapp": "0694546701"
+    },
+    "-OhwR5Vi6AjwLC_qbOlH": {
+      "category": "service",
+      "createdAt": "2026-01-02T02:01:39.711Z",
+      "description": "Besoin d’un expert pour créer ou améliorer votre site web ou application ? Je suis développeur full stack, maîtrisant les technologies front-end (HTML, CSS, JavaScript, React, Angular, Vue.js) et back-end (Node.js, PHP, Python, SQL). Je conçois des solutions modernes, performantes et adaptées à vos besoins. Contactez-moi dès maintenant pour donner vie à votre projet ! 🚀",
+      "duration": 90,
+      "expirationDate": "2026-04-02T02:04:02.194Z",
+      "invoiceId": "INV-ZQTUM3UW9",
+      "paymentDate": "2026-01-02T02:04:02.194Z",
+      "paymentStatus": "paid",
+      "price": 50,
+      "publisher": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "publisherEmail": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "live",
+      "title": "💻 Développeur Full Stack – Vos Projets Web sur Mesure",
+      "type": "image",
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1767319295492_ChatGPT_Image_Jan_2__2026__02_59_02_AM.png",
+      "whatsapp": "0612345678"
     }
   },
   "users": {
+    "3PFYA7Yc9AaaIsvCzozMB10bgku1": {
+      "createdAt": 1768143584038,
+      "email": "alitest@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Ali",
+      "lastName": "Test ",
+      "notifications": {
+        "meta": {
+          "lastOpenedGlobalAt": 1768148669391
+        }
+      },
+      "role": "student",
+      "startYear": 2024,
+      "uid": "3PFYA7Yc9AaaIsvCzozMB10bgku1"
+    },
+    "JHumWsxWo6SGMsv7vRGanBnc9A02": {
+      "createdAt": 1768088668524,
+      "email": "test123@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Étudiant",
+      "lastName": "test123",
+      "role": "student",
+      "startYear": 2024,
+      "uid": "JHumWsxWo6SGMsv7vRGanBnc9A02"
+    },
+    "T5r3ch2kANgfLLb1G2lcCGthc7l2": {
+      "createdAt": 1768089410145,
+      "email": "hakeem.hakeem.test@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Hakim",
+      "lastName": "Hakem",
+      "role": "student",
+      "startYear": 2025,
+      "uid": "T5r3ch2kANgfLLb1G2lcCGthc7l2"
+    },
+    "VPRYrwcNlOPi7MaNEMTTZY4Geio2": {
+      "createdAt": 1768088057943,
+      "email": "testtest@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Étudiant",
+      "lastName": "testtest",
+      "role": "student",
+      "startYear": 2025,
+      "uid": "VPRYrwcNlOPi7MaNEMTTZY4Geio2"
+    },
     "ak04pzxzikfdr6I0L6z3zx9VKLm1": {
       "academicOverride": {
         "2025-2026": 1
@@ -1144,6 +1352,16 @@
           "module": "Algorithmes... - S1",
           "timestamp": 1766866772208,
           "title": "Algorithmes"
+        },
+        "-OhwOTntRw47JOXZS4Dz": {
+          "module": "Mathématiques... - S1",
+          "timestamp": 1767318612831,
+          "title": "Série TD"
+        },
+        "-Oi0oBvQTF6ti_pirTSP": {
+          "module": "Probabilités... - S1",
+          "timestamp": 1767409503459,
+          "title": "Tests d’hypothèses"
         }
       },
       "createdAt": 1766496484001,
@@ -1151,9 +1369,32 @@
       "filiere": "AI",
       "firstName": "Abdelhakim",
       "lastName": "Sahifa",
+      "notifications": {
+        "meta": {
+          "lastOpenedGlobalAt": 1768151252724
+        }
+      },
       "role": "admin",
       "startYear": "2025",
       "updatedAt": 1766765798776
+    },
+    "juoLTc0cvjMWdVnfqVSNoVP4dMy2": {
+      "createdAt": 1768086522208,
+      "email": "admin123@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Étudiant",
+      "lastName": "admin123",
+      "role": "student",
+      "startYear": 2024,
+      "uid": "juoLTc0cvjMWdVnfqVSNoVP4dMy2"
+    },
+    "sEKQNtMhzURzbiIcrMpNgzm9WNx1": {
+      "createdAt": 1767139679498,
+      "email": "thevcercle@gmail.com",
+      "filiere": "ia",
+      "firstName": "thevcercle",
+      "lastName": "Tester",
+      "startYear": "2025"
     },
     "xY9DAedDxfgOVFdHpdcRwpjyirt2": {
       "academicOverride": {
