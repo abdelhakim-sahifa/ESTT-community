@@ -9,10 +9,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, Send, Users, Info, Flame, AlertTriangle, Sparkles } from 'lucide-react';
 import { cn, getUserLevel, getAcademicYear } from '@/lib/utils';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
+import { Badge } from '@/components/ui/badge';
 
 export default function ChatPage() {
     const { user, profile, loading: authLoading } = useAuth();
     const router = useRouter();
+    const { language } = useLanguage();
+    const t = translations[language];
+    const isAr = language === 'ar';
+
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
@@ -143,14 +150,21 @@ export default function ChatPage() {
     );
 
     return (
-        <main className="container flex-grow py-6 flex flex-col h-[calc(100vh-140px)] max-h-[800px] gap-4">
+        <main className={cn(
+            "container flex-grow py-6 flex flex-col h-[calc(100vh-140px)] max-h-[800px] gap-4",
+            isAr && "rtl font-arabic"
+        )}>
             {levelPrompt && (
                 <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <Card className="max-w-md w-full shadow-2xl border-primary/20 animate-in zoom-in-95 duration-300">
                         <CardHeader className="text-center">
                             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2 text-primary font-black text-2xl">?</div>
-                            <CardTitle className="text-xl font-black uppercase tracking-tight">Vérification Académique</CardTitle>
-                            <p className="text-sm text-muted-foreground">Une nouvelle année à commencé ! En quelle année es-tu ?</p>
+                            <CardTitle className="text-xl font-black uppercase tracking-tight">
+                                {t.chat.academicVerification}
+                            </CardTitle>
+                            <p className="text-sm text-muted-foreground">
+                                {t.chat.newYearPrompt}
+                            </p>
                         </CardHeader>
                         <CardContent className="grid grid-cols-2 gap-4 pt-4">
                             <Button
@@ -158,20 +172,20 @@ export default function ChatPage() {
                                 variant={getUserLevel(profile?.startYear) === 1 ? "default" : "outline"}
                                 onClick={() => confirmLevel(1)}
                             >
-                                <span className="text-2xl">1ère Année</span>
-                                <span className="text-[10px] uppercase opacity-60">S1 / S2</span>
+                                <span className="text-2xl">{t.chat.year1}</span>
+                                <span className="text-[10px] uppercase opacity-60">{t.chat.semesters1}</span>
                             </Button>
                             <Button
                                 className={cn("h-24 flex-col gap-2 font-bold transition-all", getUserLevel(profile?.startYear) === 2 ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-primary/5")}
                                 variant={getUserLevel(profile?.startYear) === 2 ? "default" : "outline"}
                                 onClick={() => confirmLevel(2)}
                             >
-                                <span className="text-2xl">2ème Année</span>
-                                <span className="text-[10px] uppercase opacity-60">S3 / S4</span>
+                                <span className="text-2xl">{t.chat.year2}</span>
+                                <span className="text-[10px] uppercase opacity-60">{t.chat.semesters2}</span>
                             </Button>
                         </CardContent>
                         <div className="p-4 bg-muted/30 text-[10px] text-center text-muted-foreground rounded-b-xl border-t">
-                            <i className="fas fa-info-circle mr-1"></i> Cela détermine ton canal de discussion automatique.
+                            <i className={cn("fas fa-info-circle", isAr ? "ml-1" : "mr-1")}></i> {t.chat.filiereInfo}
                         </div>
                     </Card>
                 </div>
@@ -180,18 +194,22 @@ export default function ChatPage() {
             <div className="flex h-full gap-4 overflow-hidden">
                 {/* Chat Sidebar */}
                 <aside className="hidden md:flex flex-col w-64 gap-4">
-                    <Card className="p-4 bg-primary text-white shadow-lg border-none">
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-1">Espace Social</h3>
-                        <h2 className="text-xl font-black truncate">{profile?.filiere?.toUpperCase()}</h2>
+                    <Card className="p-4 bg-primary text-white shadow-lg border-none text-start">
+                        <h3 className="text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-1">
+                            {t.chat.socialSpace}
+                        </h3>
+                        <h2 className="text-xl font-black truncate">
+                            {t.fields[profile?.filiere] || profile?.filiere?.toUpperCase()}
+                        </h2>
                         <div className="mt-4 flex items-center gap-2 text-sm font-bold bg-white/10 p-2 rounded-lg">
                             <i className="fas fa-calendar-alt opacity-60"></i>
                             {getAcademicYear()}
                         </div>
                     </Card>
 
-                    <Card className="flex-grow p-4 shadow-sm border-muted-foreground/10 overflow-auto">
+                    <Card className="flex-grow p-4 shadow-sm border-muted-foreground/10 overflow-auto text-start">
                         <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-4 flex items-center justify-between">
-                            Membres du groupe <span className="bg-primary/10 text-primary px-1.5 rounded-full text-[8px]">En ligne</span>
+                            {t.chat.groupMembers} <span className="bg-primary/10 text-primary px-1.5 rounded-full text-[8px]">{t.chat.online}</span>
                         </h3>
                         <div className="space-y-3 mb-8">
                             <div className="flex items-center gap-2 group cursor-default">
@@ -199,22 +217,26 @@ export default function ChatPage() {
                                     <i className="fas fa-user text-primary"></i>
                                 </div>
                                 <div className="flex-grow min-w-0">
-                                    <p className="text-xs font-bold truncate">Moi ({profile?.firstName})</p>
-                                    <p className="text-[8px] uppercase text-muted-foreground font-black">Étudiant</p>
+                                    <p className="text-xs font-bold truncate">{t.chat.me} ({profile?.firstName})</p>
+                                    <p className="text-[8px] uppercase text-muted-foreground font-black">{t.chat.student}</p>
                                 </div>
                             </div>
                         </div>
 
                         {ads.length > 0 && (
                             <div className="mt-auto pt-6 border-t">
-                                <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-4">Focus Étudiant</h3>
+                                <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-4">
+                                    {t.chat.focusStudent}
+                                </h3>
                                 {ads.map(ad => (
                                     <a key={ad.id} href={ad.link} target="_blank" rel="noopener noreferrer" className="block group">
                                         <Card className="overflow-hidden border-none bg-slate-50 hover:bg-slate-100 transition-colors">
                                             <div className="relative aspect-video">
                                                 <img src={ad.url} alt="" className="w-full h-full object-cover" />
-                                                <div className="absolute top-2 left-2">
-                                                    <Badge className="bg-white/90 text-blue-600 border-none text-[8px] px-1 font-black">PUB</Badge>
+                                                <div className={cn("absolute top-2", isAr ? "right-2" : "left-2")}>
+                                                    <Badge className="bg-white/90 text-blue-600 border-none text-[8px] px-1 font-black">
+                                                        {isAr ? "إعلان" : "PUB"}
+                                                    </Badge>
                                                 </div>
                                             </div>
                                             <div className="p-3">
@@ -236,12 +258,14 @@ export default function ChatPage() {
                             <div className="md:hidden w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                                 <i className="fas fa-comments text-primary"></i>
                             </div>
-                            <div>
+                            <div className="text-start">
                                 <h2 className="font-black text-sm uppercase tracking-tight flex items-center gap-2">
-                                    Discussion Générale
+                                    {t.chat.generalDiscussion}
                                     <span className="bg-green-500 w-2 h-2 rounded-full animate-pulse"></span>
                                 </h2>
-                                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Canal S{getUserLevel(profile?.startYear) * 2 - 1}/S{getUserLevel(profile?.startYear) * 2}</p>
+                                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
+                                    {isAr ? "القناة" : "Canal"} S{getUserLevel(profile?.startYear) * 2 - 1}/S{getUserLevel(profile?.startYear) * 2}
+                                </p>
                             </div>
                         </div>
                         <Button variant="ghost" size="icon" className="rounded-full"><Info className="w-4 h-4" /></Button>
@@ -254,8 +278,8 @@ export default function ChatPage() {
                         {messages.length === 0 ? (
                             <div className="h-full flex flex-col items-center justify-center opacity-30 select-none px-12 text-center">
                                 <i className="fas fa-ghost text-5xl mb-4"></i>
-                                <h3 className="font-bold text-lg">C'est bien calme ici...</h3>
-                                <p className="text-xs">Sois le premier à briser la glace avec tes camarades !</p>
+                                <h3 className="font-bold text-lg">{t.chat.emptyChatTitle}</h3>
+                                <p className="text-xs">{t.chat.emptyChatSubtitle}</p>
                             </div>
                         ) : (
                             messages.map((msg, idx) => {
@@ -265,21 +289,24 @@ export default function ChatPage() {
                                 return (
                                     <div key={msg.id} className={cn("flex flex-col", isMe ? "items-end" : "items-start")}>
                                         {isFirstInGroup && !isMe && (
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1 mb-1 flex items-center gap-1">
+                                            <span className={cn(
+                                                "text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1 flex items-center gap-1",
+                                                isAr ? "mr-1" : "ml-1"
+                                            )}>
                                                 {msg.senderName}
-                                                {msg.isMentor && <i className="fas fa-crown text-[8px] text-yellow-500" title="Mentor"></i>}
+                                                {msg.isMentor && <i className="fas fa-crown text-[8px] text-yellow-500" title={t.chat.mentor}></i>}
                                             </span>
                                         )}
                                         <div className={cn(
-                                            "max-w-[80%] px-4 py-2.5 rounded-2xl text-sm shadow-sm transition-all hover:shadow-md",
+                                            "max-w-[80%] px-4 py-2.5 rounded-2xl text-sm shadow-sm transition-all hover:shadow-md text-start",
                                             isMe
-                                                ? "bg-primary text-white rounded-tr-none"
-                                                : "bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200"
+                                                ? (isAr ? "bg-primary text-white rounded-tl-none" : "bg-primary text-white rounded-tr-none")
+                                                : (isAr ? "bg-slate-100 text-slate-800 rounded-tr-none border border-slate-200" : "bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200")
                                         )}>
                                             {msg.text}
                                         </div>
                                         <span className="text-[8px] opacity-40 mt-1 font-bold">
-                                            {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {new Date(msg.timestamp).toLocaleTimeString(isAr ? 'ar-MA' : 'fr-FR', { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </div>
                                 );
@@ -292,12 +319,12 @@ export default function ChatPage() {
                             <Input
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
-                                placeholder="Écris ton message ici..."
+                                placeholder={t.chat.inputPlaceholder}
                                 className="flex-grow rounded-full border-muted-foreground/20 h-11 px-6 shadow-inner focus-visible:ring-primary/30"
                                 maxLength={500}
                             />
                             <Button type="submit" size="icon" className="rounded-full w-11 h-11 shadow-lg shadow-primary/20 transition-transform active:scale-90" disabled={!newMessage.trim()}>
-                                <Send className="w-5 h-5" />
+                                <Send className={cn("w-5 h-5", isAr && "rotate-180")} />
                             </Button>
                         </form>
                     </footer>
@@ -306,4 +333,3 @@ export default function ChatPage() {
         </main>
     );
 }
-

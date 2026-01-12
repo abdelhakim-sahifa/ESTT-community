@@ -7,8 +7,13 @@ import { Input } from '@/components/ui/input';
 import ClubCard from '@/components/features/clubs/ClubCard';
 import { Search, Plus, Loader2, SearchX } from 'lucide-react';
 import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
+import { cn } from '@/lib/utils';
 
 export default function ClubsPage() {
+    const { language } = useLanguage();
+    const t = translations[language];
     const [clubs, setClubs] = useState([]);
     const [filteredClubs, setFilteredClubs] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -71,22 +76,24 @@ export default function ClubsPage() {
             <section className="bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white border-b">
                 <div className="container py-16 px-4 md:px-6">
                     <div className="max-w-3xl">
-                        <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tight mb-4">
-                            Clubs Étudiants
+                        <h1 className={cn("text-4xl md:text-5xl font-heading font-bold tracking-tight mb-4", language === 'ar' && "font-arabic")}>
+                            {t.clubs.studentClubs}
                         </h1>
                         <p className="text-lg text-muted-foreground mb-6">
-                            Découvrez les clubs et associations de l'ESTT. Rejoignez une communauté passionnée et participez à des activités enrichissantes.
+                            {t.clubs.description}
                         </p>
 
-                        {/* Search Bar */}
                         <div className="relative max-w-xl">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                            <Input
+                            <Search className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5", language === 'ar' ? "right-4" : "left-4")} />
+                            <input
                                 type="text"
-                                placeholder="Rechercher un club..."
+                                placeholder={t.clubs.searchPlaceholder}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-12 h-12 text-base shadow-sm"
+                                className={cn(
+                                    "w-full h-12 text-base shadow-sm rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                                    language === 'ar' ? "pr-12" : "pl-12"
+                                )}
                             />
                         </div>
                     </div>
@@ -97,11 +104,11 @@ export default function ClubsPage() {
             <section className="container py-12 px-4 md:px-6">
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h2 className="text-2xl font-bold">
-                            {searchQuery ? 'Résultats de recherche' : 'Tous les clubs'}
+                        <h2 className={cn("text-2xl font-bold", language === 'ar' && "font-arabic")}>
+                            {searchQuery ? t.clubs.searchResults : t.clubs.allClubs}
                         </h2>
                         <p className="text-sm text-muted-foreground mt-1">
-                            {filteredClubs.length} club{filteredClubs.length !== 1 ? 's' : ''} {searchQuery ? 'trouvé(s)' : 'disponible(s)'}
+                            {filteredClubs.length} {language === 'ar' ? 'نادي' : 'club'}{filteredClubs.length !== 1 && language !== 'ar' ? 's' : ''} {searchQuery ? t.clubs.found : t.clubs.available}
                         </p>
                     </div>
 
@@ -109,7 +116,7 @@ export default function ClubsPage() {
                     <Button variant="outline" size="sm" asChild className="gap-2">
                         <Link href="/clubs/request">
                             <Plus className="w-4 h-4" />
-                            <span className="hidden sm:inline">Proposer un club</span>
+                            <span className="hidden sm:inline">{t.clubs.proposeBtn}</span>
                         </Link>
                     </Button>
                 </div>
@@ -130,16 +137,16 @@ export default function ClubsPage() {
                             </div>
                         </div>
                         <h3 className="text-xl font-semibold mb-2">
-                            {searchQuery ? 'Aucun club trouvé' : 'Aucun club disponible'}
+                            {searchQuery ? t.clubs.noClubFound : language === 'ar' ? 'لا توجد أندية متاحة' : 'Aucun club disponible'}
                         </h3>
                         <p className="text-muted-foreground mb-6">
                             {searchQuery
-                                ? 'Essayez avec d\'autres mots-clés'
-                                : 'Les clubs seront bientôt disponibles'}
+                                ? t.clubs.tryOtherKeywords
+                                : language === 'ar' ? 'ستكون الأندية متاحة قريباً' : 'Les clubs seront bientôt disponibles'}
                         </p>
                         {searchQuery && (
                             <Button variant="outline" onClick={() => setSearchQuery('')}>
-                                Réinitialiser la recherche
+                                {t.clubs.resetSearch}
                             </Button>
                         )}
                     </div>
@@ -159,15 +166,14 @@ export default function ClubsPage() {
             {!loading && clubs.length > 0 && (
                 <section className="bg-muted/30 border-y py-16">
                     <div className="container px-4 md:px-6 text-center">
-                        <h2 className="text-3xl font-bold mb-4">Vous avez un club à proposer ?</h2>
+                        <h2 className={cn("text-3xl font-bold mb-4", language === 'ar' && "font-arabic")}>{t.clubs.proposeTitle}</h2>
                         <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-                            Si votre club n'est pas encore listé, vous pouvez soumettre une demande de création.
-                            Les administrateurs examineront votre demande et l'approuveront si elle répond aux critères.
+                            {t.clubs.proposeDescription}
                         </p>
                         <Button size="lg" asChild className="gap-2">
                             <Link href="/clubs/request">
                                 <Plus className="w-5 h-5" />
-                                Proposer un nouveau club
+                                {t.clubs.proposeBtn}
                             </Link>
                         </Button>
                     </div>

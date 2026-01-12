@@ -16,11 +16,15 @@ import { CheckCircle2, Loader2, Settings, ArrowLeft, Users, Calendar, ChevronLef
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
 
 export default function ClubProfilePage() {
     const params = useParams();
     const router = useRouter();
     const { user } = useAuth();
+    const { language } = useLanguage();
+    const t = translations[language];
     const clubId = params.clubId;
 
     const [club, setClub] = useState(null);
@@ -132,7 +136,7 @@ export default function ClubProfilePage() {
     };
 
     const getAuthorInfo = (email) => {
-        if (!club) return { name: 'Membre du club', role: '' };
+        if (!club) return { name: t.clubs.memberRole, role: '' };
 
         // Check organigram
         if (club.organizationalChart) {
@@ -143,10 +147,10 @@ export default function ClubProfilePage() {
         // Check members list
         if (club.members) {
             const member = club.members.find(m => m.email === email);
-            if (member) return { name: member.name, role: 'Membre' };
+            if (member) return { name: member.name, role: t.common.members };
         }
 
-        return { name: 'Membre du club', role: '' };
+        return { name: t.clubs.memberRole, role: '' };
     };
 
     const nextSlide = () => {
@@ -194,10 +198,10 @@ export default function ClubProfilePage() {
                 <div className="container py-8 px-4 md:px-6 relative z-10">
 
                     <div className="flex flex-col gap-6">
-                        <Button variant="ghost" size="sm" asChild className="self-start gap-2 mb-2">
+                        <Button variant="ghost" size="sm" asChild className={cn("self-start gap-2 mb-2", language === 'ar' && "flex-row-reverse")}>
                             <Link href="/clubs">
-                                <ArrowLeft className="w-4 h-4" />
-                                Retour aux clubs
+                                {language === 'ar' ? <ChevronRight className="w-4 h-4 ml-2" /> : <ArrowLeft className="w-4 h-4 mr-2" />}
+                                {t.clubs.backToClubs}
                             </Link>
                         </Button>
 
@@ -214,7 +218,7 @@ export default function ClubProfilePage() {
                                         />
                                     ) : (
                                         <div
-                                            className="w-full h-full flex items-center justify-center text-4xl font-bold bg-muted"
+                                            className={cn("w-full h-full flex items-center justify-center text-4xl font-bold bg-muted", language === 'ar' && "font-arabic")}
                                             style={{ color: club.themeColor || '#64748b' }}
                                         >
                                             {club.name?.charAt(0).toUpperCase()}
@@ -222,16 +226,16 @@ export default function ClubProfilePage() {
                                     )}
                                 </div>
                                 <div className="text-center md:text-left space-y-2">
-                                    <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
-                                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight leading-tight">{club.name}</h1>
+                                    <div className={cn("flex items-center justify-center md:justify-start gap-2 flex-wrap", language === 'ar' && "flex-row-reverse")}>
+                                        <h1 className={cn("text-2xl md:text-3xl lg:text-4xl font-black tracking-tight leading-tight", language === 'ar' && "font-arabic")}>{club.name}</h1>
                                         {club.verified && (
                                             <Badge className="bg-blue-500 hover:bg-blue-600 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1.5 border-0">
                                                 <i className="fa-solid fa-circle-check text-[10px]"></i>
-                                                <span className="text-[10px] font-bold uppercase tracking-wider">Vérifié</span>
+                                                <span className="text-[10px] font-bold uppercase tracking-wider">{t.clubs.verified}</span>
                                             </Badge>
                                         )}
                                     </div>
-                                    <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto md:mx-0 leading-relaxed font-medium">{club.description}</p>
+                                    <p className={cn("text-sm md:text-base text-muted-foreground max-w-xl mx-auto md:mx-0 leading-relaxed font-medium", language === 'ar' && "text-right font-arabic")}>{club.description}</p>
 
                                     {club.socialLinks && Object.values(club.socialLinks).some(link => link) && (
                                         <div className="flex flex-wrap gap-3 pt-2 justify-center md:justify-start">
@@ -289,10 +293,10 @@ export default function ClubProfilePage() {
                                     )}
 
                                     {isAdmin && (
-                                        <Button asChild variant="outline" className="gap-2 mt-4">
+                                        <Button asChild variant="outline" className={cn("gap-2 mt-4", language === 'ar' && "flex-row-reverse")}>
                                             <Link href={`/clubs/${clubId}/admin`}>
                                                 <Settings className="w-4 h-4" />
-                                                Administration du club
+                                                {t.clubs.administration}
                                             </Link>
                                         </Button>
                                     )}
@@ -323,22 +327,22 @@ export default function ClubProfilePage() {
                                         </div>
 
                                         {/* Content Overlay */}
-                                        <div className="absolute inset-x-0 bottom-0 p-5 md:p-8 bg-gradient-to-t from-black/95 via-black/60 to-transparent">
+                                        <div className={cn("absolute inset-x-0 bottom-0 p-5 md:p-8 bg-gradient-to-t from-black/95 via-black/60 to-transparent", language === 'ar' && "text-right")}>
                                             <Badge className="mb-2 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm px-2 py-0.5 text-[10px] md:text-xs">
-                                                {headerPosts[currentSlide].type === 'announcement' ? 'Annonce' : 'Activité'}
+                                                {headerPosts[currentSlide].type === 'announcement' ? t.clubs.announcement : t.clubs.activity}
                                             </Badge>
                                             <Link href={`/clubs/${clubId}/posts/${headerPosts[currentSlide].id}`} className="block group-hover:underline decoration-white/50 underline-offset-4">
-                                                <h3 className="text-xl md:text-3xl font-bold text-white mb-2 line-clamp-2 md:line-clamp-1 leading-tight">
+                                                <h3 className={cn("text-xl md:text-3xl font-bold text-white mb-2 line-clamp-2 md:line-clamp-1 leading-tight", language === 'ar' && "font-arabic")}>
                                                     {headerPosts[currentSlide].title}
                                                 </h3>
                                             </Link>
-                                            <p className="text-slate-200 line-clamp-2 text-xs md:text-base mb-3 max-w-2xl font-medium">
+                                            <p className={cn("text-slate-200 line-clamp-2 text-xs md:text-base mb-3 max-w-2xl font-medium", language === 'ar' && "font-arabic")}>
                                                 {headerPosts[currentSlide].content}
                                             </p>
-                                            <div className="flex items-center gap-2 text-white/70 text-[10px] md:text-xs">
-                                                <span className="truncate max-w-[120px] md:max-w-none">Par {getAuthorInfo(headerPosts[currentSlide].author).name}</span>
+                                            <div className={cn("flex items-center gap-2 text-white/70 text-[10px] md:text-xs", language === 'ar' && "flex-row-reverse")}>
+                                                <span className="truncate max-w-[120px] md:max-w-none">{t.common.by} {getAuthorInfo(headerPosts[currentSlide].author).name}</span>
                                                 <span>•</span>
-                                                <span>{new Date(headerPosts[currentSlide].createdAt).toLocaleDateString('fr-FR')}</span>
+                                                <span>{new Date(headerPosts[currentSlide].createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'fr-FR')}</span>
                                             </div>
                                         </div>
 
@@ -347,19 +351,25 @@ export default function ClubProfilePage() {
                                             <>
                                                 <button
                                                     onClick={prevSlide}
-                                                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-1.5 md:p-2 rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/40 transition-colors opacity-100 md:opacity-0 group-hover:opacity-100 z-20"
+                                                    className={cn(
+                                                        "absolute top-1/2 -translate-y-1/2 p-1.5 md:p-2 rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/40 transition-colors opacity-100 md:opacity-0 group-hover:opacity-100 z-20",
+                                                        language === 'ar' ? "right-2 md:right-4" : "left-2 md:left-4"
+                                                    )}
                                                 >
-                                                    <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+                                                    {language === 'ar' ? <ChevronRight className="w-5 h-5 md:w-6 md:h-6" /> : <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />}
                                                 </button>
                                                 <button
                                                     onClick={nextSlide}
-                                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-1.5 md:p-2 rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/40 transition-colors opacity-100 md:opacity-0 group-hover:opacity-100 z-20"
+                                                    className={cn(
+                                                        "absolute top-1/2 -translate-y-1/2 p-1.5 md:p-2 rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/40 transition-colors opacity-100 md:opacity-0 group-hover:opacity-100 z-20",
+                                                        language === 'ar' ? "left-2 md:left-4" : "right-2 md:right-4"
+                                                    )}
                                                 >
-                                                    <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+                                                    {language === 'ar' ? <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" /> : <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />}
                                                 </button>
 
                                                 {/* Dots */}
-                                                <div className="absolute top-3 right-3 md:top-4 md:right-4 flex gap-1.5">
+                                                <div className={cn("absolute top-3 md:top-4 flex gap-1.5", language === 'ar' ? "left-3 md:left-4" : "right-3 md:right-4")}>
                                                     {headerPosts.map((_, idx) => (
                                                         <div
                                                             key={idx}
@@ -375,7 +385,7 @@ export default function ClubProfilePage() {
                                     </div>
                                 ) : (
                                     <div className="h-full min-h-[200px] flex items-center justify-center rounded-2xl border-2 border-dashed bg-slate-50">
-                                        <p className="text-muted-foreground">Aucune annonce récente</p>
+                                        <p className="text-muted-foreground">{t.clubs.noAnnouncements}</p>
                                     </div>
                                 )}
                             </div>
@@ -387,19 +397,19 @@ export default function ClubProfilePage() {
             {/* Main Content */}
             <section className="container py-12 px-4 md:px-6">
                 <Tabs defaultValue="activities" className="w-full">
-                    <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:max-w-md md:grid-cols-3 mb-8 no-scrollbar bg-slate-100 p-1 rounded-xl">
-                        <TabsTrigger value="activities" className="whitespace-nowrap px-6 py-2">Actualités</TabsTrigger>
-                        <TabsTrigger value="structure" className="whitespace-nowrap px-6 py-2">Structure</TabsTrigger>
-                        <TabsTrigger value="members" className="whitespace-nowrap px-6 py-2">Membres</TabsTrigger>
-                        {userTickets.length > 0 && <TabsTrigger value="tickets" className="whitespace-nowrap px-6 py-2">Mes Tickets</TabsTrigger>}
+                    <TabsList className={cn("flex w-full overflow-x-auto justify-start md:grid md:max-w-md md:grid-cols-3 mb-8 no-scrollbar bg-slate-100 p-1 rounded-xl", language === 'ar' && "flex-row-reverse")}>
+                        <TabsTrigger value="activities" className={cn("whitespace-nowrap px-6 py-2", language === 'ar' && "font-arabic")}>{t.clubs.activitiesTab}</TabsTrigger>
+                        <TabsTrigger value="structure" className={cn("whitespace-nowrap px-6 py-2", language === 'ar' && "font-arabic")}>{t.clubs.structureTab}</TabsTrigger>
+                        <TabsTrigger value="members" className={cn("whitespace-nowrap px-6 py-2", language === 'ar' && "font-arabic")}>{t.clubs.membersTab}</TabsTrigger>
+                        {userTickets.length > 0 && <TabsTrigger value="tickets" className={cn("whitespace-nowrap px-6 py-2", language === 'ar' && "font-arabic")}>{t.clubs.myTickets}</TabsTrigger>}
                     </TabsList>
 
                     {/* Activities Tab */}
                     <TabsContent value="activities" className="space-y-6">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-3">
+                        <div className={cn("flex items-center justify-between mb-6", language === 'ar' && "flex-row-reverse")}>
+                            <div className={cn("flex items-center gap-3", language === 'ar' && "flex-row-reverse")}>
                                 <Calendar className="w-6 h-6 theme-text" />
-                                <h2 className="text-2xl font-bold">Activités et Annonces</h2>
+                                <h2 className={cn("text-2xl font-bold", language === 'ar' && "font-arabic")}>{t.clubs.activitiesTitle}</h2>
                             </div>
                         </div>
 
@@ -422,41 +432,42 @@ export default function ClubProfilePage() {
                                                     </div>
                                                 )}
 
-                                                <CardHeader className="flex-1 pb-2">
-                                                    <div className="flex items-start justify-between gap-4 mb-2">
+                                                <CardHeader className={cn("flex-1 pb-2", language === 'ar' && "text-right")}>
+                                                    <div className={cn("flex items-start justify-between gap-4 mb-2", language === 'ar' && "flex-row-reverse")}>
                                                         <Badge variant={
                                                             post.type === 'announcement' ? 'default' :
                                                                 post.type === 'article' ? 'secondary' : 'outline'
                                                         }
                                                             style={post.type === 'announcement' ? { backgroundColor: club.themeColor || '#64748b' } : {}}
+                                                            className={cn(language === 'ar' && "font-arabic")}
                                                         >
-                                                            {post.type === 'announcement' ? 'Annonce' :
-                                                                post.type === 'article' ? 'Article' : 'Activité'}
+                                                            {post.type === 'announcement' ? t.clubs.announcement :
+                                                                post.type === 'article' ? t.clubs.article : t.clubs.activity}
                                                         </Badge>
                                                         <span className="text-xs text-muted-foreground">
-                                                            {new Date(post.createdAt).toLocaleDateString('fr-FR')}
+                                                            {new Date(post.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'fr-FR')}
                                                         </span>
                                                     </div>
-                                                    <CardTitle className="text-xl line-clamp-2 theme-hover-text transition-colors">
+                                                    <CardTitle className={cn("text-xl line-clamp-2 theme-hover-text transition-colors", language === 'ar' && "font-arabic")}>
                                                         {post.title}
                                                     </CardTitle>
                                                 </CardHeader>
 
-                                                <CardContent>
-                                                    <p className="text-muted-foreground line-clamp-3 text-sm">
+                                                <CardContent className={cn(language === 'ar' && "text-right")}>
+                                                    <p className={cn("text-muted-foreground line-clamp-3 text-sm", language === 'ar' && "font-arabic")}>
                                                         {post.content}
                                                     </p>
                                                 </CardContent>
 
-                                                <CardFooter className="pt-0 border-t bg-slate-50/50 p-4 mt-auto">
-                                                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                                                <CardFooter className={cn("pt-0 border-t bg-slate-50/50 p-4 mt-auto", language === 'ar' && "flex-row-reverse")}>
+                                                    <div className={cn("flex items-center gap-2 text-sm text-slate-600", language === 'ar' && "flex-row-reverse")}>
                                                         <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
                                                             <User className="w-4 h-4 text-slate-500" />
                                                         </div>
-                                                        <div className="flex flex-col">
-                                                            <span className="font-medium text-xs text-slate-900">{author.name}</span>
+                                                        <div className={cn("flex flex-col", language === 'ar' && "text-right")}>
+                                                            <span className={cn("font-medium text-xs text-slate-900", language === 'ar' && "font-arabic")}>{author.name}</span>
                                                             {author.role && (
-                                                                <span className="text-[10px] text-muted-foreground">{author.role}</span>
+                                                                <span className={cn("text-[10px] text-muted-foreground", language === 'ar' && "font-arabic")}>{author.role}</span>
                                                             )}
                                                         </div>
                                                     </div>
@@ -470,7 +481,7 @@ export default function ClubProfilePage() {
                             <Card>
                                 <CardContent className="py-12 text-center">
                                     <p className="text-muted-foreground">
-                                        Aucune activité ou annonce publiée pour le moment.
+                                        {t.clubs.noActivities}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -479,10 +490,10 @@ export default function ClubProfilePage() {
 
                     {/* Organizational Structure Tab */}
                     <TabsContent value="structure" className="space-y-6">
-                        <div>
-                            <h2 className="text-2xl font-bold mb-2">Structure Organisationnelle</h2>
-                            <p className="text-muted-foreground mb-6">
-                                Découvrez l'équipe dirigeante du club et leurs rôles respectifs.
+                        <div className={cn(language === 'ar' && "text-right")}>
+                            <h2 className={cn("text-2xl font-bold mb-2", language === 'ar' && "font-arabic")}>{t.clubs.structureTitle}</h2>
+                            <p className={cn("text-muted-foreground mb-6", language === 'ar' && "font-arabic")}>
+                                {t.clubs.structureDescription}
                             </p>
                         </div>
                         <OrganizationalChart organizationalChart={club.organizationalChart} />
@@ -490,9 +501,9 @@ export default function ClubProfilePage() {
 
                     {/* Members Tab */}
                     <TabsContent value="members" className="space-y-6">
-                        <div className="flex items-center gap-3 mb-6">
+                        <div className={cn("flex items-center gap-3 mb-6", language === 'ar' && "flex-row-reverse")}>
                             <Users className="w-6 h-6 theme-text" />
-                            <h2 className="text-2xl font-bold">Membres du Club</h2>
+                            <h2 className={cn("text-2xl font-bold", language === 'ar' && "font-arabic")}>{t.clubs.membersTitle}</h2>
                         </div>
 
                         {club.members && club.members.length > 0 ? (
@@ -505,7 +516,7 @@ export default function ClubProfilePage() {
                             <Card>
                                 <CardContent className="py-12 text-center">
                                     <p className="text-muted-foreground">
-                                        Aucun membre régulier enregistré pour le moment.
+                                        {t.clubs.noMembers}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -515,22 +526,22 @@ export default function ClubProfilePage() {
                     {/* Tickets Tab */}
                     {userTickets.length > 0 && (
                         <TabsContent value="tickets" className="space-y-6">
-                            <div className="flex items-center gap-3 mb-6">
+                            <div className={cn("flex items-center gap-3 mb-6", language === 'ar' && "flex-row-reverse")}>
                                 <Ticket className="w-6 h-6 theme-text" />
-                                <h2 className="text-2xl font-bold">Mes Tickets</h2>
+                                <h2 className={cn("text-2xl font-bold", language === 'ar' && "font-arabic")}>{t.clubs.myTickets}</h2>
                             </div>
                             <div className="grid gap-4 md:grid-cols-2">
                                 {userTickets.map(ticket => (
                                     <Link key={ticket.id} href={`/tickets/${ticket.id}`}>
                                         <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4" style={{ borderLeftColor: club.themeColor || '#64748b' }}>
-                                            <CardContent className="p-4 flex justify-between items-center">
-                                                <div>
-                                                    <h3 className="font-bold text-lg">{ticket.eventName}</h3>
+                                            <CardContent className={cn("p-4 flex justify-between items-center", language === 'ar' && "flex-row-reverse")}>
+                                                <div className={cn(language === 'ar' && "text-right")}>
+                                                    <h3 className={cn("font-bold text-lg", language === 'ar' && "font-arabic")}>{ticket.eventName}</h3>
                                                     <p className="text-sm text-muted-foreground">
-                                                        {new Date(ticket.createdAt).toLocaleDateString('fr-FR')}
+                                                        {new Date(ticket.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'fr-FR')}
                                                     </p>
-                                                    <Badge className="mt-2" variant={ticket.status === 'valid' ? 'default' : 'destructive'}>
-                                                        {ticket.status}
+                                                    <Badge className={cn("mt-2", language === 'ar' && "font-arabic")} variant={ticket.status === 'valid' ? 'default' : 'destructive'}>
+                                                        {ticket.status === 'valid' ? (language === 'ar' ? 'صالح' : 'Validé') : (language === 'ar' ? 'قيد الانتظار' : 'En attente')}
                                                     </Badge>
                                                 </div>
                                                 <Ticket className="w-8 h-8 text-slate-300" />

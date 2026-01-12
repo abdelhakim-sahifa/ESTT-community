@@ -22,21 +22,26 @@ import {
     MessageSquare
 } from 'lucide-react';
 import { AD_STATUSES } from '@/lib/ad-constants';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
+import { cn } from '@/lib/utils';
 
-const StatusBadge = ({ status }) => {
+const StatusBadge = ({ status, t }) => {
+    const isAr = t.common.arabic === "العربية"; // Simple check for language mode
+
     switch (status) {
         case AD_STATUSES.LIVE:
-            return <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-50"><CheckCircle2 className="w-3 h-3 mr-1" /> En Ligne</Badge>;
+            return <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-50"><CheckCircle2 className={cn("w-3 h-3", isAr ? "ml-1" : "mr-1")} /> {t.adsPortal.statusLive}</Badge>;
         case AD_STATUSES.UNDER_REVIEW:
-            return <Badge className="bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-50"><Clock className="w-3 h-3 mr-1" /> En Révision</Badge>;
+            return <Badge className="bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-50"><Clock className={cn("w-3 h-3", isAr ? "ml-1" : "mr-1")} /> {t.adsPortal.statusReview}</Badge>;
         case AD_STATUSES.PAYMENT_REQUIRED:
-            return <Badge className="bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-50 animate-pulse"><CreditCard className="w-3 h-3 mr-1" /> Paiement Requis</Badge>;
+            return <Badge className="bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-50 animate-pulse"><CreditCard className={cn("w-3 h-3", isAr ? "ml-1" : "mr-1")} /> {t.adsPortal.statusPayment}</Badge>;
         case AD_STATUSES.EXPIRED:
-            return <Badge className="bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-50">Expiré</Badge>;
+            return <Badge className="bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-50">{t.adsPortal.statusExpired}</Badge>;
         case AD_STATUSES.REFUSED:
-            return <Badge className="bg-red-50 text-red-600 border-red-100 hover:bg-red-50"><XCircle className="w-3 h-3 mr-1" /> Refusé</Badge>;
+            return <Badge className="bg-red-50 text-red-600 border-red-100 hover:bg-red-50"><XCircle className={cn("w-3 h-3", isAr ? "ml-1" : "mr-1")} /> {t.adsPortal.statusRefused}</Badge>;
         case AD_STATUSES.DRAFT:
-            return <Badge className="bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-100">Brouillon</Badge>;
+            return <Badge className="bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-100">{t.adsPortal.statusDraft}</Badge>;
         default:
             return <Badge>{status}</Badge>;
     }
@@ -45,12 +50,16 @@ const StatusBadge = ({ status }) => {
 export default function UserAdsDashboard() {
     const { user } = useAuth();
     const router = useRouter();
+    const { language } = useLanguage();
+    const t = translations[language];
+    const isAr = language === 'ar';
+
     const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!user) {
-            router.push('/login?redirect=/ads-portal/dashboard');
+            router.push(`/login?redirect=/ads-portal/dashboard`);
             return;
         }
 
@@ -74,41 +83,56 @@ export default function UserAdsDashboard() {
 
     const handleDelete = async (ad) => {
         if (ad.status === AD_STATUSES.LIVE) {
-            const code = window.prompt("Cette annonce est en ligne. Pour la désactiver avant expiration, veuillez saisir votre code de vérification (N° Facture envoyé par email) :");
+            const code = window.prompt(t.adsPortal.deleteLiveConfirm);
             if (code !== ad.invoiceId) {
-                alert("Code incorrect. Désactivation annulée.");
+                alert(t.adsPortal.deleteLiveError);
                 return;
             }
         } else {
-            if (!window.confirm("Voulez-vous vraiment supprimer cette annonce ?")) return;
+            if (!window.confirm(t.adsPortal.deleteConfirm)) return;
         }
 
         try {
             await remove(ref(db, `studentAds/${ad.id}`));
         } catch (error) {
-            alert("Erreur lors de la suppression");
+            alert(t.adsPortal.errorDelete);
         }
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
     };
 
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className={cn(
+            "min-h-screen bg-white",
+            isAr && "rtl font-arabic"
+        )}>
             <div className="container max-w-6xl mx-auto px-4 py-16">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
-                    <div>
+                    <div className="text-start w-full">
                         <h1 className="text-4xl font-black text-slate-900 flex items-center gap-3">
                             <LayoutDashboard className="w-10 h-10 text-blue-600" />
-                            Mes Annonces
+                            {t.adsPortal.dashboardTitle}
                         </h1>
-                        <p className="text-slate-500 mt-2">Gérez vos campagnes publicitaires et suivez leur performance.</p>
+                        <p className="text-slate-500 mt-2">
+                            {t.adsPortal.dashboardSubtitle}
+                        </p>
                     </div>
                     <Button
                         onClick={() => router.push('/ads-portal/submit')}
                         className="h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 px-8 font-bold shadow-xl shadow-slate-200 transition-all hover:scale-105"
                     >
-                        <Plus className="w-5 h-5 mr-3" />
-                        Nouvelle Annonce
+                        <Plus className={cn("w-5 h-5", isAr ? "ml-3" : "mr-3")} />
+                        {t.adsPortal.newAd}
                     </Button>
                 </div>
 
@@ -123,12 +147,14 @@ export default function UserAdsDashboard() {
                         <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                             <Plus className="w-10 h-10 text-slate-300" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Aucune annonce trouvée</h2>
+                        <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                            {t.adsPortal.noAdsTitle}
+                        </h2>
                         <p className="text-slate-500 max-w-sm mx-auto mb-8">
-                            Partagez votre première annonce dès aujourd'hui pour gagner en visibilité auprès de la communauté.
+                            {t.adsPortal.noAdsSubtitle}
                         </p>
                         <Button variant="outline" onClick={() => router.push('/ads-portal/submit')} className="rounded-full h-12 px-8">
-                            Publier ma première annonce
+                            {t.adsPortal.publishFirst}
                         </Button>
                     </div>
                 ) : (
@@ -144,45 +170,45 @@ export default function UserAdsDashboard() {
                                             ) : (
                                                 <img src={ad.url} alt={ad.title} className="w-full h-full object-cover" />
                                             )}
-                                            <div className="absolute top-4 left-4">
+                                            <div className={cn("absolute top-4", isAr ? "right-4" : "left-4")}>
                                                 <Badge className="bg-white/90 backdrop-blur-sm text-slate-900 border-none shadow-sm capitalize text-[10px]">
-                                                    {ad.category}
+                                                    {isAr ? (ad.category === 'service' ? "خدمة" : ad.category === 'project' ? "مشروع" : ad.category) : ad.category}
                                                 </Badge>
                                             </div>
                                         </div>
 
                                         {/* Info */}
                                         <div className="flex-grow p-8">
-                                            <div className="flex justify-between items-start mb-4">
-                                                <div>
+                                            <div className="flex flex-col lg:flex-row justify-between items-start mb-4 gap-4">
+                                                <div className="text-start">
                                                     <div className="flex items-center gap-3 mb-1">
                                                         <h3 className="text-xl font-bold text-slate-900">{ad.title}</h3>
-                                                        <StatusBadge status={ad.status} />
+                                                        <StatusBadge status={ad.status} t={t} />
                                                     </div>
                                                     <p className="text-slate-500 text-sm line-clamp-2 max-w-xl">
                                                         {ad.description}
                                                     </p>
                                                 </div>
                                                 <span className="text-xs font-medium text-slate-400">
-                                                    Soumise le {new Date(ad.createdAt).toLocaleDateString()}
+                                                    {t.adsPortal.submittedOn} {formatDate(ad.createdAt)}
                                                 </span>
                                             </div>
 
                                             <div className="flex flex-wrap gap-6 pt-6 border-t border-slate-50 items-center justify-between">
                                                 <div className="flex gap-8">
-                                                    <div>
-                                                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Prix</p>
+                                                    <div className="text-start">
+                                                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">{t.adsPortal.price}</p>
                                                         <p className="text-sm font-bold text-slate-900">{ad.price} MAD</p>
                                                     </div>
-                                                    <div>
-                                                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Durée</p>
-                                                        <p className="text-sm font-bold text-slate-900">{ad.duration} jours</p>
+                                                    <div className="text-start">
+                                                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">{t.adsPortal.duration}</p>
+                                                        <p className="text-sm font-bold text-slate-900">{ad.duration} {isAr ? "أيام" : "jours"}</p>
                                                     </div>
                                                     {ad.status === AD_STATUSES.LIVE && (
-                                                        <div>
-                                                            <p className="text-[10px] uppercase tracking-widest text-emerald-500 font-bold mb-1">Expiration</p>
+                                                        <div className="text-start">
+                                                            <p className="text-[10px] uppercase tracking-widest text-emerald-500 font-bold mb-1">{t.adsPortal.expiration}</p>
                                                             <p className="text-sm font-bold text-slate-900">
-                                                                {ad.expirationDate ? new Date(ad.expirationDate).toLocaleDateString() : 'Bientôt'}
+                                                                {ad.expirationDate ? formatDate(ad.expirationDate) : (isAr ? 'قريباً' : 'Bientôt')}
                                                             </p>
                                                         </div>
                                                     )}
@@ -195,7 +221,7 @@ export default function UserAdsDashboard() {
                                                             className="bg-orange-600 hover:bg-orange-700 h-10 px-6 rounded-xl font-bold"
                                                         >
                                                             <a href="https://wa.me/212715307349" target="_blank" rel="noopener noreferrer">
-                                                                Payer maintenant
+                                                                {t.adsPortal.payNow}
                                                             </a>
                                                         </Button>
                                                     )}
@@ -219,10 +245,10 @@ export default function UserAdsDashboard() {
 
                                     {/* Admin Note if Refused */}
                                     {ad.status === AD_STATUSES.REFUSED && ad.adminNote && (
-                                        <div className="bg-red-50 p-6 flex gap-4 items-start border-t border-red-100">
-                                            <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+                                        <div className="bg-red-50 p-6 flex gap-4 items-start border-t border-red-100 text-start">
+                                            <AlertCircle className={cn("w-5 h-5 text-red-500 mt-0.5", isAr ? "ml-4" : "mr-4")} />
                                             <div>
-                                                <p className="text-sm font-bold text-red-900">Note de l'administrateur :</p>
+                                                <p className="text-sm font-bold text-red-900">{t.adsPortal.adminNote}</p>
                                                 <p className="text-sm text-red-700 mt-1">{ad.adminNote}</p>
                                             </div>
                                         </div>
@@ -235,15 +261,14 @@ export default function UserAdsDashboard() {
 
                 {/* Footer Help */}
                 <div className="mt-20 p-10 bg-slate-900 rounded-[40px] text-white">
-                    <div className="max-w-3xl">
-                        <h2 className="text-2xl font-bold mb-4">Besoin d'aide avec votre campagne ?</h2>
+                    <div className="max-w-3xl text-start">
+                        <h2 className="text-2xl font-bold mb-4">{t.adsPortal.needHelpTitle}</h2>
                         <p className="text-slate-400 mb-8 leading-relaxed">
-                            Notre équipe est là pour vous accompagner dans la réussite de votre publicité.
-                            Contactez-nous si vous avez des questions sur le paiement ou le ciblage.
+                            {t.adsPortal.needHelpSubtitle}
                         </p>
                         <Button className="bg-white text-slate-900 hover:bg-slate-100 rounded-full px-8 font-bold">
-                            <MessageSquare className="w-4 h-4 mr-2" />
-                            Contacter le Support
+                            <MessageSquare className={cn("w-4 h-4", isAr ? "ml-2" : "mr-2")} />
+                            {t.adsPortal.contactSupport}
                         </Button>
                     </div>
                 </div>

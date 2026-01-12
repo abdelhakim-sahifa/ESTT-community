@@ -6,8 +6,13 @@ import { Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
 
 export default function AdsPreview({ ads }) {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     if (!ads || ads.length === 0) return null;
 
     return (
@@ -15,20 +20,20 @@ export default function AdsPreview({ ads }) {
             <div className="container">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
                     <div className="text-left">
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-2">Opportunités</h2>
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-2">{t.ads.opportunities}</h2>
                         <div className="flex items-center gap-3">
                             <div className="bg-blue-50 p-2 rounded-lg text-blue-600">
                                 <Sparkles className="h-6 w-6" />
                             </div>
-                            <h2 className="text-4xl font-black tracking-tight">Projets & Partenaires</h2>
+                            <h2 className="text-4xl font-black tracking-tight">{t.ads.title}</h2>
                         </div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
                         <p className="text-muted-foreground max-w-sm text-sm text-right">
-                            Soutenez les initiatives et services créés par vos camarades de l'ESTT.
+                            {t.ads.subtitle}
                         </p>
                         <Link href="/ads-portal" className="text-blue-600 text-sm font-bold hover:underline decoration-2 underline-offset-4">
-                            Toutes les annonces →
+                            {t.ads.allAds} <span className={language === 'ar' ? 'inline-block transform rotate-180' : ''}>→</span>
                         </Link>
                     </div>
                 </div>
@@ -57,7 +62,7 @@ export default function AdsPreview({ ads }) {
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <div className="absolute top-4 left-4">
                                     <Badge className="bg-white/90 backdrop-blur-md text-slate-900 border-none shadow-sm uppercase text-[10px] font-bold">
-                                        {ad.type === 'video' ? 'Vidéo' : 'Focus'}
+                                        {ad.type === 'video' ? t.ads.video : t.ads.focus}
                                     </Badge>
                                 </div>
                             </div>
@@ -73,12 +78,12 @@ export default function AdsPreview({ ads }) {
                                         <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-[10px] font-bold">
                                             {ad.publisherEmail?.charAt(0).toUpperCase()}
                                         </div>
-                                        <span className="text-[10px] font-medium text-slate-400">Communauté</span>
+                                        <span className="text-[10px] font-medium text-slate-400">{t.common.community}</span>
                                     </div>
                                     {ad.link && (
                                         <Button variant="ghost" size="sm" asChild className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-full h-8 px-3 text-xs font-bold">
                                             <a href={ad.link} target="_blank" rel="noopener noreferrer">
-                                                Découvrir
+                                                {t.common.discover}
                                             </a>
                                         </Button>
                                     )}

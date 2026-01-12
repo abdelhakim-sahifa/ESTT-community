@@ -3,8 +3,13 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
+import { cn } from '@/lib/utils';
 
 export default function ClubCard({ club }) {
+    const { language } = useLanguage();
+    const t = translations[language];
     const truncateDescription = (text, maxLength = 100) => {
         if (!text) return '';
         if (text.length <= maxLength) return text;
@@ -44,9 +49,14 @@ export default function ClubCard({ club }) {
                                     </span>
                                 </CardTitle>
                                 {club.verified && (
-                                    <Badge variant="default" className="flex-shrink-0 gap-1 bg-blue-500 hover:bg-blue-600 px-2 py-0.5 rounded-full border-0 shadow-sm">
+                                    <Badge variant="default" className={cn(
+                                        "flex-shrink-0 gap-1 bg-blue-500 hover:bg-blue-600 px-2 py-0.5 rounded-full border-0 shadow-sm",
+                                        language === 'ar' && "flex-row-reverse"
+                                    )}>
                                         <i className="fa-solid fa-circle-check text-[10px]"></i>
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">Vérifié</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                                            {language === 'ar' ? 'موثق' : 'Vérifié'}
+                                        </span>
                                     </Badge>
                                 )}
                             </div>

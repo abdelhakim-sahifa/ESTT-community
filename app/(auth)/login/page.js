@@ -10,12 +10,16 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, GraduationCap, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
 
 
 
 export default function LoginPage() {
     const router = useRouter();
     const { signIn } = useAuth();
+    const { language } = useLanguage();
+    const t = translations[language];
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -27,11 +31,11 @@ export default function LoginPage() {
 
     const handleForgotPassword = async () => {
         if (!email) {
-            setMessage('Veuillez saisir votre adresse email pour réinitialiser votre mot de passe.');
+            setMessage(language === 'ar' ? 'يرجى إدخال بريدك الإلكتروني لإعادة تعيين كلمة المرور.' : 'Veuillez saisir votre adresse email pour réinitialiser votre mot de passe.');
             return;
         }
         if (!validateEmail(email)) {
-            setMessage('Veuillez utiliser votre adresse académique @etu.uae.ac.ma.');
+            setMessage(t.auth.academicEmailOnly + '.');
             return;
         }
 
@@ -40,16 +44,16 @@ export default function LoginPage() {
             const { sendPasswordResetEmail } = await import('firebase/auth');
             const { auth } = await import('@/lib/firebase');
             await sendPasswordResetEmail(auth, email);
-            setMessage('Un email de réinitialisation a été envoyé à votre adresse académique.');
+            setMessage(language === 'ar' ? 'تم إرسال بريد إعادة التعيين إلى بريدك الأكاديمي.' : 'Un email de réinitialisation a été envoyé à votre adresse académique.');
         } catch (error) {
             console.error(error);
-            setMessage('Erreur lors de l\'envoi de l\'email de réinitialisation.');
+            setMessage(language === 'ar' ? 'خطأ في إرسال بريد إعادة التعيين.' : 'Erreur lors de l\'envoi de l\'email de réinitialisation.');
         } finally {
             setLoading(false);
         }
     };
 
-    const isSuccess = message.includes('réussie') || message.includes('envoyé');
+    const isSuccess = message.includes('réussie') || message.includes('envoyé') || message.includes('تم إرسال') || message.includes('نجحت');
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage('');
@@ -82,18 +86,18 @@ export default function LoginPage() {
         }
 
         if (!isAllowed) {
-            setMessage('Veuillez utiliser votre adresse académique @etu.uae.ac.ma.');
+            setMessage(t.auth.academicEmailOnly + '.');
             setLoading(false);
             return;
         }
 
         try {
             await signIn(email, password);
-            setMessage('Connexion réussie.');
+            setMessage(language === 'ar' ? 'نجحت عملية تسجيل الدخول.' : 'Connexion réussie.');
             setTimeout(() => router.push('/'), 1000);
         } catch (error) {
             console.error(error);
-            setMessage('Identifiants invalides ou erreur de connexion.');
+            setMessage(language === 'ar' ? 'بيانات غير صحيحة أو خطأ في الاتصال.' : 'Identifiants invalides ou erreur de connexion.');
             setLoading(false);
         }
     };
@@ -107,9 +111,9 @@ export default function LoginPage() {
                             <GraduationCap className="w-8 h-8" />
                         </div>
                     </div>
-                    <CardTitle className="text-2xl font-bold">Se connecter</CardTitle>
+                    <CardTitle className="text-2xl font-bold">{t.auth.loginTitle}</CardTitle>
                     <CardDescription>
-                        Accédez à votre espace étudiant
+                        {language === 'ar' ? 'قم بالدخول إلى فضاء الطالب الخاص بك' : 'Accédez à votre espace étudiant'}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -121,7 +125,7 @@ export default function LoginPage() {
                             </Alert>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="email">Adresse email académique</Label>
+                            <Label htmlFor="email">{t.auth.emailLabel}</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -134,13 +138,13 @@ export default function LoginPage() {
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <Label htmlFor="password">Mot de passe</Label>
+                                <Label htmlFor="password">{t.auth.passwordLabel}</Label>
                                 <button
                                     type="button"
                                     onClick={handleForgotPassword}
                                     className="text-xs text-primary hover:underline font-medium"
                                 >
-                                    Mot de passe oublié ?
+                                    {t.auth.forgotPassword}
                                 </button>
                             </div>
                             <Input
@@ -152,17 +156,17 @@ export default function LoginPage() {
                                 className="h-11"
                             />
                             <p className="text-[10px] text-muted-foreground">
-                                Pas forcément le mot de passe de l’e-mail académique
+                                {language === 'ar' ? 'ليس بالضرورة نفس كلمة مرور البريد الأكاديمي' : 'Pas forcément le mot de passe de l’e-mail académique'}
                             </p>
                         </div>
                         <Button type="submit" className="w-full h-11 text-base font-medium" disabled={loading}>
                             {loading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Connexion en cours...
+                                    {t.common.loading}
                                 </>
                             ) : (
-                                'Se connecter'
+                                t.auth.loginBtn
                             )}
                         </Button>
                     </form>
@@ -174,12 +178,12 @@ export default function LoginPage() {
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
                             <span className="bg-card px-2 text-muted-foreground">
-                                Nouveau ici ?
+                                {t.auth.noAccount}
                             </span>
                         </div>
                     </div>
                     <Button variant="outline" className="w-full h-11" asChild>
-                        <Link href="/signup">Créer un compte</Link>
+                        <Link href="/signup">{t.auth.signupBtn}</Link>
                     </Button>
                 </CardFooter>
             </Card>

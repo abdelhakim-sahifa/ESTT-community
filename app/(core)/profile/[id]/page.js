@@ -15,6 +15,9 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, Check, X, Megaphone } from 'lucide-react';
 import { cn, getUserLevel } from '@/lib/utils';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
+import { Globe } from 'lucide-react';
 
 export default function PublicProfilePage() {
     const { id } = useParams();
@@ -30,6 +33,9 @@ export default function PublicProfilePage() {
     const [loadingClubs, setLoadingClubs] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [saving, setSaving] = useState(false);
+    const { language, toggleLanguage } = useLanguage();
+    const t = translations[language];
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -139,11 +145,11 @@ export default function PublicProfilePage() {
 
     const handleStar = async () => {
         if (!currentUser) {
-            alert("Vous devez être connecté pour liker un profil.");
+            alert(language === 'ar' ? "يجب أن تكون مسجلاً للإعجاب بملف شخصي." : "Vous devez être connecté pour liker un profil.");
             return;
         }
         if (currentUser.uid === id) {
-            alert("Vous ne pouvez pas liker votre propre profil.");
+            alert(language === 'ar' ? "لا يمكنك الإعجاب بملفك الشخصي." : "Vous ne pouvez pas liker votre propre profil.");
             return;
         }
 
@@ -160,7 +166,7 @@ export default function PublicProfilePage() {
             setStarCount(newStarCount);
         } catch (err) {
             console.error("Error updating star:", err);
-            alert("Une erreur est survenue lors de la mise à jour des stars.");
+            alert(language === 'ar' ? "حدث خطأ أثناء تحديث الإعجابات." : "Une erreur est survenue lors de la mise à jour des stars.");
         }
     };
 
@@ -177,7 +183,7 @@ export default function PublicProfilePage() {
             setIsEditOpen(false);
         } catch (err) {
             console.error("Error updating profile:", err);
-            alert("Erreur lors de la mise à jour du profil.");
+            alert(language === 'ar' ? "خطأ أثناء تحديث الملف الشخصي." : "Erreur lors de la mise à jour du profil.");
         } finally {
             setSaving(false);
         }
@@ -193,7 +199,7 @@ export default function PublicProfilePage() {
                 });
             } else {
                 await navigator.clipboard.writeText(url);
-                alert("Lien du profil copié !");
+                alert(t.profile.copyLink);
             }
         } catch (err) {
             console.error("Error sharing profile:", err);
@@ -201,9 +207,9 @@ export default function PublicProfilePage() {
                 // Fallback to clipboard
                 try {
                     await navigator.clipboard.writeText(window.location.href);
-                    alert("Lien du profil copié !");
+                    alert(t.profile.copyLink);
                 } catch (e) {
-                    alert("Impossible de copier le lien.");
+                    alert(language === 'ar' ? "تعذر نسخ الرابط." : "Impossible de copier le lien.");
                 }
             }
         }
@@ -212,12 +218,13 @@ export default function PublicProfilePage() {
     if (loading) return (
         <div className="flex items-center justify-center min-h-[60vh] text-primary">
             <Loader2 className="animate-spin w-10 h-10" />
+            <p className="ml-2">{t.common.loading}</p>
         </div>
     );
 
     if (error) return (
         <div className="flex items-center justify-center min-h-[60vh] text-destructive">
-            {error}
+            {language === 'ar' && error === 'Profil introuvable' ? 'الملف الشخصي غير موجود' : error}
         </div>
     );
 
@@ -234,50 +241,53 @@ export default function PublicProfilePage() {
                     <div className="space-y-6">
                         <Card className="text-center p-8 bg-white border-slate-200 shadow-sm overflow-hidden relative">
                             {isMentor && (
-                                <div className="absolute top-0 right-0 bg-yellow-400 text-white px-3 py-1 rounded-bl-lg shadow-sm text-[10px] font-bold uppercase tracking-wider z-10">
-                                    Mentor
+                                <div className={cn(
+                                    "absolute top-0 bg-yellow-400 text-white px-3 py-1 shadow-sm text-[10px] font-bold uppercase tracking-wider z-10",
+                                    language === 'ar' ? "left-0 rounded-br-lg" : "right-0 rounded-bl-lg"
+                                )}>
+                                    {t.profile.mentor}
                                 </div>
                             )}
                             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-slate-100 shadow-sm">
                                 <User className="w-10 h-10 text-primary" />
                             </div>
-                            <CardTitle className="text-2xl font-bold text-slate-900">
+                            <CardTitle className={cn("text-2xl font-bold text-slate-900", language === 'ar' && "font-arabic")}>
                                 {profile.firstName} {profile.lastName}
                             </CardTitle>
                             <p className="text-muted-foreground font-medium text-sm mt-1">
-                                {profile.filiere} • {level === 1 ? 'S1/S2' : 'S3/S4'}
+                                {t.fields[profile.filiere] || profile.filiere} • {level === 1 ? 'S1/S2' : 'S3/S4'}
                             </p>
 
                             <div className="flex justify-center gap-2 mt-6">
                                 {currentUser && currentUser.uid === id ? (
                                     <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                                         <DialogTrigger asChild>
-                                            <Button className="rounded-full px-6 bg-primary hover:bg-primary/90 text-white font-semibold shadow-sm gap-2">
+                                            <Button className={cn("rounded-full px-6 bg-primary hover:bg-primary/90 text-white font-semibold shadow-sm gap-2", language === 'ar' && "flex-row-reverse")}>
                                                 <Edit2 className="w-4 h-4" />
-                                                Modifier
+                                                {t.profile.editProfile}
                                             </Button>
                                         </DialogTrigger>
                                         <Button
                                             asChild
                                             variant="outline"
-                                            className="rounded-full px-6 border-blue-200 text-blue-600 hover:bg-blue-50 font-semibold gap-2 shadow-sm"
+                                            className={cn("rounded-full px-6 border-blue-200 text-blue-600 hover:bg-blue-50 font-semibold gap-2 shadow-sm", language === 'ar' && "flex-row-reverse")}
                                         >
                                             <Link href="/ads-portal/dashboard">
                                                 <Megaphone className="w-4 h-4" />
-                                                Annonces
+                                                {t.profile.annoncement}
                                             </Link>
                                         </Button>
                                         <DialogContent className="sm:max-w-md rounded-2xl">
                                             <DialogHeader>
-                                                <DialogTitle className="text-xl font-bold">Modifier mon profil</DialogTitle>
-                                                <DialogDescription>
-                                                    Mettez à jour vos informations publiques.
+                                                <DialogTitle className={cn("text-xl font-bold", language === 'ar' && "font-arabic")}>{t.profile.editProfile}</DialogTitle>
+                                                <DialogDescription className={cn(language === 'ar' && "font-arabic")}>
+                                                    {t.profile.updatePublicInfo}
                                                 </DialogDescription>
                                             </DialogHeader>
                                             <div className="grid gap-4 py-4">
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="space-y-1.5">
-                                                        <Label htmlFor="firstName">Prénom</Label>
+                                                        <Label htmlFor="firstName">{t.profile.firstName}</Label>
                                                         <Input
                                                             id="firstName"
                                                             value={formData.firstName}
@@ -286,7 +296,7 @@ export default function PublicProfilePage() {
                                                         />
                                                     </div>
                                                     <div className="space-y-1.5">
-                                                        <Label htmlFor="lastName">Nom</Label>
+                                                        <Label htmlFor="lastName">{t.profile.lastName}</Label>
                                                         <Input
                                                             id="lastName"
                                                             value={formData.lastName}
@@ -296,7 +306,7 @@ export default function PublicProfilePage() {
                                                     </div>
                                                 </div>
                                                 <div className="space-y-1.5">
-                                                    <Label htmlFor="email">Email</Label>
+                                                    <Label htmlFor="email">{t.profile.email}</Label>
                                                     <Input
                                                         id="email"
                                                         value={profile.email}
@@ -306,7 +316,7 @@ export default function PublicProfilePage() {
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="space-y-1.5">
-                                                        <Label htmlFor="filiere">Filière</Label>
+                                                        <Label htmlFor="filiere">{t.profile.filiere}</Label>
                                                         <Input
                                                             id="filiere"
                                                             value={formData.filiere}
@@ -315,7 +325,7 @@ export default function PublicProfilePage() {
                                                         />
                                                     </div>
                                                     <div className="space-y-1.5">
-                                                        <Label htmlFor="startYear">Début</Label>
+                                                        <Label htmlFor="startYear">{t.profile.startYear}</Label>
                                                         <Input
                                                             id="startYear"
                                                             type="number"
@@ -326,13 +336,13 @@ export default function PublicProfilePage() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <DialogFooter className="flex gap-2">
+                                            <DialogFooter className={cn("flex gap-2", language === 'ar' && "flex-row-reverse")}>
                                                 <Button variant="ghost" onClick={() => setIsEditOpen(false)} className="rounded-lg">
-                                                    Annuler
+                                                    {t.common.annuler}
                                                 </Button>
                                                 <Button onClick={handleSaveProfile} disabled={saving} className="rounded-lg bg-primary text-white">
-                                                    {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                                                    Enregistrer
+                                                    {saving ? <Loader2 className={cn("w-4 h-4 animate-spin", language === 'ar' ? "ml-2" : "mr-2")} /> : null}
+                                                    {t.common.enregistrer}
                                                 </Button>
                                             </DialogFooter>
                                         </DialogContent>
@@ -343,8 +353,8 @@ export default function PublicProfilePage() {
                                         className={cn("rounded-full px-6 transition-all", isStarred && "bg-yellow-500 hover:bg-yellow-600 border-none text-white")}
                                         onClick={handleStar}
                                     >
-                                        <Star className={cn("w-4 h-4 mr-2", isStarred && "fill-current")} />
-                                        <span>{starCount}</span>
+                                        <Star className={cn("w-4 h-4", isStarred && "fill-current")} />
+                                        <span className={cn(language === 'ar' ? "mr-2" : "ml-2")}>{starCount}</span>
                                     </Button>
                                 )}
                                 <Button variant="outline" size="icon" className="rounded-full" onClick={copyProfileLink}>
@@ -355,7 +365,7 @@ export default function PublicProfilePage() {
 
                         <Card className="p-6 bg-white border-slate-200 shadow-sm">
                             <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
-                                <i className="fas fa-info-circle text-primary"></i> À propos
+                                <i className="fas fa-info-circle text-primary"></i> {t.profile.about}
                             </h3>
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3 text-sm text-slate-600">
@@ -364,38 +374,62 @@ export default function PublicProfilePage() {
                                 </div>
                                 <div className="flex items-center gap-3 text-sm text-slate-600">
                                     <GraduationCap className="w-4 h-4 text-slate-400" />
-                                    <span>Promotion {profile.startYear}</span>
+                                    <span>{t.profile.promotion} {profile.startYear}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-sm text-slate-600">
                                     <Calendar className="w-4 h-4 text-slate-400" />
-                                    <span>Membre depuis {new Date(profile.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</span>
+                                    <span>{t.profile.memberSince} {new Date(profile.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'fr-FR', { month: 'long', year: 'numeric' })}</span>
                                 </div>
                             </div>
                         </Card>
 
+                        {currentUser && currentUser.uid === id && (
+                            <Card className="p-6 bg-white border-slate-200 shadow-sm">
+                                <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
+                                    <Globe className="w-4 h-4 text-primary" /> {t.common.language}
+                                </h3>
+                                <div className="flex gap-2">
+                                    <Button
+                                        variant={language === 'fr' ? 'default' : 'outline'}
+                                        className="flex-1 rounded-xl"
+                                        onClick={() => toggleLanguage('fr')}
+                                    >
+                                        Français
+                                    </Button>
+                                    <Button
+                                        variant={language === 'ar' ? 'default' : 'outline'}
+                                        className="flex-1 rounded-xl font-arabic"
+                                        onClick={() => toggleLanguage('ar')}
+                                    >
+                                        العربية
+                                    </Button>
+                                </div>
+                            </Card>
+                        )}
+
                         <Card className="p-6 bg-white border-slate-200 shadow-sm">
                             <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
-                                <i className="fas fa-medal text-primary"></i> Succès
+                                <i className="fas fa-medal text-primary"></i> {t.profile.success}
                             </h3>
                             <div className="flex flex-wrap gap-2">
                                 {contributionsCount >= 1 && (
                                     <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100 border-none px-3 py-1">
-                                        Contributeur
+                                        {t.profile.contributor}
                                     </Badge>
                                 )}
                                 {contributionsCount >= 10 && (
                                     <Badge variant="secondary" className="bg-orange-100 text-orange-700 hover:bg-orange-100 border-none px-3 py-1">
-                                        Major Contrib
+                                        {t.profile.majorContributor}
                                     </Badge>
                                 )}
                                 {starCount >= 5 && (
                                     <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 border-none px-3 py-1">
-                                        Populaire
+                                        {t.profile.popular}
                                     </Badge>
                                 )}
                                 {level === 2 && (
                                     <Badge variant="secondary" className="bg-slate-100 text-slate-700 hover:bg-slate-100 border-none px-3 py-1">
-                                        Ancien
+                                        {t.profile.alumnus}
                                     </Badge>
                                 )}
                             </div>
@@ -407,7 +441,7 @@ export default function PublicProfilePage() {
                         <section>
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                                    <i className="fas fa-book-open text-primary"></i> Contributions
+                                    <i className="fas fa-book-open text-primary"></i> {t.profile.contributions}
                                 </h2>
                                 <Badge variant="outline">{contributionsCount}</Badge>
                             </div>
@@ -418,12 +452,12 @@ export default function PublicProfilePage() {
                                         .sort((a, b) => b[1].timestamp - a[1].timestamp)
                                         .map(([id, item]) => (
                                             <Card key={id} className="p-4 hover:shadow-md transition-all border-slate-200 bg-white group cursor-pointer">
-                                                <div className="flex justify-between items-center">
-                                                    <div>
-                                                        <h3 className="font-semibold text-slate-900 group-hover:text-primary transition-colors">{item.title}</h3>
-                                                        <div className="flex items-center gap-2 mt-1">
-                                                            <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded">{item.module || 'Ressource'}</span>
-                                                            <span className="text-xs text-slate-400">• {new Date(item.timestamp).toLocaleDateString()}</span>
+                                                <div className="flex justify-between items-center text-left">
+                                                    <div className={cn(language === 'ar' && "text-right")}>
+                                                        <h3 className={cn("font-semibold text-slate-900 group-hover:text-primary transition-colors", language === 'ar' && "font-arabic")}>{item.title}</h3>
+                                                        <div className={cn("flex items-center gap-2 mt-1", language === 'ar' && "flex-row-reverse")}>
+                                                            <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-0.5 rounded">{item.module || (language === 'ar' ? 'مورد' : 'Ressource')}</span>
+                                                            <span className="text-xs text-slate-400">• {new Date(item.timestamp).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'fr-FR')}</span>
                                                         </div>
                                                     </div>
                                                     <Share2 className="w-4 h-4 text-slate-300 group-hover:text-primary transition-colors" />
@@ -432,7 +466,7 @@ export default function PublicProfilePage() {
                                         ))
                                 ) : (
                                     <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                                        <p className="text-slate-400 text-sm">Aucune contribution pour le moment.</p>
+                                        <p className="text-slate-400 text-sm">{t.profile.none}</p>
                                     </div>
                                 )}
                             </div>
@@ -440,7 +474,7 @@ export default function PublicProfilePage() {
 
                         <section>
                             <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                <i className="fas fa-users text-primary"></i>Clubs
+                                <i className="fas fa-users text-primary"></i>{t.common.clubs}
                             </h2>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                 {loadingClubs ? (
@@ -462,7 +496,7 @@ export default function PublicProfilePage() {
                                     ))
                                 ) : (
                                     <div className="col-span-full text-center py-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                                        <p className="text-slate-400 text-sm">Aucun club.</p>
+                                        <p className="text-slate-400 text-sm">{t.profile.noClubs}</p>
                                     </div>
                                 )}
                             </div>
@@ -471,7 +505,7 @@ export default function PublicProfilePage() {
                         {currentUser && currentUser.uid === id && (
                             <section>
                                 <h2 className="text-xl font-bold text-orange-600 mb-4 flex items-center gap-2">
-                                    <Ticket className="w-5 h-5" /> Mes Tickets
+                                    <Ticket className="w-5 h-5" /> {t.profile.myTickets}
                                 </h2>
                                 <div className="grid gap-3">
                                     {loadingTickets ? (
@@ -484,14 +518,14 @@ export default function PublicProfilePage() {
                                                         <h3 className="font-semibold text-slate-900">{ticket.eventName}</h3>
                                                         <div className="flex items-center gap-2 mt-1">
                                                             <Badge variant="outline" className={ticket.status === 'valid' ? "bg-green-50 text-green-700" : "bg-orange-50 text-orange-700"}>
-                                                                {ticket.status === 'valid' ? 'Validé' : 'En attente'}
+                                                                {ticket.status === 'valid' ? t.profile.validated : t.profile.pending}
                                                             </Badge>
                                                             <span className="text-xs text-slate-400">{ticket.clubName}</span>
                                                         </div>
                                                     </div>
-                                                    <Button variant="ghost" size="sm" asChild className="rounded-lg h-8 px-3">
+                                                    <Button variant="ghost" size="sm" asChild className={cn("rounded-lg h-8 px-3", language === 'ar' && "flex-row-reverse")}>
                                                         <a href={`/tickets/${ticket.id}`} target="_blank" rel="noopener noreferrer">
-                                                            Voir <i className="fas fa-arrow-right ml-2 text-xs"></i>
+                                                            {t.profile.view} <i className={cn("fas ml-2 text-xs", language === 'ar' ? "fa-arrow-left" : "fa-arrow-right")}></i>
                                                         </a>
                                                     </Button>
                                                 </div>
@@ -499,7 +533,7 @@ export default function PublicProfilePage() {
                                         ))
                                     ) : (
                                         <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                                            <p className="text-slate-400 text-sm">Aucun ticket.</p>
+                                            <p className="text-slate-400 text-sm">{t.profile.noTickets}</p>
                                         </div>
                                     )}
                                 </div>

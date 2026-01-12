@@ -6,10 +6,15 @@ import { db, ref, onValue } from '@/lib/firebase';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, FileText, PenTool, ArrowRight, User } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
+import { cn as baseCn } from '@/lib/utils';
 
 export default function ActivityFeed() {
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { language } = useLanguage();
+    const t = translations[language];
 
     useEffect(() => {
         // We listen to resources
@@ -85,7 +90,7 @@ export default function ActivityFeed() {
 
     if (loading) return <div className="col-span-full py-20 flex justify-center"><Loader2 className="animate-spin text-primary" /></div>;
 
-    if (activities.length === 0) return <div className="col-span-full py-20 text-center text-muted-foreground italic">Aucune activité récente.</div>;
+    if (activities.length === 0) return <div className="col-span-full py-20 text-center text-muted-foreground italic">{t.common.noActivity}</div>;
 
     const getFieldColor = (field) => {
         switch (field?.toLowerCase()) {
@@ -98,10 +103,10 @@ export default function ActivityFeed() {
     };
 
     const formatDate = (timestamp) => {
-        if (!timestamp) return 'Date inconnue';
+        if (!timestamp) return t.common.dateUnknown;
         const date = new Date(timestamp);
-        if (isNaN(date.getTime())) return 'Date invalide';
-        return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+        if (isNaN(date.getTime())) return t.common.dateUnknown;
+        return date.toLocaleDateString(language === 'ar' ? 'ar-SA' : 'fr-FR', { day: 'numeric', month: 'short' });
     };
 
     return (
@@ -116,7 +121,7 @@ export default function ActivityFeed() {
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex gap-2">
                                 <Badge variant="secondary" className=" px-2 py-0 font-bold text-[9px] uppercase">
-                                    {activity.type === 'resource' ? 'Ressource' : 'Article'}
+                                    {activity.type === 'resource' ? t.common.resource : t.common.article}
                                 </Badge>
                                 {activity.semester && (
                                     <Badge variant="outline" className="px-2 py-0 font-bold text-[9px] uppercase border-primary/20 text-primary">
@@ -143,7 +148,7 @@ export default function ActivityFeed() {
                                 <User className="w-3 h-3" />
                             </div>
                             <span className="font-bold text-xs truncate">
-                                Par {activity.author}
+                                {t.common.by} {activity.author === 'Anonyme' ? t.common.anonymous : activity.author}
                             </span>
                         </div>
                     </CardContent>
@@ -160,7 +165,7 @@ export default function ActivityFeed() {
                                 rel={activity.type === 'resource' ? "noopener noreferrer" : ""}
                                 className="text-xs font-black uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all ml-auto hover:text-primary"
                             >
-                                {activity.type === 'resource' ? 'Accéder' : 'Lire'} <ArrowRight className="w-3 h-3" />
+                                {activity.type === 'resource' ? t.common.access : t.common.read} <ArrowRight className={cn("w-3 h-3", language === 'ar' && "rotate-180")} />
                             </a>
                         </div>
                     </div>

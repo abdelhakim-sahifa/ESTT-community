@@ -21,10 +21,15 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
+import { cn } from '@/lib/utils';
 
 export default function ContributePage() {
     const router = useRouter();
     const { user, profile } = useAuth();
+    const { language } = useLanguage();
+    const t = translations[language];
     const [formData, setFormData] = useState({
         field: '',
         semester: '',
@@ -87,7 +92,7 @@ export default function ContributePage() {
 
             if (file) {
                 if (file.size > 10 * 1024 * 1024) {
-                    throw new Error("Le fichier dépasse la taille maximale de 10 Mo.");
+                    throw new Error(language === 'ar' ? "يتجاوز الملف الحد الأقصى للحجم وهو 10 ميجا بايت." : "Le fichier dépasse la taille maximale de 10 Mo.");
                 }
                 const uploaded = await uploadResourceFile(file);
                 if (!uploaded && !uploaded.publicUrl) {
@@ -148,7 +153,7 @@ export default function ContributePage() {
 
 
 
-            setMessage('Contribution envoyée avec succès ! Elle sera vérifiée sous peu.');
+            setMessage(t.contribute.successMessage);
             setTimeout(() => router.push('/thanks'), 2000);
 
             // Background Emails
@@ -225,20 +230,20 @@ export default function ContributePage() {
     return (
         <main className="container py-12 max-w-4xl">
             <section className="mb-12 text-center">
-                <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl mb-4">
-                    Contribuer une ressource
+                <h1 className={cn("text-4xl font-bold tracking-tight text-foreground sm:text-5xl mb-4", language === 'ar' && "font-arabic")}>
+                    {t.contribute.title}
                 </h1>
                 <p className="text-xl text-muted-foreground">
-                    Aide tes camarades en partageant tes cours, TDs, exercices ou vidéos.
+                    {t.contribute.subtitle}
                 </p>
             </section>
 
             <section>
                 <Card className="shadow-lg border-muted-foreground/10">
                     <CardHeader>
-                        <CardTitle>Formulaire de contribution</CardTitle>
+                        <CardTitle className={cn(language === 'ar' && "font-arabic")}>{t.contribute.formTitle}</CardTitle>
                         <CardDescription>
-                            Les champs marqués d'une astérisque (*) sont obligatoires.
+                            {t.contribute.requiredFields}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -246,14 +251,14 @@ export default function ContributePage() {
                             {message && (
                                 <Alert variant={isError ? "destructive" : "default"} className={!isError ? "border-green-500 bg-green-50 text-green-700" : ""}>
                                     {isError ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                                    <AlertTitle>{isError ? "Erreur" : "Succès"}</AlertTitle>
+                                    <AlertTitle className={cn(language === 'ar' && "font-arabic")}>{isError ? (language === 'ar' ? 'خطأ' : "Erreur") : (language === 'ar' ? 'نجاح' : "Succès")}</AlertTitle>
                                     <AlertDescription>{message}</AlertDescription>
                                 </Alert>
                             )}
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="field">Filière *</Label>
+                                    <Label htmlFor="field">{t.common.filiere} *</Label>
                                     <Select
                                         value={formData.field}
                                         onValueChange={(v) => {
@@ -264,18 +269,18 @@ export default function ContributePage() {
                                         required
                                     >
                                         <SelectTrigger id="field">
-                                            <SelectValue placeholder="Sélectionnez une filière" />
+                                            <SelectValue placeholder={t.common.selectFiliere} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {staticDb.fields.map((field) => (
-                                                <SelectItem key={field.id} value={field.id}>{field.name}</SelectItem>
+                                                <SelectItem key={field.id} value={field.id}>{t.fields[field.id] || field.name}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="semester">Semestre *</Label>
+                                    <Label htmlFor="semester">{t.common.semester} *</Label>
                                     <Select
                                         value={formData.semester}
                                         onValueChange={(v) => {
@@ -286,7 +291,7 @@ export default function ContributePage() {
                                         disabled={!formData.field}
                                     >
                                         <SelectTrigger id="semester">
-                                            <SelectValue placeholder="Sélectionnez un semestre" />
+                                            <SelectValue placeholder={t.common.selectSemester} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {staticDb.semesters.map((sem) => (
@@ -299,7 +304,7 @@ export default function ContributePage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="module">Module *</Label>
+                                    <Label htmlFor="module">{t.common.module} *</Label>
                                     <Select
                                         value={formData.module}
                                         onValueChange={(v) => handleChange('module', v)}
@@ -307,7 +312,7 @@ export default function ContributePage() {
                                         disabled={!formData.semester}
                                     >
                                         <SelectTrigger id="module">
-                                            <SelectValue placeholder="Sélectionnez un module" />
+                                            <SelectValue placeholder={t.common.selectModule} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {modules.map((mod) => (
@@ -318,16 +323,16 @@ export default function ContributePage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="professor">Professeur (Optionnel)</Label>
+                                    <Label htmlFor="professor">{t.contribute.professorLabel} ({t.contribute.optional})</Label>
                                     <Select
                                         value={formData.professor}
                                         onValueChange={(v) => handleChange('professor', v)}
                                     >
                                         <SelectTrigger id="professor">
-                                            <SelectValue placeholder="Sélectionnez un professeur" />
+                                            <SelectValue placeholder={language === 'ar' ? 'اختر أستاذاً' : 'Sélectionnez un professeur'} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="non-specifie">Non spécifié</SelectItem>
+                                            <SelectItem value="non-specifie">{t.contribute.unspecified}</SelectItem>
                                             {professors.map((p, index) => {
                                                 const name = typeof p === 'string' ? p : p.name;
                                                 return (
@@ -342,10 +347,10 @@ export default function ContributePage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="title">Titre de la ressource *</Label>
+                                <Label htmlFor="title">{t.contribute.resourceTitleLabel} *</Label>
                                 <Input
                                     id="title"
-                                    placeholder="Ex: Cours complet chapitre 3"
+                                    placeholder={t.contribute.resourceTitlePlaceholder}
                                     value={formData.title}
                                     onChange={(e) => handleChange('title', e.target.value)}
                                     required
@@ -353,10 +358,10 @@ export default function ContributePage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">Description</Label>
+                                <Label htmlFor="description">{t.contribute.descriptionLabel}</Label>
                                 <Textarea
                                     id="description"
-                                    placeholder="Décrivez brièvement la ressource..."
+                                    placeholder={t.contribute.descriptionPlaceholder}
                                     value={formData.description}
                                     onChange={(e) => handleChange('description', e.target.value)}
                                     rows={3}
@@ -365,46 +370,46 @@ export default function ContributePage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="type">Type de ressource *</Label>
+                                    <Label htmlFor="type">{t.contribute.resourceTypeLabel} *</Label>
                                     <Select
                                         value={formData.type}
                                         onValueChange={(v) => handleChange('type', v)}
                                         required
                                     >
                                         <SelectTrigger id="type">
-                                            <SelectValue placeholder="Type de ressource" />
+                                            <SelectValue placeholder={t.contribute.resourceTypeLabel} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="pdf">PDF</SelectItem>
-                                            <SelectItem value="image">Image</SelectItem>
-                                            <SelectItem value="video">Vidéo (lien)</SelectItem>
-                                            <SelectItem value="link">Lien externe</SelectItem>
+                                            <SelectItem value="image">{language === 'ar' ? 'صورة' : 'Image'}</SelectItem>
+                                            <SelectItem value="video">Vidéo ({language === 'ar' ? 'رابط' : 'lien'})</SelectItem>
+                                            <SelectItem value="link">{language === 'ar' ? 'رابط خارجي' : 'Lien externe'}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="docType">Type de document *</Label>
+                                    <Label htmlFor="docType">{t.contribute.docTypeLabel} *</Label>
                                     <Select
                                         value={formData.docType}
                                         onValueChange={(v) => handleChange('docType', v)}
                                         required
                                     >
                                         <SelectTrigger id="docType">
-                                            <SelectValue placeholder="Choisir le type" />
+                                            <SelectValue placeholder={t.contribute.chooseType} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Cours">Cours</SelectItem>
+                                            <SelectItem value="Cours">{language === 'ar' ? 'درس' : 'Cours'}</SelectItem>
                                             <SelectItem value="TD">TD</SelectItem>
                                             <SelectItem value="TP">TP</SelectItem>
-                                            <SelectItem value="Exam">Examen</SelectItem>
+                                            <SelectItem value="Exam">{language === 'ar' ? 'امتحان' : 'Examen'}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
 
                                 {(formData.type === 'video' || formData.type === 'link') ? (
                                     <div className="space-y-2">
-                                        <Label htmlFor="url">URL *</Label>
+                                        <Label htmlFor="url">{t.contribute.urlLabel} *</Label>
                                         <Input
                                             id="url"
                                             type="url"
@@ -416,18 +421,18 @@ export default function ContributePage() {
                                     </div>
                                 ) : (
                                     <div className="space-y-2">
-                                        <Label htmlFor="file">Fichier *</Label>
+                                        <Label htmlFor="file">{t.contribute.fileLabel} *</Label>
                                         <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-muted-foreground/20 border-dashed rounded-md hover:bg-muted/50 transition-colors cursor-pointer relative group">
                                             <div className="space-y-1 text-center">
                                                 <CloudUpload className="mx-auto h-12 w-12 text-muted-foreground group-hover:text-primary transition-colors" />
                                                 <div className="flex text-sm text-muted-foreground">
                                                     <label htmlFor="file" className="relative cursor-pointer bg-transparent rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none">
-                                                        <span>{file ? file.name : "Cliquez pour uploader un fichier"}</span>
+                                                        <span>{file ? file.name : t.contribute.clickToUpload}</span>
                                                         <input id="file" name="file" type="file" className="sr-only" onChange={handleFileChange} accept={formData.type === 'pdf' ? '.pdf' : 'image/*'} required={!formData.url} />
                                                     </label>
                                                 </div>
                                                 <p className="text-xs text-muted-foreground">
-                                                    {formData.type === 'pdf' ? 'PDF uniquement' : 'Images uniquement'} jusqu'à 10MB
+                                                    {formData.type === 'pdf' ? (language === 'ar' ? 'PDF فقط' : 'PDF uniquement') : (language === 'ar' ? 'صور فقط' : 'Images uniquement')} {t.contribute.maxSize}
                                                 </p>
                                             </div>
                                         </div>
@@ -435,7 +440,7 @@ export default function ContributePage() {
                                 )}
                             </div>
 
-                            <div className="flex items-center space-x-2 bg-muted/30 p-4 rounded-lg">
+                            <div className={cn("flex items-center space-x-2 bg-muted/30 p-4 rounded-lg", language === 'ar' && "space-x-reverse")}>
                                 <Checkbox
                                     id="anonymous"
                                     checked={formData.anonymous}
@@ -443,10 +448,10 @@ export default function ContributePage() {
                                 />
                                 <div className="grid gap-1.5 leading-none">
                                     <Label htmlFor="anonymous" className="text-sm font-medium leading-none cursor-pointer">
-                                        Contribuer de manière anonyme
+                                        {t.contribute.anonymousLabel}
                                     </Label>
                                     <p className="text-xs text-muted-foreground">
-                                        Votre nom ne sera pas affiché publiquement sur la ressource.
+                                        {t.contribute.anonymousHint}
                                     </p>
                                 </div>
                             </div>
@@ -456,15 +461,15 @@ export default function ContributePage() {
                                     {loading ? (
                                         <>
                                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                            Envoi en cours...
+                                            {t.contribute.submitting}
                                         </>
                                     ) : (
-                                        'Soumettre la ressource'
+                                        t.contribute.submitBtn
                                     )}
                                 </Button>
                                 <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                                     <Info className="h-3 w-3" />
-                                    <span>Toutes les ressources sont vérifiées avant d'être publiées.</span>
+                                    <span>{t.contribute.verificationInfo}</span>
                                 </div>
                             </div>
                         </form>

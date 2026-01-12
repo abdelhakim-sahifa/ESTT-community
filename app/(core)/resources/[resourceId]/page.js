@@ -6,13 +6,18 @@ import { db, ref, get } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, Download, ExternalLink, User, Share2 } from 'lucide-react';
+import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, Download, ExternalLink, User, Share2, ArrowLeft, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
+import { cn } from '@/lib/utils';
 
 export default function ResourcePage() {
     const params = useParams();
     const { resourceId } = params;
 
+    const { language } = useLanguage();
+    const t = translations[language];
     const [resource, setResource] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -30,15 +35,13 @@ export default function ResourcePage() {
 
             if (snapshot.exists()) {
                 const data = snapshot.val();
-                // Check if verified - admins might view unverified via this link too, but general public shouldn't?
-                // For now, we'll display it, assuming the link is shared only when approved or by admin.
                 setResource({ id: resourceId, ...data });
             } else {
-                setError('Ressource introuvable');
+                setError(t.browse.notFound);
             }
         } catch (err) {
             console.error(err);
-            setError('Erreur lors du chargement de la ressource');
+            setError(t.browse.errorLoading);
         } finally {
             setLoading(false);
         }
@@ -72,10 +75,10 @@ export default function ResourcePage() {
 
     if (error || !resource) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-                <p className="text-xl text-muted-foreground">{error || 'Introuvable'}</p>
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
+                <p className={cn("text-xl text-muted-foreground", language === 'ar' && "font-arabic")}>{error || t.common.notAvailable}</p>
                 <Button asChild>
-                    <Link href="/browse">Parcourir les ressources</Link>
+                    <Link href="/browse">{t.common.browse}</Link>
                 </Button>
             </div>
         );
@@ -86,22 +89,23 @@ export default function ResourcePage() {
     return (
         <main className="min-h-screen bg-slate-50 py-12 px-4">
             <div className="max-w-3xl mx-auto space-y-8">
-                <div className="flex justify-between items-center">
+                <div className={cn("flex justify-between items-center", language === 'ar' && "flex-row-reverse")}>
                     <Button variant="ghost" asChild>
-                        <Link href="/browse" className="gap-2">
-                            ← Retour aux ressources
+                        <Link href="/browse" className={cn("gap-2", language === 'ar' && "flex-row-reverse")}>
+                            {language === 'ar' ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
+                            {t.browse.backToResources}
                         </Link>
                     </Button>
                 </div>
 
                 <Card className="overflow-hidden shadow-lg border-t-4 border-t-primary">
                     <CardHeader className="bg-white border-b pb-8">
-                        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+                        <div className={cn("flex flex-col md:flex-row gap-6 items-start md:items-center", language === 'ar' && "md:flex-row-reverse text-right")}>
                             <div className="p-4 bg-slate-100 rounded-2xl">
                                 {getResourceIcon(resource.type)}
                             </div>
                             <div className="space-y-2 flex-1">
-                                <div className="flex items-center gap-3">
+                                <div className={cn("flex items-center gap-3", language === 'ar' && "flex-row-reverse")}>
                                     <Badge variant="secondary" className="uppercase tracking-wider text-xs">
                                         {resource.type}
                                     </Badge>
@@ -112,44 +116,43 @@ export default function ResourcePage() {
                                     )}
                                     {resource.createdAt && (
                                         <span className="text-xs text-muted-foreground">
-                                            Ajouté le {new Date(resource.createdAt).toLocaleDateString('fr-FR')}
+                                            {t.browse.addedOn} {new Date(resource.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'fr-FR')}
                                         </span>
                                     )}
                                 </div>
-                                <CardTitle className="text-3xl font-bold text-slate-900">
+                                <CardTitle className={cn("text-3xl font-bold text-slate-900", language === 'ar' && "font-arabic")}>
                                     {resource.title}
                                 </CardTitle>
                                 {resource.professor && (
-                                    <div className="flex items-center gap-2 text-slate-600">
+                                    <div className={cn("flex items-center gap-2 text-slate-600", language === 'ar' && "flex-row-reverse")}>
                                         <User className="w-4 h-4" />
-                                        <span className="font-medium">Prof. {resource.professor}</span>
+                                        <span className={cn("font-medium", language === 'ar' && "font-arabic")}>{t.browse.prof} {resource.professor}</span>
                                     </div>
                                 )}
                             </div>
                         </div>
                     </CardHeader>
 
-                    <CardContent className="py-8 space-y-6">
+                    <CardContent className={cn("py-8 space-y-6", language === 'ar' && "text-right")}>
                         <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-slate-900">Description</h3>
-                            <p className="text-slate-600 leading-relaxed">
-                                {resource.description || "Aucune description fournie pour cette ressource."}
+                            <h3 className={cn("text-lg font-semibold text-slate-900", language === 'ar' && "font-arabic")}>{t.browse.description}</h3>
+                            <p className={cn("text-slate-600 leading-relaxed", language === 'ar' && "font-arabic")}>
+                                {resource.description || t.browse.noDescription}
                             </p>
                         </div>
 
                         {/* Additional metadata could go here */}
                     </CardContent>
 
-                    <CardFooter className="bg-slate-50 py-6 border-t flex flex-col sm:flex-row gap-4 justify-between items-center">
+                    <CardFooter className={cn("bg-slate-50 py-6 border-t flex flex-col sm:flex-row gap-4 justify-between items-center", language === 'ar' && "sm:flex-row-reverse")}>
                         <div className="flex gap-4 w-full sm:w-auto">
-                            <Button asChild size="lg" className="w-full sm:w-auto gap-2 shadow-md hover:shadow-lg transition-all">
+                            <Button asChild size="lg" className={cn("w-full sm:w-auto gap-2 shadow-md hover:shadow-lg transition-all", language === 'ar' && "flex-row-reverse")}>
                                 <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
                                     {resource.type === 'link' ? <ExternalLink className="w-5 h-5" /> : <Download className="w-5 h-5" />}
-                                    {resource.type === 'link' ? 'Accéder au lien' : 'Télécharger'}
+                                    {resource.type === 'link' ? t.browse.accessLink : t.browse.download}
                                 </a>
                             </Button>
                         </div>
-                        {/* Share button functionality could be added later */}
                     </CardFooter>
                 </Card>
             </div>

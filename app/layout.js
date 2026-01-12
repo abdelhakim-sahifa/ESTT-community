@@ -5,6 +5,7 @@ import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { AuthProvider } from '@/context/AuthContext';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -14,6 +15,37 @@ const inter = Inter({
 const canela = localFont({
     src: '../public/fonts/Canela-Medium.woff2', // Assuming this path, verified in globals.css
     variable: '--font-canela',
+});
+
+const alJazeera = localFont({
+    src: [
+        {
+            path: '../public/fonts/AlJazeeraArabicRegular.ttf',
+            weight: '400',
+            style: 'normal',
+        },
+        {
+            path: '../public/fonts/AlJazeeraArabicBold.ttf',
+            weight: '600',
+            style: 'normal',
+        },
+        {
+            path: '../public/fonts/AlJazeeraArabicBold.ttf',
+            weight: '700',
+            style: 'normal',
+        },
+        {
+            path: '../public/fonts/AlJazeeraArabicBold.ttf',
+            weight: '800',
+            style: 'normal',
+        },
+        {
+            path: '../public/fonts/AlJazeeraArabicBold.ttf',
+            weight: '900',
+            style: 'normal',
+        },
+    ],
+    variable: '--font-aljazeera',
 });
 
 export const metadata = {
@@ -82,15 +114,17 @@ export default function RootLayout({ children }) {
                     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
                 />
             </head>
-            <body className={`${inter.className} ${canela.variable} antialiased`} suppressHydrationWarning={true}>
-                <AuthProvider>
-                    <Header />
-                    {children}
-                    <Footer />
-                    <div id="spinner-overlay" className="spinner-overlay hidden" aria-hidden="true">
-                        <div className="spinner" role="status" aria-label="Chargement"></div>
-                    </div>
-                </AuthProvider>
+            <body className={`${inter.className} ${canela.variable} ${alJazeera.variable} antialiased`} suppressHydrationWarning={true}>
+                <LanguageProvider>
+                    <AuthProvider>
+                        <Header />
+                        {children}
+                        <Footer />
+                        <div id="spinner-overlay" className="spinner-overlay hidden" aria-hidden="true">
+                            <div className="spinner" role="status" aria-label="Chargement"></div>
+                        </div>
+                    </AuthProvider>
+                </LanguageProvider>
             </body>
         </html>
     );

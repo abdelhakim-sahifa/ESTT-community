@@ -10,9 +10,15 @@ import { Badge } from '@/components/ui/badge';
 import { Bell, CheckCheck, Loader2, ArrowRight, Info, AlertTriangle, Megaphone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
 
 export default function NotificationsPage() {
     const { user, profile } = useAuth();
+    const { language } = useLanguage();
+    const t = translations[language];
+    const isAr = language === 'ar';
+
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
@@ -105,6 +111,14 @@ export default function NotificationsPage() {
         }
     };
 
+    const formatDate = (dateValue) => {
+        const date = new Date(dateValue);
+        return date.toLocaleDateString(isAr ? 'ar-MA' : 'fr-FR', {
+            day: 'numeric',
+            month: 'short'
+        });
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
@@ -114,11 +128,14 @@ export default function NotificationsPage() {
     }
 
     return (
-        <div className="container max-w-2xl py-12 px-4">
+        <div className={cn(
+            "container max-w-2xl py-12 px-4",
+            isAr && "rtl font-arabic"
+        )}>
             <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-black tracking-tight">Vos Notifications</h1>
-                    <p className="text-muted-foreground mt-1">Restez informé de l'activité de votre compte.</p>
+                <div className="text-start">
+                    <h1 className="text-3xl font-black tracking-tight">{t.notifications.title}</h1>
+                    <p className="text-muted-foreground mt-1">{t.notifications.subtitle}</p>
                 </div>
                 {notifications.some(n => !n.read) && (
                     <Button
@@ -127,7 +144,7 @@ export default function NotificationsPage() {
                         className="text-primary hover:bg-primary/5 font-bold"
                         onClick={handleMarkAllRead}
                     >
-                        <CheckCheck className="w-4 h-4 mr-2" /> Tout marquer
+                        <CheckCheck className={cn("w-4 h-4", isAr ? "ml-2" : "mr-2")} /> {t.notifications.markAllRead}
                     </Button>
                 )}
             </div>
@@ -138,9 +155,9 @@ export default function NotificationsPage() {
                         <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 border border-slate-100">
                             <Bell className="w-8 h-8 text-slate-200" />
                         </div>
-                        <h3 className="font-bold text-slate-900">Aucune notification</h3>
+                        <h3 className="font-bold text-slate-900">{t.notifications.noNotificationsTitle}</h3>
                         <p className="text-sm text-slate-500 max-w-[250px] mt-2">
-                            Vous recevrez ici les alertes concernant vos contributions et annonces.
+                            {t.notifications.noNotificationsSubtitle}
                         </p>
                     </CardContent>
                 </Card>
@@ -162,13 +179,13 @@ export default function NotificationsPage() {
                                 )}>
                                     {getIcon(notif.icon)}
                                 </div>
-                                <div className="flex-grow min-w-0">
+                                <div className="flex-grow min-w-0 text-start">
                                     <div className="flex items-start justify-between gap-4">
                                         <h4 className={cn("text-sm font-bold truncate", !notif.read ? "text-slate-900" : "text-slate-600")}>
                                             {notif.title}
                                         </h4>
                                         <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap uppercase tracking-wider">
-                                            {new Date(notif.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                                            {formatDate(notif.createdAt)}
                                         </span>
                                     </div>
                                     <p className="text-sm text-slate-500 mt-1 line-clamp-2 leading-relaxed">
@@ -177,7 +194,7 @@ export default function NotificationsPage() {
 
                                     {notif.action && (
                                         <div className="flex items-center gap-1 mt-3 text-xs font-bold text-primary uppercase tracking-tighter group">
-                                            Voir les détails <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                                            {t.notifications.viewDetails} <ArrowRight className={cn("w-3 h-3 transition-transform", isAr ? "mr-1 rotate-180 group-hover:-translate-x-1" : "ml-1 group-hover:translate-x-1")} />
                                         </div>
                                     )}
                                 </div>

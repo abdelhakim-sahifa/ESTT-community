@@ -11,6 +11,8 @@ import { Menu, X, Bell } from 'lucide-react';
 import { db, ref, onValue } from '@/lib/firebase';
 import { useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
 
 
 export default function Header() {
@@ -18,6 +20,8 @@ export default function Header() {
     const { user, profile, signOut } = useAuth();
     const pathname = usePathname();
     const [unreadCount, setUnreadCount] = useState(0);
+    const { language } = useLanguage();
+    const t = translations[language];
 
     useEffect(() => {
         if (!user || !db) return;
@@ -56,14 +60,14 @@ export default function Header() {
     const isActive = (path) => pathname === path;
 
     const navItems = [
-        { href: '/', label: 'Accueil' },
-        { href: '/ads-portal', label: 'Annonces' },
-        { href: '/contribute', label: 'Contribuer' },
+        { href: '/', label: t.common.home },
+        { href: '/ads-portal', label: t.profile.annoncement },
+        { href: '/contribute', label: t.common.contribute },
     ];
 
     if (user) {
         navItems.push({ href: '/chat', label: 'Chat' });
-        navItems.push({ href: '/profile', label: 'Profil' });
+        navItems.push({ href: '/profile', label: t.common.profile });
     }
 
 
@@ -104,10 +108,10 @@ export default function Header() {
                         {!user ? (
                             <>
                                 <Button variant="ghost" asChild>
-                                    <Link href="/login">Se connecter</Link>
+                                    <Link href="/login">{t.common.login}</Link>
                                 </Button>
                                 <Button asChild>
-                                    <Link href="/signup">S'inscrire</Link>
+                                    <Link href="/signup">{t.common.signup}</Link>
                                 </Button>
                             </>
                         ) : (
@@ -131,7 +135,7 @@ export default function Header() {
                                 </Link>
 
                                 <Button variant="outline" onClick={handleSignOut}>
-                                    Se déconnecter
+                                    {t.common.logout}
                                 </Button>
 
                             </>
@@ -171,10 +175,10 @@ export default function Header() {
                         {!user ? (
                             <div className="flex flex-col gap-2 mt-4">
                                 <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-                                    <Link href="/login">Se connecter</Link>
+                                    <Link href="/login">{t.common.login}</Link>
                                 </Button>
                                 <Button asChild onClick={() => setMobileMenuOpen(false)}>
-                                    <Link href="/signup">S'inscrire</Link>
+                                    <Link href="/signup">{t.common.signup}</Link>
                                 </Button>
                             </div>
                         ) : (
@@ -183,7 +187,7 @@ export default function Header() {
                                     {user.email}
                                 </span>
                                 <Button variant="outline" onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}>
-                                    Se déconnecter
+                                    {t.common.logout}
                                 </Button>
                             </div>
                         )}

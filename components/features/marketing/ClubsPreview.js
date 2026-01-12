@@ -3,27 +3,32 @@
 import Link from 'next/link';
 import { Users } from 'lucide-react';
 import ClubCard from '@/components/features/clubs/ClubCard';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
 
 export default function ClubsPreview({ clubs, loading }) {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     return (
         <section id="clubs-section" className="py-20 bg-slate-50/50">
             <div className="container">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
                     <div className="text-left">
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2">Vie Étudiante</h2>
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2">{t.clubs.studentLife}</h2>
                         <div className="flex items-center gap-3">
                             <div className="bg-primary/10 p-2 rounded-lg text-primary">
                                 <Users className="h-6 w-6" />
                             </div>
-                            <h2 className="text-4xl font-black tracking-tight">Nos Clubs</h2>
+                            <h2 className="text-4xl font-black tracking-tight">{t.clubs.title}</h2>
                         </div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
                         <p className="text-muted-foreground max-w-sm text-sm text-right">
-                            Rejoignez l'un de nos nombreux clubs et développez vos compétences.
+                            {t.clubs.subtitle}
                         </p>
                         <Link href="/clubs" className="text-primary text-sm font-bold hover:underline">
-                            Voir tous les clubs →
+                            {t.common.viewAllClubs} <span className={language === 'ar' ? 'inline-block transform rotate-180' : ''}>→</span>
                         </Link>
                     </div>
                 </div>
@@ -36,7 +41,7 @@ export default function ClubsPreview({ clubs, loading }) {
                             ))
                         ) : (
                             <div className="col-span-full text-center py-10 text-muted-foreground">
-                                Aucun club vérifié à afficher pour le moment.
+                                {t.clubs.noClubs}
                             </div>
                         )
                     ) : (

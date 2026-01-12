@@ -19,10 +19,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/lib/translations';
 
 export default function SignupPage() {
     const router = useRouter();
     const { signUp, sendVerification } = useAuth();
+    const { language } = useLanguage();
+    const t = translations[language];
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -79,12 +83,12 @@ export default function SignupPage() {
         }
 
         if (!isAllowed) {
-            setMessage('Veuillez utiliser votre adresse académique @etu.uae.ac.ma.');
+            setMessage(t.auth.academicEmailOnly + '.');
             return;
         }
 
         if (formData.password.length < 6) {
-            setMessage('Le mot de passe doit contenir au moins 6 caractères.');
+            setMessage(language === 'ar' ? 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.' : 'Le mot de passe doit contenir au moins 6 caractères.');
             return;
         }
 
@@ -129,7 +133,7 @@ export default function SignupPage() {
                 console.error("Failed to send welcome email:", err);
             }
 
-            setMessage('Compte créé ! Un email de vérification a été envoyé à votre adresse académique. Veuillez vérifier votre boîte de réception avant de vous connecter.');
+            setMessage(language === 'ar' ? 'تم إنشاء الحساب! تم إرسال بريد تحقق إلى عنوانك الأكاديمي. يرجى التحقق من بريدك قبل تسجيل الدخول.' : 'Compte créé ! Un email de vérification a été envoyé à votre adresse académique. Veuillez vérifier votre boîte de réception avant de vous connecter.');
         } catch (error) {
             console.error(error);
             setMessage(error.message || 'Erreur lors de la création du compte.');
@@ -138,7 +142,7 @@ export default function SignupPage() {
         }
     };
 
-    const isSuccess = message.includes('créé') || message.includes('succès') || message.includes('réussie');
+    const isSuccess = message.includes('créé') || message.includes('succès') || message.includes('réussie') || message.includes('تم إنشاء') || message.includes('نجحت');
 
     return (
         <main className="container py-12 flex items-center justify-center min-h-[calc(100vh-100px)]">
@@ -149,9 +153,9 @@ export default function SignupPage() {
                             <UserPlus className="w-8 h-8" />
                         </div>
                     </div>
-                    <CardTitle className="text-3xl font-bold">Créer un compte</CardTitle>
+                    <CardTitle className={cn("text-3xl font-bold", language === 'ar' && "font-arabic")}>{t.auth.signupTitle}</CardTitle>
                     <CardDescription>
-                        Rejoignez la communauté ESTT pour partager et accéder aux ressources
+                        {language === 'ar' ? 'انضم إلى مجتمع ESTT لمشاركة الوصول إلى الموارد' : 'Rejoignez la communauté ESTT pour partager et accéder aux ressources'}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-8">
@@ -168,15 +172,15 @@ export default function SignupPage() {
                                 <CheckCircle2 className="w-12 h-12" />
                             </div>
                             <div className="text-center space-y-2">
-                                <h3 className="text-xl font-bold">Vérifiez votre boîte mail</h3>
-                                <p className="text-muted-foreground">Un lien de vérification a été envoyé à <strong>{formData.email}</strong>.</p>
+                                <h3 className="text-xl font-bold">{language === 'ar' ? 'تحقق من بريدك الإلكتروني' : 'Vérifiez votre boîte mail'}</h3>
+                                <p className="text-muted-foreground">{language === 'ar' ? 'تم إرسال رابط تحقق إلى' : 'Un lien de vérification a été envoyé à'} <strong>{formData.email}</strong>.</p>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-4 w-full">
                                 <Button className="flex-grow h-12 text-lg" asChild>
-                                    <Link href="/">Retour à l'accueil</Link>
+                                    <Link href="/">{t.common.home}</Link>
                                 </Button>
                                 <Button variant="outline" className="flex-grow h-12 text-lg" asChild>
-                                    <Link href="/login">Se connecter</Link>
+                                    <Link href="/login">{t.common.login}</Link>
                                 </Button>
                             </div>
                         </div>
@@ -184,10 +188,10 @@ export default function SignupPage() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="firstName">Prénom</Label>
+                                    <Label htmlFor="firstName">{t.profile.firstName}</Label>
                                     <Input
                                         id="firstName"
-                                        placeholder="Ahmed"
+                                        placeholder={language === 'ar' ? 'أحمد' : 'Ahmed'}
                                         value={formData.firstName}
                                         onChange={(e) => handleChange('firstName', e.target.value)}
                                         required
@@ -195,10 +199,10 @@ export default function SignupPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="lastName">Nom</Label>
+                                    <Label htmlFor="lastName">{t.profile.lastName}</Label>
                                     <Input
                                         id="lastName"
-                                        placeholder="Alami"
+                                        placeholder={language === 'ar' ? 'العلمي' : 'Alami'}
                                         value={formData.lastName}
                                         onChange={(e) => handleChange('lastName', e.target.value)}
                                         required
@@ -208,7 +212,7 @@ export default function SignupPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="email">Adresse email académique</Label>
+                                <Label htmlFor="email">{t.auth.emailLabel}</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -219,29 +223,29 @@ export default function SignupPage() {
                                     disabled={loading}
                                 />
                                 <p className="text-[10px] text-muted-foreground">
-                                    Requis pour vérifier votre appartenance à l'UAE
+                                    {language === 'ar' ? 'مطلوب للتحقق من انتمائك إلى جامعة عبد المالك السعدي' : 'Requis pour vérifier votre appartenance à l\'UAE'}
                                 </p>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="password">Mot de passe</Label>
+                                <Label htmlFor="password">{t.auth.passwordLabel}</Label>
                                 <Input
                                     id="password"
                                     type="password"
-                                    placeholder="Au moins 6 caractères"
+                                    placeholder={language === 'ar' ? '6 أحرف على الأقل' : 'Au moins 6 caractères'}
                                     value={formData.password}
                                     onChange={(e) => handleChange('password', e.target.value)}
                                     required
                                     disabled={loading}
                                 />
                                 <p className="text-[10px] text-muted-foreground">
-                                    Pas forcément le mot de passe de l’e-mail académique
+                                    {language === 'ar' ? 'ليس بالضرورة نفس كلمة مرور البريد الأكاديمي' : 'Pas forcément le mot de passe de l’e-mail académique'}
                                 </p>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="filiere">Filière</Label>
+                                    <Label htmlFor="filiere">{t.common.filiere}</Label>
                                     <Select
                                         value={formData.filiere}
                                         onValueChange={(v) => handleChange('filiere', v)}
@@ -249,17 +253,17 @@ export default function SignupPage() {
                                         disabled={loading}
                                     >
                                         <SelectTrigger id="filiere">
-                                            <SelectValue placeholder="Sélectionnez..." />
+                                            <SelectValue placeholder={language === 'ar' ? 'اختر...' : 'Sélectionnez...'} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {staticDb.fields.map((f) => (
-                                                <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                                                <SelectItem key={f.id} value={f.id}>{t.fields[f.id] || f.name}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="startYear">Année d'entrée</Label>
+                                    <Label htmlFor="startYear">{language === 'ar' ? 'سنة الدخول' : 'Année d\'entrée'}</Label>
                                     <Select
                                         value={formData.startYear}
                                         onValueChange={(v) => handleChange('startYear', v)}
@@ -267,7 +271,7 @@ export default function SignupPage() {
                                         disabled={loading}
                                     >
                                         <SelectTrigger id="startYear">
-                                            <SelectValue placeholder="Sélectionnez..." />
+                                            <SelectValue placeholder={language === 'ar' ? 'اختر...' : 'Sélectionnez...'} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {years.map((year) => (
@@ -282,10 +286,10 @@ export default function SignupPage() {
                                 {loading ? (
                                     <>
                                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                        Création du compte...
+                                        {language === 'ar' ? 'جاري إنشاء الحساب...' : 'Création du compte...'}
                                     </>
                                 ) : (
-                                    'Créer un compte'
+                                    t.auth.signupBtn
                                 )}
                             </Button>
                         </form>
@@ -293,9 +297,9 @@ export default function SignupPage() {
                 </CardContent>
                 <CardFooter className="flex justify-center border-t py-6 bg-muted/20">
                     <p className="text-sm text-muted-foreground">
-                        Vous avez déjà un compte ?{' '}
+                        {t.auth.hasAccount}{' '}
                         <Link href="/login" className="text-primary font-semibold hover:underline">
-                            Se connecter
+                            {t.common.login}
                         </Link>
                     </p>
                 </CardFooter>

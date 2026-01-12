@@ -92,6 +92,26 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'AlJazeeraArabic';
+  src: url('/fonts/AlJazeeraArabicRegular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AlJazeeraArabic';
+  src: url('/fonts/AlJazeeraArabicBold.ttf') format('truetype');
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-arabic {
+  font-family: 'AlJazeeraArabic', var(--font-aljazeera), sans-serif !important;
+}
+
 /* 
    Legacy Styles Preservation 
    Some complex custom styles from previous globals.css might be needed until components are refactored.
