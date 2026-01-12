@@ -9,7 +9,8 @@ import {
     CreditCard,
     Settings,
     ShieldCheck,
-    Bell
+    Bell,
+    Zap
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,13 @@ export default function AdminSidebar({ activeTab, setActiveTab, profile, stats =
                     onClick={() => setActiveTab('resources')}
                 >
                     <FileText className="w-4 h-4" /> Ressources
+                </Button>
+                <Button
+                    variant={activeTab === 'fastContribute' ? 'default' : 'ghost'}
+                    className="justify-start gap-3 h-11 border-dashed border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary"
+                    onClick={() => setActiveTab('fastContribute')}
+                >
+                    <Zap className="w-4 h-4" /> Contribuer (Vite)
                 </Button>
 
                 <Button

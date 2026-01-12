@@ -9,6 +9,7 @@ import { Loader2, Ticket, Calendar, User, Building2, CheckCircle2, AlertCircle, 
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { useSearchParams } from 'next/navigation';
 
 export default function TicketPage() {
     const params = useParams();
@@ -18,6 +19,9 @@ export default function TicketPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [club, setClub] = useState(null);
+    const searchParams = useSearchParams();
+    const sessionId = searchParams.get('session_id');
+    const [verifying, setVerifying] = useState(false);
 
     useEffect(() => {
         if (!ticketId || !db) return;
@@ -37,6 +41,23 @@ export default function TicketPage() {
                         setClub(clubSnap.val());
                     }
                 }
+
+                // Fallback Verification: If session_id is in URL and ticket still awaiting_payment
+                if (sessionId && data.status === 'awaiting_payment' && !verifying) {
+                    setVerifying(true);
+                    try {
+                        await fetch('/api/verify-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ticketId, sessionId })
+                        });
+                    } catch (err) {
+                        console.error("Verification callback failed:", err);
+                    } finally {
+                        setVerifying(false);
+                    }
+                }
+
                 setLoading(false);
             } else {
                 setError('Ticket introuvable');
@@ -49,7 +70,7 @@ export default function TicketPage() {
         });
 
         return () => unsubscribe();
-    }, [ticketId, db]);
+    }, [ticketId, db, sessionId, verifying]);
 
     if (loading) {
         return (

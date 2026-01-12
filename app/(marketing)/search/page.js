@@ -292,6 +292,11 @@ function SearchContent() {
                                                             <Badge variant="secondary" className="w-fit text-[10px] mt-1 uppercase">
                                                                 {resource.type}
                                                             </Badge>
+                                                            {resource.docType && (
+                                                                <Badge variant="outline" className="w-fit text-[10px] mt-1 uppercase border-primary/20 text-primary bg-primary/5">
+                                                                    {resource.docType}
+                                                                </Badge>
+                                                            )}
                                                         </div>
                                                     </CardHeader>
                                                     <CardContent className="flex-grow pt-2">

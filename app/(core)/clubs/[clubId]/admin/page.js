@@ -87,6 +87,7 @@ export default function ClubAdminPage() {
         time: '',
         location: '',
         maxCapacity: '',
+        price: 0,
         status: 'published',
         fields: [
             { id: 'name', label: 'Nom complet', type: 'text', required: true },
@@ -713,6 +714,7 @@ export default function ClubAdminPage() {
                 time: '',
                 location: '',
                 maxCapacity: '',
+                price: 0,
                 status: 'published',
                 fields: [
                     { id: 'name', label: 'Nom complet', type: 'text', required: true },
@@ -1215,6 +1217,16 @@ export default function ClubAdminPage() {
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
+                                                        <Label>Prix (DH) (0 pour gratuit)</Label>
+                                                        <Input
+                                                            type="number"
+                                                            value={newEvent.price}
+                                                            onChange={e => setNewEvent(p => ({ ...p, price: Number(e.target.value) }))}
+                                                            placeholder="0"
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
                                                         <Label>Image de couverture (Optionnel)</Label>
                                                         <div className="flex items-center gap-4">
                                                             <Input
@@ -1354,6 +1366,10 @@ export default function ClubAdminPage() {
                                                                     <div className="text-sm text-muted-foreground flex flex-wrap gap-x-4">
                                                                         <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(event.date).toLocaleDateString()}</span>
                                                                         <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {event.registrationCount || 0} / {event.maxCapacity || '∞'}</span>
+                                                                        <span className="flex items-center gap-1 font-semibold text-primary">
+                                                                            <Ticket className="w-3 h-3 text-muted-foreground mr-1" />
+                                                                            {event.price > 0 ? `${event.price} DH` : 'Gratuit'}
+                                                                        </span>
                                                                         <span className="flex items-center gap-1"><Ticket className="w-3 h-3" /> Billetterie active</span>
                                                                     </div>
                                                                 </div>

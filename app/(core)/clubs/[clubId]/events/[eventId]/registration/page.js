@@ -104,7 +104,9 @@ export default function EventRegistrationPage() {
                 userEmail: recipientEmail,
                 firstName: firstName || 'Participant',
                 lastName: lastName || '',
-                status: 'pending',
+                status: event.price > 0 ? 'awaiting_payment' : 'pending',
+                paid: false,
+                price: event.price || 0,
                 createdAt: Date.now(),
                 formData: formData,
                 eventDate: event.date,
@@ -114,13 +116,43 @@ export default function EventRegistrationPage() {
 
             await set(ticketRef, ticketData);
 
-            // 4. Update Registration Count
+            // 4. Handle Payment or Standard Registration
+            if (event.price > 0) {
+                // Redirect to Stripe Checkout
+                try {
+                    const response = await fetch('/api/checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ticketId,
+                            clubId,
+                            eventId,
+                            price: event.price,
+                            eventName: event.title,
+                            userEmail: recipientEmail
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.url) {
+                        window.location.href = data.url;
+                        return; // Stop here, redirecting
+                    } else {
+                        throw new Error(data.error || 'Erreur lors de l’initialisation du paiement');
+                    }
+                } catch (payErr) {
+                    console.error("Payment initialization failed:", payErr);
+                    throw payErr;
+                }
+            }
+
+            // 5. Update Registration Count (Only for free/manual events here, paid is done in webhook or after redirect)
             const eventRef = ref(db, `clubs/${clubId}/events/${eventId}`);
             await update(eventRef, {
                 registrationCount: increment(1)
             });
 
-            // 5. Send Confirmation Email
+            // 6. Send Confirmation Email (For free/pending events)
             try {
                 const { ticketConfirmationEmail } = await import('@/lib/email-templates');
                 const html = ticketConfirmationEmail(ticketData, event.title, club.name);
@@ -333,18 +365,28 @@ export default function EventRegistrationPage() {
                             <div className="pt-8">
                                 <Button
                                     type="submit"
-                                    disabled={submitting || isFull}
-                                    className="w-full h-14 rounded-xl text-base font-bold transition-all hover:opacity-90 active:scale-[0.98] shadow-sm text-white"
+                                    className="w-full h-12 text-lg font-semibold"
+                                    disabled={submitting || (event?.maxCapacity > 0 && event?.registrationCount >= event?.maxCapacity)}
                                     style={{
                                         backgroundColor: themeColor
                                     }}
                                 >
                                     {submitting ? (
-                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        <>
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                            Traitement...
+                                        </>
                                     ) : isFull ? (
                                         'Événement Complet'
                                     ) : (
-                                        'Obtenir mon billet'
+                                        event.price > 0 ? (
+                                            <div className="flex items-center gap-2">
+                                                <Ticket className="w-5 h-5" />
+                                                Payer {event.price} DH & S'inscrire
+                                            </div>
+                                        ) : (
+                                            "S'inscrire à l'événement"
+                                        )
                                     )}
                                 </Button>
                                 <p className="text-[10px] text-slate-400 font-medium text-center mt-4 tracking-tight uppercase">

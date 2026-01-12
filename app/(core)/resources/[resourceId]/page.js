@@ -105,6 +105,11 @@ export default function ResourcePage() {
                                     <Badge variant="secondary" className="uppercase tracking-wider text-xs">
                                         {resource.type}
                                     </Badge>
+                                    {resource.docType && (
+                                        <Badge variant="outline" className="uppercase tracking-wider text-xs border-primary/20 text-primary bg-primary/5">
+                                            {resource.docType}
+                                        </Badge>
+                                    )}
                                     {resource.createdAt && (
                                         <span className="text-xs text-muted-foreground">
                                             Ajouté le {new Date(resource.createdAt).toLocaleDateString('fr-FR')}

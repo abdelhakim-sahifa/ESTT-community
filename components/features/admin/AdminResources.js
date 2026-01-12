@@ -12,7 +12,24 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Search, CheckCircle2, Eye, Trash2 } from 'lucide-react';
+import { Search, CheckCircle2, Eye, Trash2, Edit2, Loader2 } from 'lucide-react';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import RejectionDialog from './RejectionDialog';
 import { sendPrivateNotification, NOTIF_TYPES } from '@/lib/notifications';
 
@@ -23,6 +40,17 @@ export default function AdminResources({ resources }) {
     const [itemToReject, setItemToReject] = useState(null);
     const [rejectionReason, setRejectionReason] = useState('');
     const [rejecting, setRejecting] = useState(false);
+
+    // Edit Modal State
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [itemToEdit, setItemToEdit] = useState(null);
+    const [editData, setEditData] = useState({
+        title: '',
+        description: '',
+        professor: '',
+        docType: ''
+    });
+    const [saving, setSaving] = useState(false);
 
     const filteredResources = resources.filter(r =>
         r.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -165,6 +193,104 @@ export default function AdminResources({ resources }) {
         }
     };
 
+    const handleEditResource = (resource) => {
+        setItemToEdit(resource);
+        setEditData({
+            title: resource.title || '',
+            description: resource.description || '',
+            professor: resource.professor || '',
+            docType: resource.docType || ''
+        });
+        setEditModalOpen(true);
+    };
+
+    const handleSaveEdit = async () => {
+        if (!itemToEdit) return;
+        setSaving(true);
+        try {
+            const changes = [];
+            if (editData.title !== itemToEdit.title) changes.push({ label: 'Titre', old: itemToEdit.title || 'Non spécifié', new: editData.title });
+            if (editData.description !== itemToEdit.description) changes.push({ label: 'Description', old: itemToEdit.description || 'Non spécifié', new: editData.description });
+            if (editData.professor !== itemToEdit.professor) changes.push({ label: 'Professeur', old: itemToEdit.professor || 'Non spécifié', new: editData.professor });
+            if (editData.docType !== itemToEdit.docType) changes.push({ label: 'Type de document', old: itemToEdit.docType || 'Non spécifié', new: editData.docType });
+
+            let path = `resources/${itemToEdit.id}`;
+            if (itemToEdit._isNested && itemToEdit.moduleId) {
+                path = `resources/${itemToEdit.moduleId}/${itemToEdit.id}`;
+            }
+
+            await update(ref(db, path), editData);
+
+            // Notify Contributor
+            if (itemToEdit.authorId) {
+                try {
+                    // 1. Send In-App Notification
+                    const changeDescription = changes.length > 0
+                        ? `Modifications: ${changes.map(c => c.label).join(', ')}.`
+                        : '';
+
+                    await sendPrivateNotification(itemToEdit.authorId, {
+                        type: NOTIF_TYPES.RESOURCE,
+                        title: 'Ressource Mise à Jour 📝',
+                        message: `Votre contribution "${editData.title}" a été mise à jour par un administrateur. ${changeDescription}`,
+                        icon: 'edit-3',
+                        action: { type: 'navigate', target: `/resources/${itemToEdit.id}` }
+                    });
+
+                    // 2. Send Email Notification
+                    const userSnap = await get(ref(db, `users/${itemToEdit.authorId}`));
+                    if (userSnap.exists()) {
+                        const userData = userSnap.val();
+                        if (userData.email) {
+                            const { resourceUpdatedEmail } = await import('@/lib/email-templates');
+                            const resourceUrl = `https://estt-community.vercel.app/resources/${itemToEdit.id}`;
+                            const html = resourceUpdatedEmail(
+                                userData.firstName || 'Étudiant',
+                                editData.title,
+                                resourceUrl,
+                                changes
+                            );
+
+                            await fetch('/api/send-email', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    to: userData.email,
+                                    subject: 'Ta ressource a été mise à jour',
+                                    html: html
+                                })
+                            });
+                        }
+                    }
+                } catch (notifErr) {
+                    console.error("Failed to notify contributor of update:", notifErr);
+                }
+            }
+
+            // Sync with keywords if field exists
+            if (itemToEdit.field) {
+                const keywordPath = `metadata/keywords/${itemToEdit.field}/${itemToEdit.id}`;
+                await update(ref(db, keywordPath), { title: editData.title });
+            }
+
+            // Sync with user profile if authorId exists
+            if (itemToEdit.authorId) {
+                const profileContribPath = `users/${itemToEdit.authorId}/contributions/${itemToEdit.id}`;
+                await update(ref(db, profileContribPath), {
+                    title: editData.title
+                });
+            }
+
+            setEditModalOpen(false);
+            setItemToEdit(null);
+        } catch (err) {
+            console.error(err);
+            alert("Erreur lors de la mise à jour.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -189,6 +315,7 @@ export default function AdminResources({ resources }) {
                         <TableRow>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Titre</TableHead>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Module</TableHead>
+                            <TableHead className="font-black uppercase text-[10px] tracking-widest">Type</TableHead>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Auteur</TableHead>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Statut</TableHead>
                             <TableHead className="text-right font-black uppercase text-[10px] tracking-widest">Actions</TableHead>
@@ -199,6 +326,9 @@ export default function AdminResources({ resources }) {
                             <TableRow key={res.id} className="hover:bg-slate-50/50 transition-colors">
                                 <TableCell className="font-bold text-sm">{res.title}</TableCell>
                                 <TableCell className="text-xs text-muted-foreground font-medium uppercase">{res.module}</TableCell>
+                                <TableCell>
+                                    {res.docType && <Badge variant="secondary" className="text-[9px] font-bold">{res.docType}</Badge>}
+                                </TableCell>
                                 <TableCell className="text-xs font-bold">{res.authorName || 'Anonyme'}</TableCell>
                                 <TableCell>
                                     {res.unverified ? (
@@ -214,6 +344,9 @@ export default function AdminResources({ resources }) {
                                                 <CheckCircle2 className="w-4 h-4" />
                                             </Button>
                                         )}
+                                        <Button size="sm" variant="outline" className="h-8 px-2 text-primary border-primary/10 hover:bg-primary/5" onClick={() => handleEditResource(res)}>
+                                            <Edit2 className="w-4 h-4" />
+                                        </Button>
                                         <Button size="sm" variant="outline" className="h-8 px-2" asChild>
                                             <a href={res.url || res.link || res.file} target="_blank"><Eye className="w-4 h-4" /></a>
                                         </Button>
@@ -236,6 +369,71 @@ export default function AdminResources({ resources }) {
                 reason={rejectionReason}
                 setReason={setRejectionReason}
             />
+
+            {/* Edit Modal */}
+            <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Modifier la ressource</DialogTitle>
+                        <DialogDescription>
+                            Mettez à jour les informations de la ressource.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="title">Titre</Label>
+                            <Input
+                                id="title"
+                                value={editData.title}
+                                onChange={(e) => setEditData(prev => ({ ...prev, title: e.target.value }))}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="professor">Professeur</Label>
+                            <Input
+                                id="professor"
+                                value={editData.professor}
+                                onChange={(e) => setEditData(prev => ({ ...prev, professor: e.target.value }))}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="docType">Type de document</Label>
+                            <Select
+                                value={editData.docType}
+                                onValueChange={(v) => setEditData(prev => ({ ...prev, docType: v }))}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Choisir le type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Cours">Cours</SelectItem>
+                                    <SelectItem value="TD">TD</SelectItem>
+                                    <SelectItem value="TP">TP</SelectItem>
+                                    <SelectItem value="Exam">Examen</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="description">Description</Label>
+                            <Textarea
+                                id="description"
+                                value={editData.description}
+                                onChange={(e) => setEditData(prev => ({ ...prev, description: e.target.value }))}
+                                rows={3}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setEditModalOpen(false)} disabled={saving}>
+                            Annuler
+                        </Button>
+                        <Button onClick={handleSaveEdit} disabled={saving}>
+                            {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                            Enregistrer
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

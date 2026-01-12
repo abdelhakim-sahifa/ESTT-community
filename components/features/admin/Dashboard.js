@@ -20,6 +20,7 @@ import AdminAnnouncements from './AdminAnnouncements';
 import AdminAds from './AdminAds';
 import AdminSettings from './AdminSettings';
 import AdminNotifications from './AdminNotifications';
+import AdminFastContribute from './AdminFastContribute';
 
 
 export default function AdminDashboard() {
@@ -225,6 +226,10 @@ export default function AdminDashboard() {
 
                     {activeTab === 'notifications' && (
                         <AdminNotifications users={users} />
+                    )}
+
+                    {activeTab === 'fastContribute' && (
+                        <AdminFastContribute />
                     )}
                 </main>
 

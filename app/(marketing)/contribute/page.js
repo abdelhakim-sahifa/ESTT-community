@@ -33,6 +33,7 @@ export default function ContributePage() {
         title: '',
         description: '',
         type: 'pdf',
+        docType: '',
         url: '',
         anonymous: false
     });
@@ -378,6 +379,25 @@ export default function ContributePage() {
                                             <SelectItem value="image">Image</SelectItem>
                                             <SelectItem value="video">Vidéo (lien)</SelectItem>
                                             <SelectItem value="link">Lien externe</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="docType">Type de document *</Label>
+                                    <Select
+                                        value={formData.docType}
+                                        onValueChange={(v) => handleChange('docType', v)}
+                                        required
+                                    >
+                                        <SelectTrigger id="docType">
+                                            <SelectValue placeholder="Choisir le type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Cours">Cours</SelectItem>
+                                            <SelectItem value="TD">TD</SelectItem>
+                                            <SelectItem value="TP">TP</SelectItem>
+                                            <SelectItem value="Exam">Examen</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
