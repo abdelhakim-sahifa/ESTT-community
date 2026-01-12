@@ -81,3 +81,11 @@ To make the `navigate` actions even more powerful:
 To extend this to native Push Notifications (FCM/Expo Push):
 1. Integrated a Cloud Function that triggers on `onCreate` for both `notifications/global` and `notifications/private/{userId}`.
 2. The function sends an FCM message to the user's device token (stored in `users/{userId}/fcmToken`).
+
+
+pk_test_51SoYbz0B
+5hyOm1N6hi4i3Ufmi7e8qqc8jOq8mwCCzLCbyLlA4aJvtEtuhM0fbs5n2zzoSaH8LXZqaJ0gCERgeUN0004ZozrONn
+
+
+sk_test_51SoYbz0B5hyOm1N6
+wleNvMAYvEt8Qqjek4x6hmzYzdKyw456gJsVfEmts5TAdoYCLLyASqzx1zOU3mi3oY30bZqo00HYdWtkaG
