@@ -1,31 +1,43 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 export default function DeepLinkPage() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const [status, setStatus] = useState('Checking device...');
+    const router = useRouter();
 
     useEffect(() => {
-        // 1. Construct the App URI
+        // 1. Construct the App URI and Web Target
         const pathParts = pathname.replace(/^\/deeplink\//, '');
         const queryString = searchParams.toString() ? `?${searchParams.toString()}` : '';
+
         const appUri = `esttplus://${pathParts}${queryString}`;
+        const webTarget = `/${pathParts}${queryString}`;
 
         // 2. Platform Detection
         const userAgent = typeof window !== 'undefined' ? (navigator.userAgent || navigator.vendor || window.opera) : '';
         const isMobile = /android|iphone|ipad|ipod/i.test(userAgent);
 
         if (isMobile) {
-            setStatus('Opening App...');
+            // 3. Try to open the app
             window.location.href = appUri;
-        } else {
-            setStatus('Please open this link on your mobile phone to access the app.');
-        }
-    }, [pathname, searchParams]);
 
+            // 4. After a very short delay, redirect the browser to the web version
+            // This ensures the user sees the web content if the app doesn't open
+            const timer = setTimeout(() => {
+                router.replace(webTarget);
+            }, 500);
+
+            return () => clearTimeout(timer);
+        } else {
+            // On desktop, just go straight to the web version
+            router.replace(webTarget);
+        }
+    }, [pathname, searchParams, router]);
+
+    // We show a minimal loader for the brief period before redirection
     return (
         <div style={{
             display: 'flex',
@@ -34,33 +46,17 @@ export default function DeepLinkPage() {
             justifyContent: 'center',
             height: '100vh',
             fontFamily: 'sans-serif',
-            padding: '20px',
-            textAlign: 'center'
+            color: '#64748b'
         }}>
-            <h2>ESTT Community</h2>
-            <p style={{ color: '#666', maxWidth: '300px' }}>{status}</p>
-
-            <div style={{ marginTop: '20px' }}>
-                <a
-                    href={`esttplus://${pathname.replace(/^\/deeplink\//, '')}${searchParams.toString() ? '?' + searchParams.toString() : ''}`}
-                    style={{
-                        display: 'inline-block',
-                        backgroundColor: '#3b82f6',
-                        color: 'white',
-                        padding: '10px 20px',
-                        borderRadius: '8px',
-                        textDecoration: 'none',
-                        fontWeight: '600'
-                    }}
-                >
-                    Open App
-                </a>
-            </div>
-            <div style={{ marginTop: '20px' }}>
-                <a href="/" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: '14px' }}>
-                    Back to Website
-                </a>
-            </div>
+            <div className="animate-spin" style={{
+                width: '40px',
+                height: '40px',
+                border: '4px solid #f3f3f3',
+                borderTop: '4px solid #3b82f6',
+                borderRadius: '50%',
+                marginBottom: '20px'
+            }}></div>
+            <p>Chargement...</p>
         </div>
     );
 }
