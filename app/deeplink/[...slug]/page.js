@@ -10,10 +10,16 @@ export default function DeepLinkPage() {
 
     useEffect(() => {
         // 1. Construct the App URI and Web Target
-        const pathParts = pathname.replace(/^\/deeplink\//, '');
+        let pathParts = pathname.replace(/^\/deeplink\//, '');
         const queryString = searchParams.toString() ? `?${searchParams.toString()}` : '';
 
-        const appUri = `esttplus://${pathParts}${queryString}`;
+        // Handle specific mappings
+        let appPath = pathParts;
+        if (pathParts.startsWith('profile/')) {
+            appPath = pathParts.replace('profile/', 'user/');
+        }
+
+        const appUri = `esttplus://${appPath}${queryString}`;
         const webTarget = `/${pathParts}${queryString}`;
 
         // 2. Platform Detection
