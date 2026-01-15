@@ -7,6 +7,7 @@ import { Heart, Github, Globe } from 'lucide-react';
 
 export default function Footer() {
     const pathname = usePathname();
+    if (pathname === '/downloadAndroid' || pathname === '/docs') return null;
     const isAdsPage = pathname === '/ads-portal';
 
     return (

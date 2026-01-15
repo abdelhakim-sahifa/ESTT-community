@@ -17,6 +17,7 @@ export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { user, profile, signOut } = useAuth();
     const pathname = usePathname();
+    if (pathname === '/downloadAndroid' || pathname === '/docs') return null;
     const [unreadCount, setUnreadCount] = useState(0);
 
     useEffect(() => {
