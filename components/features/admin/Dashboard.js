@@ -77,6 +77,8 @@ export default function AdminDashboard() {
                     });
                 }
             });
+            // Sort by newest first
+            list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
             setResources(list);
             setStats(prev => ({ ...prev, resources: list.length, pending: list.filter(r => r.unverified).length }));
         });
