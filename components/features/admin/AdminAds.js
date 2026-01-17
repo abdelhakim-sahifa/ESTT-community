@@ -212,6 +212,14 @@ export default function AdminAds() {
                                             {ad.status === AD_STATUSES.LIVE && (
                                                 <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100">Actif</Badge>
                                             )}
+                                            {ad.paymentStatus === 'paid' ? (
+                                                <Badge variant="outline" className="border-emerald-200 text-emerald-600 bg-emerald-50/30">
+                                                    {ad.stripeSessionId ? <CreditCard className="w-3 h-3 mr-1" /> : null}
+                                                    Payé
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant="outline" className="border-slate-200 text-slate-400">Paiement Attente</Badge>
+                                            )}
                                         </div>
                                     </div>
 

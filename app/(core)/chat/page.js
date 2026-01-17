@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, Send, Users, Info, Flame, AlertTriangle, Sparkles } from 'lucide-react';
+import { Loader2, Send, Users, Info, Flame, AlertTriangle, Sparkles, Badge } from 'lucide-react';
 import { cn, getUserLevel, getAcademicYear } from '@/lib/utils';
 
 export default function ChatPage() {

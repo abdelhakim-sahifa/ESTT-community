@@ -19,9 +19,11 @@ import {
     AlertCircle,
     XCircle,
     CreditCard,
-    MessageSquare
+    MessageSquare,
+    Loader2
 } from 'lucide-react';
 import { AD_STATUSES } from '@/lib/ad-constants';
+import { useSearchParams } from 'next/navigation';
 
 const StatusBadge = ({ status }) => {
     switch (status) {
@@ -45,8 +47,22 @@ const StatusBadge = ({ status }) => {
 export default function UserAdsDashboard() {
     const { user } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [payLoading, setPayLoading] = useState(null);
+
+    // Handle success/cancel notifications
+    useEffect(() => {
+        const success = searchParams.get('success');
+        const canceled = searchParams.get('canceled');
+        if (success) {
+            alert("Paiement réussi ! Votre annonce est maintenant en cours d'activation.");
+        }
+        if (canceled) {
+            alert("Paiement annulé.");
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         if (!user) {
@@ -82,11 +98,39 @@ export default function UserAdsDashboard() {
         } else {
             if (!window.confirm("Voulez-vous vraiment supprimer cette annonce ?")) return;
         }
-
         try {
             await remove(ref(db, `studentAds/${ad.id}`));
         } catch (error) {
             alert("Erreur lors de la suppression");
+        }
+    };
+
+    const handleStripePayment = async (ad) => {
+        setPayLoading(ad.id);
+        try {
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: 'ad',
+                    adId: ad.id,
+                    adTitle: ad.title,
+                    price: ad.price,
+                    userEmail: user.email
+                })
+            });
+
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                throw new Error(data.error || "Une erreur est survenue");
+            }
+        } catch (error) {
+            console.error("Payment error:", error);
+            alert("Erreur: " + error.message);
+        } finally {
+            setPayLoading(null);
         }
     };
 
@@ -190,14 +234,24 @@ export default function UserAdsDashboard() {
 
                                                 <div className="flex items-center gap-3">
                                                     {ad.status === AD_STATUSES.PAYMENT_REQUIRED && (
-                                                        <Button
-                                                            asChild
-                                                            className="bg-orange-600 hover:bg-orange-700 h-10 px-6 rounded-xl font-bold"
-                                                        >
-                                                            <a href="https://wa.me/212715307349" target="_blank" rel="noopener noreferrer">
-                                                                Payer maintenant
-                                                            </a>
-                                                        </Button>
+                                                        <div className="flex gap-2">
+                                                            <Button
+                                                                disabled={true}
+                                                                className="bg-slate-100 text-slate-400 h-10 px-6 rounded-xl font-bold border border-slate-200"
+                                                            >
+                                                                <CreditCard className="w-4 h-4 mr-2" />
+                                                                Carte (Bientôt)
+                                                            </Button>
+                                                            <Button
+                                                                asChild
+                                                                className="bg-blue-600 hover:bg-blue-700 h-10 px-6 rounded-xl font-bold shadow-lg shadow-blue-500/20"
+                                                            >
+                                                                <a href="https://wa.me/212715307349" target="_blank" rel="noopener noreferrer">
+                                                                    <MessageSquare className="w-4 h-4 mr-2" />
+                                                                    Payer via WhatsApp
+                                                                </a>
+                                                            </Button>
+                                                        </div>
                                                     )}
                                                     <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-slate-50" asChild>
                                                         <a href={ad.url} target="_blank" rel="noopener noreferrer">

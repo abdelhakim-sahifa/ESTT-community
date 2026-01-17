@@ -28,57 +28,103 @@ export async function POST(req) {
     // Handle the event
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
-        const { ticketId, clubId, eventId } = session.metadata;
+        const { type = 'ticket' } = session.metadata;
 
         try {
-            // 1. Update Ticket Status
-            const ticketRef = ref(db, `tickets/${ticketId}`);
+            if (type === 'ad') {
+                const { adId } = session.metadata;
+                const adRef = ref(db, `studentAds/${adId}`);
+                const adSnap = await get(adRef);
 
-            // Check if already valid to avoid double counting
-            const currentTicket = await get(ticketRef);
-            if (currentTicket.exists() && currentTicket.val().status === 'valid') {
-                return NextResponse.json({ received: true, already_processed: true });
-            }
+                if (adSnap.exists()) {
+                    const adData = adSnap.val();
 
-            await update(ticketRef, {
-                status: 'valid',
-                paid: true,
-                stripeSessionId: session.id,
-                updatedAt: Date.now()
-            });
+                    // Only update if not already live
+                    if (adData.status !== 'live') {
+                        const expirationDate = new Date();
+                        expirationDate.setDate(expirationDate.getDate() + (adData.duration || 30));
+                        const invoiceId = `INV-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
-            // 2. Update Registration Count
-            const eventRef = ref(db, `clubs/${clubId}/events/${eventId}`);
-            const { increment } = await import('@/lib/firebase');
-            await update(eventRef, {
-                registrationCount: increment(1)
-            });
+                        await update(adRef, {
+                            status: 'live',
+                            paymentStatus: 'paid',
+                            paymentDate: new Date().toISOString(),
+                            expirationDate: expirationDate.toISOString(),
+                            invoiceId: invoiceId,
+                            stripeSessionId: session.id,
+                            updatedAt: Date.now()
+                        });
 
-            // 3. Fetch Ticket details for email
-            const ticketSnap = await get(ticketRef);
-            if (ticketSnap.exists()) {
-                const ticketData = ticketSnap.val();
+                        // Send Invoice/Confirmation Email
+                        try {
+                            const { adInvoiceEmail } = await import('@/lib/email-templates');
+                            const html = adInvoiceEmail(adData.title, adData.price, invoiceId);
 
-                // 3. Send Confirmation Email (Validated)
-                try {
-                    const { ticketValidatedEmail } = await import('@/lib/email-templates');
-                    const html = ticketValidatedEmail(ticketData, ticketData.eventName, ticketData.clubName);
-
-                    await fetch(`${req.nextUrl.origin}/api/send-email`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            to: ticketData.userEmail,
-                            subject: `Billet Validé : ${ticketData.eventName}`,
-                            html: html
-                        })
-                    });
-                } catch (emailErr) {
-                    console.error("Webhook email sending failed:", emailErr);
+                            await fetch(`${req.nextUrl.origin}/api/send-email`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    to: adData.publisherEmail,
+                                    subject: `Confirmation & Facture : ${adData.title}`,
+                                    html: html
+                                })
+                            });
+                        } catch (emailErr) {
+                            console.error("Ad webhook email error:", emailErr);
+                        }
+                    }
                 }
-            }
+                console.log(`Ad ${adId} activated successfully via Webhook.`);
+            } else {
+                // TICKET LOGIC (Original)
+                const { ticketId, clubId, eventId } = session.metadata;
+                const ticketRef = ref(db, `tickets/${ticketId}`);
 
-            console.log(`Ticket ${ticketId} validated successfully via Webhook.`);
+                // Check if already valid to avoid double counting
+                const currentTicket = await get(ticketRef);
+                if (currentTicket.exists() && currentTicket.val().status === 'valid') {
+                    return NextResponse.json({ received: true, already_processed: true });
+                }
+
+                await update(ticketRef, {
+                    status: 'valid',
+                    paid: true,
+                    stripeSessionId: session.id,
+                    updatedAt: Date.now()
+                });
+
+                // 2. Update Registration Count
+                const eventRef = ref(db, `clubs/${clubId}/events/${eventId}`);
+                const { increment } = await import('@/lib/firebase');
+                await update(eventRef, {
+                    registrationCount: increment(1)
+                });
+
+                // 3. Fetch Ticket details for email
+                const ticketSnap = await get(ticketRef);
+                if (ticketSnap.exists()) {
+                    const ticketData = ticketSnap.val();
+
+                    // 3. Send Confirmation Email (Validated)
+                    try {
+                        const { ticketValidatedEmail } = await import('@/lib/email-templates');
+                        const html = ticketValidatedEmail(ticketData, ticketData.eventName, ticketData.clubName);
+
+                        await fetch(`${req.nextUrl.origin}/api/send-email`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: ticketData.userEmail,
+                                subject: `Billet Validé : ${ticketData.eventName}`,
+                                html: html
+                            })
+                        });
+                    } catch (emailErr) {
+                        console.error("Webhook email sending failed:", emailErr);
+                    }
+                }
+                console.log(`Ticket ${ticketId} validated successfully via Webhook.`);
+            }
         } catch (dbErr) {
             console.error('Webhook Database Error:', dbErr);
             return NextResponse.json({ error: 'Database update failed' }, { status: 500 });
