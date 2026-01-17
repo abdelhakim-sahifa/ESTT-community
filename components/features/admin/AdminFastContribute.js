@@ -31,8 +31,26 @@ export default function AdminFastContribute() {
         type: 'pdf'
     });
 
+    const [variableFields, setVariableFields] = useState(new Set());
+
     const [resources, setResources] = useState([
-        { id: Date.now(), title: '', description: '', file: null, url: '', loading: false, success: false, error: '' }
+        {
+            id: Date.now(),
+            title: '',
+            description: '',
+            file: null,
+            url: '',
+            loading: false,
+            success: false,
+            error: '',
+            // Dynamic fields
+            field: '',
+            semester: '',
+            module: '',
+            professor: '',
+            docType: '',
+            type: ''
+        }
     ]);
 
     const [professors, setProfessors] = useState([]);
@@ -54,6 +72,18 @@ export default function AdminFastContribute() {
         fetchProfessors();
     }, []);
 
+    const toggleVariableField = (fieldName) => {
+        setVariableFields(prev => {
+            const next = new Set(prev);
+            if (next.has(fieldName)) {
+                next.delete(fieldName);
+            } else {
+                next.add(fieldName);
+            }
+            return next;
+        });
+    };
+
     const handleCommonChange = (name, value) => {
         setCommonData(prev => ({ ...prev, [name]: value }));
     };
@@ -63,7 +93,22 @@ export default function AdminFastContribute() {
     };
 
     const addResourceRow = () => {
-        setResources(prev => [...prev, { id: Date.now(), title: '', description: '', file: null, url: '', loading: false, success: false, error: '' }]);
+        setResources(prev => [...prev, {
+            id: Date.now(),
+            title: '',
+            description: '',
+            file: null,
+            url: '',
+            loading: false,
+            success: false,
+            error: '',
+            field: '',
+            semester: '',
+            module: '',
+            professor: '',
+            docType: '',
+            type: ''
+        }]);
     };
 
     const removeResourceRow = (id) => {
@@ -73,7 +118,7 @@ export default function AdminFastContribute() {
     };
 
     const handleSubmitAll = async () => {
-        const toSubmit = resources.filter(r => !r.success && (r.file || r.url) && r.title);
+        const toSubmit = resources.filter(r => !r.success && (r.file || r.url || r.type === 'link') && r.title);
         if (toSubmit.length === 0) return;
 
         for (const resource of toSubmit) {
@@ -87,15 +132,23 @@ export default function AdminFastContribute() {
                     resourceUrl = uploaded.publicUrl;
                 }
 
+                // Merge common and specific data
+                const finalData = { ...commonData };
+                variableFields.forEach(field => {
+                    if (resource[field]) {
+                        finalData[field] = resource[field];
+                    }
+                });
+
                 const timestamp = Date.now();
-                const moduleId = commonData.module;
-                const moduleObj = staticDb.modules[`${commonData.field}-${commonData.semester}`]?.find(m => m.id === moduleId);
+                const moduleId = finalData.module;
+                const moduleObj = staticDb.modules[`${finalData.field}-${finalData.semester}`]?.find(m => m.id === moduleId);
                 const fullModuleName = moduleObj ? moduleObj.name : moduleId;
                 const firstWord = fullModuleName.trim().split(/\s+/)[0];
-                const shortModuleName = `${firstWord}... - ${commonData.semester}`;
+                const shortModuleName = `${firstWord}... - ${finalData.semester}`;
 
                 const contributionData = {
-                    ...commonData,
+                    ...finalData,
                     title: resource.title,
                     description: resource.description,
                     module: shortModuleName,
@@ -106,7 +159,7 @@ export default function AdminFastContribute() {
                     authorId: user?.uid || null,
                     authorName: profile?.firstName ? `${profile.firstName} ${profile.lastName}` : 'Admin',
                     createdAt: timestamp,
-                    unverified: false // Admin contribution is pre-verified
+                    unverified: false
                 };
 
                 const resourcesRef = ref(db, 'resources');
@@ -117,7 +170,7 @@ export default function AdminFastContribute() {
                 const moduleMappingRef = ref(db, `module_resources/${moduleId}/${resourceId}`);
                 await set(moduleMappingRef, true);
 
-                const keywordRef = ref(db, `metadata/keywords/${commonData.field}/${resourceId}`);
+                const keywordRef = ref(db, `metadata/keywords/${finalData.field}/${resourceId}`);
                 await set(keywordRef, { title: resource.title, resourceId: resourceId });
 
                 updateResource(resource.id, { loading: false, success: true });
@@ -132,6 +185,28 @@ export default function AdminFastContribute() {
         ? staticDb.modules[`${commonData.field}-${commonData.semester}`] || []
         : [];
 
+    const FieldHeader = ({ label, field, children }) => (
+        <div className="space-y-2">
+            <div className="flex items-center justify-between">
+                <Label className={variableFields.has(field) ? "text-muted-foreground opacity-50" : ""}>{label}</Label>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4"
+                    onClick={() => toggleVariableField(field)}
+                    title={variableFields.has(field) ? "Rendre fixe" : "Rendre variable"}
+                >
+                    {variableFields.has(field) ? <Plus className="h-3 w-3" /> : <Info className="h-3 w-3" />}
+                </Button>
+            </div>
+            {!variableFields.has(field) ? children : (
+                <div className="h-10 flex items-center px-3 rounded-md border border-dashed text-xs text-muted-foreground italic bg-slate-50/50">
+                    Saisie par ressource
+                </div>
+            )}
+        </div>
+    );
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -144,42 +219,47 @@ export default function AdminFastContribute() {
                 </Button>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Informations Communes</CardTitle>
+            <Card className="border-primary/10 shadow-sm bg-slate-50/30">
+                <CardHeader className="pb-4">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                        <Info className="w-4 h-4 text-primary" />
+                        Informations Communes
+                    </CardTitle>
+                    <CardDescription>
+                        Les champs avec un <Info className="w-3 h-3 inline" /> sont appliqués à toutes les lignes. Cliquez pour les rendre variables.
+                    </CardDescription>
                 </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                        <Label>Filière</Label>
+                <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <FieldHeader label="Filière" field="field">
                         <Select value={commonData.field} onValueChange={(v) => handleCommonChange('field', v)}>
-                            <SelectTrigger><SelectValue placeholder="Filière" /></SelectTrigger>
+                            <SelectTrigger className="bg-white"><SelectValue placeholder="Filière" /></SelectTrigger>
                             <SelectContent>
                                 {staticDb.fields.map(f => <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Semestre</Label>
+                    </FieldHeader>
+
+                    <FieldHeader label="Semestre" field="semester">
                         <Select value={commonData.semester} onValueChange={(v) => handleCommonChange('semester', v)}>
-                            <SelectTrigger><SelectValue placeholder="Semestre" /></SelectTrigger>
+                            <SelectTrigger className="bg-white"><SelectValue placeholder="Semestre" /></SelectTrigger>
                             <SelectContent>
                                 {staticDb.semesters.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                             </SelectContent>
                         </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Module</Label>
-                        <Select value={commonData.module} onValueChange={(v) => handleCommonChange('module', v)} disabled={!commonData.semester}>
-                            <SelectTrigger><SelectValue placeholder="Module" /></SelectTrigger>
+                    </FieldHeader>
+
+                    <FieldHeader label="Module" field="module">
+                        <Select value={commonData.module} onValueChange={(v) => handleCommonChange('module', v)} disabled={!commonData.semester && !variableFields.has('semester')}>
+                            <SelectTrigger className="bg-white"><SelectValue placeholder="Module" /></SelectTrigger>
                             <SelectContent>
                                 {modules.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Type de Ressource</Label>
+                    </FieldHeader>
+
+                    <FieldHeader label="Type de Ressource" field="type">
                         <Select value={commonData.type} onValueChange={(v) => handleCommonChange('type', v)}>
-                            <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+                            <SelectTrigger className="bg-white"><SelectValue placeholder="Type" /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="pdf">PDF</SelectItem>
                                 <SelectItem value="image">Image</SelectItem>
@@ -187,11 +267,11 @@ export default function AdminFastContribute() {
                                 <SelectItem value="link">Lien</SelectItem>
                             </SelectContent>
                         </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Type de Document</Label>
+                    </FieldHeader>
+
+                    <FieldHeader label="Type de Document" field="docType">
                         <Select value={commonData.docType} onValueChange={(v) => handleCommonChange('docType', v)}>
-                            <SelectTrigger><SelectValue placeholder="Type de Document" /></SelectTrigger>
+                            <SelectTrigger className="bg-white"><SelectValue placeholder="Type de Document" /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="Cours">Cours</SelectItem>
                                 <SelectItem value="TD">TD</SelectItem>
@@ -199,74 +279,164 @@ export default function AdminFastContribute() {
                                 <SelectItem value="Exam">Examen</SelectItem>
                             </SelectContent>
                         </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Professeur</Label>
+                    </FieldHeader>
+
+                    <FieldHeader label="Professeur" field="professor">
                         <Select value={commonData.professor} onValueChange={(v) => handleCommonChange('professor', v)}>
-                            <SelectTrigger><SelectValue placeholder="Professeur" /></SelectTrigger>
+                            <SelectTrigger className="bg-white"><SelectValue placeholder="Professeur" /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="non-specifie">Non spécifié</SelectItem>
                                 {professors.map((p, i) => <SelectItem key={i} value={typeof p === 'string' ? p : p.name}>{typeof p === 'string' ? p : p.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
-                    </div>
+                    </FieldHeader>
                 </CardContent>
             </Card>
 
             <div className="space-y-4">
-                {resources.map((resource, index) => (
-                    <Card key={resource.id} className={resource.success ? "border-green-500 bg-green-50/50" : ""}>
-                        <CardContent className="pt-6">
-                            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                                <div className="md:col-span-4 space-y-2">
-                                    <Label>Titre</Label>
-                                    <Input
-                                        placeholder="Ex: Chapitre 1"
-                                        value={resource.title}
-                                        onChange={(e) => updateResource(resource.id, { title: e.target.value })}
-                                        disabled={resource.success || resource.loading}
-                                    />
-                                </div>
-                                <div className="md:col-span-6 space-y-2">
-                                    <Label>{(commonData.type === 'video' || commonData.type === 'link') ? 'URL' : 'Fichier'}</Label>
-                                    {(commonData.type === 'video' || commonData.type === 'link') ? (
-                                        <Input
-                                            placeholder="https://..."
-                                            value={resource.url}
-                                            onChange={(e) => updateResource(resource.id, { url: e.target.value })}
-                                            disabled={resource.success || resource.loading}
-                                        />
-                                    ) : (
-                                        <div className="flex items-center gap-2">
-                                            <Input
-                                                type="file"
-                                                onChange={(e) => updateResource(resource.id, { file: e.target.files[0], title: resource.title || e.target.files[0]?.name.split('.')[0] })}
-                                                disabled={resource.success || resource.loading}
-                                                className="cursor-pointer"
-                                            />
-                                            {resource.file && <span className="text-xs truncate max-w-[100px]">{resource.file.name}</span>}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="md:col-span-2 flex justify-end gap-2">
-                                    {resource.loading ? (
-                                        <Loader2 className="animate-spin text-primary" />
-                                    ) : resource.success ? (
-                                        <CheckCircle2 className="text-green-500" />
-                                    ) : (
-                                        <Button variant="ghost" size="icon" onClick={() => removeResourceRow(resource.id)} className="text-destructive">
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    )}
-                                </div>
-                            </div>
-                            {resource.error && <p className="text-xs text-destructive mt-2">{resource.error}</p>}
-                        </CardContent>
-                    </Card>
-                ))}
+                {resources.map((resource, index) => {
+                    const resType = variableFields.has('type') ? resource.type : commonData.type;
+                    const resField = variableFields.has('field') ? resource.field : commonData.field;
+                    const resSemeostre = variableFields.has('semester') ? resource.semester : commonData.semester;
+                    const rowModules = resField && resSemeostre ? staticDb.modules[`${resField}-${resSemeostre}`] || [] : [];
 
-                <Button variant="outline" className="w-full border-dashed" onClick={addResourceRow}>
-                    <Plus className="w-4 h-4 mr-2" /> Ajouter une autre ressource
+                    return (
+                        <Card key={resource.id} className={resource.success ? "border-green-500 bg-green-50/50" : "shadow-sm border-slate-200"}>
+                            <CardContent className="pt-6 space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                                    <div className="md:col-span-4 space-y-2">
+                                        <Label className="text-xs font-bold uppercase">Titre de la ressource {index + 1}</Label>
+                                        <Input
+                                            placeholder="Ex: Chapitre 1 - Introduction"
+                                            value={resource.title}
+                                            onChange={(e) => updateResource(resource.id, { title: e.target.value })}
+                                            disabled={resource.success || resource.loading}
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-6 space-y-2">
+                                        <Label className="text-xs font-bold uppercase">{(resType === 'video' || resType === 'link') ? 'URL / Lien' : 'Fichier'}</Label>
+                                        {(resType === 'video' || resType === 'link') ? (
+                                            <Input
+                                                placeholder="https://..."
+                                                value={resource.url}
+                                                onChange={(e) => updateResource(resource.id, { url: e.target.value })}
+                                                disabled={resource.success || resource.loading}
+                                                className="bg-white"
+                                            />
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <Input
+                                                    type="file"
+                                                    onChange={(e) => updateResource(resource.id, { file: e.target.files[0], title: resource.title || e.target.files[0]?.name.split('.')[0] })}
+                                                    disabled={resource.success || resource.loading}
+                                                    className="cursor-pointer bg-white"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="md:col-span-2 flex justify-end gap-2">
+                                        {resource.loading ? (
+                                            <Loader2 className="animate-spin text-primary" />
+                                        ) : resource.success ? (
+                                            <div className="flex items-center gap-2 text-green-600 font-bold text-xs">
+                                                <span>Envoyé</span>
+                                                <CheckCircle2 className="w-5 h-5" />
+                                            </div>
+                                        ) : (
+                                            <Button variant="ghost" size="icon" onClick={() => removeResourceRow(resource.id)} className="text-destructive hover:bg-destructive/10">
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {variableFields.size > 0 && !resource.success && (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                                        {variableFields.has('field') && (
+                                            <div className="space-y-1.5">
+                                                <Label className="text-[10px] font-black uppercase">Filière</Label>
+                                                <Select value={resource.field} onValueChange={(v) => updateResource(resource.id, { field: v })}>
+                                                    <SelectTrigger className="h-8 text-xs bg-white"><SelectValue placeholder="Filière" /></SelectTrigger>
+                                                    <SelectContent>
+                                                        {staticDb.fields.map(f => <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>)}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        )}
+                                        {variableFields.has('semester') && (
+                                            <div className="space-y-1.5">
+                                                <Label className="text-[10px] font-black uppercase">Semestre</Label>
+                                                <Select value={resource.semester} onValueChange={(v) => updateResource(resource.id, { semester: v })}>
+                                                    <SelectTrigger className="h-8 text-xs bg-white"><SelectValue placeholder="Semestre" /></SelectTrigger>
+                                                    <SelectContent>
+                                                        {staticDb.semesters.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        )}
+                                        {variableFields.has('module') && (
+                                            <div className="space-y-1.5">
+                                                <Label className="text-[10px] font-black uppercase">Module</Label>
+                                                <Select value={resource.module} onValueChange={(v) => updateResource(resource.id, { module: v })}>
+                                                    <SelectTrigger className="h-8 text-xs bg-white"><SelectValue placeholder="Module" /></SelectTrigger>
+                                                    <SelectContent>
+                                                        {rowModules.map(m => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        )}
+                                        {variableFields.has('type') && (
+                                            <div className="space-y-1.5">
+                                                <Label className="text-[10px] font-black uppercase">Type de Ressource</Label>
+                                                <Select value={resource.type} onValueChange={(v) => updateResource(resource.id, { type: v })}>
+                                                    <SelectTrigger className="h-8 text-xs bg-white"><SelectValue placeholder="Type" /></SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="pdf">PDF</SelectItem>
+                                                        <SelectItem value="image">Image</SelectItem>
+                                                        <SelectItem value="video">Vidéo</SelectItem>
+                                                        <SelectItem value="link">Lien</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        )}
+                                        {variableFields.has('docType') && (
+                                            <div className="space-y-1.5">
+                                                <Label className="text-[10px] font-black uppercase">Type de Document</Label>
+                                                <Select value={resource.docType} onValueChange={(v) => updateResource(resource.id, { docType: v })}>
+                                                    <SelectTrigger className="h-8 text-xs bg-white"><SelectValue placeholder="Doc Type" /></SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="Cours">Cours</SelectItem>
+                                                        <SelectItem value="TD">TD</SelectItem>
+                                                        <SelectItem value="TP">TP</SelectItem>
+                                                        <SelectItem value="Exam">Examen</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        )}
+                                        {variableFields.has('professor') && (
+                                            <div className="space-y-1.5">
+                                                <Label className="text-[10px] font-black uppercase">Professeur</Label>
+                                                <Select value={resource.professor} onValueChange={(v) => updateResource(resource.id, { professor: v })}>
+                                                    <SelectTrigger className="h-8 text-xs bg-white"><SelectValue placeholder="Professeur" /></SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="non-specifie">Non spécifié</SelectItem>
+                                                        {professors.map((p, i) => <SelectItem key={i} value={typeof p === 'string' ? p : p.name}>{typeof p === 'string' ? p : p.name}</SelectItem>)}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                                {resource.error && <p className="text-xs text-destructive mt-2 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {resource.error}</p>}
+                            </CardContent>
+                        </Card>
+                    );
+                })}
+
+                <Button variant="outline" className="w-full border-dashed border-2 py-8 rounded-2xl hover:bg-slate-50 hover:border-primary/50 transition-all group" onClick={addResourceRow}>
+                    <Plus className="w-5 h-5 mr-2 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <span className="font-bold">Ajouter une autre ressource</span>
                 </Button>
             </div>
         </div>
