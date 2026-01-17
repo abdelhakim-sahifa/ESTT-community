@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { db, ref, update, remove, get } from '@/lib/firebase';
+import { db, ref, update, remove, get, set } from '@/lib/firebase';
 import {
     Table,
     TableBody,
@@ -12,7 +12,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Search, CheckCircle2, Eye, Trash2, Edit2, Loader2 } from 'lucide-react';
+import { Search, CheckCircle2, Eye, Trash2, Edit2, Loader2, Link2 } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -32,6 +32,8 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import RejectionDialog from './RejectionDialog';
 import { sendPrivateNotification, NOTIF_TYPES } from '@/lib/notifications';
+import { db as staticDb } from '@/lib/data';
+import { Checkbox } from '@/components/ui/checkbox';
 
 
 export default function AdminResources({ resources }) {
@@ -51,6 +53,9 @@ export default function AdminResources({ resources }) {
         docType: ''
     });
     const [saving, setSaving] = useState(false);
+    const [linkModalOpen, setLinkModalOpen] = useState(false);
+    const [itemToLink, setItemToLink] = useState(null);
+    const [selectedFields, setSelectedFields] = useState([]);
 
     const filteredResources = resources.filter(r =>
         r.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -291,6 +296,50 @@ export default function AdminResources({ resources }) {
         }
     };
 
+    const handleLinkResource = (resource) => {
+        setItemToLink(resource);
+        // Initialize with existing links or empty
+        // Structure: [{ fieldId: 'ai', moduleId: 'ai_m1' }, ...]
+        const existingLinks = resource.fields || [];
+        setSelectedFields(existingLinks);
+        setLinkModalOpen(true);
+    };
+
+    const handleSaveLinks = async () => {
+        if (!itemToLink) return;
+        setSaving(true);
+        try {
+            let path = `resources/${itemToLink.id}`;
+            if (itemToLink._isNested && itemToLink.moduleId) {
+                path = `resources/${itemToLink.moduleId}/${itemToLink.id}`;
+            }
+
+            // 1. Update the resource itself with the new fields structure
+            await update(ref(db, path), { fields: selectedFields });
+
+            // 2. Update keywords and module mappings for ALL linked fields
+            for (const link of selectedFields) {
+                if (!link.fieldId || !link.moduleId) continue;
+
+                // Index by Field for Search
+                const keywordRef = ref(db, `metadata/keywords/${link.fieldId}/${itemToLink.id}`);
+                await update(keywordRef, { title: itemToLink.title, resourceId: itemToLink.id });
+
+                // Index by Module for Browse
+                const moduleMappingRef = ref(db, `module_resources/${link.moduleId}/${itemToLink.id}`);
+                await set(moduleMappingRef, true);
+            }
+
+            setLinkModalOpen(false);
+            setItemToLink(null);
+        } catch (err) {
+            console.error(err);
+            alert("Erreur lors de la liaison des filières.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -346,6 +395,9 @@ export default function AdminResources({ resources }) {
                                         )}
                                         <Button size="sm" variant="outline" className="h-8 px-2 text-primary border-primary/10 hover:bg-primary/5" onClick={() => handleEditResource(res)}>
                                             <Edit2 className="w-4 h-4" />
+                                        </Button>
+                                        <Button size="sm" variant="outline" className="h-8 px-2 text-primary border-primary/10 hover:bg-primary/5" onClick={() => handleLinkResource(res)} title="Lier à d'autres filières">
+                                            <Link2 className="w-4 h-4" />
                                         </Button>
                                         <Button size="sm" variant="outline" className="h-8 px-2" asChild>
                                             <a href={res.url || res.link || res.file} target="_blank"><Eye className="w-4 h-4" /></a>
@@ -430,6 +482,88 @@ export default function AdminResources({ resources }) {
                         <Button onClick={handleSaveEdit} disabled={saving}>
                             {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                             Enregistrer
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            {/* Link Modal */}
+            <Dialog open={linkModalOpen} onOpenChange={setLinkModalOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Lier à d'autres filières</DialogTitle>
+                        <DialogDescription>
+                            Sélectionnez toutes les filières où cette ressource doit apparaître.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-1 gap-3">
+                            {staticDb.fields.map((field) => {
+                                const isSelected = selectedFields.some(f => f.fieldId === field.id);
+                                const currentModuleId = selectedFields.find(f => f.fieldId === field.id)?.moduleId || '';
+
+                                // Get modules for this field and the resource's semester
+                                const fieldModules = itemToLink?.semester
+                                    ? staticDb.modules[`${field.id}-${itemToLink.semester}`] || []
+                                    : [];
+
+                                return (
+                                    <div key={field.id} className="space-y-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50/50 transition-colors">
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id={`field-${field.id}`}
+                                                checked={isSelected || field.id === itemToLink?.field}
+                                                onCheckedChange={(checked) => {
+                                                    if (checked) {
+                                                        setSelectedFields(prev => [...prev, { fieldId: field.id, moduleId: '' }]);
+                                                    } else {
+                                                        setSelectedFields(prev => prev.filter(f => f.fieldId !== field.id));
+                                                    }
+                                                }}
+                                                disabled={field.id === itemToLink?.field}
+                                            />
+                                            <label
+                                                htmlFor={`field-${field.id}`}
+                                                className="text-sm font-bold leading-none cursor-pointer flex-grow"
+                                            >
+                                                {field.name}
+                                                {field.id === itemToLink?.field && <span className="ml-2 text-[10px] text-primary italic">(Source)</span>}
+                                            </label>
+                                        </div>
+
+                                        {isSelected && (
+                                            <div className="pl-6 animate-in slide-in-from-top-2 duration-200">
+                                                <Label className="text-[10px] font-black uppercase text-muted-foreground mb-1 block">Module Équivalent ({itemToLink?.semester})</Label>
+                                                <Select
+                                                    value={currentModuleId}
+                                                    onValueChange={(val) => {
+                                                        setSelectedFields(prev => prev.map(f =>
+                                                            f.fieldId === field.id ? { ...f, moduleId: val } : f
+                                                        ));
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="h-9 text-xs bg-white">
+                                                        <SelectValue placeholder="Choisir le module" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {fieldModules.map(m => (
+                                                            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setLinkModalOpen(false)} disabled={saving}>
+                            Annuler
+                        </Button>
+                        <Button onClick={handleSaveLinks} disabled={saving}>
+                            {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                            Enregistrer les liaisons
                         </Button>
                     </DialogFooter>
                 </DialogContent>

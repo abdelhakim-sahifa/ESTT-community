@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Select,
     SelectContent,
@@ -49,7 +50,8 @@ export default function AdminFastContribute() {
             module: '',
             professor: '',
             docType: '',
-            type: ''
+            type: 'pdf',
+            fields: [] // Linked fields
         }
     ]);
 
@@ -107,7 +109,8 @@ export default function AdminFastContribute() {
             module: '',
             professor: '',
             docType: '',
-            type: ''
+            type: 'pdf',
+            fields: []
         }]);
     };
 
@@ -148,18 +151,24 @@ export default function AdminFastContribute() {
                 const shortModuleName = `${firstWord}... - ${finalData.semester}`;
 
                 const contributionData = {
-                    ...finalData,
+                    ...commonData,
                     title: resource.title,
                     description: resource.description,
-                    module: shortModuleName,
-                    fullModuleName: fullModuleName,
-                    moduleId: moduleId,
                     url: resourceUrl,
                     fileName: resource.file?.name || null,
                     authorId: user?.uid || null,
-                    authorName: profile?.firstName ? `${profile.firstName} ${profile.lastName}` : 'Admin',
+                    authorName: 'Admin',
                     createdAt: timestamp,
-                    unverified: false
+                    unverified: false,
+                    fields: [
+                        ...(variableFields.has('field') ? [resource.field] : [commonData.field]),
+                        ...(resource.fields || [])
+                    ],
+                    // Override common data with variable field data
+                    ...(Array.from(variableFields).reduce((acc, field) => {
+                        acc[field] = resource[field];
+                        return acc;
+                    }, {}))
                 };
 
                 const resourcesRef = ref(db, 'resources');
@@ -167,11 +176,22 @@ export default function AdminFastContribute() {
                 const resourceId = newResourceRef.key;
                 await set(newResourceRef, contributionData);
 
-                const moduleMappingRef = ref(db, `module_resources/${moduleId}/${resourceId}`);
-                await set(moduleMappingRef, true);
+                // 3. Keywords & Module Mappings for ALL linked fields/modules
+                const allLinks = contributionData.fields || [];
+                for (const link of allLinks) {
+                    if (!link.fieldId || !link.moduleId) continue;
 
-                const keywordRef = ref(db, `metadata/keywords/${finalData.field}/${resourceId}`);
-                await set(keywordRef, { title: resource.title, resourceId: resourceId });
+                    // Index by Field for Search
+                    const keywordRef = ref(db, `metadata/keywords/${link.fieldId}/${resourceId}`);
+                    await set(keywordRef, {
+                        title: resource.title,
+                        resourceId: resourceId
+                    });
+
+                    // Index by Module for Browse
+                    const moduleMappingRef = ref(db, `module_resources/${link.moduleId}/${resourceId}`);
+                    await set(moduleMappingRef, true);
+                }
 
                 updateResource(resource.id, { loading: false, success: true });
             } catch (err) {
@@ -426,6 +446,97 @@ export default function AdminFastContribute() {
                                                 </Select>
                                             </div>
                                         )}
+                                    </div>
+                                )}
+
+                                {/* Additional Fields (Linking) */}
+                                {!resource.success && (
+                                    <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <label className="text-[10px] font-black uppercase text-slate-500">
+                                                Aussi utile pour (Lier à d'autres filières)
+                                            </label>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-6 text-[9px] font-bold"
+                                                onClick={() => {
+                                                    const current = resource.fields || [];
+                                                    updateResource(resource.id, { fields: [...current, { fieldId: '', moduleId: '' }] });
+                                                }}
+                                            >
+                                                <Plus className="w-3 h-3 mr-1" /> Ajouter
+                                            </Button>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            {(resource.fields || []).map((link, lIndex) => {
+                                                const semester = variableFields.has('semester') ? resource.semester : commonData.semester;
+                                                const linkModules = link.fieldId && semester
+                                                    ? staticDb.modules[`${link.fieldId}-${semester}`] || []
+                                                    : [];
+
+                                                return (
+                                                    <div key={lIndex} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-white rounded-lg border border-slate-200">
+                                                        <div className="space-y-1">
+                                                            <Label className="text-[9px] font-black uppercase text-muted-foreground">Filière</Label>
+                                                            <Select
+                                                                value={link.fieldId}
+                                                                onValueChange={(val) => {
+                                                                    const updatedLinks = [...resource.fields];
+                                                                    updatedLinks[lIndex] = { ...updatedLinks[lIndex], fieldId: val, moduleId: '' };
+                                                                    updateResource(resource.id, { fields: updatedLinks });
+                                                                }}
+                                                            >
+                                                                <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Filière" /></SelectTrigger>
+                                                                <SelectContent>
+                                                                    {staticDb.fields.map(f => (
+                                                                        <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                        <div className="space-y-1 relative">
+                                                            <Label className="text-[9px] font-black uppercase text-muted-foreground">Module Équivalent</Label>
+                                                            <div className="flex gap-2">
+                                                                <Select
+                                                                    value={link.moduleId}
+                                                                    onValueChange={(val) => {
+                                                                        const updatedLinks = [...resource.fields];
+                                                                        updatedLinks[lIndex] = { ...updatedLinks[lIndex], moduleId: val };
+                                                                        updateResource(resource.id, { fields: updatedLinks });
+                                                                    }}
+                                                                    disabled={!link.fieldId}
+                                                                >
+                                                                    <SelectTrigger className="h-8 text-xs flex-grow"><SelectValue placeholder="Module" /></SelectTrigger>
+                                                                    <SelectContent>
+                                                                        {linkModules.map(m => (
+                                                                            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                                                                        ))}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="h-8 w-8 text-destructive"
+                                                                    onClick={() => {
+                                                                        const updatedLinks = resource.fields.filter((_, i) => i !== lIndex);
+                                                                        updateResource(resource.id, { fields: updatedLinks });
+                                                                    }}
+                                                                >
+                                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                            {(!resource.fields || resource.fields.length === 0) && (
+                                                <p className="text-[10px] text-muted-foreground italic text-center py-2">
+                                                    Aucune liaison supplémentaire définie.
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                                 {resource.error && <p className="text-xs text-destructive mt-2 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {resource.error}</p>}

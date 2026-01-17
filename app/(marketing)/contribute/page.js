@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info } from 'lucide-react';
+import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Sparkles, Plus, Trash2 } from 'lucide-react';
 
 export default function ContributePage() {
     const router = useRouter();
@@ -35,7 +35,8 @@ export default function ContributePage() {
         type: 'pdf',
         docType: '',
         url: '',
-        anonymous: false
+        anonymous: false,
+        fields: []
     });
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState('');
@@ -122,18 +123,35 @@ export default function ContributePage() {
             const resourcesRef = ref(db, 'resources');
             const newResourceRef = push(resourcesRef);
             const resourceId = newResourceRef.key;
-            await set(newResourceRef, contributionData);
 
-            // 2. Link in module_resources mapping using the ID
-            const moduleMappingRef = ref(db, `module_resources/${moduleId}/${resourceId}`);
-            await set(moduleMappingRef, true);
+            // Map of field linking
+            const finalFields = [
+                { fieldId: formData.field, moduleId: moduleId },
+                ...(formData.fields || [])
+            ];
 
-            // 3. Store keywords for matching search
-            const keywordRef = ref(db, `metadata/keywords/${formData.field}/${resourceId}`);
-            await set(keywordRef, {
-                title: formData.title,
-                resourceId: resourceId
-            });
+            const updatedContributionData = {
+                ...contributionData,
+                fields: formData.fields || [] // Store just the extra links in the resource
+            };
+
+            await set(newResourceRef, updatedContributionData);
+
+            // 2. Link in module_resources mapping for ALL linked fields/modules
+            for (const link of finalFields) {
+                if (!link.fieldId || !link.moduleId) continue;
+
+                // Index by Module for Browse
+                const moduleMappingRef = ref(db, `module_resources/${link.moduleId}/${resourceId}`);
+                await set(moduleMappingRef, true);
+
+                // Index by Field for Search
+                const keywordRef = ref(db, `metadata/keywords/${link.fieldId}/${resourceId}`);
+                await set(keywordRef, {
+                    title: formData.title,
+                    resourceId: resourceId
+                });
+            }
 
             if (user) {
                 // Track in user profile
@@ -340,6 +358,104 @@ export default function ContributePage() {
                                     </Select>
                                 </div>
                             </div>
+
+                            {/* Additional Fields (Linking) */}
+                            {formData.field && formData.semester && (
+                                <div className="space-y-4 p-5 bg-muted/20 rounded-2xl border border-muted-foreground/10">
+                                    <div className="flex items-center justify-between">
+                                        <div className="space-y-1">
+                                            <Label className="text-sm font-bold flex items-center gap-2">
+                                                <Sparkles className="w-4 h-4 text-primary" />
+                                                Aussi utile pour... (Optionnel)
+                                            </Label>
+                                            <p className="text-[11px] text-muted-foreground">
+                                                Si cette ressource correspond à un module dans une autre filière.
+                                            </p>
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 text-xs font-bold text-primary hover:bg-primary/5"
+                                            onClick={() => {
+                                                const current = formData.fields || [];
+                                                handleChange('fields', [...current, { fieldId: '', moduleId: '' }]);
+                                            }}
+                                        >
+                                            <Plus className="w-3 h-3 mr-1" /> Ajouter
+                                        </Button>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {(formData.fields || []).map((link, lIndex) => {
+                                            const linkModules = link.fieldId && formData.semester
+                                                ? staticDb.modules[`${link.fieldId}-${formData.semester}`] || []
+                                                : [];
+
+                                            return (
+                                                <div key={lIndex} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-white/50 rounded-xl border border-muted-foreground/5 relative group">
+                                                    <div className="space-y-1.5">
+                                                        <Label className="text-[10px] font-bold uppercase opacity-70">Filière</Label>
+                                                        <Select
+                                                            value={link.fieldId}
+                                                            onValueChange={(val) => {
+                                                                const updatedLinks = [...formData.fields];
+                                                                updatedLinks[lIndex] = { ...updatedLinks[lIndex], fieldId: val, moduleId: '' };
+                                                                handleChange('fields', updatedLinks);
+                                                            }}
+                                                        >
+                                                            <SelectTrigger className="h-9 text-xs"><SelectValue placeholder="Filière" /></SelectTrigger>
+                                                            <SelectContent>
+                                                                {staticDb.fields.map(f => (
+                                                                    <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        <Label className="text-[10px] font-bold uppercase opacity-70">Module Équivalent</Label>
+                                                        <div className="flex gap-2">
+                                                            <Select
+                                                                value={link.moduleId}
+                                                                onValueChange={(val) => {
+                                                                    const updatedLinks = [...formData.fields];
+                                                                    updatedLinks[lIndex] = { ...updatedLinks[lIndex], moduleId: val };
+                                                                    handleChange('fields', updatedLinks);
+                                                                }}
+                                                                disabled={!link.fieldId}
+                                                            >
+                                                                <SelectTrigger className="h-9 text-xs flex-grow"><SelectValue placeholder="Module" /></SelectTrigger>
+                                                                <SelectContent>
+                                                                    {linkModules.map(m => (
+                                                                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-9 w-9 text-destructive hover:bg-destructive/10"
+                                                                onClick={() => {
+                                                                    const updatedLinks = formData.fields.filter((_, i) => i !== lIndex);
+                                                                    handleChange('fields', updatedLinks);
+                                                                }}
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                        {(!formData.fields || formData.fields.length === 0) && (
+                                            <p className="text-[10px] text-muted-foreground italic text-center py-2 opacity-60">
+                                                Aucune liaison supplémentaire ajoutée.
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="space-y-2">
                                 <Label htmlFor="title">Titre de la ressource *</Label>
