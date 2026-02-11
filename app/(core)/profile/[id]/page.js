@@ -432,7 +432,7 @@ export default function PublicProfilePage() {
                         <section>
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                                    <i className="fas fa-book-open text-primary"></i> Contributions
+                                    <i className="fas fa-book-open text-primary"></i> Contributions en attente
                                 </h2>
                                 <Badge variant="outline">{contributionsCount}</Badge>
                             </div>

@@ -38,7 +38,7 @@ export default function Hero({ stats, handleSearchClick }) {
                         <strong className="text-primary text-base md:text-lg" id="hero-stat-resources">{stats.resources}</strong> ressources
                     </div>
                     <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border whitespace-nowrap">
-                        <strong className="text-primary text-base md:text-lg" id="hero-stat-contributions">{stats.contributions}</strong> contributions
+                        <strong className="text-primary text-base md:text-lg" id="hero-stat-contributions">{stats.contributions}</strong> Contributions en attente
                     </div>
                     <div className="flex items-center gap-2 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm border whitespace-nowrap">
                         <strong className="text-primary text-base md:text-lg" id="hero-stat-modules">{stats.modules}</strong> modules
