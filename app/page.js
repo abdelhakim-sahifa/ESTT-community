@@ -217,7 +217,7 @@ export default function Home() {
                 "name": "EST Tétouan Community",
                 "alternateName": "École Supérieure de Technologie de Tétouan",
                 "url": "https://estt-community.vercel.app",
-                "logo": "https://estt-community.vercel.app/assets/images/favicon.jpg",
+                "logo": "https://estt-community.vercel.app/favicon.ico",
                 "description": "Plateforme collaborative de partage de ressources académiques pour les étudiants de l'École Supérieure de Technologie de Tétouan",
                 "address": {
                     "@type": "PostalAddress",

@@ -33,7 +33,7 @@ export const metadata = {
         telephone: false,
     },
     icons: {
-        icon: '/assets/images/favicon.jpg',
+        icon: '/favicon.ico',
     },
     openGraph: {
         type: 'website',
@@ -44,7 +44,7 @@ export const metadata = {
         description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
         images: [
             {
-                url: '/assets/images/favicon.jpg',
+                url: '/favicon.ico',
                 width: 1200,
                 height: 630,
                 alt: 'EST Tétouan Community',
@@ -55,7 +55,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'EST Tétouan - Ressources Étudiants',
         description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
-        images: ['/assets/images/favicon.jpg'],
+        images: ['/favicon.ico'],
     },
     robots: {
         index: true,
