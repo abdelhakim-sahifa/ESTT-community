@@ -53,6 +53,11 @@ export async function generateMetadata({ params }) {
                 description: club.description || `Découvrez ${club.name}, un club étudiant de l'EST Tétouan`,
                 images: club.logo ? [club.logo] : [],
             },
+            icons: {
+                icon: club.logo || '/favicon.ico',
+                shortcut: club.logo || '/favicon.ico',
+                apple: club.logo || '/favicon.ico',
+            },
         };
     } catch (error) {
         console.error('Error generating club metadata:', error);
