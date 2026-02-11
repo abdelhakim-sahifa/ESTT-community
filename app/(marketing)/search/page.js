@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -22,6 +22,18 @@ function SearchContent() {
     const [results, setResults] = useState({ modules: [], resources: [], ads: [] });
     const [loading, setLoading] = useState(false);
     const [searchInputValue, setSearchInputValue] = useState(query);
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === '/' && document.activeElement !== inputRef.current) {
+                e.preventDefault();
+                inputRef.current?.focus();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     useEffect(() => {
         if (fieldParam) {
@@ -164,34 +176,47 @@ function SearchContent() {
                     </div>
                 ) : (
                     <div className="max-w-3xl mx-auto relative mt-8 animate-in zoom-in-95 duration-300">
-                        <div className="flex items-center justify-between mb-6 px-4">
-                            <Badge variant="outline" className="px-4 py-1.5 bg-primary/5 border-primary/20 text-primary font-bold rounded-full flex items-center gap-3 shadow-sm">
-                                <span className="text-[10px] uppercase tracking-widest opacity-60">Filière:</span>
-                                <span className="text-sm">{staticDb.fields.find(f => f.id === selectedField)?.name}</span>
-                                <button onClick={() => {
-                                    setSelectedField('');
-                                    setResults({ modules: [], resources: [] });
-                                    setSearchInputValue('');
-                                    router.push('/search');
-                                }} className="hover:scale-125 transition-transform text-primary/40 hover:text-primary">
-                                    <i className="fas fa-times-circle"></i>
-                                </button>
-                            </Badge>
-                        </div>
-                        <form onSubmit={handleSearchSubmit} className="relative group px-2 sm:px-0">
-                            <div className="absolute left-6 sm:left-8 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none group-focus-within:text-primary transition-colors">
-                                <SearchIcon className="h-6 w-6" />
+                        <div className="flex items-center justify-between mb-4 px-2">
+                            <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="px-3 py-1 bg-primary/5 border-primary/20 text-primary font-semibold rounded-lg flex items-center gap-2 shadow-sm transition-all hover:bg-primary/10">
+                                    <span className="text-[9px] uppercase tracking-tighter opacity-50 font-bold">Filière</span>
+                                    <span className="text-xs">{staticDb.fields.find(f => f.id === selectedField)?.name}</span>
+                                    <button onClick={() => {
+                                        setSelectedField('');
+                                        setResults({ modules: [], resources: [] });
+                                        setSearchInputValue('');
+                                        router.push('/search');
+                                    }} className="ml-1 text-primary/40 hover:text-primary transition-colors">
+                                        <i className="fas fa-times-circle text-xs"></i>
+                                    </button>
+                                </Badge>
                             </div>
+                        </div>
+
+                        <form onSubmit={handleSearchSubmit} className="relative group px-1 sm:px-0">
+                            <div className="absolute left-6 sm:left-7 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors z-10">
+                                <SearchIcon className="h-5 w-5" />
+                            </div>
+
                             <input
+                                ref={inputRef}
                                 type="text"
-                                className="w-full h-16 sm:h-20 pl-16 sm:pl-20 pr-32 sm:pr-40 rounded-[2rem] sm:rounded-full border-2 border-slate-100 bg-white shadow-2xl shadow-slate-200/50 focus:border-primary/30 focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all text-lg placeholder:text-slate-300 font-medium"
+                                className="w-full h-14 sm:h-16 pl-14 sm:pl-16 pr-36 sm:pr-44 rounded-2xl border border-slate-200 bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] focus:border-primary/40 focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all text-base sm:text-lg placeholder:text-slate-300 font-medium"
                                 placeholder="Rechercher par titre, module, prof..."
                                 value={searchInputValue}
                                 onChange={(e) => setSearchInputValue(e.target.value)}
                                 autoFocus
                             />
-                            <div className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                                <Button type="submit" className="h-10 sm:h-12 rounded-full px-6 sm:px-8 font-black uppercase tracking-widest text-[10px] sm:text-xs shadow-xl shadow-primary/20 group-hover:scale-105 transition-transform">
+
+                            <div className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                                <div className="hidden sm:flex items-center gap-1 px-2 py-1 rounded-md bg-slate-50 border border-slate-100 text-[10px] font-bold text-slate-400 pointer-events-none">
+                                    <span>Press</span>
+                                    <span className="bg-white px-1 border rounded shadow-sm">/</span>
+                                </div>
+                                <Button
+                                    type="submit"
+                                    className="h-9 sm:h-10 rounded-xl px-5 sm:px-7 font-bold text-[11px] sm:text-xs shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+                                >
                                     Rechercher
                                 </Button>
                             </div>

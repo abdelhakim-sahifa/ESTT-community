@@ -18,7 +18,7 @@ import { cn, getUserLevel } from '@/lib/utils';
 
 export default function PublicProfilePage() {
     const { id } = useParams();
-    const { user: currentUser } = useAuth();
+    const { user: currentUser, signOut } = useAuth();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -180,6 +180,15 @@ export default function PublicProfilePage() {
             alert("Erreur lors de la mise à jour du profil.");
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleLogout = async () => {
+        if (!window.confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) return;
+        try {
+            await signOut();
+        } catch (error) {
+            console.error("Error signing out", error);
         }
     };
 
@@ -400,6 +409,22 @@ export default function PublicProfilePage() {
                                 )}
                             </div>
                         </Card>
+
+                        {currentUser && currentUser.uid === id && (
+                            <Card className="p-6 bg-white border-slate-200 shadow-sm border-t-4 border-t-destructive/20">
+                                <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
+                                    <i className="fas fa-cog text-destructive"></i> Compte
+                                </h3>
+                                <Button
+                                    variant="outline"
+                                    onClick={handleLogout}
+                                    className="w-full justify-start rounded-xl border-destructive/10 text-destructive hover:bg-destructive/5 hover:text-destructive font-semibold gap-3"
+                                >
+                                    <X className="w-4 h-4" />
+                                    Déconnexion
+                                </Button>
+                            </Card>
+                        )}
                     </div>
 
                     {/* Right Column: Contributions & Clubs */}
