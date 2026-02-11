@@ -41,3 +41,6 @@ next-env.d.ts
 # IDE
 .vscode
 .idea
+
+
+USER_FILES/
