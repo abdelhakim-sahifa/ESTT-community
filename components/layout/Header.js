@@ -45,14 +45,6 @@ export default function Header() {
         };
     }, [user, profile, db]);
 
-    const handleSignOut = async () => {
-
-        try {
-            await signOut();
-        } catch (error) {
-            console.error("Error signing out", error);
-        }
-    };
 
     const isActive = (path) => pathname === path;
 
@@ -131,9 +123,6 @@ export default function Header() {
                                     )}
                                 </Link>
 
-                                <Button variant="outline" onClick={handleSignOut}>
-                                    Se déconnecter
-                                </Button>
 
                             </>
                         )}
@@ -183,9 +172,6 @@ export default function Header() {
                                 <span className="text-sm font-medium text-muted-foreground text-center">
                                     {user.email}
                                 </span>
-                                <Button variant="outline" onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}>
-                                    Se déconnecter
-                                </Button>
                             </div>
                         )}
                     </nav>

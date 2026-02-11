@@ -137,7 +137,26 @@ export default function ResourcePage() {
                             </p>
                         </div>
 
-                        {/* Additional metadata could go here */}
+                        {((resource.fields && resource.fields.length > 0) || resource.field) && (
+                            <div className="space-y-3 pt-6 border-t">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                                    <GraduationCap className="w-4 h-4" />
+                                    Filières associées
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {resource.field && (
+                                        <Badge variant="secondary" className="bg-primary/10 text-primary border-none hover:bg-primary/20 transition-colors">
+                                            {getFieldName(resource.field)}
+                                        </Badge>
+                                    )}
+                                    {resource.fields?.map((f, idx) => (
+                                        <Badge key={idx} variant="outline" className="border-slate-200 text-slate-600">
+                                            {getFieldName(f.fieldId)}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
 
                     <CardFooter className="bg-slate-50 py-6 border-t flex flex-col sm:flex-row gap-4 justify-between items-center">

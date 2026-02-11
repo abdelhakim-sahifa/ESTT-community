@@ -117,12 +117,20 @@ export default function BrowsePage() {
             if (formattedResources.length === 0) {
                 formattedResources = Object.entries(allResources)
                     .map(([id, res]) => ({ id, ...res }))
-                    .filter(res =>
-                        res.unverified !== true &&
-                        (res.module === selectedModule || res.moduleId === selectedModule) &&
-                        (res.url || res.link || res.file) &&
-                        res.title
-                    );
+                    .filter(res => {
+                        const isVerified = res.unverified !== true;
+                        const hasContent = res.url || res.link || res.file;
+                        const hasTitle = !!res.title;
+
+                        // Check direct module field
+                        const matchesDirectModule = res.module === selectedModule || res.moduleId === selectedModule;
+
+                        // Check multiple fields array
+                        const matchesInFields = res.fields && Array.isArray(res.fields) &&
+                            res.fields.some(f => f.moduleId === selectedModule);
+
+                        return isVerified && (matchesDirectModule || matchesInFields) && hasContent && hasTitle;
+                    });
             }
 
             setResources(formattedResources);
@@ -156,6 +164,10 @@ export default function BrowsePage() {
             case 'link': return <LinkIcon className="w-5 h-5" />;
             default: return <FileText className="w-5 h-5" />;
         }
+    };
+
+    const getFieldName = (fieldId) => {
+        return staticDb.fields.find(f => f.id === fieldId)?.name || fieldId;
     };
 
     return (
@@ -322,6 +334,15 @@ export default function BrowsePage() {
                                                     <Badge variant="outline" className="w-fit text-[10px] mt-1 uppercase border-primary/20 text-primary bg-primary/5">
                                                         {resource.docType}
                                                     </Badge>
+                                                )}
+                                                {resource.fields && resource.fields.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1 mt-1">
+                                                        {resource.fields.map((f, idx) => (
+                                                            <span key={idx} className="text-[9px] text-muted-foreground/60 font-medium">
+                                                                #{getFieldName(f.fieldId)}
+                                                            </span>
+                                                        ))}
+                                                    </div>
                                                 )}
                                             </div>
                                         </CardHeader>
