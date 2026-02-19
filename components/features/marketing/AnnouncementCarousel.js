@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { IMAGE_SIZES } from '@/lib/image-constants';
@@ -18,18 +18,11 @@ export default function AnnouncementCarousel({
     if (!announcements || announcements.length === 0) return null;
 
     return (
-        <section className="py-12 bg-white">
+        <section className="py-20 bg-slate-50/50">
             <div className="container px-4 md:px-6">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
-                    <div className="text-left">
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2">Annonces</h2>
-                        <div className="flex items-center gap-3">
-                            <div className="bg-primary/10 p-2 rounded-lg text-primary">
-                                <Calendar className="h-6 w-6" />
-                            </div>
-                            <h2 className="text-4xl font-black tracking-tight">À ne pas manquer</h2>
-                        </div>
-                    </div>
+                <div className="max-w-2xl mb-12">
+                    <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-4">À ne pas manquer</h2>
+                    <p className="text-slate-500 text-lg">Les annonces et événements récents de la communauté.</p>
                 </div>
 
                 <div className="relative rounded-3xl overflow-hidden bg-slate-900 aspect-[4/5] sm:aspect-[16/9] md:aspect-[21/7] shadow-2xl group">

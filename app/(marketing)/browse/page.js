@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { db as staticDb } from '@/lib/data';
 import { db, ref, get } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
     Select,
     SelectContent,
@@ -14,9 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User, Sparkles } from 'lucide-react';
-import { Image } from 'next/image'; // Check if this is needed or if global Image is fine
+import { Badge, Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User } from 'lucide-react';
 
 export default function BrowsePage() {
     const searchParams = useSearchParams();
@@ -268,51 +265,39 @@ export default function BrowsePage() {
                             <p className="text-muted-foreground">Recherche des ressources...</p>
                         </div>
                     ) : resources.length === 0 ? (
-                        <Card className="text-center py-16 border-dashed border-2 bg-muted/30">
-                            <CardHeader>
-                                <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                                    <FolderOpen className="w-8 h-8 text-muted-foreground" />
-                                </div>
-                                <CardTitle className="text-xl">Aucune ressource disponible</CardTitle>
-                                <CardDescription className="max-w-sm mx-auto mt-2">
-                                    Aidez vos camarades en étant le premier à partager une ressource pour ce module !
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Link href="/contribute">
-                                    <Button size="lg" className="mt-4">
-                                        Contribuer une ressource
-                                    </Button>
-                                </Link>
-                            </CardContent>
-                        </Card>
+                        <div className="text-center py-16 border border-dashed border-slate-200 rounded-xl">
+                            <div className="mx-auto w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                                <FolderOpen className="w-7 h-7 text-slate-400" />
+                            </div>
+                            <p className="font-semibold text-slate-900 mb-1">Aucune ressource disponible</p>
+                            <p className="text-sm text-slate-400 max-w-sm mx-auto mb-6">Aidez vos camarades en étant le premier à partager une ressource pour ce module !</p>
+                            <Link href="/contribute">
+                                <Button size="sm" className="rounded-full px-6">Contribuer une ressource</Button>
+                            </Link>
+                        </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {/* Student Ad Card */}
                             {ads.length > 0 && (
-                                <Card className="flex flex-col h-full border-blue-100 bg-blue-50/20 overflow-hidden group">
-                                    <div className="relative aspect-video overflow-hidden">
-                                        <img src={ads[0].url} alt="" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                                        <div className="absolute top-4 left-4">
-                                            <Badge className="bg-blue-600 text-white border-none shadow-sm font-black uppercase text-[10px]">Focus Étudiant</Badge>
+                                <div className="group border border-slate-200 rounded-xl overflow-hidden hover:border-primary/50 transition-colors flex flex-col h-full">
+                                    <div className="relative aspect-video overflow-hidden bg-slate-100">
+                                        <img src={ads[0].url} alt="" className="w-full h-full object-cover" />
+                                        <div className="absolute top-3 left-3">
+                                            <span className="inline-block bg-white/90 text-slate-700 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Focus</span>
                                         </div>
                                     </div>
-                                    <CardHeader className="p-6">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Sparkles className="w-4 h-4 text-blue-600" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-600/60">Sponsorisé</span>
+                                    <div className="p-5 flex flex-col flex-1">
+                                        <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors mb-1 line-clamp-1">{ads[0].title}</h3>
+                                        <p className="text-slate-500 text-sm line-clamp-2 mb-4">{ads[0].description}</p>
+                                        <div className="mt-auto pt-4 border-t border-slate-100">
+                                            {ads[0].link && (
+                                                <a href={ads[0].link} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-primary hover:underline">
+                                                    Découvrir →
+                                                </a>
+                                            )}
                                         </div>
-                                        <CardTitle className="text-xl line-clamp-1">{ads[0].title}</CardTitle>
-                                        <CardDescription className="line-clamp-2 text-sm mt-3">{ads[0].description}</CardDescription>
-                                    </CardHeader>
-                                    <div className="p-6 pt-0 mt-auto">
-                                        <Button className="w-full bg-blue-600 hover:bg-blue-700 font-bold rounded-xl" asChild>
-                                            <a href={ads[0].link} target="_blank" rel="noopener noreferrer">
-                                                Découvrir le projet
-                                            </a>
-                                        </Button>
                                     </div>
-                                </Card>
+                                </div>
                             )}
 
                             {resources.map((resource) => {
@@ -320,62 +305,42 @@ export default function BrowsePage() {
                                 const validUrl = rawUrl ? ensureProtocol(rawUrl) : null;
 
                                 return (
-                                    <Card key={resource.id} className="flex flex-col h-full hover:shadow-md transition-shadow">
-                                        <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                                            <div className="p-3 bg-primary/10 rounded-lg text-primary">
+                                    <div key={resource.id} className="group flex flex-col h-full border border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white p-5">
+                                        <div className="flex items-start gap-3 mb-3">
+                                            <div className="p-2 bg-slate-100 rounded-lg text-slate-500 shrink-0">
                                                 {getResourceIcon(resource.type)}
                                             </div>
-                                            <div className="flex flex-col overflow-hidden">
-                                                <CardTitle className="text-lg line-clamp-1">{resource.title}</CardTitle>
-                                                <Badge variant="secondary" className="w-fit text-[10px] mt-1 uppercase">
-                                                    {resource.type}
-                                                </Badge>
-                                                {resource.docType && (
-                                                    <Badge variant="outline" className="w-fit text-[10px] mt-1 uppercase border-primary/20 text-primary bg-primary/5">
-                                                        {resource.docType}
-                                                    </Badge>
-                                                )}
-                                                {resource.fields && resource.fields.length > 0 && (
-                                                    <div className="flex flex-wrap gap-1 mt-1">
-                                                        {resource.fields.map((f, idx) => (
-                                                            <span key={idx} className="text-[9px] text-muted-foreground/60 font-medium">
-                                                                #{getFieldName(f.fieldId)}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                )}
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">{resource.title}</h3>
+                                                <div className="flex flex-wrap gap-1 mt-1.5">
+                                                    <span className="text-[10px] font-bold uppercase text-slate-400">{resource.type}</span>
+                                                    {resource.docType && (
+                                                        <span className="text-[10px] font-bold uppercase text-primary">· {resource.docType}</span>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </CardHeader>
-                                        <CardContent className="flex-grow pt-2">
-                                            {resource.description && (
-                                                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                                                    {resource.description}
-                                                </p>
+                                        </div>
+
+                                        {resource.description && (
+                                            <p className="text-sm text-slate-500 line-clamp-2 mb-3">{resource.description}</p>
+                                        )}
+
+                                        <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+                                            {resource.professor && (
+                                                <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                                                    <User className="w-3 h-3" />
+                                                    <span className="truncate">{resource.professor}</span>
+                                                </div>
                                             )}
-                                            <div className="flex flex-col gap-2 mt-2">
-                                                {resource.professor && (
-                                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                        <User className="w-3 h-3" />
-                                                        <span>{resource.professor}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </CardContent>
-                                        <div className="p-6 pt-0 mt-auto border-t border-muted/50 pt-4 mt-4">
                                             {validUrl ? (
-                                                <Button className="w-full justify-between group" asChild>
-                                                    <a href={validUrl} target="_blank" rel="noopener noreferrer">
-                                                        Accéder à la ressource
-                                                        <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                                                    </a>
-                                                </Button>
+                                                <a href={validUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-primary hover:underline ml-auto flex items-center gap-1">
+                                                    Accéder <ArrowRight className="w-3 h-3" />
+                                                </a>
                                             ) : (
-                                                <Button variant="ghost" className="w-full" disabled>
-                                                    Non disponible
-                                                </Button>
+                                                <span className="text-xs text-slate-300 ml-auto">Non disponible</span>
                                             )}
                                         </div>
-                                    </Card>
+                                    </div>
                                 );
                             })}
                         </div>

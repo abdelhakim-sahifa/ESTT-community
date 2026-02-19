@@ -7,12 +7,11 @@ import { useAuth } from '@/context/AuthContext';
 import { isClubAdmin } from '@/lib/clubUtils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OrganizationalChart from '@/components/features/admin/OrganizationalChart';
 import ClubMemberCard from '@/components/features/clubs/ClubMemberCard';
 import StructuredData from '@/components/layout/StructuredData';
-import { CheckCircle2, Loader2, Settings, ArrowLeft, Users, Calendar, ChevronLeft, ChevronRight, User, Ticket } from 'lucide-react';
+import { CheckCircle2, Loader2, Settings, ArrowLeft, ChevronLeft, ChevronRight, User, Ticket } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -397,102 +396,71 @@ export default function ClubProfilePage() {
                     {/* Activities Tab */}
                     <TabsContent value="activities" className="space-y-6">
                         <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-3">
-                                <Calendar className="w-6 h-6 theme-text" />
-                                <h2 className="text-2xl font-bold">Activités et Annonces</h2>
-                            </div>
+                            <h2 className="text-xl font-bold text-slate-900">Actualités</h2>
                         </div>
 
                         {clubPosts.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {clubPosts.map((post) => {
                                     const author = getAuthorInfo(post.author);
                                     return (
-                                        <Link href={`/clubs/${clubId}/posts/${post.id}`} key={post.id}>
-                                            <Card className="h-full hover:shadow-md transition-shadow cursor-pointer overflow-hidden flex flex-col group">
-                                                {/* Card Image */}
-                                                {post.imageUrl && (
-                                                    <div className="relative w-full h-48 bg-slate-100">
-                                                        <Image
-                                                            src={post.imageUrl}
-                                                            alt={post.title}
-                                                            fill
-                                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                                        />
+                                        <Link href={`/clubs/${clubId}/posts/${post.id}`} key={post.id} className="group block border border-slate-200 rounded-xl overflow-hidden hover:border-primary/50 transition-colors bg-white">
+                                            {post.imageUrl && (
+                                                <div className="relative w-full h-44 bg-slate-100">
+                                                    <Image
+                                                        src={post.imageUrl}
+                                                        alt={post.title}
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                </div>
+                                            )}
+                                            <div className="p-5">
+                                                <div className="flex items-center justify-between gap-2 mb-2">
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                                        {post.type === 'announcement' ? 'Annonce' : post.type === 'article' ? 'Article' : 'Activité'}
+                                                    </span>
+                                                    <span className="text-xs text-slate-400">
+                                                        {new Date(post.createdAt).toLocaleDateString('fr-FR')}
+                                                    </span>
+                                                </div>
+                                                <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                                                    {post.title}
+                                                </h3>
+                                                <p className="text-slate-500 text-sm line-clamp-2 mb-4">{post.content}</p>
+                                                <div className="flex items-center gap-2 pt-3 border-t border-slate-100">
+                                                    <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                                                        <User className="w-3 h-3 text-slate-400" />
                                                     </div>
-                                                )}
-
-                                                <CardHeader className="flex-1 pb-2">
-                                                    <div className="flex items-start justify-between gap-4 mb-2">
-                                                        <Badge variant={
-                                                            post.type === 'announcement' ? 'default' :
-                                                                post.type === 'article' ? 'secondary' : 'outline'
-                                                        }
-                                                            style={post.type === 'announcement' ? { backgroundColor: club.themeColor || '#64748b' } : {}}
-                                                        >
-                                                            {post.type === 'announcement' ? 'Annonce' :
-                                                                post.type === 'article' ? 'Article' : 'Activité'}
-                                                        </Badge>
-                                                        <span className="text-xs text-muted-foreground">
-                                                            {new Date(post.createdAt).toLocaleDateString('fr-FR')}
-                                                        </span>
+                                                    <div>
+                                                        <span className="text-xs font-semibold text-slate-700">{author.name}</span>
+                                                        {author.role && <span className="text-[10px] text-slate-400 ml-1">· {author.role}</span>}
                                                     </div>
-                                                    <CardTitle className="text-xl line-clamp-2 theme-hover-text transition-colors">
-                                                        {post.title}
-                                                    </CardTitle>
-                                                </CardHeader>
-
-                                                <CardContent>
-                                                    <p className="text-muted-foreground line-clamp-3 text-sm">
-                                                        {post.content}
-                                                    </p>
-                                                </CardContent>
-
-                                                <CardFooter className="pt-0 border-t bg-slate-50/50 p-4 mt-auto">
-                                                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                                                        <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
-                                                            <User className="w-4 h-4 text-slate-500" />
-                                                        </div>
-                                                        <div className="flex flex-col">
-                                                            <span className="font-medium text-xs text-slate-900">{author.name}</span>
-                                                            {author.role && (
-                                                                <span className="text-[10px] text-muted-foreground">{author.role}</span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </CardFooter>
-                                            </Card>
+                                                </div>
+                                            </div>
                                         </Link>
                                     );
                                 })}
                             </div>
                         ) : (
-                            <Card>
-                                <CardContent className="py-12 text-center">
-                                    <p className="text-muted-foreground">
-                                        Aucune activité ou annonce publiée pour le moment.
-                                    </p>
-                                </CardContent>
-                            </Card>
+                            <div className="text-center py-12 border border-dashed border-slate-200 rounded-xl">
+                                <p className="text-slate-400 text-sm">Aucune activité ou annonce publiée pour le moment.</p>
+                            </div>
                         )}
                     </TabsContent>
 
                     {/* Organizational Structure Tab */}
                     <TabsContent value="structure" className="space-y-6">
-                        <div>
-                            <h2 className="text-2xl font-bold mb-2">Structure Organisationnelle</h2>
-                            <p className="text-muted-foreground mb-6">
-                                Découvrez l'équipe dirigeante du club et leurs rôles respectifs.
-                            </p>
+                        <div className="flex items-center gap-2 mb-6">
+                            <h2 className="text-xl font-bold text-slate-900">Structure Organisationnelle</h2>
                         </div>
                         <OrganizationalChart organizationalChart={club.organizationalChart} />
                     </TabsContent>
 
                     {/* Members Tab */}
                     <TabsContent value="members" className="space-y-6">
-                        <div className="flex items-center gap-3 mb-6">
-                            <Users className="w-6 h-6 theme-text" />
-                            <h2 className="text-2xl font-bold">Membres du Club</h2>
+                        <div className="flex items-center gap-2 mb-6">
+                            <h2 className="text-xl font-bold text-slate-900">Membres du Club</h2>
                         </div>
 
                         {club.members && club.members.length > 0 ? (
@@ -502,40 +470,29 @@ export default function ClubProfilePage() {
                                 ))}
                             </div>
                         ) : (
-                            <Card>
-                                <CardContent className="py-12 text-center">
-                                    <p className="text-muted-foreground">
-                                        Aucun membre régulier enregistré pour le moment.
-                                    </p>
-                                </CardContent>
-                            </Card>
+                            <div className="text-center py-12 border border-dashed border-slate-200 rounded-xl">
+                                <p className="text-slate-400 text-sm">Aucun membre régulier enregistré pour le moment.</p>
+                            </div>
                         )}
                     </TabsContent>
 
                     {/* Tickets Tab */}
                     {userTickets.length > 0 && (
                         <TabsContent value="tickets" className="space-y-6">
-                            <div className="flex items-center gap-3 mb-6">
-                                <Ticket className="w-6 h-6 theme-text" />
-                                <h2 className="text-2xl font-bold">Mes Tickets</h2>
+                            <div className="flex items-center gap-2 mb-6">
+                                <h2 className="text-xl font-bold text-slate-900">Mes Tickets</h2>
                             </div>
-                            <div className="grid gap-4 md:grid-cols-2">
+                            <div className="grid gap-3 md:grid-cols-2">
                                 {userTickets.map(ticket => (
-                                    <Link key={ticket.id} href={`/tickets/${ticket.id}`}>
-                                        <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4" style={{ borderLeftColor: club.themeColor || '#64748b' }}>
-                                            <CardContent className="p-4 flex justify-between items-center">
-                                                <div>
-                                                    <h3 className="font-bold text-lg">{ticket.eventName}</h3>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {new Date(ticket.createdAt).toLocaleDateString('fr-FR')}
-                                                    </p>
-                                                    <Badge className="mt-2" variant={ticket.status === 'valid' ? 'default' : 'destructive'}>
-                                                        {ticket.status}
-                                                    </Badge>
-                                                </div>
-                                                <Ticket className="w-8 h-8 text-slate-300" />
-                                            </CardContent>
-                                        </Card>
+                                    <Link key={ticket.id} href={`/tickets/${ticket.id}`} className="group flex items-center justify-between p-4 border border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white">
+                                        <div>
+                                            <h3 className="font-bold text-sm text-slate-900 group-hover:text-primary transition-colors">{ticket.eventName}</h3>
+                                            <p className="text-xs text-slate-400 mt-0.5">{new Date(ticket.createdAt).toLocaleDateString('fr-FR')}</p>
+                                            <span className={cn("inline-block mt-2 text-[10px] font-bold uppercase px-2 py-0.5 rounded-md", ticket.status === 'valid' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700')}>
+                                                {ticket.status === 'valid' ? 'Validé' : 'En attente'}
+                                            </span>
+                                        </div>
+                                        <Ticket className="w-5 h-5 text-slate-300 group-hover:text-primary transition-colors shrink-0" />
                                     </Link>
                                 ))}
                             </div>

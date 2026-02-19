@@ -6,13 +6,12 @@ export default function LatestActivity() {
     return (
         <section id="activity-feed" className="py-20 bg-white">
             <div className="container">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
-                    <div className="text-left">
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2">Communauté</h2>
-                        <h2 className="text-4xl font-black tracking-tight">Dernières Activités</h2>
-                    </div>
-                    <p className="text-muted-foreground max-w-sm text-sm">
-                        Découvrez ce que vos camarades partagent en temps réel sur la plateforme.
+                <div className="max-w-2xl mb-12">
+                    <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-4">
+                        Dernières Activités
+                    </h2>
+                    <p className="text-slate-500 text-lg">
+                        Les derniers partages de la communauté en temps réel.
                     </p>
                 </div>
 

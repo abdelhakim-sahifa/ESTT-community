@@ -89,11 +89,11 @@ export default function ActivityFeed() {
 
     const getFieldColor = (field) => {
         switch (field?.toLowerCase()) {
-            case 'ia': return 'bg-purple-100 text-purple-700 border-purple-200';
-            case 'casi': return 'bg-blue-100 text-blue-700 border-blue-200';
-            case 'insem': return 'bg-orange-100 text-orange-700 border-orange-200';
-            case 'idd': return 'bg-green-100 text-green-700 border-green-200';
-            default: return 'bg-slate-100 text-slate-700 border-slate-200';
+            case 'ia': return 'text-purple-600';
+            case 'casi': return 'text-blue-600';
+            case 'insem': return 'text-orange-600';
+            case 'idd': return 'text-green-600';
+            default: return 'text-slate-600';
         }
     };
 
@@ -107,64 +107,41 @@ export default function ActivityFeed() {
     return (
         <>
             {activities.map((activity) => (
-                <Card key={activity.id} className="group hover:shadow-xl transition-all duration-300 border-muted-foreground/10 overflow-hidden relative flex flex-col">
-                    <div className={cn(
-                        "absolute top-0 left-0 w-1 h-full",
-                        activity.type === 'resource' ? "bg-primary" : "bg-blue-500"
-                    )}></div>
-                    <CardContent className="p-6 flex-grow">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex gap-2">
-                                <Badge variant="secondary" className=" px-2 py-0 font-bold text-[9px] uppercase">
-                                    {activity.type === 'resource' ? 'Ressource' : 'Article'}
-                                </Badge>
-                                {activity.semester && (
-                                    <Badge variant="outline" className="px-2 py-0 font-bold text-[9px] uppercase border-primary/20 text-primary">
-                                        {activity.semester}
-                                    </Badge>
-                                )}
-                                {activity.field && (
-                                    <Badge variant="outline" className={cn("px-2 py-0 font-bold text-[9px] uppercase", getFieldColor(activity.field))}>
-                                        {activity.field}
-                                    </Badge>
-                                )}
-                            </div>
-                            <span className="text-[10px] text-muted-foreground font-bold">
-                                {formatDate(activity.timestamp)}
-                            </span>
-                        </div>
+                <a
+                    key={activity.id}
+                    href={activity.href}
+                    target={activity.type === 'resource' ? "_blank" : "_self"}
+                    rel={activity.type === 'resource' ? "noopener noreferrer" : ""}
+                    className="group block p-6 bg-white border border-slate-200 rounded-xl hover:border-primary/50 transition-colors"
+                >
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            {activity.type === 'resource' ? 'Ressource' : 'Article'}
+                        </span>
+                        <time className="text-[10px] text-slate-400 font-medium">
+                            {formatDate(activity.timestamp)}
+                        </time>
+                    </div>
 
-                        <h3 className="text-lg font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors">
-                            {activity.title}
-                        </h3>
+                    <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors mb-4 line-clamp-2">
+                        {activity.title}
+                    </h3>
 
-                        <div className="flex items-center gap-2 mb-6 text-sm text-muted-foreground">
-                            <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
-                                <User className="w-3 h-3" />
-                            </div>
-                            <span className="font-bold text-xs truncate">
-                                Par {activity.author}
-                            </span>
+                    <div className="flex items-center gap-2 pt-4 border-t border-slate-100">
+                        <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center">
+                            <User className="w-3 h-3 text-slate-400" />
                         </div>
-                    </CardContent>
-                    <div className="p-6 pt-0 mt-auto">
-                        <div className="flex items-center justify-between pt-4 border-t border-muted/20">
-                            {activity.type === 'resource' && (
-                                <span className="text-[10px] font-black uppercase text-primary truncate max-w-[150px]">
-                                    {activity.module}
-                                </span>
-                            )}
-                            <a
-                                href={activity.href}
-                                target={activity.type === 'resource' ? "_blank" : "_self"}
-                                rel={activity.type === 'resource' ? "noopener noreferrer" : ""}
-                                className="text-xs font-black uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all ml-auto hover:text-primary"
-                            >
-                                {activity.type === 'resource' ? 'Accéder' : 'Lire'} <ArrowRight className="w-3 h-3" />
-                            </a>
+                        <span className="text-xs text-slate-600 font-medium truncate">
+                            {activity.author}
+                        </span>
+                        <div className="ml-auto flex items-center gap-1 text-[10px] font-bold uppercase">
+                            <span className={cn(getFieldColor(activity.field))}>
+                                {activity.field || activity.module || 'ESTT'}
+                            </span>
+                            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                         </div>
                     </div>
-                </Card>
+                </a>
             ))}
         </>
     );

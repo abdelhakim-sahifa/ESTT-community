@@ -1,17 +1,21 @@
 'use client';
 
-import { useState, useEffect, Suspense, useRef } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { db as staticDb } from '@/lib/data';
 import { db, ref, get } from '@/lib/firebase';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, Search as SearchIcon, User, BookOpen, Sparkles } from 'lucide-react';
-
+import { Button } from '@/components/ui/button';
 function SearchContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -155,21 +159,15 @@ function SearchContent() {
                             {staticDb.fields.map((field) => (
                                 <button
                                     key={field.id}
-                                    className="group relative flex flex-col items-center p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm hover:shadow-2xl hover:border-primary/20 hover:-translate-y-2 transition-all duration-300"
+                                    className="group relative flex flex-col items-center p-8 rounded-2xl bg-white border border-slate-200 hover:border-primary/50 transition-all duration-300"
                                     onClick={() => setSelectedField(field.id)}
                                 >
-                                    <div className="w-16 h-16 rounded-3xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 mb-6 shadow-inner">
-                                        <i className={cn("fas text-2xl", field.icon)}></i>
-                                    </div>
-                                    <span className="text-sm font-black uppercase tracking-widest text-slate-700 group-hover:text-primary transition-colors text-center">
+                                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-600 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300 mb-6 font-bold uppercase tracking-widest text-xs">
                                         {field.id.toUpperCase()}
-                                    </span>
-                                    <p className="text-[10px] text-muted-foreground mt-3 line-clamp-2 text-center font-medium">
-                                        {field.name}
-                                    </p>
-                                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <ArrowRight className="w-4 h-4 text-primary" />
                                     </div>
+                                    <span className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors text-center">
+                                        {field.name}
+                                    </span>
                                 </button>
                             ))}
                         </div>
@@ -178,30 +176,32 @@ function SearchContent() {
                     <div className="max-w-3xl mx-auto relative mt-8 animate-in zoom-in-95 duration-300">
                         <div className="flex items-center justify-between mb-4 px-2">
                             <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="px-3 py-1 bg-primary/5 border-primary/20 text-primary font-semibold rounded-lg flex items-center gap-2 shadow-sm transition-all hover:bg-primary/10">
-                                    <span className="text-[9px] uppercase tracking-tighter opacity-50 font-bold">Filière</span>
-                                    <span className="text-xs">{staticDb.fields.find(f => f.id === selectedField)?.name}</span>
-                                    <button onClick={() => {
-                                        setSelectedField('');
-                                        setResults({ modules: [], resources: [] });
-                                        setSearchInputValue('');
-                                        router.push('/search');
-                                    }} className="ml-1 text-primary/40 hover:text-primary transition-colors">
-                                        <i className="fas fa-times-circle text-xs"></i>
-                                    </button>
-                                </Badge>
+                                <div className="flex items-center gap-2">
+                                    <div className="px-3 py-1 bg-slate-50 border border-slate-200 text-slate-600 font-semibold rounded-lg flex items-center gap-2 text-xs">
+                                        <span className="text-[10px] uppercase tracking-widest opacity-50">Filière</span>
+                                        <span>{staticDb.fields.find(f => f.id === selectedField)?.name}</span>
+                                        <button onClick={() => {
+                                            setSelectedField('');
+                                            setResults({ modules: [], resources: [] });
+                                            setSearchInputValue('');
+                                            router.push('/search');
+                                        }} className="ml-1 text-slate-400 hover:text-slate-600 transition-colors">
+                                            <i className="fas fa-times-circle text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <form onSubmit={handleSearchSubmit} className="relative group px-1 sm:px-0">
-                            <div className="absolute left-6 sm:left-7 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors z-10">
+                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors z-10">
                                 <SearchIcon className="h-5 w-5" />
                             </div>
 
                             <input
                                 ref={inputRef}
                                 type="text"
-                                className="w-full h-14 sm:h-16 pl-14 sm:pl-16 pr-36 sm:pr-44 rounded-2xl border border-slate-200 bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] focus:border-primary/40 focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all text-base sm:text-lg placeholder:text-slate-300 font-medium"
+                                className="w-full h-14 sm:h-16 pl-14 sm:pl-16 pr-36 sm:pr-40 rounded-xl border border-slate-200 bg-white focus:border-primary/50 focus:outline-none transition-all text-base sm:text-lg placeholder:text-slate-300 font-medium"
                                 placeholder="Rechercher par titre, module, prof..."
                                 value={searchInputValue}
                                 onChange={(e) => setSearchInputValue(e.target.value)}
@@ -215,7 +215,7 @@ function SearchContent() {
                                 </div>
                                 <Button
                                     type="submit"
-                                    className="h-9 sm:h-10 rounded-xl px-5 sm:px-7 font-bold text-[11px] sm:text-xs shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+                                    className="h-9 sm:h-10 rounded-xl px-5 sm:px-6 font-bold text-xs"
                                 >
                                     Rechercher
                                 </Button>
@@ -243,15 +243,9 @@ function SearchContent() {
                                     </h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {results.modules.map((module) => (
-                                            <Link key={module.id} href={`/browse?module=${module.id}`}>
-                                                <Card className="hover:shadow-md transition-shadow cursor-pointer h-full border-primary/20 bg-primary/5">
-                                                    <CardHeader className="p-4">
-                                                        <CardTitle className="text-base">{module.name}</CardTitle>
-                                                        <CardDescription className="text-xs uppercase">
-                                                            {module.id}
-                                                        </CardDescription>
-                                                    </CardHeader>
-                                                </Card>
+                                            <Link key={module.id} href={`/browse?module=${module.id}`} className="group p-5 border border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white">
+                                                <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors">{module.name}</h3>
+                                                <p className="text-[10px] uppercase font-bold text-slate-400 mt-1">{module.id}</p>
                                             </Link>
                                         ))}
                                     </div>
@@ -265,29 +259,30 @@ function SearchContent() {
                                         <Sparkles className="w-5 h-5 text-blue-600" />
                                         Opportunités Étudiantes
                                     </h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {results.ads.map((ad) => (
-                                            <Card key={ad.id} className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row bg-white rounded-2xl">
-                                                <div className="w-full sm:w-32 aspect-video sm:aspect-square relative overflow-hidden flex-shrink-0 bg-slate-100">
+                                            <div key={ad.id} className="group border border-slate-200 rounded-xl overflow-hidden hover:border-primary/50 transition-colors flex flex-col sm:flex-row bg-white">
+                                                <div className="w-full sm:w-28 aspect-video sm:aspect-square relative overflow-hidden shrink-0 bg-slate-50">
                                                     {ad.type === 'video' ? (
                                                         <video src={ad.url} className="w-full h-full object-cover" muted />
                                                     ) : (
                                                         <Image src={ad.url} alt="" fill className="object-cover" />
                                                     )}
                                                 </div>
-                                                <CardContent className="p-4 flex flex-col justify-between flex-grow">
+                                                <div className="p-4 flex flex-col justify-between flex-grow">
                                                     <div>
-                                                        <div className="flex items-center justify-between mb-1">
-                                                            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none text-[8px] uppercase font-black">Sponsorisé</Badge>
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">Annonce</span>
                                                         </div>
-                                                        <h3 className="font-bold text-slate-900 line-clamp-1">{ad.title}</h3>
-                                                        <p className="text-xs text-slate-500 line-clamp-2 mt-1">{ad.description}</p>
+                                                        <h3 className="text-sm font-bold text-slate-900 line-clamp-1">{ad.title}</h3>
+                                                        <p className="text-xs text-slate-500 line-clamp-1 mt-1">{ad.description}</p>
                                                     </div>
-                                                    <Button variant="outline" size="sm" className="w-full mt-4 rounded-xl border-blue-200 text-blue-600 hover:bg-blue-50 font-bold text-xs" asChild>
-                                                        <a href={ad.link} target="_blank" rel="noopener noreferrer">Découvrir</a>
-                                                    </Button>
-                                                </CardContent>
-                                            </Card>
+                                                    <a href={ad.link} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-blue-600 hover:text-blue-700 mt-3 inline-flex items-center gap-1 group/link">
+                                                        Découvrir
+                                                        <ArrowRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5" />
+                                                    </a>
+                                                </div>
+                                            </div>
                                         ))}
                                     </div>
                                 </section>
@@ -304,56 +299,46 @@ function SearchContent() {
                                         <p className="text-muted-foreground">Aucune ressource trouvée pour "{query}"</p>
                                     </div>
                                 ) : (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        {results.resources.map((resource) => {
-                                            return (
-                                                <Card key={resource.id} className="flex flex-col h-full hover:shadow-md transition-shadow">
-                                                    <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                                                        <div className="p-3 bg-primary/10 rounded-lg text-primary">
-                                                            {getResourceIcon(resource.type)}
-                                                        </div>
-                                                        <div className="flex flex-col overflow-hidden">
-                                                            <CardTitle className="text-lg line-clamp-1">{resource.title}</CardTitle>
-                                                            <Badge variant="secondary" className="w-fit text-[10px] mt-1 uppercase">
-                                                                {resource.type}
-                                                            </Badge>
-                                                            {resource.docType && (
-                                                                <Badge variant="outline" className="w-fit text-[10px] mt-1 uppercase border-primary/20 text-primary bg-primary/5">
-                                                                    {resource.docType}
-                                                                </Badge>
-                                                            )}
-                                                        </div>
-                                                    </CardHeader>
-                                                    <CardContent className="flex-grow pt-2">
-                                                        {resource.description && (
-                                                            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                                                                {resource.description}
-                                                            </p>
-                                                        )}
-                                                        <div className="flex flex-col gap-2">
-                                                            {resource.professor && (
-                                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                                    <User className="w-3 h-3" />
-                                                                    <span>{resource.professor}</span>
-                                                                </div>
-                                                            )}
-                                                            <div className="text-[10px] text-muted-foreground flex items-center gap-1 mt-1">
-                                                                <BookOpen className="w-3 h-3" />
-                                                                <span>{resource.module || resource.moduleId}</span>
-                                                            </div>
-                                                        </div>
-                                                    </CardContent>
-                                                    <div className="p-6 pt-0 mt-auto">
-                                                        <Button className="w-full justify-between group" asChild>
-                                                            <Link href={`/resources/${resource.id}`}>
-                                                                Ouvrir la ressource
-                                                                <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                                                            </Link>
-                                                        </Button>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {results.resources.map((resource) => (
+                                            <div key={resource.id} className="group flex flex-col h-full border border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white p-5">
+                                                <div className="flex items-start justify-between mb-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                                        {getResourceIcon(resource.type)}
                                                     </div>
-                                                </Card>
-                                            );
-                                        })}
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{resource.type}</span>
+                                                </div>
+
+                                                <div className="flex-grow">
+                                                    <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-1">
+                                                        {resource.title}
+                                                    </h3>
+                                                    {resource.description && (
+                                                        <p className="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed">
+                                                            {resource.description}
+                                                        </p>
+                                                    )}
+
+                                                    <div className="flex flex-col gap-1.5 mt-4">
+                                                        {resource.professor && (
+                                                            <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                                                                <User className="w-3 h-3" />
+                                                                <span>{resource.professor}</span>
+                                                            </div>
+                                                        )}
+                                                        <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                                                            <BookOpen className="w-3 h-3" />
+                                                            <span>{resource.module || resource.moduleId}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <Link href={`/resources/${resource.id}`} className="mt-5 pt-4 border-t border-slate-50 text-xs font-bold text-slate-400 group-hover:text-primary transition-colors flex items-center justify-between">
+                                                    Ouvrir la ressource
+                                                    <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+                                                </Link>
+                                            </div>
+                                        ))}
                                     </div>
                                 )}
                             </section>
