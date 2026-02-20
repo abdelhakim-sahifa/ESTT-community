@@ -39,7 +39,7 @@ export default function ActivityFeed() {
                                     author: resource.authorName || 'Anonyme',
                                     authorId: resource.authorId,
                                     timestamp: resource.createdAt || resource.created_at || Date.now(),
-                                    href: resource.url || resource.link || resource.file || `/browse?module=${resource.module}`
+                                    href: `/resource/${id}`
                                 });
                                 seenIds.add(id);
                             }
@@ -62,7 +62,7 @@ export default function ActivityFeed() {
                                 author: resource.authorName || 'Anonyme',
                                 authorId: resource.authorId,
                                 timestamp: resource.createdAt || resource.created_at || Date.now(),
-                                href: resource.url || resource.link || resource.file || `/browse?module=${resource.module}`
+                                href: `/resource/${id}`
                             });
                             seenIds.add(id);
                         }
@@ -110,8 +110,6 @@ export default function ActivityFeed() {
                 <a
                     key={activity.id}
                     href={activity.href}
-                    target={activity.type === 'resource' ? "_blank" : "_self"}
-                    rel={activity.type === 'resource' ? "noopener noreferrer" : ""}
                     className="group block p-6 bg-white border border-slate-200 rounded-xl hover:border-primary/50 transition-colors"
                 >
                     <div className="flex items-center justify-between mb-4">

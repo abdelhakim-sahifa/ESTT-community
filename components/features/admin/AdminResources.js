@@ -84,7 +84,7 @@ export default function AdminResources({ resources }) {
                         const userData = userSnap.val();
                         if (userData.email) {
                             const { resourceApprovedEmail } = await import('@/lib/email-templates');
-                            const resourceUrl = `https://estt-community.vercel.app/resources/${resource.id}`;
+                            const resourceUrl = `https://estt-community.vercel.app/resource/${resource.id}`;
                             const html = resourceApprovedEmail(userData.firstName || 'Étudiant', resource.title, resourceUrl);
 
                             await fetch('/api/send-email', {
@@ -108,7 +108,7 @@ export default function AdminResources({ resources }) {
                     title: 'Ressource Approuvée 🎉',
                     message: `Votre contribution "${resource.title}" a été validée et est maintenant en ligne.`,
                     icon: 'book-open',
-                    action: { type: 'navigate', target: `/resources/${resource.id}` }
+                    action: { type: 'navigate', target: `/resource/${resource.id}` }
                 });
             }
 
@@ -239,7 +239,7 @@ export default function AdminResources({ resources }) {
                         title: 'Ressource Mise à Jour 📝',
                         message: `Votre contribution "${editData.title}" a été mise à jour par un administrateur. ${changeDescription}`,
                         icon: 'edit-3',
-                        action: { type: 'navigate', target: `/resources/${itemToEdit.id}` }
+                        action: { type: 'navigate', target: `/resource/${itemToEdit.id}` }
                     });
 
                     // 2. Send Email Notification
@@ -248,7 +248,7 @@ export default function AdminResources({ resources }) {
                         const userData = userSnap.val();
                         if (userData.email) {
                             const { resourceUpdatedEmail } = await import('@/lib/email-templates');
-                            const resourceUrl = `https://estt-community.vercel.app/resources/${itemToEdit.id}`;
+                            const resourceUrl = `https://estt-community.vercel.app/resource/${itemToEdit.id}`;
                             const html = resourceUpdatedEmail(
                                 userData.firstName || 'Étudiant',
                                 editData.title,

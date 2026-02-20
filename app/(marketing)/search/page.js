@@ -333,7 +333,7 @@ function SearchContent() {
                                                     </div>
                                                 </div>
 
-                                                <Link href={`/resources/${resource.id}`} className="mt-5 pt-4 border-t border-slate-50 text-xs font-bold text-slate-400 group-hover:text-primary transition-colors flex items-center justify-between">
+                                                <Link href={`/resource/${resource.id}`} className="mt-5 pt-4 border-t border-slate-50 text-xs font-bold text-slate-400 group-hover:text-primary transition-colors flex items-center justify-between">
                                                     Ouvrir la ressource
                                                     <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
                                                 </Link>
