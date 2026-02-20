@@ -2,74 +2,62 @@
 export default async function sitemap() {
     const baseUrl = 'https://estt-community.vercel.app';
 
-    // Static routes
-    const staticRoutes = [
-        {
-            url: baseUrl,
-            lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 1,
-        },
-        {
-            url: `${baseUrl}/browse`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/clubs`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/search`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/terms`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/privacy`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
+    // Core application pages
+    const staticPages = [
+        '',
+        '/browse',
+        '/clubs',
+        '/search',
+        '/terms',
+        '/privacy',
+        '/resources',
+        '/ads-portal',
+        '/contribute',
+        '/docs',
+        '/download',
+        '/downloadAndroid',
+        '/thanks',
     ];
 
-    // Fetch clubs from Firebase (if available)
-    let clubRoutes = [];
-    try {
-        // Dynamic import to avoid issues if firebase is not initialized
-        const { db: firebaseDb, ref, get } = await import('@/lib/firebase');
+    const staticRoutes = staticPages.map((page) => ({
+        url: `${baseUrl}${page}`,
+        lastModified: new Date(),
+        changeFrequency: page === '' ? 'daily' : 'weekly',
+        priority: page === '' ? 1.0 : 0.8,
+    }));
 
-        if (firebaseDb) {
-            const clubsRef = ref(firebaseDb, 'clubs');
-            const clubsSnap = await get(clubsRef);
+    // Dynamic data fetching helper
+    const fetchDynamicRoutes = async (refPath, routePrefix, priority) => {
+        try {
+            const { db, ref, get } = await import('@/lib/firebase');
+            if (!db) return [];
 
-            if (clubsSnap.exists()) {
-                const clubsData = clubsSnap.val();
-                clubRoutes = Object.entries(clubsData)
-                    .filter(([_, club]) => club.verified)
-                    .map(([id, club]) => ({
-                        url: `${baseUrl}/clubs/${id}`,
-                        lastModified: new Date(club.createdAt || Date.now()),
-                        changeFrequency: 'weekly',
-                        priority: 0.9,
-                    }));
-            }
+            const snapshot = await get(ref(db, refPath));
+            if (!snapshot.exists()) return [];
+
+            return Object.entries(snapshot.val())
+                .filter(([_, item]) => item.verified || item.unverified !== true) // Show verified or not marked as unverified
+                .map(([id, item]) => ({
+                    url: `${baseUrl}/${routePrefix}/${id}`,
+                    lastModified: new Date(item.updatedAt || item.createdAt || Date.now()),
+                    changeFrequency: 'monthly',
+                    priority,
+                }));
+        } catch (error) {
+            console.error(`Error fetching dynamic routes for ${refPath}:`, error);
+            return [];
         }
-    } catch (error) {
-        console.error('Error fetching clubs for sitemap:', error);
-    }
+    };
+
+    // Fetch dynamic routes
+    const [clubRoutes, resourceRoutes] = await Promise.all([
+        fetchDynamicRoutes('clubs', 'clubs', 0.9),
+        fetchDynamicRoutes('resources', 'resources', 0.7),
+    ]);
 
     return [
         ...staticRoutes,
         ...clubRoutes,
+        ...resourceRoutes,
     ];
-}
+}

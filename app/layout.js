@@ -5,6 +5,7 @@ import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { AuthProvider } from '@/context/AuthContext';
+import { defaultMetadata } from '@/lib/metadata';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -17,24 +18,7 @@ const canela = localFont({
 });
 
 export const metadata = {
-    metadataBase: new URL('https://estt-community.vercel.app'),
-    title: {
-        default: 'EST Tétouan - Ressources Étudiants',
-        template: '%s | EST Tétouan',
-    },
-    description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'École Supérieure de Technologie de Tétouan. Accédez à des cours, TD, exercices et vidéos pour toutes les filières : IA, Cybersécurité, Industrie Navale, et Développement Digital.',
-    keywords: ['EST Tétouan', 'ressources étudiants', 'cours', 'TD', 'exercices', 'Intelligence Artificielle', 'Cybersécurité', 'CASI', 'INSEM', 'IDD', 'université', 'Maroc'],
-    authors: [{ name: 'EST Tétouan Community' }],
-    creator: 'EST Tétouan Community',
-    publisher: 'EST Tétouan',
-    formatDetection: {
-        email: false,
-        address: false,
-        telephone: false,
-    },
-    icons: {
-        icon: '/favicon.ico',
-    },
+    ...defaultMetadata,
     openGraph: {
         type: 'website',
         locale: 'fr_FR',
@@ -44,7 +28,7 @@ export const metadata = {
         description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
         images: [
             {
-                url: '/favicon.ico',
+                url: 'https://estt-community.vercel.app/favicon.ico',
                 width: 1200,
                 height: 630,
                 alt: 'EST Tétouan Community',
@@ -55,21 +39,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'EST Tétouan - Ressources Étudiants',
         description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
-        images: ['/favicon.ico'],
-    },
-    robots: {
-        index: true,
-        follow: true,
-        googleBot: {
-            index: true,
-            follow: true,
-            'max-video-preview': -1,
-            'max-image-preview': 'large',
-            'max-snippet': -1,
-        },
-    },
-    other: {
-        'google-adsense-account': 'ca-pub-8145062068015821',
+        images: ['https://estt-community.vercel.app/favicon.ico'],
     },
 };
 

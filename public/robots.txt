@@ -6,5 +6,10 @@ Disallow: /login
 Disallow: /signup
 Disallow: /profile
 Disallow: /api/
+Disallow: /private/
 
+# Crawl delay for polite crawling
+Crawl-delay: 1
+
+# Sitemap location
 Sitemap: https://estt-community.vercel.app/sitemap.xml
