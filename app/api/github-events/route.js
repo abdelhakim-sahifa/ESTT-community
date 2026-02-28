@@ -15,15 +15,33 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-const db = getDatabase(app);
+let db;
+try {
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+    db = getDatabase(app);
+} catch (error) {
+    console.error('Failed to initialize Firebase:', error);
+}
+
+export async function OPTIONS(req) {
+    return NextResponse.json(
+        { message: 'OK' },
+        {
+            status: 200,
+            headers: {
+                'Allow': 'GET, POST, OPTIONS',
+                'Content-Type': 'application/json',
+            },
+        }
+    );
+}
 
 export async function POST(req) {
     try {
         const payload = await req.json();
 
         // Verify it's a release event
-        if (payload.action && (payload.action === 'published' || payload.action === 'released') && payload.release) {
+        if (payload && payload.action && (payload.action === 'published' || payload.action === 'released') && payload.release) {
             const release = payload.release;
 
             // Extract relevant release information
