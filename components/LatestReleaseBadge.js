@@ -1,20 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getDatabase, ref, onValue } from 'firebase/database';
-import { initializeApp, getApps, getApp } from 'firebase/app';
-
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyBxyQZhdDbY3CN0G0o0AXPG9hueTXh7_54",
-    authDomain: "estt-community.firebaseapp.com",
-    databaseURL: "https://estt-community-default-rtdb.firebaseio.com",
-    projectId: "estt-community",
-    storageBucket: "estt-community.firebasestorage.app",
-    messagingSenderId: "154353945946",
-    appId: "1:154353945946:web:70546c5aec1bae742b3763",
-    measurementId: "G-SQVSELPERE"
-};
 
 export default function LatestReleaseBadge() {
     const [release, setRelease] = useState(null);
@@ -22,34 +8,23 @@ export default function LatestReleaseBadge() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        try {
-            const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-            const db = getDatabase(app);
-
-            // Listen to the latest release
-            const releaseRef = ref(db, 'releases/latest');
-
-            const unsubscribe = onValue(
-                releaseRef,
-                (snapshot) => {
-                    if (snapshot.exists()) {
-                        setRelease(snapshot.val());
-                    }
-                    setLoading(false);
-                },
-                (error) => {
-                    console.error('Error fetching release:', error);
-                    setError(error.message);
-                    setLoading(false);
+        const fetchLatestRelease = async () => {
+            try {
+                const response = await fetch('https://api.github.com/repos/abdelhakim-sahifa/ESTT-community/releases/latest');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch latest release');
                 }
-            );
+                const data = await response.json();
+                setRelease(data);
+            } catch (err) {
+                console.error('Error fetching release:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-            return () => unsubscribe();
-        } catch (err) {
-            console.error('Error setting up listener:', err);
-            setError(err.message);
-            setLoading(false);
-        }
+        fetchLatestRelease();
     }, []);
 
     if (loading || error || !release) {
@@ -58,16 +33,16 @@ export default function LatestReleaseBadge() {
 
     return (
         <a
-            href={release.url}
+            href={release.html_url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-full hover:border-blue-400 transition-colors group"
-            title={`Latest release: ${release.name || release.tagName}`}
+            title={`Latest release: ${release.name || release.tag_name}`}
         >
             <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 <span className="text-xs font-semibold text-slate-700 group-hover:text-blue-600 transition-colors">
-                    v{release.tagName.replace(/^v/, '')}
+                    v{release.tag_name.replace(/^v/, '')}
                 </span>
             </span>
             {!release.draft && !release.prerelease && (
