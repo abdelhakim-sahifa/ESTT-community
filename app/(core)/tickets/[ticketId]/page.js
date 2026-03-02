@@ -22,6 +22,8 @@ export default function TicketPage() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session_id');
     const [verifying, setVerifying] = useState(false);
+    const [justScanned, setJustScanned] = useState(false);
+    const [prevScanned, setPrevScanned] = useState(false);
 
     useEffect(() => {
         if (!ticketId || !db) return;
@@ -32,6 +34,16 @@ export default function TicketPage() {
         const unsubscribe = onValue(ticketRef, async (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
+
+                // Check if it was just scanned (transition from false to true)
+                const isScanned = data.scanned || data.checkedIn;
+                if (isScanned && !prevScanned && ticket) {
+                    setJustScanned(true);
+                    // Reset animation state after 3 seconds
+                    setTimeout(() => setJustScanned(false), 3000);
+                }
+                setPrevScanned(isScanned);
+
                 setTicket({ id: ticketId, ...data });
 
                 // Fetch club data for theme/branding if not already fetched
@@ -70,7 +82,7 @@ export default function TicketPage() {
         });
 
         return () => unsubscribe();
-    }, [ticketId, db, sessionId, verifying]);
+    }, [ticketId, db, sessionId, verifying, prevScanned, ticket?.id]);
 
     if (loading) {
         return (
@@ -124,7 +136,10 @@ export default function TicketPage() {
                 </div>
 
                 {/* THE TICKET */}
-                <div className="flex flex-col shadow-2xl rounded-[2.5rem] overflow-hidden bg-white group animate-in slide-in-from-bottom-8 duration-700">
+                <div className={cn(
+                    "flex flex-col shadow-2xl rounded-[2.5rem] overflow-hidden bg-white group animate-in slide-in-from-bottom-8 duration-700 transition-all",
+                    (ticket.scanned || ticket.checkedIn) && "ring-[16px] ring-green-500/10"
+                )}>
                     {/* Top Part: Branding & Event */}
                     <div className="relative p-8 text-white min-h-[160px] flex flex-col justify-end" style={{ backgroundColor: themeColor }}>
                         <div className="absolute top-0 right-0 p-6 opacity-10">
@@ -184,19 +199,25 @@ export default function TicketPage() {
                         <div className={cn(
                             "mt-8 p-4 rounded-2xl flex items-center gap-4 border-2 transition-all duration-500",
                             ticket.status === 'valid'
-                                ? "bg-green-50 border-green-100 text-green-700"
+                                ? (ticket.scanned || ticket.checkedIn ? "bg-blue-50 border-blue-100 text-blue-700" : "bg-green-50 border-green-100 text-green-700")
                                 : "bg-amber-50 border-amber-100 text-amber-700 animate-pulse"
                         )}>
                             <div className={cn(
                                 "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
-                                ticket.status === 'valid' ? "bg-green-500 text-white" : "bg-amber-500 text-white"
+                                ticket.status === 'valid'
+                                    ? (ticket.scanned || ticket.checkedIn ? "bg-blue-500 text-white" : "bg-green-500 text-white")
+                                    : "bg-amber-500 text-white"
                             )}>
-                                {ticket.status === 'valid' ? <CheckCircle2 className="w-6 h-6" /> : <Loader2 className="w-6 h-6 animate-spin" />}
+                                {ticket.status === 'valid'
+                                    ? (ticket.scanned || ticket.checkedIn ? <CheckCircle2 className="w-6 h-6" /> : <CheckCircle2 className="w-6 h-6" />)
+                                    : <Loader2 className="w-6 h-6 animate-spin" />}
                             </div>
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Statut du ticket</p>
                                 <p className="font-black text-sm uppercase">
-                                    {ticket.status === 'valid' ? (ticket.checkedIn ? 'UTILISÉ / ENTRÉE VALIDÉE' : 'VALIDÉ - PRÊT') : 'EN ATTENTE DE VALIDATION'}
+                                    {ticket.status === 'valid'
+                                        ? (ticket.scanned || ticket.checkedIn ? 'SCANNÉ / ENTRÉE VALIDÉE' : 'VALIDÉ - PRÊT')
+                                        : 'EN ATTENTE DE VALIDATION'}
                                 </p>
                             </div>
                         </div>
@@ -208,8 +229,10 @@ export default function TicketPage() {
                         <div className="absolute top-0 left-8 right-8 h-[2px] border-t-2 border-dashed border-slate-200" />
 
                         <div className={cn(
-                            "p-4 bg-white rounded-[2rem] shadow-sm border-2 transition-all duration-1000",
-                            ticket.status === 'valid' ? "border-slate-200" : "border-slate-100 opacity-20 filter grayscale"
+                            "p-4 bg-white rounded-[2rem] shadow-sm border-2 transition-all duration-1000 relative",
+                            ticket.status === 'valid'
+                                ? (ticket.scanned || ticket.checkedIn ? "border-blue-200 opacity-40 filter grayscale scale-95" : "border-slate-200")
+                                : "border-slate-100 opacity-20 filter grayscale"
                         )}>
                             <Image
                                 src={qrUrl}
@@ -218,6 +241,14 @@ export default function TicketPage() {
                                 height={200}
                                 className="w-48 h-48"
                             />
+
+                            {(ticket.scanned || ticket.checkedIn) && (
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div className="bg-white/90 backdrop-blur-sm p-4 rounded-full shadow-2xl border-4 border-green-500/20 scale-110 animate-in zoom-in-50 fade-in duration-500">
+                                        <CheckCircle2 className="w-16 h-16 text-green-500" />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {ticket.status !== 'valid' && (
