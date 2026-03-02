@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, ArrowLeft, Camera, CheckCircle2, XCircle, AlertCircle, Scan, User, Ticket, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { Html5QrcodeScanner } from 'html5-qrcode';
+import { cn } from '@/lib/utils';
+
 
 export default function TicketScannerPage() {
     const params = useParams();
@@ -128,13 +130,16 @@ export default function TicketScannerPage() {
 
         try {
             await update(ref(db, `tickets/${scannedTicket.id}`), {
+                scanned: true,
+                scannedAt: Date.now(),
+                scannedBy: user.email,
                 checkedIn: true,
                 checkedInAt: Date.now(),
                 checkedInBy: user.email
             });
 
             setSuccess("Validation réussie ! Le participant peut entrer.");
-            setScannedTicket(prev => ({ ...prev, checkedIn: true }));
+            setScannedTicket(prev => ({ ...prev, scanned: true, checkedIn: true }));
 
             // Auto reset after 3 seconds
             setTimeout(() => {
@@ -236,8 +241,8 @@ export default function TicketScannerPage() {
                                 <Badge variant={scannedTicket.status === 'valid' ? 'default' : 'outline'} className={scannedTicket.status === 'valid' ? 'bg-green-600' : 'text-amber-500 border-amber-500'}>
                                     {scannedTicket.status === 'valid' ? 'VALIDE' : 'EN ATTENTE'}
                                 </Badge>
-                                {scannedTicket.checkedIn && (
-                                    <Badge className="bg-blue-600">DÉJÀ ENTRÉ</Badge>
+                                {(scannedTicket.scanned || scannedTicket.checkedIn) && (
+                                    <Badge className="bg-blue-600">DÉJÀ SCANNÉ</Badge>
                                 )}
                             </div>
                         </CardHeader>
@@ -277,8 +282,8 @@ export default function TicketScannerPage() {
                                 className={cn("w-full h-14 text-lg font-black", scannedTicket.checkedIn ? "bg-slate-700" : "bg-green-600 hover:bg-green-700")}
                                 disabled={actionLoading || scannedTicket.checkedIn || scannedTicket.status !== 'valid'}
                             >
-                                {scannedTicket.checkedIn ? <CheckCircle2 className="mr-2 h-6 w-6" /> : <Scan className="mr-2 h-6 w-6" />}
-                                {scannedTicket.checkedIn ? 'DÉJÀ ENTRÉ' : 'APPROUVER L\'ENTRÉE'}
+                                {scannedTicket.scanned || scannedTicket.checkedIn ? <CheckCircle2 className="mr-2 h-6 w-6" /> : <Scan className="mr-2 h-6 w-6" />}
+                                {scannedTicket.scanned || scannedTicket.checkedIn ? 'DÉJÀ SCANNÉ' : 'APPROUVER L\'ENTRÉE'}
                             </Button>
 
                             <Button variant="ghost" className="w-full text-slate-400" onClick={() => {
