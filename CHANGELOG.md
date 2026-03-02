@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.1.3...v1.2.0) (2026-03-02)
+
+
+### Features
+
+* enhance ticket scanning functionality with visual feedback ([06e783c](https://github.com/abdelhakim-sahifa/ESTT-community/commit/06e783ce315a17d8068561ec9d77df7906538b34))
+
 ## [1.1.3](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.1.2...v1.1.3) (2026-02-28)
 
 
