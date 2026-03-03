@@ -54,7 +54,7 @@ export default function Hero({ stats, handleSearchClick }) {
                     Formats acceptés : PDF · Images · Liens · Vidéos — Anonyme possible · Modération rapide
                 </p>
 
-                <div className="relative w-full max-w-2xl mt-10 z-50 px-2 sm:px-0">
+                <div className="relative w-full max-w-2xl mt-12 z-50 px-2 sm:px-0">
                     <div
                         onClick={handleSearchClick}
                         className="group relative cursor-pointer"
@@ -63,24 +63,8 @@ export default function Hero({ stats, handleSearchClick }) {
                             <Search className="h-5 w-5" />
                         </div>
 
-                        <div className="w-full h-14 sm:h-16 pl-14 sm:pl-16 pr-6 rounded-2xl border border-slate-200 bg-white flex items-center text-slate-400 group-hover:border-primary/40 transition-colors text-sm md:text-base font-medium">
+                        <div className="w-full h-16 sm:h-20 pl-16 sm:pl-20 pr-10 rounded-3xl border border-slate-200 bg-white/80 backdrop-blur-sm flex items-center text-slate-400 group-hover:border-primary/40 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.1)] transition-all duration-300 shadow-sm text-base md:text-xl font-medium tracking-tight">
                             Rechercher un module, un cours ou une filière...
-                        </div>
-
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-3">
-                            <div className="hidden sm:flex items-center gap-1 px-2 py-1 rounded-md bg-slate-50 border border-slate-100 text-[10px] font-bold text-slate-400 pointer-events-none">
-                                <span>Press</span>
-                                <span className="bg-white px-1 border rounded shadow-sm">/</span>
-                            </div>
-                            <Button
-                                size="sm"
-                                className="h-9 rounded-xl px-5 sm:px-7 font-bold text-[11px] sm:text-xs hidden sm:flex"
-                            >
-                                Rechercher
-                            </Button>
-                            <Button size="icon" className="h-9 w-9 rounded-xl sm:hidden">
-                                <Search className="h-4 w-4" />
-                            </Button>
                         </div>
                     </div>
                 </div>
