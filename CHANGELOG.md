@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.3.0...v1.3.1) (2026-03-03)
+
+
+### Bug Fixes
+
+* **searchBar:** simplified the search bar by removing the redundant blue button and making the entire, enlarged bar a single clickable element ([a8f1207](https://github.com/abdelhakim-sahifa/ESTT-community/commit/a8f120732e330ebc7c7fe6988449b0adb973ddb1))
+
 # [1.3.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.2.1...v1.3.0) (2026-03-02)
 
 
