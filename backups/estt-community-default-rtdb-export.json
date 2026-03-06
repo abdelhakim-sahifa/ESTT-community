@@ -1,0 +1,2789 @@
+{
+  "accountModifications": {
+    "-OijJjGioUy0oWm7q3He": {
+      "createdAt": 1768173006773,
+      "currentValue": "Date",
+      "fieldToModify": "Date",
+      "newValue": "12",
+      "reason": "I want",
+      "requestType": "other",
+      "status": "pending",
+      "timestamp": "2026-01-11T23:10:06.774Z",
+      "userEmail": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "userName": "Abdelhakim Sahifa"
+    }
+  },
+  "adminSettings": {
+    "notifications": {
+      "email": "thevcercle@gmail.com",
+      "enabled": true
+    }
+  },
+  "admins": [
+    "sahifa.abdelhakim@etu.uae.ac.ma"
+  ],
+  "bugReports": {
+    "-OmpRMOURBT3k1-3V75I": {
+      "appVersion": "1.4.0",
+      "browser": "Chrome",
+      "createdAt": 1772570638183,
+      "description": "You need a separator for website sates in phone screens\n\nIts dos not look good ",
+      "deviceType": "Mobile",
+      "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "os": "Linux",
+      "referenceId": "BUG-X0YYRE",
+      "reporterName": "Abdelhakim Sahifa",
+      "severity": "Low",
+      "status": "fixed",
+      "stepsToReproduce": "1. Go to the main page",
+      "timestamp": 1772570637372,
+      "title": "You need a separator for website sates in phone screens",
+      "updatedAt": 1772570762012,
+      "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+    }
+  },
+  "chats": {
+    "ia_year1": {
+      "metadata": {
+        "lastReset": "2025"
+      }
+    }
+  },
+  "clubChangeRequests": {
+    "-Oi0nXTZoBORxmaJQoqH": {
+      "changeType": "name",
+      "clubId": "-OhlcLjhwujh0yd1T8gF",
+      "clubName": "CyberClub",
+      "newData": {
+        "name": "cyberLock"
+      },
+      "rejectedAt": 1767409411595,
+      "requestedAt": 1767409329744,
+      "requestedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "rejected"
+    }
+  },
+  "clubPosts": {
+    "-OhPxD3gb3t5ApR1Xwwt": {
+      "-OhPyjFIl1hxYmVi9G9j": {
+        "author": "sahifa.abdelhakim@etu.uae.ac.ma",
+        "content": "Le club TorchCoder est en cours de création et prépare son lancement officiel ! Très bientôt, les passionnés de programmation et de nouvelles technologies pourront rejoindre notre communauté dynamique pour apprendre, partager et créer des projets innovants. Restez connectés pour ne pas manquer l’ouverture et les premières activités du club !",
+        "createdAt": 1766757954564,
+        "imageUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/reClubeAnImg.png",
+        "likeCount": 1,
+        "likes": {
+          "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+        },
+        "title": "TorchCoder : Le Club de Codage Bientôt Ouvert !",
+        "type": "announcement"
+      },
+      "-OhQL_RTqrVQTfuvlwt6": {
+        "author": "sahifa.abdelhakim@etu.uae.ac.ma",
+        "content": "TorchCoder, notre nouveau club de programmation, est en cours de lancement ! Nous voulons que VOUS participiez à sa construction dès le départ.\n\nVous avez des idées pour des ateliers, des défis de codage, des projets ou des événements ? Ou des suggestions sur la meilleure façon dont notre club peut soutenir les passionnés de code ?\n\nSoumettez vos idées et aidez-nous à faire de TorchCoder la communauté de codage ultime ! Vos suggestions façonneront les activités, événements et expériences d’apprentissage pour tous les membres.",
+        "createdAt": 1766764205830,
+        "imageUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/idereClubeAnImg.png",
+        "likeCount": 6,
+        "likes": {
+          "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+        },
+        "linkedFormId": "-OhQLJfPt8rJMh3onE9I",
+        "title": "Participez à la création de TorchCoder – Donnez vos idées !",
+        "type": "announcement"
+      }
+    },
+    "-OlD9A_sDUPbz0Dfir6D": {
+      "-OlDDTa6dxl3GnJeU0ec": {
+        "author": "club.sport.estt@gmail.com",
+        "content": "Ready to take the trophy? \n🏆 The Annual Football Tournament is back!\nAssemble your 5-man squad, pick a legendary team name, and get ready for a high-stakes knockout tournament. Whether you’re a pro or just here for the glory, we want to see you on the pitch.\n⏰ Deadline for registration: February 19th\n📞 Info/Sign-ups: +212 611-110740",
+        "createdAt": 1770838943431,
+        "imageUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1770838941239_631725288_17862781956591780_5099416482391036426_ns.jpg",
+        "linkedFormId": "",
+        "title": "🏆 The Annual Football Tournament",
+        "type": "announcement"
+      },
+      "-OlDFbCEuRx4TsrwQR05": {
+        "author": "Admin",
+        "content": "Time to hit the court! 🏐 The Volleyball Tournament is officially here!\nGet your squad together, perfect your serves, and prepare for an epic showdown. Whether you’re aiming for the top spot or just here for the teamwork, we want to see you in action.\n⏰ Registration Deadline: February 19th\n📞 Info & Sign-ups: +212 611-110740\n\nINFORMATIONS:\n- Chaque équipe est composée de 6 joueurs.\n- Le nombre de remplaçants autorisé est compris entre 0 et 1.\n- Chaque équipe doit choisir un nom.\n- Le tournoi se déroulera en élimination directe.\n- Les équipes seront mixtes (filles et garçons).\n- Chaque équipe peut contenir au maximum 3 garçons.\n- Chaque équipe peut inclure des joueurs externes à l'école, dans la limite de 2 joueurs maximum\nLe dernier délai pour l'inscription est le 19/02\n\nFRAIS D'INSCRIPTION:\nadhérents : 15dh/per\nnon adhérents : 20dh/per\nexterne :25dh/per",
+        "createdAt": 1770839502990,
+        "imageUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1770839500238_Screenshot_2026-02-11_204628.png",
+        "linkedFormId": "",
+        "title": "🏐 The Volleyball Tournamen",
+        "type": "announcement"
+      }
+    }
+  },
+  "clubRequests": {
+    "-OhPx5rpUHDUEPQ6ii21": {
+      "approvedAt": 1766757556659,
+      "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+      "clubName": "TorchCoders",
+      "description": "Notre mission est d’allumer la passion pour la programmation et le développement logiciel chez les étudiants et les passionnés de technologie. Nous organisons des ateliers, des hackathons et des projets collaboratifs pour permettre à nos membres d’améliorer leurs compétences en codage, de découvrir de nouvelles technologies et de créer des solutions innovantes. Que vous soyez débutant ou programmeur expérimenté, TorchCoder est l’endroit idéal pour apprendre, partager et progresser ensemble.",
+      "logoUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1766757408952_TorchCoders.png",
+      "organizationalChart": {
+        "président": {
+          "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "Abdelhakim Sahifa",
+          "photo": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1766757511659_unnamed.png",
+          "role": "Président"
+        }
+      },
+      "requestedAt": 1766757527020,
+      "requestedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "approved"
+    },
+    "-Oi0qGUHfcIaOfhOE3Zb": {
+      "approvedAt": 1768154307554,
+      "clubId": "-OiiCOWV5k8Uf7pdBpgN",
+      "clubName": "Robotic",
+      "description": "une club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de roboticsune club de robotics",
+      "logoUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1767409925854_Gear-icon-blue.png",
+      "organizationalChart": {
+        "président": {
+          "email": "its.yaleem@etu.uae.ac.ma",
+          "filiere": "idd",
+          "name": "abdelhakim",
+          "photo": "",
+          "role": "Président"
+        }
+      },
+      "rejectedAt": 1767410157736,
+      "rejectionReason": "utilser une autre logo svp and renvoi la demmande",
+      "requestedAt": 1767410046425,
+      "requestedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "approved"
+    },
+    "-OlD7h0veNmInpcVCKnY": {
+      "approvedAt": 1770837817503,
+      "clubId": "-OlD9A_sDUPbz0Dfir6D",
+      "clubName": "Sport Club",
+      "description": "🏐 Sport\n⚽ Tournois | 🏆 Compétitions\n📩 club.sport.estt@gmail.com\n📲 Rejoins-nous 👇",
+      "logoUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1770836971333_562037883_17843816211591780_8255195418097290648_n.jpg",
+      "organizationalChart": {
+        "pageclubadmin": {
+          "email": "club.sport.estt@gmail.com",
+          "filiere": "ia",
+          "name": "Page Club Admin",
+          "photo": "",
+          "role": "Page Club Admin"
+        },
+        "président": {
+          "email": "club_president_email@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "club_president_name",
+          "photo": "",
+          "role": "Président"
+        },
+        "secrétaire": {
+          "email": "club_secretaire_email@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "club_secretaire_name",
+          "photo": "",
+          "role": "Secrétaire"
+        },
+        "trésorier": {
+          "email": "club_tresorier_name@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "club_tresorier_name",
+          "photo": "",
+          "role": "Trésorier"
+        },
+        "vice-président": {
+          "email": "club_vicpresident_email@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "club_vicepresident_name",
+          "photo": "",
+          "role": "Vice-Président"
+        }
+      },
+      "requestedAt": 1770837429690,
+      "requestedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "approved"
+    },
+    "-OlDLM8vqiZCRn9di9RU": {
+      "approvedAt": 1770841068537,
+      "clubId": "-OlDL_K1_4H4ZpzLUPVI",
+      "clubName": "ThinkCraft Club",
+      "description": "Innovate. Create. Inspire.\nEmpowering tech enthusiasts to turn ideas into impact",
+      "logoUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1770840824857_thinkcraft.jpg",
+      "organizationalChart": {
+        "autreposition": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "autre Position"
+        },
+        "président": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "Président"
+        },
+        "secrétaire": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "Secrétaire"
+        },
+        "trésorier": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "Trésorier"
+        },
+        "vice-président": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "Vice-Président"
+        }
+      },
+      "requestedAt": 1770841010105,
+      "requestedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "approved"
+    }
+  },
+  "clubs": {
+    "-OhPxD3gb3t5ApR1Xwwt": {
+      "createdAt": 1766757556509,
+      "description": "Notre mission est d’allumer la passion pour la programmation et le développement logiciel chez les étudiants et les passionnés de technologie. Nous organisons des ateliers, des hackathons et des projets collaboratifs pour permettre à nos membres d’améliorer leurs compétences en codage, de découvrir de nouvelles technologies et de créer des solutions innovantes. Que vous soyez débutant ou programmeur expérimenté, TorchCoder est l’endroit idéal pour apprendre, partager et progresser ensemble.",
+      "events": {
+        "-Oij_J1LD2KTPYah_un_": {
+          "createdAt": 1768177351535,
+          "date": "2026-03-08",
+          "description": "Faire partie du club",
+          "fields": [
+            {
+              "id": "name",
+              "label": "Nom complet",
+              "required": true,
+              "type": "text"
+            },
+            {
+              "id": "email",
+              "label": "Email",
+              "required": true,
+              "type": "email"
+            }
+          ],
+          "imageUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1768177324960_reClubeAnImg.png",
+          "location": "Amphi1",
+          "maxCapacity": 20,
+          "price": 120,
+          "registrationCount": 5,
+          "status": "published",
+          "time": "01:21",
+          "title": "Faire partie du club"
+        },
+        "-OkubzmrcZo_ZsJu_FYQ": {
+          "createdAt": 1770510084732,
+          "date": "2026-3-02",
+          "description": "test",
+          "fields": [
+            {
+              "id": "name",
+              "label": "Nom complet",
+              "required": true,
+              "type": "text"
+            },
+            {
+              "id": "email",
+              "label": "Email",
+              "required": true,
+              "type": "email"
+            },
+            {
+              "id": 1770510061053,
+              "label": "Telephone",
+              "options": "",
+              "required": false,
+              "type": "tel"
+            }
+          ],
+          "imageUrl": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1770510083438_amphi1.jpg",
+          "location": "sale 1",
+          "maxCapacity": "12",
+          "price": 99,
+          "registrationCount": 3,
+          "status": "published",
+          "time": "00:30",
+          "title": "Événement"
+        },
+        "-OmiVRS8CF4-jQxEPXKV": {
+          "createdAt": 1772454266789,
+          "date": "2026-03-02",
+          "description": "faire partire de l'evenement test",
+          "fields": [
+            {
+              "id": "name",
+              "label": "Nom complet",
+              "required": true,
+              "type": "text"
+            },
+            {
+              "id": "email",
+              "label": "Email",
+              "required": true,
+              "type": "email"
+            },
+            {
+              "id": 1772454240161,
+              "label": "accepter les reglements",
+              "options": "",
+              "required": true,
+              "type": "boolean"
+            }
+          ],
+          "imageUrl": "",
+          "location": "lieuTest",
+          "maxCapacity": "40",
+          "price": 13,
+          "registrationCount": 1,
+          "status": "published",
+          "time": "17:26",
+          "title": "12Test"
+        }
+      },
+      "formSubmissions": {
+        "-OhQLJfPt8rJMh3onE9I": {
+          "-OijK1lbRQTYVw_KwjYR": {
+            "data": {
+              "1": "Abdelhakim Sahifa",
+              "1766764078745": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "1766764088723": "Teat"
+            },
+            "submittedAt": 1768173086660,
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Ois_rmwvd-EbB0tDp6O": {
+            "data": {
+              "1": "Abdelhakim Sahifa",
+              "1766764078745": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "1766764088723": "Mon \n"
+            },
+            "paid": false,
+            "submittedAt": 1768328493023,
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-OiskqXL8TY-sfrfWnKz": {
+            "data": {
+              "1": "Karim Ahmes",
+              "1766764078745": "karim.ahmed.test@etu.uae.ac.ma",
+              "1766764088723": "Re"
+            },
+            "paid": false,
+            "submittedAt": 1768331371444,
+            "userId": "mSLkDVZ5WxXisPLT09BgsGcQ1GJ2"
+          }
+        },
+        "registration": {
+          "-OimzdJlqMOoz_4O_zmw": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3SonmI0B5hyOm1N61uHaEBuR",
+            "submittedAt": 1768234586873,
+            "ticketId": "-OimzdJtPL2P42K7Y8B8",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Oin0avssP9YdC5bCUMX": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3SonuV0B5hyOm1N60h0wvROP",
+            "submittedAt": 1768235101255,
+            "ticketId": "-Oin0avtWUg4i2sPXiFr",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Oin0t1K8TQHmaHwgTDA": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3SonwF0B5hyOm1N61a618GdA",
+            "submittedAt": 1768235175515,
+            "ticketId": "-Oin0t1QcdaNp5bXPtCi",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Oin2kmUuwITg7lf11rr": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3Soo3f0B5hyOm1N61NtiYmbk",
+            "submittedAt": 1768235665956,
+            "ticketId": "-Oin2kmVU03LUaRB7j2W",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Oin3ADQgXwK1ElYAe3q": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3Soo5Y0B5hyOm1N61NVGA6VF",
+            "submittedAt": 1768235774204,
+            "ticketId": "-Oin3ADS3k9uu-lrtqp2",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Oin5U7prU2d1CZHoE_C": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3SooFV0B5hyOm1N61NP8zF4S",
+            "submittedAt": 1768236380044,
+            "ticketId": "-Oin5U7v1GG3opH3ZfmU",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Oin6vyTJDRoKwktJIMV": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3SooLC0B5hyOm1N60i2N1mRx",
+            "submittedAt": 1768236760215,
+            "ticketId": "-Oin6vyVsNsbmOinMTFq",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Oin9Xp1lQlfDFR8-5KG": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": false,
+            "submittedAt": 1768237445108,
+            "ticketId": "-Oin9Xp1lQlfDFR8-5KH",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Oioj0zDVjpii3u3D9BG": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3SovNU0B5hyOm1N61g9QpqAX",
+            "submittedAt": 1768263786065,
+            "ticketId": "-Oioj0zTk37XImZw69s7",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-OiokKn5Rkd7ZUUBYl-k": {
+            "data": {
+              "email": "hakim.hakim@etu.uae.ac.ma",
+              "name": "Hakim Hakim"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3SovTD0B5hyOm1N60yPsDoRd",
+            "submittedAt": 1768264129105,
+            "ticketId": "-OiokKnJ4AYiTd2N2qlr",
+            "userId": "Jo23hUMVQKSe9Gvw0FfI9ahOOoy2"
+          },
+          "-Oitv4NMUsug6vxtq77U": {
+            "data": {
+              "email": "hakim.hakim@etu.uae.ac.ma",
+              "name": "Hakim Hakim"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3SpI1V0B5hyOm1N61T2V9fQg",
+            "submittedAt": 1768350832170,
+            "ticketId": "-Oitv4NRaelnjdWTgkIV",
+            "userId": "Jo23hUMVQKSe9Gvw0FfI9ahOOoy2"
+          },
+          "-Oj0g-gsj7qfFiNR5vBt": {
+            "data": {
+              "email": "admin.test@etu.uae.ac.ma",
+              "name": "Admin Admin"
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3Sppua0B5hyOm1N60eAtAlmr",
+            "submittedAt": 1768481096738,
+            "ticketId": "-Oj0g-gtmhcFrMvdMUoZ",
+            "userId": "tRC8UaEBevdSWcAjViezHlBmYDi1"
+          },
+          "-OkucnPe58XzJR5p-yOv": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-OkubzmrcZo_ZsJu_FYQ",
+            "paid": true,
+            "stripeSessionId": "pi_3SyLne0B5hyOm1N60gyk58rL",
+            "submittedAt": 1770510301081,
+            "ticketId": "-OkucnPkZPCHGLrZSZp_",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Olb8JwcU4Ltc3LLcDbs": {
+            "data": {
+              "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+              "name": "Abdelhakim Sahifa"
+            },
+            "eventId": "-Olb82gMeqX-w4qYYqRu",
+            "paid": true,
+            "stripeSessionId": "pi_3T1U3C0B5hyOm1N610FAKDUR",
+            "submittedAt": 1771257024122,
+            "ticketId": "-Olb8JwdggzNWl3ywQYW",
+            "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+          },
+          "-Om6EHznYI31p8bUkw54": {
+            "data": {
+              "email": "testaccount@etu.uae.ac.ma",
+              "name": "Test  Account "
+            },
+            "eventId": "-Oij_J1LD2KTPYah_un_",
+            "paid": true,
+            "stripeSessionId": "pi_3T3k7p0B5hyOm1N619dMbpKC",
+            "submittedAt": 1771795459981,
+            "ticketId": "-Om6EHzqPLRYUXuvKsJ6",
+            "userId": "UnzSqZjiefgPr2tZy0kbsHhWEV03"
+          },
+          "-Om6F9ld59vFT-QDeNIg": {
+            "data": {
+              "1771795624265": true,
+              "email": "testaccount@etu.uae.ac.ma",
+              "name": "Test  Account "
+            },
+            "eventId": "-Om6F3z2DppNTUf14fUT",
+            "paid": false,
+            "submittedAt": 1771795688537,
+            "ticketId": "-Om6F9ld59vFT-QDeNIh",
+            "userId": "UnzSqZjiefgPr2tZy0kbsHhWEV03"
+          }
+        }
+      },
+      "forms": {
+        "-OhQLJfPt8rJMh3onE9I": {
+          "createdAt": 1766764137154,
+          "description": "Vous avez des idées pour des ateliers, des défis de codage, des projets ou des événements ? Ou des suggestions sur la meilleure façon dont notre club peut soutenir les passionnés de code ?",
+          "fields": [
+            {
+              "id": 1,
+              "label": "Nom",
+              "required": true,
+              "type": "text"
+            },
+            {
+              "id": 1766764078745,
+              "label": "Email",
+              "required": false,
+              "type": "email"
+            },
+            {
+              "id": 1766764088723,
+              "label": "Suggestions",
+              "required": true,
+              "type": "textarea"
+            }
+          ],
+          "generateTicket": false,
+          "title": "Donnez vos idées"
+        }
+      },
+      "joinFormQuestions": [
+        {
+          "id": 1766862925306,
+          "label": "Avez-vous un compte GitHub ?",
+          "options": "Oui , Non",
+          "required": true,
+          "type": "radio"
+        },
+        {
+          "id": 1766862947123,
+          "label": "Si oui, veuillez saisir votre nom d’utilisateur Github",
+          "options": "",
+          "required": false,
+          "type": "text"
+        },
+        {
+          "id": 1766862973155,
+          "label": "Langages de programmation maîtrisés ",
+          "options": "",
+          "required": false,
+          "type": "text"
+        },
+        {
+          "id": 1766863101100,
+          "label": "Domaines d’intérêt en informatique?",
+          "options": "Web, Mobile, IA, Cybersécurité, autre",
+          "required": false,
+          "type": "checkbox"
+        },
+        {
+          "id": 1766863313351,
+          "label": "J’accepte de respecter le règlement intérieur du club ",
+          "options": "Oui,",
+          "required": true,
+          "type": "radio"
+        }
+      ],
+      "logo": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1766757408952_TorchCoders.png",
+      "name": "TorchCoders",
+      "organizationalChart": {
+        "président": {
+          "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "Abdelhakim Sahifa",
+          "photo": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1766757511659_unnamed.png",
+          "role": "Président"
+        }
+      },
+      "socialLinks": {
+        "github": "",
+        "instagram": "instagram.com/torchCoders",
+        "other": "https://www.est.uae.ma/?club=torchcoder"
+      },
+      "themeColor": "#512d6d",
+      "verified": true
+    },
+    "-OlD9A_sDUPbz0Dfir6D": {
+      "createdAt": 1770837817006,
+      "description": "🏐 Sport\n⚽ Tournois | 🏆 Compétitions\n📩 club.sport.estt@gmail.com\n📲 Rejoins-nous 👇",
+      "logo": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1770836971333_562037883_17843816211591780_8255195418097290648_n.jpg",
+      "name": "Sport Club",
+      "organizationalChart": {
+        "pageclubadmin": {
+          "email": "club.sport.estt@gmail.com",
+          "filiere": "ia",
+          "name": "Page Club Admin",
+          "photo": "",
+          "role": "Page Club Admin"
+        },
+        "président": {
+          "email": "club.sport.estt@gmail.com",
+          "filiere": "ia",
+          "name": "club_president_name",
+          "photo": "",
+          "role": "Président"
+        },
+        "secrétaire": {
+          "email": "club_secretaire_email@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "club_secretaire_name",
+          "photo": "",
+          "role": "Secrétaire"
+        },
+        "trésorier": {
+          "email": "club_tresorier_name@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "club_tresorier_name",
+          "photo": "",
+          "role": "Trésorier"
+        },
+        "vice-président": {
+          "email": "club_vicpresident_email@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "club_vicepresident_name",
+          "photo": "",
+          "role": "Vice-Président"
+        }
+      },
+      "socialLinks": {
+        "instagram": "https://www.instagram.com/sportclubestt/",
+        "other": ""
+      },
+      "themeColor": "#1f1f1f",
+      "verified": true
+    },
+    "-OlDL_K1_4H4ZpzLUPVI": {
+      "createdAt": 1770841068373,
+      "description": "Innovate. Create. Inspire.\nEmpowering tech enthusiasts to turn ideas into impact",
+      "logo": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1770840824857_thinkcraft.jpg",
+      "name": "ThinkCraft Club",
+      "organizationalChart": {
+        "autreposition": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "autre Position"
+        },
+        "président": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "Président"
+        },
+        "secrétaire": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "Secrétaire"
+        },
+        "trésorier": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "Trésorier"
+        },
+        "vice-président": {
+          "email": "postemail@etu.uae.ac.ma",
+          "filiere": "ia",
+          "name": "nom",
+          "photo": "",
+          "role": "Vice-Président"
+        }
+      },
+      "socialLinks": {
+        "instagram": "https://www.instagram.com/thinkcraft_estt/",
+        "linkedin": "https://www.linkedin.com/company/thinkcraft-club-est-t%C3%A9touan/?utm_source=esttplus"
+      },
+      "themeColor": "#1c0936",
+      "verified": true
+    }
+  },
+  "emailExceptions": [
+    "thevcercle@gmail.com",
+    "club.sport.estt@gmail.com"
+  ],
+  "eventAttendees": {
+    "-Oij_J1LD2KTPYah_un_": {
+      "ak04pzxzikfdr6I0L6z3zx9VKLm1": {
+        "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+        "eventId": "-Oij_J1LD2KTPYah_un_",
+        "rsvpAt": 1772483721211,
+        "status": "going",
+        "ticketId": "-OmkFnRAUNezhksS4Mwe"
+      }
+    },
+    "-OkubzmrcZo_ZsJu_FYQ": {
+      "ak04pzxzikfdr6I0L6z3zx9VKLm1": {
+        "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+        "eventId": "-OkubzmrcZo_ZsJu_FYQ",
+        "rsvpAt": 1772451032861,
+        "status": "going",
+        "ticketId": "-OmiJ5xz9wx_5rW2ECmf"
+      }
+    },
+    "-OmiVRS8CF4-jQxEPXKV": {
+      "ak04pzxzikfdr6I0L6z3zx9VKLm1": {
+        "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+        "eventId": "-OmiVRS8CF4-jQxEPXKV",
+        "rsvpAt": 1772454352864,
+        "status": "going",
+        "ticketId": "-OmiVlQd7AXSllO9DH5p"
+      }
+    }
+  },
+  "metadata": {
+    "fields": {
+      "casi": {
+        "description": "Sécurité des réseaux, cryptographie, audit SI et protection des données.",
+        "icon": "fa-shield-alt",
+        "id": "casi",
+        "name": "Cybersécurité et audit des systèmes d’information"
+      },
+      "ia": {
+        "description": "Techniques d’IA, Big Data, machine learning, data science.",
+        "icon": "fa-brain",
+        "id": "ia",
+        "name": "Intelligence Artificielle"
+      },
+      "idd": {
+        "description": "Dév. web, Big Data, cloud, digitalisation, IA et numérique.",
+        "icon": "fa-laptop-code",
+        "id": "idd",
+        "name": "Informatique & Développement Digital"
+      },
+      "insem": {
+        "description": "Électricité navale, maintenance, propulsion, instrumentation marine.",
+        "icon": "fa-ship",
+        "id": "insem",
+        "name": "Industrie Navale : Systèmes Électriques et Maintenance"
+      }
+    },
+    "keywords": {
+      "casi": {
+        "-OhWSqRva3_irsedJyhd": {
+          "resourceId": "-OhWSqRva3_irsedJyhd",
+          "title": "Algorithmes"
+        }
+      },
+      "ia": {
+        "-Oh5cSufyu6Y7YNOXq27": {
+          "resourceId": "-Oh5cSufyu6Y7YNOXq27",
+          "title": "Groupes, Anneaux, Corps et Espaces Vectoriels"
+        },
+        "-OhWSqRva3_irsedJyhd": {
+          "resourceId": "-OhWSqRva3_irsedJyhd",
+          "title": "Algorithmes"
+        },
+        "-OhlFKsghVNExmgRYF8F": {
+          "resourceId": "-OhlFKsghVNExmgRYF8F",
+          "title": "Cours Module Réseau Chaiptre 1,2,3 et 4 "
+        },
+        "-OhwOTntRw47JOXZS4Dz": {
+          "resourceId": "-OhwOTntRw47JOXZS4Dz",
+          "title": "Série TD"
+        },
+        "-Oi0oBvQTF6ti_pirTSP": {
+          "resourceId": "-Oi0oBvQTF6ti_pirTSP",
+          "title": "Tests d’hypothèses"
+        },
+        "-Oij3LM5uqjYJs5hLOws": {
+          "resourceId": "-Oij3LM5uqjYJs5hLOws",
+          "title": "Drive - Cours Module Réseau Chaiptre 1,2,3 et 4.pdf"
+        },
+        "-Oij8bhfpEwuHuC4tO5j": {
+          "resourceId": "-Oij8bhfpEwuHuC4tO5j",
+          "title": "TD1"
+        },
+        "-Oij8bpkMqd94jwyA9Rl": {
+          "resourceId": "-Oij8bpkMqd94jwyA9Rl",
+          "title": "TD2"
+        },
+        "-Oij8c0aAl3pAdgtVobV": {
+          "resourceId": "-Oij8c0aAl3pAdgtVobV",
+          "title": "TD3"
+        },
+        "-OijC0G3RDz80MDc-7uC": {
+          "resourceId": "-OijC0G3RDz80MDc-7uC",
+          "title": "Drive - TPs"
+        },
+        "-OijCJfND7JHpDF1sqfB": {
+          "resourceId": "-OijCJfND7JHpDF1sqfB",
+          "title": "Résumé Réseaux & Sécurité"
+        },
+        "-OluBusOfxHMT_qVtClA": {
+          "resourceId": "-OluBusOfxHMT_qVtClA",
+          "title": "Playlist : Language C"
+        },
+        "-OmM3FsMHxlhwKUkbZoh": {
+          "resourceId": "-OmM3FsMHxlhwKUkbZoh",
+          "title": "test"
+        }
+      },
+      "idd": {
+        "-OhWSqRva3_irsedJyhd": {
+          "resourceId": "-OhWSqRva3_irsedJyhd",
+          "title": "Algorithmes"
+        },
+        "-Oi0oBvQTF6ti_pirTSP": {
+          "resourceId": "-Oi0oBvQTF6ti_pirTSP",
+          "title": "Tests d’hypothèses"
+        },
+        "-OluBusOfxHMT_qVtClA": {
+          "resourceId": "-OluBusOfxHMT_qVtClA",
+          "title": "Playlist : Language C"
+        }
+      }
+    },
+    "modules": {
+      "casi-S1": [
+        {
+          "id": "casi_m1",
+          "name": "Mathématiques pour la Cybersécurité"
+        },
+        {
+          "id": "casi_m2",
+          "name": "Algorithmes & Programmation Python"
+        },
+        {
+          "id": "casi_m3",
+          "name": "Réseaux & Protocoles Sécurisés"
+        },
+        {
+          "id": "casi_m4",
+          "name": "SGBD / Bases de Données"
+        },
+        {
+          "id": "casi_m5",
+          "name": "Architecture des Ordinateurs & OS"
+        },
+        {
+          "id": "casi_m6",
+          "name": "Langues & Techniques de Communication 1"
+        },
+        {
+          "id": "casi_m7",
+          "name": "Méthodologie de Travail Universitaire"
+        }
+      ],
+      "casi-S2": [
+        {
+          "id": "casi_m8",
+          "name": "Programmation C"
+        },
+        {
+          "id": "casi_m9",
+          "name": "Cryptographie appliquée"
+        },
+        {
+          "id": "casi_m10",
+          "name": "Administration Windows Server"
+        },
+        {
+          "id": "casi_m11",
+          "name": "Programmation Python Orientée Objet"
+        },
+        {
+          "id": "casi_m12",
+          "name": "Sécurité des Réseaux"
+        },
+        {
+          "id": "casi_m13",
+          "name": "Langues & Communication 2"
+        },
+        {
+          "id": "casi_m14",
+          "name": "Culture Digitale / Power Skills"
+        }
+      ],
+      "casi-S3": [
+        {
+          "id": "casi_m15",
+          "name": "Tests d’intrusion (Pen-testing)"
+        },
+        {
+          "id": "casi_m16",
+          "name": "Analyse de Logs"
+        },
+        {
+          "id": "casi_m17",
+          "name": "Sécurité des Applications Web"
+        },
+        {
+          "id": "casi_m18",
+          "name": "SOC & Supervision de Sécurité"
+        },
+        {
+          "id": "casi_m19",
+          "name": "Audit des SI – Méthodologies & Outils"
+        },
+        {
+          "id": "casi_m20",
+          "name": "Introduction à la Gestion d’Entreprise"
+        },
+        {
+          "id": "casi_m21",
+          "name": "Culture & Art Skills"
+        }
+      ],
+      "casi-S4": [
+        {
+          "id": "casi_m22",
+          "name": "Veille Technologique & Innovation Numérique"
+        },
+        {
+          "id": "casi_m23",
+          "name": "Cloud Sécurisé & Sauvegardes"
+        },
+        {
+          "id": "casi_m24",
+          "name": "Introduction à l’IA"
+        },
+        {
+          "id": "casi_m25",
+          "name": "Développement Personnel"
+        },
+        {
+          "id": "casi_m26",
+          "name": "Projet de Fin d’Études (PFE)"
+        }
+      ],
+      "ia-S1": [
+        {
+          "id": "ia_m1",
+          "name": "Architecture des ordinateurs & Systèmes d’exploitation"
+        },
+        {
+          "id": "ia_m2",
+          "name": "Algorithmes & Programmation Python"
+        },
+        {
+          "id": "ia_m3",
+          "name": "Mathématiques pour l’apprentissage automatique"
+        },
+        {
+          "id": "ia_m4",
+          "name": "Réseaux & Sécurité Informatique"
+        },
+        {
+          "id": "ia_m5",
+          "name": "Probabilités & Statistiques pour Data Science"
+        },
+        {
+          "id": "ia_m6",
+          "name": "Langues étrangères 1"
+        },
+        {
+          "id": "ia_m7",
+          "name": "Méthodologie de travail universitaire"
+        }
+      ],
+      "ia-S2": [
+        {
+          "id": "ia_m8",
+          "name": "Introduction à l’Intelligence Artificielle"
+        },
+        {
+          "id": "ia_m9",
+          "name": "Algorithmes & Structures de Données"
+        },
+        {
+          "id": "ia_m10",
+          "name": "Bases de Données & Systèmes d’Information"
+        },
+        {
+          "id": "ia_m11",
+          "name": "Mathématiques Appliquées à l’IA 2"
+        },
+        {
+          "id": "ia_m12",
+          "name": "Introduction à DevOps"
+        },
+        {
+          "id": "ia_m13",
+          "name": "Langues étrangères 2"
+        },
+        {
+          "id": "ia_m14",
+          "name": "Culture Digitale"
+        }
+      ],
+      "ia-S3": [
+        {
+          "id": "ia_m15",
+          "name": "Techniques Web & Architectures Distribuées"
+        },
+        {
+          "id": "ia_m16",
+          "name": "Big Data & NoSQL"
+        },
+        {
+          "id": "ia_m17",
+          "name": "Science des Données"
+        },
+        {
+          "id": "ia_m18",
+          "name": "Apprentissage Automatique (Machine Learning)"
+        },
+        {
+          "id": "ia_m19",
+          "name": "MLOps: CI/CD pour IA"
+        },
+        {
+          "id": "ia_m20",
+          "name": "Langues étrangères 3"
+        },
+        {
+          "id": "ia_m21",
+          "name": "Culture & Arts"
+        }
+      ],
+      "ia-S4": [
+        {
+          "id": "ia_m22",
+          "name": "Apprentissage Profond (Deep Learning)"
+        },
+        {
+          "id": "ia_m23",
+          "name": "Vision par Ordinateur"
+        },
+        {
+          "id": "ia_m24",
+          "name": "Cloud Computing & Informatique en Nuage"
+        },
+        {
+          "id": "ia_m25",
+          "name": "Langues étrangères 4"
+        },
+        {
+          "id": "ia_m26",
+          "name": "Développement Personnel"
+        },
+        {
+          "id": "ia_m27",
+          "name": "Projet de Fin d’Études (PFE)"
+        }
+      ],
+      "idd-S1": [
+        {
+          "id": "idd_m1",
+          "name": "Langues & Techniques de Communication 1"
+        },
+        {
+          "id": "idd_m2",
+          "name": "Python 1: Algorithmes & Programmation"
+        },
+        {
+          "id": "idd_m3",
+          "name": "Architecture des ordinateurs & Systèmes d’exploitation"
+        },
+        {
+          "id": "idd_m4",
+          "name": "Réseaux & Sécurité Informatique"
+        },
+        {
+          "id": "idd_m5",
+          "name": "Intro aux Statistiques & Probabilités"
+        },
+        {
+          "id": "idd_m6",
+          "name": "Mathématiques pour ML"
+        },
+        {
+          "id": "idd_m7",
+          "name": "Culture Digitale"
+        }
+      ],
+      "idd-S2": [
+        {
+          "id": "idd_m8",
+          "name": "Python 2: Structures de données & Algorithmes"
+        },
+        {
+          "id": "idd_m9",
+          "name": "Bases de Données & SGBD Relationnel"
+        },
+        {
+          "id": "idd_m10",
+          "name": "Visualisation de Données"
+        },
+        {
+          "id": "idd_m11",
+          "name": "Introduction à l’IA"
+        },
+        {
+          "id": "idd_m12",
+          "name": "Introduction à DevOps"
+        },
+        {
+          "id": "idd_m13",
+          "name": "Langues & Techniques de Communication 2"
+        },
+        {
+          "id": "idd_m14",
+          "name": "Programmation C/C++"
+        }
+      ],
+      "idd-S3": [
+        {
+          "id": "idd_m15",
+          "name": "Gestion de Projets Data & UML"
+        },
+        {
+          "id": "idd_m16",
+          "name": "Fondamentaux Big Data"
+        },
+        {
+          "id": "idd_m17",
+          "name": "Introduction à la Réalité Virtuelle / Augmentée"
+        },
+        {
+          "id": "idd_m18",
+          "name": "Techniques Web & Architectures Distribuées"
+        },
+        {
+          "id": "idd_m19",
+          "name": "IA Avancée"
+        },
+        {
+          "id": "idd_m20",
+          "name": "Bases de Données Avancées"
+        },
+        {
+          "id": "idd_m21",
+          "name": "Entrepreneuriat & Digitalisation"
+        }
+      ],
+      "idd-S4": [
+        {
+          "id": "idd_m22",
+          "name": "Informatique Décisionnelle"
+        },
+        {
+          "id": "idd_m23",
+          "name": "Fondamentaux Cloud Computing"
+        },
+        {
+          "id": "idd_m24",
+          "name": "Applications de l’IA"
+        },
+        {
+          "id": "idd_m25",
+          "name": "Analyse Web"
+        },
+        {
+          "id": "idd_m26",
+          "name": "Projet de Fin d’Études (PFE)"
+        },
+        {
+          "id": "idd_m27",
+          "name": "Stage Technique"
+        }
+      ],
+      "insem-S1": [
+        {
+          "id": "insem_m1",
+          "name": "Mathématiques I"
+        },
+        {
+          "id": "insem_m2",
+          "name": "Bases de l’électricité"
+        },
+        {
+          "id": "insem_m3",
+          "name": "Physique I"
+        },
+        {
+          "id": "insem_m4",
+          "name": "Physique II"
+        },
+        {
+          "id": "insem_m5",
+          "name": "Environnement maritime & Architecture navale"
+        },
+        {
+          "id": "insem_m6",
+          "name": "Langues étrangères 1"
+        },
+        {
+          "id": "insem_m7",
+          "name": "Méthodologie de Travail Universitaire"
+        }
+      ],
+      "insem-S2": [
+        {
+          "id": "insem_m8",
+          "name": "Électrotechnique"
+        },
+        {
+          "id": "insem_m9",
+          "name": "Hydraulique & Pneumatique"
+        },
+        {
+          "id": "insem_m10",
+          "name": "Mathématiques II"
+        },
+        {
+          "id": "insem_m11",
+          "name": "Électronique"
+        },
+        {
+          "id": "insem_m12",
+          "name": "Conception Assistée par Ordinateur (CAO)"
+        },
+        {
+          "id": "insem_m13",
+          "name": "Algorithmique & Programmation"
+        },
+        {
+          "id": "insem_m14",
+          "name": "Langues étrangères 2"
+        }
+      ],
+      "insem-S3": [
+        {
+          "id": "insem_m15",
+          "name": "Informatique Industrielle & Automatisme"
+        },
+        {
+          "id": "insem_m16",
+          "name": "Électronique de Puissance & Automatique"
+        },
+        {
+          "id": "insem_m17",
+          "name": "Systèmes de Propulsion"
+        },
+        {
+          "id": "insem_m18",
+          "name": "Électricité à Bord"
+        },
+        {
+          "id": "insem_m19",
+          "name": "Maintenance des Systèmes Électriques"
+        },
+        {
+          "id": "insem_m20",
+          "name": "Compétences Culturelles & Artistiques"
+        },
+        {
+          "id": "insem_m21",
+          "name": "Langues étrangères 3"
+        }
+      ],
+      "insem-S4": [
+        {
+          "id": "insem_m22",
+          "name": "Gestion de la Maintenance & GMAO"
+        },
+        {
+          "id": "insem_m23",
+          "name": "Réseau Électrique Naval & Sécurité"
+        },
+        {
+          "id": "insem_m24",
+          "name": "Sécurité Maritime & Normes"
+        },
+        {
+          "id": "insem_m25",
+          "name": "Compétences Professionnelles"
+        },
+        {
+          "id": "insem_m26",
+          "name": "Langues étrangères 4"
+        }
+      ]
+    },
+    "professors": [
+      {
+        "department": "Informatique & IA",
+        "name": "Pr. Itri BOUZGARNE"
+      },
+      {
+        "department": "Génie Mécanique",
+        "name": "Pr. El Mehdi EL BAHLOUL"
+      },
+      {
+        "department": "Informatique Embarquée",
+        "name": "Pr. Aboubakr EL HAMMOUMI"
+      },
+      {
+        "department": "Langue anglaise",
+        "name": "Pr. Majda EL MOUFAREJ"
+      },
+      {
+        "department": "Métallurgie",
+        "name": "Pr. Sara ELHAMZI"
+      },
+      {
+        "department": "Informatique",
+        "name": "Pr. Manar KASSOU"
+      },
+      {
+        "department": "Télécommunications",
+        "name": "Pr. Mohammed MAHFOUDI"
+      },
+      {
+        "department": "Informatique & IA",
+        "name": "Pr. Faouzi MARZOUKI"
+      },
+      {
+        "department": "Mathématiques",
+        "name": "Pr. Soufiane MEZROUI"
+      },
+      {
+        "department": "Informatique & IA",
+        "name": "Pr. Lamyae MELLOUK"
+      },
+      {
+        "department": "Sciences de gestion",
+        "name": "Pr. Amal MELLOULI"
+      },
+      {
+        "department": "Mécanique et Energétique",
+        "name": "Pr. Jamal-Eddine SALHI"
+      },
+      {
+        "department": "Informatique & Digitalisation",
+        "name": "Pr. Soukaina SEDDIK"
+      },
+      {
+        "department": "Génie électrique",
+        "name": "Pr. Othmane ZAMZOUM"
+      },
+      {
+        "department": "Langue française",
+        "name": "Pr. Jihane ZNAIDI"
+      },
+      {
+        "department": "Informatique & IA",
+        "name": "Pr. Mohammed BOUTALLINE"
+      },
+      {
+        "department": "Mathématiques",
+        "name": "Pr. El Mahdi"
+      }
+    ],
+    "semesters": [
+      "S1",
+      "S2",
+      "S3",
+      "S4"
+    ]
+  },
+  "module_resources": {
+    "casi_m2": {
+      "-OhWSqRva3_irsedJyhd": true
+    },
+    "ia_m1": {
+      "sample_res_1": true
+    },
+    "ia_m2": {
+      "-OhWSqRva3_irsedJyhd": true,
+      "-OieSNgWegZZWqBC1Qbq": true
+    },
+    "ia_m3": {
+      "-Oh5cSufyu6Y7YNOXq27": true,
+      "-OhwOTntRw47JOXZS4Dz": true
+    },
+    "ia_m4": {
+      "-Oij3LM5uqjYJs5hLOws": true,
+      "-Oij8bhfpEwuHuC4tO5j": true,
+      "-Oij8bpkMqd94jwyA9Rl": true,
+      "-Oij8c0aAl3pAdgtVobV": true,
+      "-OijC0G3RDz80MDc-7uC": true,
+      "-OijCJfND7JHpDF1sqfB": true
+    },
+    "ia_m5": {
+      "-Oi0oBvQTF6ti_pirTSP": true
+    },
+    "ia_m6": {
+      "-OmM3FsMHxlhwKUkbZoh": true
+    },
+    "ia_m9": {
+      "-OluBusOfxHMT_qVtClA": true
+    },
+    "idd_m14": {
+      "-OluBusOfxHMT_qVtClA": true
+    },
+    "idd_m2": {
+      "-OhWSqRva3_irsedJyhd": true
+    }
+  },
+  "monetization": {
+    "donations": {
+      "-OhVmmtL6gVH1SiK5jFA": {
+        "timestamp": "2025-12-27T17:11:25.539Z"
+      },
+      "-OhVoapaTbQAKJML8Rzs": {
+        "timestamp": "2025-12-27T17:19:20.387Z"
+      },
+      "-OhVob6aBb4vRIEsOYy5": {
+        "timestamp": "2025-12-27T17:19:21.540Z"
+      },
+      "-OhVob91vulLmKhcxwjN": {
+        "timestamp": "2025-12-27T17:19:21.695Z"
+      },
+      "-OhVobBJ9B-M4YUJOvtm": {
+        "timestamp": "2025-12-27T17:19:21.841Z"
+      },
+      "-OhVobDXGB5RTeEzC-9a": {
+        "timestamp": "2025-12-27T17:19:21.983Z"
+      },
+      "-OhVobGrRN6I7V6u3bZC": {
+        "timestamp": "2025-12-27T17:19:22.196Z"
+      },
+      "-OhVobKeFAX8VYOME4_H": {
+        "timestamp": "2025-12-27T17:19:22.439Z"
+      },
+      "-OhVobNC_MzRaDc5CV6W": {
+        "timestamp": "2025-12-27T17:19:22.602Z"
+      },
+      "-OhVobPPf2oXkK4gS-wN": {
+        "timestamp": "2025-12-27T17:19:22.743Z"
+      },
+      "-OhVobSqqYCDn3kzwAIa": {
+        "timestamp": "2025-12-27T17:19:22.963Z"
+      },
+      "-OhVp7mtC2ZKWta3SmAV": {
+        "timestamp": "2025-12-27T17:21:39.478Z"
+      },
+      "-OhVp7xsCi0fyAftAH2_": {
+        "timestamp": "2025-12-27T17:21:40.181Z"
+      },
+      "-OhVp82bjVyQB7rX2CJe": {
+        "timestamp": "2025-12-27T17:21:40.549Z"
+      },
+      "-OhVp85cYNRdvZbZeo6H": {
+        "timestamp": "2025-12-27T17:21:40.741Z"
+      },
+      "-OhVp8989QL62k5OyDek": {
+        "timestamp": "2025-12-27T17:21:40.966Z"
+      },
+      "-OhVp9EJJ2hh_s4cWWY8": {
+        "timestamp": "2025-12-27T17:21:45.393Z"
+      },
+      "-OhVp9HaZw-d7BSubBv6": {
+        "timestamp": "2025-12-27T17:21:45.603Z"
+      },
+      "-OhVtECS5p1RGcK_ovNU": {
+        "timestamp": "2025-12-27T17:39:34.337Z"
+      },
+      "-OhVtEKBa_LJfsKvCdyM": {
+        "timestamp": "2025-12-27T17:39:34.831Z"
+      },
+      "-OhVtUtIolpn3Qwp_-_O": {
+        "timestamp": "2025-12-27T17:40:42.678Z"
+      },
+      "-Oh_9yWHxfn1HXuWRWZo": {
+        "timestamp": "2025-12-28T13:35:32.944Z"
+      },
+      "-Oh_9yZIcbk67dJWR11F": {
+        "timestamp": "2025-12-28T13:35:33.136Z"
+      },
+      "-Oh_9ybphJJ0D7k4v-YT": {
+        "timestamp": "2025-12-28T13:35:33.363Z"
+      },
+      "-Oh_9yf1rBj71wUmg2UH": {
+        "timestamp": "2025-12-28T13:35:33.567Z"
+      },
+      "-Oh_G8hC4u83pySNQfEB": {
+        "timestamp": "2025-12-28T14:02:31.563Z"
+      },
+      "-Oh_G8kYDF472B6cS9S3": {
+        "timestamp": "2025-12-28T14:02:31.777Z"
+      },
+      "-Oh_G8nfkM7grei3RaWS": {
+        "timestamp": "2025-12-28T14:02:31.977Z"
+      },
+      "-Oh_G8rGyVvAmm6mAf33": {
+        "timestamp": "2025-12-28T14:02:32.207Z"
+      },
+      "-Oh_G8xm8VTfsPqIxIDf": {
+        "timestamp": "2025-12-28T14:02:32.624Z"
+      },
+      "-OhgJ0XnunUQ5VLfFpJH": {
+        "timestamp": "2025-12-29T22:52:25.748Z"
+      },
+      "-OhgJ1lZjkhcuo7HAeLX": {
+        "timestamp": "2025-12-29T22:52:30.789Z"
+      },
+      "-OhgJ1zyA3jf39CWbk1f": {
+        "timestamp": "2025-12-29T22:52:31.711Z"
+      },
+      "-OhgJ21WYeVDP59rtucl": {
+        "timestamp": "2025-12-29T22:52:31.875Z"
+      },
+      "-OhgJ2jn2X4PUumQht7u": {
+        "timestamp": "2025-12-29T22:52:34.772Z"
+      },
+      "-OhgJ2mFt7Y4T0nQeblu": {
+        "timestamp": "2025-12-29T22:52:34.929Z"
+      },
+      "-OhgJ2p1fXlvMKQVUB01": {
+        "timestamp": "2025-12-29T22:52:35.107Z"
+      },
+      "-OhgJ2rX6tNO6ytHZx54": {
+        "timestamp": "2025-12-29T22:52:35.267Z"
+      },
+      "-OhgJ2tqPvSKq9cLueUf": {
+        "timestamp": "2025-12-29T22:52:35.416Z"
+      },
+      "-OhgJ2wRN0NXsHGv8Wfe": {
+        "timestamp": "2025-12-29T22:52:35.581Z"
+      },
+      "-OhgJ2zCqcePcvFcp9ap": {
+        "timestamp": "2025-12-29T22:52:35.758Z"
+      },
+      "-OhgJ30K_20arYrwl59Z": {
+        "timestamp": "2025-12-29T22:52:35.894Z"
+      },
+      "-OhgJ331G2dfucP0I2TX": {
+        "timestamp": "2025-12-29T22:52:36.067Z"
+      },
+      "-OhgJ35b5OqsGBk2D6dL": {
+        "timestamp": "2025-12-29T22:52:36.232Z"
+      },
+      "-OhgJ37wmybjxuiGP8TV": {
+        "timestamp": "2025-12-29T22:52:36.381Z"
+      },
+      "-OhgJ3APiuuXRiQOUmL2": {
+        "timestamp": "2025-12-29T22:52:36.539Z"
+      },
+      "-OhgJ3DBsHgwrw0dzncy": {
+        "timestamp": "2025-12-29T22:52:36.717Z"
+      },
+      "-OhgJ3FecZoDw3EaGP2S": {
+        "timestamp": "2025-12-29T22:52:36.875Z"
+      },
+      "-OhgJ3ILHGVli0LJy_n6": {
+        "timestamp": "2025-12-29T22:52:37.047Z"
+      },
+      "-OhgJ3KZxIOLSeUwyDRD": {
+        "timestamp": "2025-12-29T22:52:37.189Z"
+      },
+      "-OhgJ3Mt_EXUyM1rzqvj": {
+        "timestamp": "2025-12-29T22:52:37.339Z"
+      },
+      "-OhgJ3PpAgMoVjs8--4B": {
+        "timestamp": "2025-12-29T22:52:37.526Z"
+      },
+      "-OhgJ3SH6Zta8nUx1ycT": {
+        "timestamp": "2025-12-29T22:52:37.683Z"
+      },
+      "-OhgJ3UrS_-KCl6Kwafr": {
+        "timestamp": "2025-12-29T22:52:37.848Z"
+      },
+      "-OhgJ3XHjHa9erpvwoGN": {
+        "timestamp": "2025-12-29T22:52:38.003Z"
+      },
+      "-OhgJ3ZXk3b0QF4oOP2T": {
+        "timestamp": "2025-12-29T22:52:38.148Z"
+      },
+      "-OhgJ3bJTjrWzfnKvUg5": {
+        "timestamp": "2025-12-29T22:52:38.325Z"
+      },
+      "-OhgJ3dgODQb3yK0PUMe": {
+        "timestamp": "2025-12-29T22:52:38.477Z"
+      },
+      "-OhgJ3gMcptTdohhz0D0": {
+        "timestamp": "2025-12-29T22:52:38.648Z"
+      },
+      "-OhgJ3j01-LCnX5r0Ov5": {
+        "timestamp": "2025-12-29T22:52:38.818Z"
+      },
+      "-OhgJ3laKCEdVbmBAJQv": {
+        "timestamp": "2025-12-29T22:52:38.983Z"
+      },
+      "-OhgJ3nqX5gBHMWSr3zi": {
+        "timestamp": "2025-12-29T22:52:39.127Z"
+      },
+      "-OhgJ3qIbdcjsKeJI7FJ": {
+        "timestamp": "2025-12-29T22:52:39.284Z"
+      },
+      "-OhgJ3ssrY-O-k7wblQA": {
+        "timestamp": "2025-12-29T22:52:39.449Z"
+      },
+      "-OhgJ3vY1TDTcf2B1gyF": {
+        "timestamp": "2025-12-29T22:52:39.620Z"
+      },
+      "-OhgJ3yu8DUgXyNCLRGm": {
+        "timestamp": "2025-12-29T22:52:39.835Z"
+      }
+    },
+    "pageOpens": {
+      "-OhVmlSNFZeb9sPiUkej": {
+        "timestamp": "2025-12-27T17:11:19.653Z"
+      },
+      "-OhVmlSOdkEZAOf-gFGP": {
+        "timestamp": "2025-12-27T17:11:19.655Z"
+      },
+      "-OhVnstaBYrddfXMPakl": {
+        "timestamp": "2025-12-27T17:16:12.340Z"
+      },
+      "-OhVnstbBOiU4TRvr0aF": {
+        "timestamp": "2025-12-27T17:16:12.342Z"
+      },
+      "-OhVo5cMoekmhEGIUoG0": {
+        "timestamp": "2025-12-27T17:17:08.469Z"
+      },
+      "-OhVo5cMoekmhEGIUoG1": {
+        "timestamp": "2025-12-27T17:17:08.471Z"
+      },
+      "-OhVqYoXJW9jCmdPVx08": {
+        "timestamp": "2025-12-27T17:27:52.325Z"
+      },
+      "-OhVqYoYXwI55AUqPFAt": {
+        "timestamp": "2025-12-27T17:27:52.326Z"
+      },
+      "-OhVrA1S9DqyevSX1EQT": {
+        "timestamp": "2025-12-27T17:30:33.014Z"
+      },
+      "-OhVro2CBjCzDk7Gy0b9": {
+        "timestamp": "2025-12-27T17:33:20.941Z"
+      },
+      "-OhVro2CBjCzDk7Gy0bA": {
+        "timestamp": "2025-12-27T17:33:20.943Z"
+      },
+      "-OhVt8nRKeRkpQd15btB": {
+        "timestamp": "2025-12-27T17:39:13.761Z"
+      },
+      "-OhVt8nVrWG40NdUGETr": {
+        "timestamp": "2025-12-27T17:39:13.767Z"
+      },
+      "-OhVtC3n1dt9jcU9Re6Y": {
+        "timestamp": "2025-12-27T17:39:25.592Z"
+      },
+      "-OhVtC3pN_znlPpj_0kY": {
+        "timestamp": "2025-12-27T17:39:25.596Z"
+      },
+      "-OhVtPO4FdGw6py3KfGs": {
+        "timestamp": "2025-12-27T17:40:21.704Z"
+      },
+      "-OhVtPO50Q4qT0x7Iejd": {
+        "timestamp": "2025-12-27T17:40:21.711Z"
+      },
+      "-OhVxucuEG4oFn-Zg2um": {
+        "timestamp": "2025-12-27T18:00:00.771Z"
+      },
+      "-OhVxucvAEHtn6LappXs": {
+        "timestamp": "2025-12-27T18:00:00.778Z"
+      },
+      "-OhVy6V0QvjFz9PhhFtM": {
+        "timestamp": "2025-12-27T18:00:53.490Z"
+      },
+      "-Oh_9N4Ds_iGOofmd0xs": {
+        "timestamp": "2025-12-28T13:32:55.400Z"
+      },
+      "-Oh_9WGggq58utMAH8zn": {
+        "timestamp": "2025-12-28T13:33:33.120Z"
+      },
+      "-Oh_9Y46_L875n3udTj8": {
+        "timestamp": "2025-12-28T13:33:40.448Z"
+      },
+      "-Oh_9a3lYUCvT7ZX62EC": {
+        "timestamp": "2025-12-28T13:33:52.707Z"
+      },
+      "-Oh_9e0k0pBkF4regCcV": {
+        "timestamp": "2025-12-28T13:34:09.008Z"
+      },
+      "-Oh_Ft65w1cyxSUOpaIi": {
+        "timestamp": "2025-12-28T14:01:23.589Z"
+      },
+      "-OhgIwPhXwi1pGO_hEca": {
+        "timestamp": "2025-12-29T22:52:04.751Z"
+      },
+      "-OhgJ4h4GyVLgqPfGX4J": {
+        "timestamp": "2025-12-29T22:52:42.626Z"
+      },
+      "-Ohp7Tnf4eb0Ck9LZtwT": {
+        "timestamp": "2025-12-31T15:58:35.471Z"
+      },
+      "-Ohp7Tnf4eb0Ck9LZtwU": {
+        "timestamp": "2025-12-31T15:58:35.474Z"
+      },
+      "-Ohp7sjBiUSas31BczHP": {
+        "timestamp": "2025-12-31T16:00:22.479Z"
+      },
+      "-Ohp7sjDrtmfwJc2JDGF": {
+        "timestamp": "2025-12-31T16:00:22.492Z"
+      },
+      "-Ohp8RgHyRYkmoMZUC47": {
+        "timestamp": "2025-12-31T16:02:49.752Z"
+      },
+      "-Ohp8RgMuEOXllVJ8eYV": {
+        "timestamp": "2025-12-31T16:02:49.760Z"
+      },
+      "-Ohp8SU5jvGO_qnwZjbm": {
+        "timestamp": "2025-12-31T16:02:52.220Z"
+      },
+      "-Ohp8SUCTOFy_UoWxqGv": {
+        "timestamp": "2025-12-31T16:02:52.225Z"
+      },
+      "-Ohp8Tc8pJUvDnSAhkxq": {
+        "timestamp": "2025-12-31T16:02:57.676Z"
+      },
+      "-Ohp8TcA-m3vAxDS39bD": {
+        "timestamp": "2025-12-31T16:02:57.696Z"
+      },
+      "-Ohp8zAU2w1GhVTXzq2_": {
+        "timestamp": "2025-12-31T16:05:10.212Z"
+      },
+      "-OhpAM30WdNFmYlmB09j": {
+        "timestamp": "2025-12-31T16:11:10.181Z"
+      },
+      "-OhpM-rC_DU_UMBoaWHr": {
+        "timestamp": "2025-12-31T17:02:05.018Z"
+      }
+    }
+  },
+  "notifications": {
+    "global": {
+      "-OmsZblaWVMOJ-lVAyTP": {
+        "action": {
+          "target": "/remerciements",
+          "type": "navigate"
+        },
+        "createdAt": 1772623133968,
+        "icon": "alert-triangle",
+        "id": "-OmsZblaWVMOJ-lVAyTP",
+        "isGlobal": true,
+        "message": "Thank You",
+        "priority": "high",
+        "title": "Thank You",
+        "type": "system"
+      },
+      "-OmsbPKNhuFEhgwc5CoW": {
+        "action": {
+          "buttonIcon": "git-branch",
+          "buttonText": "Contribute",
+          "target": "https://github.com/abdelhakim-sahifa/ESTT-community/",
+          "type": "external_link"
+        },
+        "createdAt": 1772623865328,
+        "icon": "info",
+        "id": "-OmsbPKNhuFEhgwc5CoW",
+        "isGlobal": true,
+        "message": "Contribute to ESTT Co , it open source",
+        "priority": "normal",
+        "title": "Contribute to ESTT Co , it open source",
+        "type": "system"
+      }
+    },
+    "private": {
+      "1YjRmJqxsTMY3oDRnQ8cuYDyrsi1": {
+        "-Okre4Xb7Ob8N78o1cwZ": {
+          "createdAt": 1770460305768,
+          "icon": "bell",
+          "id": "-Okre4Xb7Ob8N78o1cwZ",
+          "message": "Bonjour ",
+          "priority": "normal",
+          "read": true,
+          "title": "Bonjour ",
+          "type": "system"
+        }
+      },
+      "UnzSqZjiefgPr2tZy0kbsHhWEV03": {
+        "-Om6G4QKp868Z6UsClHQ": {
+          "action": {
+            "target": "/tickets/-Om6F9ld59vFT-QDeNIh",
+            "type": "navigate"
+          },
+          "createdAt": 1771795928979,
+          "icon": "ticket",
+          "id": "-Om6G4QKp868Z6UsClHQ",
+          "message": "Votre billet pour \"Conference \" a été validé par TorchCoders.",
+          "priority": "normal",
+          "read": true,
+          "title": "Billet validé !",
+          "type": "system"
+        },
+        "-Om6G4RSX8m7HvirDZp8": {
+          "action": {
+            "target": "/tickets/-Om6F9ld59vFT-QDeNIh",
+            "type": "navigate"
+          },
+          "createdAt": 1771795929047,
+          "icon": "ticket",
+          "id": "-Om6G4RSX8m7HvirDZp8",
+          "message": "Votre billet pour \"Conference \" a été validé par TorchCoders.",
+          "priority": "normal",
+          "read": true,
+          "title": "Billet validé !",
+          "type": "system"
+        },
+        "-Om6G4Rgui1xp6dKwCzL": {
+          "action": {
+            "target": "/tickets/-Om6F9ld59vFT-QDeNIh",
+            "type": "navigate"
+          },
+          "createdAt": 1771795929059,
+          "icon": "ticket",
+          "id": "-Om6G4Rgui1xp6dKwCzL",
+          "message": "Votre billet pour \"Conference \" a été validé par TorchCoders.",
+          "priority": "normal",
+          "read": true,
+          "title": "Billet validé !",
+          "type": "system"
+        },
+        "-Om9s6nL3rHzqLZQ9PzK": {
+          "action": {
+            "target": "/hello?user={uid}",
+            "type": "navigate"
+          },
+          "createdAt": 1771856493938,
+          "icon": "bell",
+          "id": "-Om9s6nL3rHzqLZQ9PzK",
+          "message": "Bonjour ",
+          "priority": "normal",
+          "read": true,
+          "title": "Hello",
+          "type": "system"
+        },
+        "-Om9t2qeIycTZ3PSO7rk": {
+          "action": {
+            "target": "/profile/{uid}",
+            "type": "navigate"
+          },
+          "createdAt": 1771856739901,
+          "icon": "bell",
+          "id": "-Om9t2qeIycTZ3PSO7rk",
+          "message": "Votre porfile",
+          "priority": "normal",
+          "read": true,
+          "title": "Votre profile",
+          "type": "system"
+        }
+      },
+      "ak04pzxzikfdr6I0L6z3zx9VKLm1": {
+        "-OiiICNdQb3rFadkKiLs": {
+          "action": {
+            "target": "/tickets/-OiiHP3hUJy-keqepuuV",
+            "type": "navigate"
+          },
+          "createdAt": 1768155830617,
+          "icon": "ticket",
+          "id": "-OiiICNdQb3rFadkKiLs",
+          "message": "Votre billet pour \"events\" a été validé par Robotic.",
+          "priority": "normal",
+          "read": true,
+          "title": "Billet validé !",
+          "type": "system"
+        },
+        "-OiiOp21MH-PlffGjo2z": {
+          "action": {
+            "target": "/tickets/-OiiKLA0DBqN5uM4JxSF",
+            "type": "navigate"
+          },
+          "createdAt": 1768157571372,
+          "icon": "ticket",
+          "id": "-OiiOp21MH-PlffGjo2z",
+          "message": "Votre billet pour \"Conference\" a été validé par Robotic.",
+          "priority": "normal",
+          "read": true,
+          "title": "Billet validé !",
+          "type": "system"
+        },
+        "-OiiUJ9Q9mZNyG6znKL_": {
+          "action": {
+            "target": "/tickets/-OiiTZVPHxh6vRLDW5o0",
+            "type": "navigate"
+          },
+          "createdAt": 1768159003476,
+          "icon": "ticket",
+          "id": "-OiiUJ9Q9mZNyG6znKL_",
+          "message": "Votre billet pour \"meeting\" a été validé par Robotic.",
+          "priority": "normal",
+          "read": true,
+          "title": "Billet validé !",
+          "type": "system"
+        },
+        "-Oij6c9jGuqX_OoBWMdG": {
+          "action": {
+            "target": "/resources/-Oij3LM5uqjYJs5hLOws",
+            "type": "navigate"
+          },
+          "createdAt": 1768169571646,
+          "icon": "book-open",
+          "id": "-Oij6c9jGuqX_OoBWMdG",
+          "message": "Votre contribution \"Cours Module Réseau Chaiptre 1,2,3 et 4.pdf\" a été validée et est maintenant en ligne.",
+          "priority": "normal",
+          "read": true,
+          "title": "Ressource Approuvée 🎉",
+          "type": "resource"
+        },
+        "-OijALfl6m8PuKcu9OLf": {
+          "action": {
+            "target": "/resources/-OhWSqRva3_irsedJyhd",
+            "type": "navigate"
+          },
+          "createdAt": 1768170548132,
+          "icon": "edit-3",
+          "id": "-OijALfl6m8PuKcu9OLf",
+          "message": "Votre contribution \"Algorithmes\" a été mise à jour par un administrateur.",
+          "priority": "normal",
+          "read": true,
+          "title": "Ressource Mise à Jour 📝",
+          "type": "resource"
+        },
+        "-OijAsNeKEG7nP2KB4Uu": {
+          "action": {
+            "target": "/resources/-Oij3LM5uqjYJs5hLOws",
+            "type": "navigate"
+          },
+          "createdAt": 1768170686176,
+          "icon": "edit-3",
+          "id": "-OijAsNeKEG7nP2KB4Uu",
+          "message": "Votre contribution \"Drive - Cours Module Réseau Chaiptre 1,2,3 et 4.pdf\" a été mise à jour par un administrateur. Modifications: Titre, Type de document.",
+          "priority": "normal",
+          "read": true,
+          "title": "Ressource Mise à Jour 📝",
+          "type": "resource"
+        },
+        "-OijB0bJztx8noEi_oXV": {
+          "action": {
+            "target": "/resources/-Oij3LM5uqjYJs5hLOws",
+            "type": "navigate"
+          },
+          "createdAt": 1768170723991,
+          "icon": "edit-3",
+          "id": "-OijB0bJztx8noEi_oXV",
+          "message": "Votre contribution \"Drive - Cours Module Réseau Chaiptre 1,2,3 et 4.pdf\" a été mise à jour par un administrateur. Modifications: Type de document.",
+          "priority": "normal",
+          "read": true,
+          "title": "Ressource Mise à Jour 📝",
+          "type": "resource"
+        },
+        "-OijB6lyrbGPobPAZ15A": {
+          "action": {
+            "target": "/resources/-Oi0oBvQTF6ti_pirTSP",
+            "type": "navigate"
+          },
+          "createdAt": 1768170749237,
+          "icon": "edit-3",
+          "id": "-OijB6lyrbGPobPAZ15A",
+          "message": "Votre contribution \"Tests d’hypothèses\" a été mise à jour par un administrateur. Modifications: Type de document.",
+          "priority": "normal",
+          "read": true,
+          "title": "Ressource Mise à Jour 📝",
+          "type": "resource"
+        },
+        "-OijBBRi74LY3vTvItm0": {
+          "action": {
+            "target": "/resources/-OhwOTntRw47JOXZS4Dz",
+            "type": "navigate"
+          },
+          "createdAt": 1768170768354,
+          "icon": "edit-3",
+          "id": "-OijBBRi74LY3vTvItm0",
+          "message": "Votre contribution \"Série TD\" a été mise à jour par un administrateur. Modifications: Type de document.",
+          "priority": "normal",
+          "read": true,
+          "title": "Ressource Mise à Jour 📝",
+          "type": "resource"
+        },
+        "-OijBKPvD79Qg9HR9S57": {
+          "action": {
+            "target": "/resources/-OhlFKsghVNExmgRYF8F",
+            "type": "navigate"
+          },
+          "createdAt": 1768170805116,
+          "icon": "edit-3",
+          "id": "-OijBKPvD79Qg9HR9S57",
+          "message": "Votre contribution \"Cours Module Réseau Chaiptre 1,2,3 et 4 \" a été mise à jour par un administrateur. Modifications: Type de document.",
+          "priority": "normal",
+          "read": true,
+          "title": "Ressource Mise à Jour 📝",
+          "type": "resource"
+        },
+        "-OmM3S3FVUYHKVXviR_y": {
+          "action": {
+            "target": "/resource/-OmM3FsMHxlhwKUkbZoh",
+            "type": "navigate"
+          },
+          "createdAt": 1772061053619,
+          "icon": "book-open",
+          "id": "-OmM3S3FVUYHKVXviR_y",
+          "message": "Votre contribution \"test\" a été validée et est maintenant en ligne.",
+          "priority": "normal",
+          "read": true,
+          "title": "Ressource Approuvée 🎉",
+          "type": "resource"
+        },
+        "-OmpRvHcps1b4e7sBrQR": {
+          "action": "/report-bug",
+          "createdAt": 1772570785277,
+          "icon": "check-circle",
+          "id": "-OmpRvHcps1b4e7sBrQR",
+          "message": "Le problème que vous avez signalé (\"You need a separator for website sates in phone screens\") a été corrigé. Merci de votre aide !",
+          "priority": "normal",
+          "read": true,
+          "title": "Bug résolu !",
+          "type": "system"
+        }
+      }
+    }
+  },
+  "resources": {
+    "-Oh5cSufyu6Y7YNOXq27": {
+      "anonymous": false,
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1766416569844,
+      "description": "Les notions de groupe, d’anneau, de corps et d’espace vectoriel constituent la base de l’algèbre moderne. Elles permettent d’étudier les structures algébriques qui interviennent dans de nombreux domaines des mathématiques et de l’informatique, notamment dans la théorie des nombres, la cryptographie, la sécurité des systèmes et l’apprentissage automatique.\n",
+      "docType": "Cours",
+      "field": "ia",
+      "module": "Mathématiques... - S1",
+      "professor": "Pr. Soufiane MEZROUI",
+      "semester": "S1",
+      "title": "Groupes, Anneaux, Corps et Espaces Vectoriels",
+      "type": "pdf",
+      "unverified": false,
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/ressources/1765987707037_cours_maths_pour_IA.pdf"
+    },
+    "-OhWSqRva3_irsedJyhd": {
+      "anonymous": false,
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "abdelhakim sahifa",
+      "createdAt": 1766866772208,
+      "description": "",
+      "docType": "Cours",
+      "field": "ia",
+      "fields": [
+        {
+          "fieldId": "casi",
+          "moduleId": "casi_m2"
+        },
+        {
+          "fieldId": "idd",
+          "moduleId": "idd_m2"
+        }
+      ],
+      "fullModuleName": "Algorithmes & Programmation Python",
+      "likeCount": 1,
+      "likes": {
+        "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+      },
+      "module": "Algorithmes... - S1",
+      "moduleId": "ia_m2",
+      "professor": "Pr. Aboubakr EL HAMMOUMI",
+      "ratingAverage": 4,
+      "ratingCount": 1,
+      "ratings": {
+        "ak04pzxzikfdr6I0L6z3zx9VKLm1": {
+          "createdAt": 1772121081413,
+          "rating": 4,
+          "review": "Bien",
+          "updatedAt": 1772121081413,
+          "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+          "userName": "sahifa.abdelhakim@etu.uae.ac.ma"
+        }
+      },
+      "semester": "S1",
+      "title": "Algorithmes",
+      "type": "pdf",
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/ressources/1764582857350_Algorithmique_et_programmation_pyhton_-_Version_2.pdf"
+    },
+    "-OhlFKsghVNExmgRYF8F": {
+      "anonymous": false,
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1767131668034,
+      "description": "Cours Module Réseau Chaiptre 1,2,3 et 4 ",
+      "docType": "Cours",
+      "field": "ia",
+      "fullModuleName": "Réseaux & Sécurité Informatique",
+      "likeCount": 1,
+      "likes": {
+        "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+      },
+      "module": "Réseaux... - S1",
+      "moduleId": "ia_m4",
+      "professor": "Pr. Mohammed MAHFOUDI",
+      "semester": "S1",
+      "title": "Cours Module Réseau Chaiptre 1,2,3 et 4 ",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1ULtTUK7--lfnim7bTiefAizdnxD7hV-V/view"
+    },
+    "-OhwOTntRw47JOXZS4Dz": {
+      "anonymous": false,
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1767318612831,
+      "description": "",
+      "docType": "TD",
+      "field": "ia",
+      "fileName": "Série TD Maths pour l'IA.pdf",
+      "fullModuleName": "Mathématiques pour l'apprentissage automatique",
+      "likeCount": 1,
+      "likes": {
+        "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+      },
+      "module": "Mathématiques... - S1",
+      "moduleId": "ia_m3",
+      "professor": "Pr. Soufiane MEZROUI",
+      "semester": "S1",
+      "title": "Série TD",
+      "type": "pdf",
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1767318611712_S_rie_TD_Maths_pour_l_IA.pdf"
+    },
+    "-Oi0oBvQTF6ti_pirTSP": {
+      "anonymous": false,
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1767409503459,
+      "description": "",
+      "docType": "Cours",
+      "field": "ia",
+      "fileName": "Tests d’hypothèses.pdf",
+      "fullModuleName": "Probabilités & Statistiques pour Data Science",
+      "likeCount": 1,
+      "likes": {
+        "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+      },
+      "module": "Probabilités... - S1",
+      "moduleId": "ia_m5",
+      "professor": "Pr. El Mahdi",
+      "semester": "S1",
+      "title": "Tests d’hypothèses",
+      "type": "pdf",
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1767409501793_Tests_d_hypothe_ses.pdf"
+    },
+    "-Oij3LM5uqjYJs5hLOws": {
+      "anonymous": false,
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1768168710979,
+      "description": "-",
+      "docType": "Cours",
+      "field": "ia",
+      "fullModuleName": "Réseaux & Sécurité Informatique",
+      "module": "Réseaux... - S1",
+      "moduleId": "ia_m4",
+      "professor": "Pr. Mohammed MAHFOUDI",
+      "semester": "S1",
+      "title": "Drive - Cours Module Réseau Chaiptre 1,2,3 et 4.pdf",
+      "type": "link",
+      "url": "https://drive.google.com/file/d/1ULtTUK7--lfnim7bTiefAizdnxD7hV-V/view?usp=drive_link"
+    },
+    "-Oij8bhfpEwuHuC4tO5j": {
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1768170092782,
+      "description": "",
+      "docType": "TD",
+      "field": "ia",
+      "fullModuleName": "Réseaux & Sécurité Informatique",
+      "module": "Réseaux... - S1",
+      "moduleId": "ia_m4",
+      "professor": "Pr. Mohammed MAHFOUDI",
+      "semester": "S1",
+      "title": "TD1",
+      "type": "link",
+      "unverified": false,
+      "url": "https://drive.google.com/file/d/1OEMEdn66S6HOkgQS-GOz1_QU5dx6Au-H/view?usp=drive_link"
+    },
+    "-Oij8bpkMqd94jwyA9Rl": {
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1768170093303,
+      "description": "",
+      "docType": "TD",
+      "field": "ia",
+      "fullModuleName": "Réseaux & Sécurité Informatique",
+      "module": "Réseaux... - S1",
+      "moduleId": "ia_m4",
+      "professor": "Pr. Mohammed MAHFOUDI",
+      "semester": "S1",
+      "title": "TD2",
+      "type": "link",
+      "unverified": false,
+      "url": "https://drive.google.com/file/d/1-_Bjpdjz5095WdmoCWx_liY-ZUzWZAql/view?usp=drive_link"
+    },
+    "-Oij8c0aAl3pAdgtVobV": {
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1768170094061,
+      "description": "",
+      "docType": "TD",
+      "field": "ia",
+      "fullModuleName": "Réseaux & Sécurité Informatique",
+      "module": "Réseaux... - S1",
+      "moduleId": "ia_m4",
+      "professor": "Pr. Mohammed MAHFOUDI",
+      "semester": "S1",
+      "title": "TD3",
+      "type": "link",
+      "unverified": false,
+      "url": "https://drive.google.com/file/d/1oWE5IIAf-znlxrYW87SzGm3fY1mhMVXu/view?usp=drive_link"
+    },
+    "-OijC0G3RDz80MDc-7uC": {
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1768170983473,
+      "description": "",
+      "docType": "TP",
+      "field": "ia",
+      "fullModuleName": "Réseaux & Sécurité Informatique",
+      "module": "Réseaux... - S1",
+      "moduleId": "ia_m4",
+      "professor": "Pr. Mohammed MAHFOUDI",
+      "semester": "S1",
+      "title": "Drive - TPs",
+      "type": "link",
+      "unverified": false,
+      "url": "https://drive.google.com/drive/u/1/folders/19urJaTGbIO48rsZgYJ9x7vz03CSMcbQZ"
+    },
+    "-OijCJfND7JHpDF1sqfB": {
+      "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "authorName": "Abdelhakim Sahifa",
+      "createdAt": 1768171062982,
+      "description": "",
+      "docType": "Cours",
+      "field": "ia",
+      "fullModuleName": "Réseaux & Sécurité Informatique",
+      "likeCount": 2,
+      "likes": {
+        "Jo23hUMVQKSe9Gvw0FfI9ahOOoy2": true,
+        "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+      },
+      "module": "Réseaux... - S1",
+      "moduleId": "ia_m4",
+      "professor": "Pr. Mohammed MAHFOUDI",
+      "ratingAverage": 5,
+      "ratingCount": 1,
+      "ratings": {
+        "ak04pzxzikfdr6I0L6z3zx9VKLm1": {
+          "createdAt": 1772110516174,
+          "rating": 5,
+          "review": "bien",
+          "updatedAt": 1772110516174,
+          "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+          "userName": "sahifa.abdelhakim@etu.uae.ac.ma"
+        }
+      },
+      "semester": "S1",
+      "title": "Résumé Réseaux & Sécurité",
+      "type": "link",
+      "unverified": false,
+      "url": "https://docs.google.com/document/d/1GSw7BrIGlOW-skL5OJHj1XwUmWyFSs6k0xX4fbFwhXU/edit?usp=drive_link"
+    },
+    "-OluBusOfxHMT_qVtClA": {
+      "anonymous": true,
+      "authorName": "Anonyme",
+      "comments": {
+        "-OlvCCO5yM_Dvb7gb0IF": {
+          "authorId": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+          "authorName": "Abdelhakim Sahifa",
+          "isReply": false,
+          "text": "Merci",
+          "timestamp": 1771593586422
+        }
+      },
+      "createdAt": 1771576732650,
+      "description": "",
+      "docType": "Cours",
+      "field": "ia",
+      "fields": [
+        {
+          "fieldId": "idd",
+          "moduleId": "idd_m14"
+        }
+      ],
+      "fullModuleName": "Algorithmes & Structures de Données",
+      "likeCount": 1,
+      "likes": {
+        "ak04pzxzikfdr6I0L6z3zx9VKLm1": true
+      },
+      "module": "Algorithmes... - S2",
+      "moduleId": "ia_m9",
+      "professor": "non-specifie",
+      "semester": "S2",
+      "title": "Playlist : Language C",
+      "type": "video",
+      "url": "https://youtube.com/playlist?list=PLZpzLuUp9qXxKSkKT43ppqzb8c2ahO4VS&si=L6YrZJW1n2xgFgxW"
+    }
+  },
+  "studentAds": {
+    "-OhpNRFVuk_cX1Zj1ug0": {
+      "category": "service",
+      "createdAt": "2025-12-31T17:08:19.296Z",
+      "description": "Le moyen le plus simple et le plus efficace pour atteindre des milliers d'étudiants chaque jour. Services, projets ou événements : soyez visible là où ça compte.\n\n",
+      "duration": 365,
+      "expirationDate": "2026-01-17T01:37:02.248Z",
+      "invoiceId": "INV-E7UTHYFZQ",
+      "link": "https://estt-community.vercel.app/view-ads",
+      "paymentDate": "2025-12-31T17:13:59.310Z",
+      "paymentStatus": "paid",
+      "price": 7,
+      "publisher": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "publisherEmail": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "live",
+      "title": "Propulsez votre projet au cœur de l'EST Tétouan",
+      "type": "image",
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1766757181217_principal.jpeg",
+      "whatsapp": "0694546701"
+    },
+    "-Oj8ZWW5FwsDTFUMu2Lc": {
+      "category": "service",
+      "createdAt": "2026-01-17T01:29:11.758Z",
+      "description": "Découvre, expérimente et apprends autrement.\nUn espace moderne dédié aux élèves pour pratiquer la science, développer la curiosité et comprendre par l’expérience.",
+      "duration": 90,
+      "expirationDate": "2026-01-17T01:37:02.248Z",
+      "invoiceId": "INV-5QJQ88P4X",
+      "link": "estt-community.vercel.app/redirect/Laboratoire-ads",
+      "paymentDate": "2026-01-17T01:37:02.248Z",
+      "paymentStatus": "paid",
+      "price": 50,
+      "publisher": "ak04pzxzikfdr6I0L6z3zx9VKLm1",
+      "publisherEmail": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "live",
+      "title": "🔬 Le Laboratoire qui Donne Vie à la Science",
+      "type": "image",
+      "url": "https://fnaiedociknutdxoezhn.supabase.co/storage/v1/object/public/resources/1768613350293_est1.jpg",
+      "whatsapp": "0694546701"
+    }
+  },
+  "tickets": {
+    "-Oitv4NRaelnjdWTgkIV": {
+      "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+      "clubName": "TorchCoders",
+      "createdAt": 1768350831451,
+      "eventDate": "2026-01-15",
+      "eventId": "-Oij_J1LD2KTPYah_un_",
+      "eventLocation": "Amphi1",
+      "eventName": "Faire partie du club",
+      "eventTime": "01:21",
+      "firstName": "Hakim",
+      "formData": {
+        "email": "hakim.hakim@etu.uae.ac.ma",
+        "name": "Hakim Hakim"
+      },
+      "id": "-Oitv4NRaelnjdWTgkIV",
+      "lastName": "Hakim",
+      "price": 120,
+      "status": "paid",
+      "stripeSessionId": "pi_3SpI1V0B5hyOm1N61T2V9fQg",
+      "userEmail": "hakim.hakim@etu.uae.ac.ma",
+      "userId": "Jo23hUMVQKSe9Gvw0FfI9ahOOoy2"
+    },
+    "-Oj0g-gtmhcFrMvdMUoZ": {
+      "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+      "clubName": "TorchCoders",
+      "createdAt": 1768481096235,
+      "eventDate": "2026-01-15",
+      "eventId": "-Oij_J1LD2KTPYah_un_",
+      "eventLocation": "Amphi1",
+      "eventName": "Faire partie du club",
+      "eventTime": "01:21",
+      "firstName": "Admin",
+      "formData": {
+        "email": "admin.test@etu.uae.ac.ma",
+        "name": "Admin Admin"
+      },
+      "id": "-Oj0g-gtmhcFrMvdMUoZ",
+      "lastName": "Admin",
+      "price": 120,
+      "status": "paid",
+      "stripeSessionId": "pi_3Sppua0B5hyOm1N60eAtAlmr",
+      "userEmail": "admin.test@etu.uae.ac.ma",
+      "userId": "tRC8UaEBevdSWcAjViezHlBmYDi1"
+    },
+    "-Om6EHzqPLRYUXuvKsJ6": {
+      "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+      "clubName": "TorchCoders",
+      "createdAt": 1771795459532,
+      "eventDate": "2026-03-08",
+      "eventId": "-Oij_J1LD2KTPYah_un_",
+      "eventLocation": "Amphi1",
+      "eventName": "Faire partie du club",
+      "eventTime": "01:21",
+      "firstName": "Test",
+      "formData": {
+        "email": "testaccount@etu.uae.ac.ma",
+        "name": "Test  Account "
+      },
+      "id": "-Om6EHzqPLRYUXuvKsJ6",
+      "lastName": " Account ",
+      "price": 120,
+      "status": "paid",
+      "stripeSessionId": "pi_3T3k7p0B5hyOm1N619dMbpKC",
+      "userEmail": "testaccount@etu.uae.ac.ma",
+      "userId": "UnzSqZjiefgPr2tZy0kbsHhWEV03"
+    },
+    "-Om6F9ld59vFT-QDeNIh": {
+      "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+      "clubName": "TorchCoders",
+      "createdAt": 1771795688008,
+      "eventDate": "2026-02-24",
+      "eventId": "-Om6F3z2DppNTUf14fUT",
+      "eventLocation": "Sale 2",
+      "eventName": "Conference ",
+      "eventTime": "12:30",
+      "firstName": "Test",
+      "formData": {
+        "1771795624265": true,
+        "email": "testaccount@etu.uae.ac.ma",
+        "name": "Test  Account "
+      },
+      "id": "-Om6F9ld59vFT-QDeNIh",
+      "lastName": " Account ",
+      "price": 0,
+      "status": "valid",
+      "userEmail": "testaccount@etu.uae.ac.ma",
+      "userId": "UnzSqZjiefgPr2tZy0kbsHhWEV03"
+    },
+    "-OmiJ5xz9wx_5rW2ECmf": {
+      "checkedIn": true,
+      "checkedInAt": 1772540659833,
+      "checkedInBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+      "clubName": "TorchCoders",
+      "createdAt": 1772451032496,
+      "eventDate": "2026-3-02",
+      "eventId": "-OkubzmrcZo_ZsJu_FYQ",
+      "eventLocation": "sale 1",
+      "eventName": "Événement",
+      "eventTime": "00:30",
+      "firstName": "Abdelhakim",
+      "formData": {
+        "1770510061053": "0612345648",
+        "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+        "name": "Abdelhakim Sahifa"
+      },
+      "id": "-OmiJ5xz9wx_5rW2ECmf",
+      "lastName": "Sahifa",
+      "paid": true,
+      "price": 99,
+      "scanned": true,
+      "scannedAt": 1772540659833,
+      "scannedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "valid",
+      "stripeSessionId": "cs_test_a1ivYodWDYetbZlVh0fCo3F3CztxPeDNqt8VPksrdd63CEr44DfFDxToTw",
+      "updatedAt": 1772451101363,
+      "userEmail": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+    },
+    "-OmkFnRAUNezhksS4Mwe": {
+      "checkedIn": true,
+      "checkedInAt": 1772620041378,
+      "checkedInBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "clubId": "-OhPxD3gb3t5ApR1Xwwt",
+      "clubName": "TorchCoders",
+      "createdAt": 1772483721039,
+      "eventDate": "2026-03-08",
+      "eventId": "-Oij_J1LD2KTPYah_un_",
+      "eventLocation": "Amphi1",
+      "eventName": "Faire partie du club",
+      "eventTime": "01:21",
+      "firstName": "Abdelhakim",
+      "formData": {
+        "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+        "name": "Abdelhakim Sahifa"
+      },
+      "id": "-OmkFnRAUNezhksS4Mwe",
+      "lastName": "Sahifa",
+      "paid": true,
+      "price": 120,
+      "scanned": true,
+      "scannedAt": 1772620041378,
+      "scannedBy": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "status": "valid",
+      "stripeSessionId": "cs_test_a1ThMID6P0sjjxvaGugHe5KGCNHyuKzLinnCJXfV1gZEGcgnUhnRoWFJaS",
+      "updatedAt": 1772483754186,
+      "userEmail": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "userId": "ak04pzxzikfdr6I0L6z3zx9VKLm1"
+    }
+  },
+  "userFavorites": {
+    "ak04pzxzikfdr6I0L6z3zx9VKLm1": {
+      "-OluBusOfxHMT_qVtClA": {
+        "createdAt": 1772189058651,
+        "docType": "Cours",
+        "field": "ia",
+        "resourceId": "-OluBusOfxHMT_qVtClA",
+        "title": "Playlist : Language C",
+        "type": "video"
+      }
+    }
+  },
+  "users": {
+    "1YjRmJqxsTMY3oDRnQ8cuYDyrsi1": {
+      "createdAt": 1770459781596,
+      "email": "test.user.123@etu.uae.ac.ma",
+      "filiere": "idd",
+      "firstName": "Test",
+      "lastName": "User",
+      "role": "student",
+      "startYear": 2023,
+      "uid": "1YjRmJqxsTMY3oDRnQ8cuYDyrsi1"
+    },
+    "3PFYA7Yc9AaaIsvCzozMB10bgku1": {
+      "academicOverride": {
+        "2025-2026": 1
+      },
+      "createdAt": 1768143584038,
+      "email": "alitest@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Ali",
+      "lastName": "Ali",
+      "notifications": {
+        "meta": {
+          "lastOpenedGlobalAt": 1768148669391
+        }
+      },
+      "role": "student",
+      "stars": 0,
+      "startYear": 2024,
+      "uid": "3PFYA7Yc9AaaIsvCzozMB10bgku1",
+      "updatedAt": 1772133890755
+    },
+    "JHumWsxWo6SGMsv7vRGanBnc9A02": {
+      "createdAt": 1768088668524,
+      "email": "test123@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Étudiant",
+      "lastName": "test123",
+      "role": "student",
+      "startYear": 2024,
+      "uid": "JHumWsxWo6SGMsv7vRGanBnc9A02"
+    },
+    "Jo23hUMVQKSe9Gvw0FfI9ahOOoy2": {
+      "createdAt": 1768264061700,
+      "email": "hakim.hakim@etu.uae.ac.ma",
+      "filiere": "idd",
+      "firstName": "Hakim",
+      "lastName": "Hakim",
+      "role": "student",
+      "startYear": 2025,
+      "uid": "Jo23hUMVQKSe9Gvw0FfI9ahOOoy2"
+    },
+    "T5r3ch2kANgfLLb1G2lcCGthc7l2": {
+      "createdAt": 1768089410145,
+      "email": "hakeem.hakeem.test@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Hakim",
+      "lastName": "Hakem",
+      "role": "student",
+      "startYear": 2025,
+      "uid": "T5r3ch2kANgfLLb1G2lcCGthc7l2"
+    },
+    "UnzSqZjiefgPr2tZy0kbsHhWEV03": {
+      "createdAt": 1771795388760,
+      "email": "testaccount@etu.uae.ac.ma",
+      "filiere": "idd",
+      "firstName": "Test ",
+      "lastName": "Account ",
+      "notifications": {
+        "meta": {
+          "lastOpenedGlobalAt": 1771856627483
+        }
+      },
+      "role": "student",
+      "startYear": 2025,
+      "uid": "UnzSqZjiefgPr2tZy0kbsHhWEV03"
+    },
+    "VGajCbUOWDSg58MSaMuImU2DW2D2": {
+      "academicOverride": {
+        "2025-2026": 1
+      },
+      "createdAt": 1772115558850,
+      "email": "chat2tester@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "2chattester",
+      "lastName": "tester2",
+      "startYear": "2025"
+    },
+    "VPRYrwcNlOPi7MaNEMTTZY4Geio2": {
+      "createdAt": 1768088057943,
+      "email": "testtest@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Étudiant",
+      "lastName": "testtest",
+      "role": "student",
+      "startYear": 2025,
+      "uid": "VPRYrwcNlOPi7MaNEMTTZY4Geio2"
+    },
+    "ZMoHj9zcmbQ7AKcezun1uy3BINU2": {
+      "createdAt": 1770841104960,
+      "email": "postemail@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "postmail",
+      "lastName": "mail",
+      "startYear": "2026"
+    },
+    "ak04pzxzikfdr6I0L6z3zx9VKLm1": {
+      "academicOverride": {
+        "2025-2026": 1
+      },
+      "contributions": {
+        "-Oh5cSufyu6Y7YNOXq27": {
+          "module": "Mathématiques... - S1",
+          "timestamp": 1766416569844,
+          "title": "Groupes, Anneaux, Corps et Espaces Vectoriels"
+        },
+        "-OhWSqRva3_irsedJyhd": {
+          "module": "Algorithmes... - S1",
+          "timestamp": 1766866772208,
+          "title": "Algorithmes"
+        },
+        "-OhlFKsghVNExmgRYF8F": {
+          "title": "Cours Module Réseau Chaiptre 1,2,3 et 4 "
+        },
+        "-OhwOTntRw47JOXZS4Dz": {
+          "module": "Mathématiques... - S1",
+          "timestamp": 1767318612831,
+          "title": "Série TD"
+        },
+        "-Oi0oBvQTF6ti_pirTSP": {
+          "module": "Probabilités... - S1",
+          "timestamp": 1767409503459,
+          "title": "Tests d’hypothèses"
+        },
+        "-Oij3LM5uqjYJs5hLOws": {
+          "module": "Réseaux... - S1",
+          "timestamp": 1768168710979,
+          "title": "Drive - Cours Module Réseau Chaiptre 1,2,3 et 4.pdf"
+        },
+        "-OmM3FsMHxlhwKUkbZoh": {
+          "module": "Langues... - S1",
+          "timestamp": 1772061003353,
+          "title": "test",
+          "unverified": true
+        }
+      },
+      "createdAt": 1766496484001,
+      "email": "sahifa.abdelhakim@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Abdelhakim",
+      "lastName": "Sahifa",
+      "notifications": {
+        "meta": {
+          "lastOpenedGlobalAt": 1772623876164
+        }
+      },
+      "role": "admin",
+      "startYear": "2025",
+      "updatedAt": 1766765798776
+    },
+    "eb8OwnZpy9X4L6mZ4TQqUIUVGHl1": {
+      "academicOverride": {
+        "2025-2026": 1
+      },
+      "createdAt": 1772115247081,
+      "email": "chat.tester@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "chattester",
+      "lastName": "tester",
+      "startYear": 2025
+    },
+    "juoLTc0cvjMWdVnfqVSNoVP4dMy2": {
+      "createdAt": 1768086522208,
+      "email": "admin123@etu.uae.ac.ma",
+      "filiere": "ia",
+      "firstName": "Étudiant",
+      "lastName": "admin123",
+      "role": "student",
+      "startYear": 2024,
+      "uid": "juoLTc0cvjMWdVnfqVSNoVP4dMy2"
+    },
+    "mSLkDVZ5WxXisPLT09BgsGcQ1GJ2": {
+      "createdAt": 1768331108791,
+      "email": "karim.ahmed.test@etu.uae.ac.ma",
+      "filiere": "casi",
+      "firstName": "Karim",
+      "lastName": "Ahmes",
+      "role": "student",
+      "startYear": 2025,
+      "uid": "mSLkDVZ5WxXisPLT09BgsGcQ1GJ2"
+    },
+    "sEKQNtMhzURzbiIcrMpNgzm9WNx1": {
+      "createdAt": 1767139679498,
+      "email": "thevcercle@gmail.com",
+      "filiere": "ia",
+      "firstName": "thevcercle",
+      "lastName": "Tester",
+      "startYear": "2025"
+    },
+    "tRC8UaEBevdSWcAjViezHlBmYDi1": {
+      "createdAt": 1768480878862,
+      "email": "admin.test@etu.uae.ac.ma",
+      "filiere": "insem",
+      "firstName": "Admin",
+      "lastName": "Admin",
+      "role": "student",
+      "startYear": 2025,
+      "uid": "tRC8UaEBevdSWcAjViezHlBmYDi1"
+    },
+    "xY9DAedDxfgOVFdHpdcRwpjyirt2": {
+      "academicOverride": {
+        "2025-2026": 1
+      },
+      "createdAt": 1766869401811,
+      "email": "mohamed.alami@etu.uae.ac.ma",
+      "filiere": "idd",
+      "firstName": "Mohamed",
+      "lastName": "Alami",
+      "startYear": "2025"
+    }
+  }
+}
