@@ -1,5 +1,6 @@
 # ESTT Community - Next.js
 
+
 Plateforme communautaire pour partager, découvrir et contribuer des ressources, événements et projets liés à la communauté EST Tétouan.
 
 ## 🚀 Migration vers Next.js
