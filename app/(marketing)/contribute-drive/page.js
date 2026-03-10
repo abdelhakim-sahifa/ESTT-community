@@ -22,7 +22,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Sparkles, Plus, Trash2, HardDrive } from 'lucide-react';
 
-export default function ContributePage() {
+export default function ContributeDrivePage() {
     const router = useRouter();
     const { user, profile } = useAuth();
     const [formData, setFormData] = useState({
@@ -42,7 +42,6 @@ export default function ContributePage() {
     const [message, setMessage] = useState('');
     const [isError, setIsError] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
     const [professors, setProfessors] = useState([]);
 
     useEffect(() => {
@@ -88,33 +87,17 @@ export default function ContributePage() {
             let resourceUrl = formData.url;
 
             if (file) {
+                // Keep the 10MB limit for now, same as original
                 if (file.size > 10 * 1024 * 1024) {
                     throw new Error("Le fichier dépasse la taille maximale de 10 Mo.");
                 }
 
-                // Get human readable names for folder creation
-                const fieldObj = staticDb.fields.find(f => f.id === formData.field);
-                const moduleId = formData.module;
-                const moduleObj = staticDb.modules[`${formData.field}-${formData.semester}`]?.find(m => m.id === moduleId);
-
-                const folderMetadata = {
-                    fieldName: fieldObj ? fieldObj.name : formData.field,
-                    semester: formData.semester,
-                    moduleName: moduleObj ? moduleObj.name : moduleId,
-                    professorName: formData.professor,
-                    displayTitle: formData.title
-                };
-
-                // Uses the new lib/drive.js which calls /api/upload-drive with metadata
-                const uploaded = await uploadResourceFile(file, folderMetadata, (progress) => {
-                    setUploadProgress(progress);
-                });
-
+                // Uses the new lib/drive.js which calls /api/upload-drive
+                const uploaded = await uploadResourceFile(file);
                 if (!uploaded || !uploaded.publicUrl) {
-                    throw new Error("Erreur lors de l'upload du fichier.");
+                    throw new Error("Erreur lors de l'upload du fichier sur Google Drive.");
                 }
                 resourceUrl = uploaded.publicUrl;
-                setUploadProgress(100);
             }
 
             const timestamp = Date.now();
@@ -136,7 +119,7 @@ export default function ContributePage() {
                 authorName: formData.anonymous ? 'Anonyme' : (profile?.firstName ? `${profile.firstName} ${profile.lastName}` : 'Étudiant'),
                 createdAt: timestamp,
                 unverified: true,
-                storageType: 'google-drive'
+                storageType: 'google-drive' // Tag for testing
             };
 
             const resourcesRef = ref(db, 'resources');
@@ -179,69 +162,13 @@ export default function ContributePage() {
                 });
             }
 
-            setMessage('Contribution envoyée avec succès ! Elle sera vérifiée sous peu.');
+            setMessage('Contribution (Test Drive) envoyée avec succès !');
             setTimeout(() => router.push('/thanks'), 2000);
 
-            // Background Emails
-            (async () => {
-                if (user && user.email) {
-                    try {
-                        const { resourceReceivedEmail } = await import('@/lib/email-templates');
-                        const html = resourceReceivedEmail(user.displayName || 'Étudiant', contributionData.title);
-
-                        await fetch('/api/send-email', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                to: user.email,
-                                subject: 'Contribution reçue',
-                                html: html
-                            })
-                        });
-                    } catch (err) {
-                        console.error("Failed to send resource received email:", err);
-                    }
-                }
-
-                try {
-                    const settingsSnap = await get(ref(db, 'adminSettings/notifications'));
-                    let sendAdminEmail = true;
-                    let adminEmail = 'thevcercle@gmail.com';
-
-                    if (settingsSnap.exists()) {
-                        const settings = settingsSnap.val();
-                        sendAdminEmail = settings.enabled !== false;
-                        if (settings.email) adminEmail = settings.email;
-                    }
-
-                    if (sendAdminEmail) {
-                        const { adminNotificationEmail } = await import('@/lib/email-templates');
-                        const adminHtml = adminNotificationEmail(
-                            'Admin',
-                            'Nouvelle Ressource (Drive)',
-                            `Une nouvelle ressource "<strong>${contributionData.title}</strong>" a été soumise pour le module ${contributionData.module} par ${contributionData.authorName}.`,
-                            'https://estt-community.vercel.app/admin'
-                        );
-
-                        await fetch('/api/send-email', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                to: adminEmail,
-                                subject: 'Action requise : Nouvelle ressource soumise (Drive)',
-                                html: adminHtml
-                            })
-                        });
-                    }
-                } catch (adminErr) {
-                    console.error("Failed to notify admin:", adminErr);
-                }
-            })();
-
         } catch (error) {
-            console.error('Error submitting contribution:', error);
+            console.error('Error submitting drive contribution:', error);
             setIsError(true);
-            setMessage(error.message || 'Erreur lors de l\'envoi. Veuillez réessayer.');
+            setMessage(error.message || 'Erreur lors de l\'envoi vers Drive.');
         } finally {
             setLoading(false);
         }
@@ -254,20 +181,29 @@ export default function ContributePage() {
     return (
         <main className="container py-12 max-w-4xl">
             <section className="mb-12 text-center">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                    <HardDrive className="w-8 h-8 text-primary" />
+                    <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        BETA - Google Drive Storage
+                    </span>
+                </div>
                 <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl mb-4">
                     Contribuer une ressource
                 </h1>
                 <p className="text-xl text-muted-foreground">
-                    Aide tes camarades en partageant tes cours, TDs, exercices ou vidéos.
+                    Test de stockage sur Google Drive Centralisé.
                 </p>
             </section>
 
             <section>
-                <Card className="shadow-lg border-muted-foreground/10">
+                <Card className="shadow-lg border-primary/20 bg-primary/5">
                     <CardHeader>
-                        <CardTitle>Formulaire de contribution</CardTitle>
+                        <CardTitle className="text-primary flex items-center gap-2">
+                            <Sparkles className="w-5 h-5" />
+                            Mode Test : Google Drive
+                        </CardTitle>
                         <CardDescription>
-                            Les champs marqués d'une astérisque (*) sont obligatoires.
+                            Cette page envoie les fichiers sur votre Drive Google au lieu de Supabase.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -292,7 +228,7 @@ export default function ContributePage() {
                                         }}
                                         required
                                     >
-                                        <SelectTrigger id="field">
+                                        <SelectTrigger id="field" className="bg-white">
                                             <SelectValue placeholder="Sélectionnez une filière" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -314,7 +250,7 @@ export default function ContributePage() {
                                         required
                                         disabled={!formData.field}
                                     >
-                                        <SelectTrigger id="semester">
+                                        <SelectTrigger id="semester" className="bg-white">
                                             <SelectValue placeholder="Sélectionnez un semestre" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -335,7 +271,7 @@ export default function ContributePage() {
                                         required
                                         disabled={!formData.semester}
                                     >
-                                        <SelectTrigger id="module">
+                                        <SelectTrigger id="module" className="bg-white">
                                             <SelectValue placeholder="Sélectionnez un module" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -352,7 +288,7 @@ export default function ContributePage() {
                                         value={formData.professor}
                                         onValueChange={(v) => handleChange('professor', v)}
                                     >
-                                        <SelectTrigger id="professor">
+                                        <SelectTrigger id="professor" className="bg-white">
                                             <SelectValue placeholder="Sélectionnez un professeur" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -370,108 +306,11 @@ export default function ContributePage() {
                                 </div>
                             </div>
 
-                            {/* Additional Fields (Linking) */}
-                            {formData.field && formData.semester && (
-                                <div className="space-y-4 p-5 bg-muted/20 rounded-2xl border border-muted-foreground/10">
-                                    <div className="flex items-center justify-between">
-                                        <div className="space-y-1">
-                                            <Label className="text-sm font-bold flex items-center gap-2">
-                                                <Sparkles className="w-4 h-4 text-primary" />
-                                                Aussi utile pour... (Optionnel)
-                                            </Label>
-                                            <p className="text-[11px] text-muted-foreground">
-                                                Si cette ressource correspond à un module dans une autre filière.
-                                            </p>
-                                        </div>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-8 text-xs font-bold text-primary hover:bg-primary/5"
-                                            onClick={() => {
-                                                const current = formData.fields || [];
-                                                handleChange('fields', [...current, { fieldId: '', moduleId: '' }]);
-                                            }}
-                                        >
-                                            <Plus className="w-3 h-3 mr-1" /> Ajouter
-                                        </Button>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        {(formData.fields || []).map((link, lIndex) => {
-                                            const linkModules = link.fieldId && formData.semester
-                                                ? staticDb.modules[`${link.fieldId}-${formData.semester}`] || []
-                                                : [];
-
-                                            return (
-                                                <div key={lIndex} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-white/50 rounded-xl border border-muted-foreground/5 relative group">
-                                                    <div className="space-y-1.5">
-                                                        <Label className="text-[10px] font-bold uppercase opacity-70">Filière</Label>
-                                                        <Select
-                                                            value={link.fieldId}
-                                                            onValueChange={(val) => {
-                                                                const updatedLinks = [...formData.fields];
-                                                                updatedLinks[lIndex] = { ...updatedLinks[lIndex], fieldId: val, moduleId: '' };
-                                                                handleChange('fields', updatedLinks);
-                                                            }}
-                                                        >
-                                                            <SelectTrigger className="h-9 text-xs"><SelectValue placeholder="Filière" /></SelectTrigger>
-                                                            <SelectContent>
-                                                                {staticDb.fields.map(f => (
-                                                                    <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-                                                    <div className="space-y-1.5">
-                                                        <Label className="text-[10px] font-bold uppercase opacity-70">Module Équivalent</Label>
-                                                        <div className="flex gap-2">
-                                                            <Select
-                                                                value={link.moduleId}
-                                                                onValueChange={(val) => {
-                                                                    const updatedLinks = [...formData.fields];
-                                                                    updatedLinks[lIndex] = { ...updatedLinks[lIndex], moduleId: val };
-                                                                    handleChange('fields', updatedLinks);
-                                                                }}
-                                                                disabled={!link.fieldId}
-                                                            >
-                                                                <SelectTrigger className="h-9 text-xs flex-grow"><SelectValue placeholder="Module" /></SelectTrigger>
-                                                                <SelectContent>
-                                                                    {linkModules.map(m => (
-                                                                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-                                                            <Button
-                                                                type="button"
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                className="h-9 w-9 text-destructive hover:bg-destructive/10"
-                                                                onClick={() => {
-                                                                    const updatedLinks = formData.fields.filter((_, i) => i !== lIndex);
-                                                                    handleChange('fields', updatedLinks);
-                                                                }}
-                                                            >
-                                                                <Trash2 className="w-4 h-4" />
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                        {(!formData.fields || formData.fields.length === 0) && (
-                                            <p className="text-[10px] text-muted-foreground italic text-center py-2 opacity-60">
-                                                Aucune liaison supplémentaire ajoutée.
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
                             <div className="space-y-2">
                                 <Label htmlFor="title">Titre de la ressource *</Label>
                                 <Input
                                     id="title"
+                                    className="bg-white"
                                     placeholder="Ex: Cours complet chapitre 3"
                                     value={formData.title}
                                     onChange={(e) => handleChange('title', e.target.value)}
@@ -483,6 +322,7 @@ export default function ContributePage() {
                                 <Label htmlFor="description">Description</Label>
                                 <Textarea
                                     id="description"
+                                    className="bg-white"
                                     placeholder="Décrivez brièvement la ressource..."
                                     value={formData.description}
                                     onChange={(e) => handleChange('description', e.target.value)}
@@ -498,7 +338,7 @@ export default function ContributePage() {
                                         onValueChange={(v) => handleChange('type', v)}
                                         required
                                     >
-                                        <SelectTrigger id="type">
+                                        <SelectTrigger id="type" className="bg-white">
                                             <SelectValue placeholder="Type de ressource" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -517,7 +357,7 @@ export default function ContributePage() {
                                         onValueChange={(v) => handleChange('docType', v)}
                                         required
                                     >
-                                        <SelectTrigger id="docType">
+                                        <SelectTrigger id="docType" className="bg-white">
                                             <SelectValue placeholder="Choisir le type" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -534,6 +374,7 @@ export default function ContributePage() {
                                         <Label htmlFor="url">URL *</Label>
                                         <Input
                                             id="url"
+                                            className="bg-white"
                                             type="url"
                                             placeholder="https://..."
                                             value={formData.url}
@@ -543,18 +384,18 @@ export default function ContributePage() {
                                     </div>
                                 ) : (
                                     <div className="space-y-2">
-                                        <Label htmlFor="file">Fichier *</Label>
-                                        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-muted-foreground/20 border-dashed rounded-md hover:bg-muted/50 transition-colors cursor-pointer relative group">
+                                        <Label htmlFor="file">Fichier (Google Drive) *</Label>
+                                        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-primary/20 border-dashed rounded-md bg-white hover:bg-muted/50 transition-colors cursor-pointer relative group">
                                             <div className="space-y-1 text-center">
-                                                <CloudUpload className="mx-auto h-12 w-12 text-muted-foreground group-hover:text-primary transition-colors" />
+                                                <CloudUpload className="mx-auto h-12 w-12 text-primary group-hover:scale-110 transition-transform" />
                                                 <div className="flex text-sm text-muted-foreground">
                                                     <label htmlFor="file" className="relative cursor-pointer bg-transparent rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none">
-                                                        <span>{file ? file.name : "Cliquez pour uploader un fichier"}</span>
+                                                        <span>{file ? file.name : "Cliquez pour uploader sur Drive"}</span>
                                                         <input id="file" name="file" type="file" className="sr-only" onChange={handleFileChange} accept={formData.type === 'pdf' ? '.pdf' : 'image/*'} required={!formData.url} />
                                                     </label>
                                                 </div>
                                                 <p className="text-xs text-muted-foreground">
-                                                    {formData.type === 'pdf' ? 'PDF uniquement' : 'Images uniquement'} jusqu'à 10MB
+                                                    PDF ou Images jusqu'à 10MB
                                                 </p>
                                             </div>
                                         </div>
@@ -562,41 +403,17 @@ export default function ContributePage() {
                                 )}
                             </div>
 
-                            <div className="flex items-center space-x-2 bg-muted/30 p-4 rounded-lg">
-                                <Checkbox
-                                    id="anonymous"
-                                    checked={formData.anonymous}
-                                    onCheckedChange={(v) => handleChange('anonymous', v)}
-                                />
-                                <div className="grid gap-1.5 leading-none">
-                                    <Label htmlFor="anonymous" className="text-sm font-medium leading-none cursor-pointer">
-                                        Contribuer de manière anonyme
-                                    </Label>
-                                    <p className="text-xs text-muted-foreground">
-                                        Votre nom ne sera pas affiché publiquement sur la ressource.
-                                    </p>
-                                </div>
-                            </div>
-
                             <div className="flex flex-col gap-4">
-                                <Button type="submit" size="lg" className="w-full h-12 text-lg shadow-sm" disabled={loading}>
+                                <Button type="submit" size="lg" className="w-full h-12 text-lg shadow-sm bg-primary hover:bg-primary/90" disabled={loading}>
                                     {loading ? (
                                         <>
                                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                            {uploadProgress > 0 && uploadProgress < 100
-                                                ? `Envoi en cours... ${uploadProgress}%`
-                                                : uploadProgress === 100
-                                                    ? "Finalisation..."
-                                                    : "Envoi en cours..."}
+                                            Upload sur Google Drive...
                                         </>
                                     ) : (
-                                        'Soumettre la ressource'
+                                        'Envoyer sur Google Drive'
                                     )}
                                 </Button>
-                                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                                    <Info className="h-3 w-3" />
-                                    <span>Toutes les ressources sont vérifiées avant d'être publiées.</span>
-                                </div>
                             </div>
                         </form>
                     </CardContent>

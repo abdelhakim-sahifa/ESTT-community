@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { db as staticDb } from '@/lib/data';
-import { uploadResourceFile } from '@/lib/drive'; // SWAPPED FROM SUPABASE TO DRIVE
-import { db, ref, push, set, get } from '@/lib/firebase';
+import { uploadResourceFile } from '@/lib/supabase';
+import { db, ref, push, set, get, update } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Sparkles, Plus, Trash2, HardDrive } from 'lucide-react';
+import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Sparkles, Plus, Trash2 } from 'lucide-react';
 
 export default function ContributePage() {
     const router = useRouter();
@@ -42,7 +42,6 @@ export default function ContributePage() {
     const [message, setMessage] = useState('');
     const [isError, setIsError] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
     const [professors, setProfessors] = useState([]);
 
     useEffect(() => {
@@ -91,34 +90,16 @@ export default function ContributePage() {
                 if (file.size > 10 * 1024 * 1024) {
                     throw new Error("Le fichier dépasse la taille maximale de 10 Mo.");
                 }
-
-                // Get human readable names for folder creation
-                const fieldObj = staticDb.fields.find(f => f.id === formData.field);
-                const moduleId = formData.module;
-                const moduleObj = staticDb.modules[`${formData.field}-${formData.semester}`]?.find(m => m.id === moduleId);
-
-                const folderMetadata = {
-                    fieldName: fieldObj ? fieldObj.name : formData.field,
-                    semester: formData.semester,
-                    moduleName: moduleObj ? moduleObj.name : moduleId,
-                    professorName: formData.professor,
-                    displayTitle: formData.title
-                };
-
-                // Uses the new lib/drive.js which calls /api/upload-drive with metadata
-                const uploaded = await uploadResourceFile(file, folderMetadata, (progress) => {
-                    setUploadProgress(progress);
-                });
-
-                if (!uploaded || !uploaded.publicUrl) {
+                const uploaded = await uploadResourceFile(file);
+                if (!uploaded && !uploaded.publicUrl) {
                     throw new Error("Erreur lors de l'upload du fichier.");
                 }
                 resourceUrl = uploaded.publicUrl;
-                setUploadProgress(100);
             }
 
             const timestamp = Date.now();
 
+            // Get module info for short name and full name
             const moduleId = formData.module;
             const moduleObj = staticDb.modules[`${formData.field}-${formData.semester}`]?.find(m => m.id === moduleId);
             const fullModuleName = moduleObj ? moduleObj.name : moduleId;
@@ -127,22 +108,23 @@ export default function ContributePage() {
 
             const contributionData = {
                 ...formData,
-                module: shortModuleName,
-                fullModuleName: fullModuleName,
-                moduleId: moduleId,
+                module: shortModuleName, // Store "ShortName - Semester"
+                fullModuleName: fullModuleName, // Store full name
+                moduleId: moduleId, // Store original ID for mapping and indexing
                 url: resourceUrl,
                 fileName: file?.name || null,
                 authorId: user?.uid || null,
                 authorName: formData.anonymous ? 'Anonyme' : (profile?.firstName ? `${profile.firstName} ${profile.lastName}` : 'Étudiant'),
                 createdAt: timestamp,
-                unverified: true,
-                storageType: 'google-drive'
+                unverified: true
             };
 
+            // 1. Push to flat resources node
             const resourcesRef = ref(db, 'resources');
             const newResourceRef = push(resourcesRef);
             const resourceId = newResourceRef.key;
 
+            // Map of field linking
             const finalFields = [
                 { fieldId: formData.field, moduleId: moduleId },
                 ...(formData.fields || [])
@@ -150,17 +132,20 @@ export default function ContributePage() {
 
             const updatedContributionData = {
                 ...contributionData,
-                fields: formData.fields || []
+                fields: formData.fields || [] // Store just the extra links in the resource
             };
 
             await set(newResourceRef, updatedContributionData);
 
+            // 2. Link in module_resources mapping for ALL linked fields/modules
             for (const link of finalFields) {
                 if (!link.fieldId || !link.moduleId) continue;
 
+                // Index by Module for Browse
                 const moduleMappingRef = ref(db, `module_resources/${link.moduleId}/${resourceId}`);
                 await set(moduleMappingRef, true);
 
+                // Index by Field for Search
                 const keywordRef = ref(db, `metadata/keywords/${link.fieldId}/${resourceId}`);
                 await set(keywordRef, {
                     title: formData.title,
@@ -169,21 +154,24 @@ export default function ContributePage() {
             }
 
             if (user) {
+                // Track in user profile
                 const userActivityRef = ref(db, `users/${user.uid}/contributions/${resourceId}`);
                 await set(userActivityRef, {
                     module: shortModuleName,
                     title: formData.title,
                     timestamp: timestamp,
-                    unverified: true,
-                    storageType: 'google-drive'
+                    unverified: true
                 });
             }
+
+
 
             setMessage('Contribution envoyée avec succès ! Elle sera vérifiée sous peu.');
             setTimeout(() => router.push('/thanks'), 2000);
 
             // Background Emails
             (async () => {
+                // Send Resource Received Email to User
                 if (user && user.email) {
                     try {
                         const { resourceReceivedEmail } = await import('@/lib/email-templates');
@@ -203,14 +191,16 @@ export default function ContributePage() {
                     }
                 }
 
+                // Notify Admin
                 try {
+                    // Fetch admin settings
                     const settingsSnap = await get(ref(db, 'adminSettings/notifications'));
                     let sendAdminEmail = true;
                     let adminEmail = 'thevcercle@gmail.com';
 
                     if (settingsSnap.exists()) {
                         const settings = settingsSnap.val();
-                        sendAdminEmail = settings.enabled !== false;
+                        sendAdminEmail = settings.enabled !== false; // Default true
                         if (settings.email) adminEmail = settings.email;
                     }
 
@@ -218,7 +208,7 @@ export default function ContributePage() {
                         const { adminNotificationEmail } = await import('@/lib/email-templates');
                         const adminHtml = adminNotificationEmail(
                             'Admin',
-                            'Nouvelle Ressource (Drive)',
+                            'Nouvelle Ressource',
                             `Une nouvelle ressource "<strong>${contributionData.title}</strong>" a été soumise pour le module ${contributionData.module} par ${contributionData.authorName}.`,
                             'https://estt-community.vercel.app/admin'
                         );
@@ -228,7 +218,7 @@ export default function ContributePage() {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 to: adminEmail,
-                                subject: 'Action requise : Nouvelle ressource soumise (Drive)',
+                                subject: 'Action requise : Nouvelle ressource soumise',
                                 html: adminHtml
                             })
                         });
@@ -237,7 +227,6 @@ export default function ContributePage() {
                     console.error("Failed to notify admin:", adminErr);
                 }
             })();
-
         } catch (error) {
             console.error('Error submitting contribution:', error);
             setIsError(true);
@@ -583,11 +572,7 @@ export default function ContributePage() {
                                     {loading ? (
                                         <>
                                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                            {uploadProgress > 0 && uploadProgress < 100
-                                                ? `Envoi en cours... ${uploadProgress}%`
-                                                : uploadProgress === 100
-                                                    ? "Finalisation..."
-                                                    : "Envoi en cours..."}
+                                            Envoi en cours...
                                         </>
                                     ) : (
                                         'Soumettre la ressource'
@@ -605,3 +590,4 @@ export default function ContributePage() {
         </main>
     );
 }
+

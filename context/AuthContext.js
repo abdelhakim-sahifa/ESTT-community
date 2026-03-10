@@ -6,7 +6,8 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut as firebaseSignOut,
-    sendEmailVerification
+    sendEmailVerification,
+    GoogleAuthProvider
 } from 'firebase/auth';
 import { auth, db, ref, onValue } from '@/lib/firebase';
 
@@ -78,6 +79,11 @@ export const AuthProvider = ({ children }) => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
+
+            // Get Google Access Token if we need to interact with Google APIs
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const accessToken = credential?.accessToken;
+
             const email = user.email.toLowerCase();
 
             let isAllowed = false;
@@ -115,7 +121,7 @@ export const AuthProvider = ({ children }) => {
                 });
             }
 
-            return result;
+            return { ...result, accessToken };
         } catch (error) {
             console.error("Google Sign-In Error:", error);
             throw error;
