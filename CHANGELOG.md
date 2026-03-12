@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.6.2...v1.7.0) (2026-03-10)
+
+
+### Features
+
+* **contribution:** migrated the contribution system to Google Drive. ([964dc61](https://github.com/abdelhakim-sahifa/ESTT-community/commit/964dc61e01969c23883d80b5e10a8d143f0bb8d5))
+
 ## [1.6.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.6.1...v1.6.2) (2026-03-10)
 
 
