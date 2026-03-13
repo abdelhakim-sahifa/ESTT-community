@@ -75,6 +75,26 @@ export async function POST(req) {
                     }
                 }
                 console.log(`Ad ${adId} activated successfully via Webhook.`);
+
+                // Notify Slack Finance
+                try {
+                    const { notifySlack, SLACK_CHANNELS } = await import('@/lib/slack');
+                    await notifySlack(SLACK_CHANNELS.FINANCE, {
+                        title: '💰 Nouveau Revenu Publicitaire',
+                        message: `Une publicité "*${adData.title}*" vient d'être payée et activée.`,
+                        user: {
+                            name: adData.publisherName || 'Annonceur',
+                            email: adData.publisherEmail || 'N/A'
+                        },
+                        resource: {
+                            title: adData.title,
+                            type: 'ad',
+                            id: adId
+                        }
+                    });
+                } catch (slackErr) {
+                    console.error('Slack finance notification failed (ad):', slackErr);
+                }
             } else {
                 // TICKET LOGIC (Original)
                 const { ticketId, clubId, eventId } = session.metadata;
@@ -121,6 +141,26 @@ export async function POST(req) {
                         });
                     } catch (emailErr) {
                         console.error("Webhook email sending failed:", emailErr);
+                    }
+
+                    // Notify Slack Finance
+                    try {
+                        const { notifySlack, SLACK_CHANNELS } = await import('@/lib/slack');
+                        await notifySlack(SLACK_CHANNELS.FINANCE, {
+                            title: '🎫 Vente de Billet',
+                            message: `Un billet pour l'événement "*${ticketData.eventName}*" (${ticketData.clubName}) a été acheté.`,
+                            user: {
+                                name: ticketData.userName,
+                                email: ticketData.userEmail
+                            },
+                            resource: {
+                                title: ticketData.eventName,
+                                type: 'ticket',
+                                id: ticketId
+                            }
+                        });
+                    } catch (slackErr) {
+                        console.error('Slack finance notification failed (ticket):', slackErr);
                     }
                 }
                 console.log(`Ticket ${ticketId} validated successfully via Webhook.`);

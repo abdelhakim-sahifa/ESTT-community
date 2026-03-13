@@ -236,6 +236,26 @@ export default function ContributePage() {
                 } catch (adminErr) {
                     console.error("Failed to notify admin:", adminErr);
                 }
+
+                try {
+                    const { notifySlack, SLACK_CHANNELS } = await import('@/lib/slack');
+                    await notifySlack(SLACK_CHANNELS.ADMIN, {
+                        title: '📚 Nouvelle Contribution',
+                        message: `Une nouvelle ressource a été soumise pour le module *${contributionData.fullModuleName || contributionData.module}*.`,
+                        user: {
+                            name: contributionData.authorName,
+                            email: user?.email || 'N/A',
+                            uid: user?.uid || 'N/A'
+                        },
+                        resource: {
+                            title: contributionData.title,
+                            type: contributionData.type || 'resource',
+                            id: resourceId
+                        }
+                    });
+                } catch (slackErr) {
+                    console.error('Failed to notify Slack about contribution:', slackErr);
+                }
             })();
 
         } catch (error) {

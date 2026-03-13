@@ -46,6 +46,7 @@ export async function POST(req) {
         const semester = formData.get('semester');
         const moduleName = formData.get('moduleName');
         const professorName = formData.get('professorName');
+        const isBugReport = formData.get('isBugReport') === 'true';
 
         if (!file) {
             return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -77,7 +78,13 @@ export async function POST(req) {
         // 3. Handle Folder Hierarchy
         let targetFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
 
-        if (fieldName && semester && moduleName) {
+        if (isBugReport) {
+            try {
+                targetFolderId = await findOrCreateFolder(drive, 'Bug Reports', targetFolderId);
+            } catch (folderErr) {
+                console.warn('Bug Reports folder creation error:', folderErr);
+            }
+        } else if (fieldName && semester && moduleName) {
             try {
                 // Root -> Field -> Semester -> Module -> Professor/Autres
                 const fieldFolderId = await findOrCreateFolder(drive, fieldName, targetFolderId);

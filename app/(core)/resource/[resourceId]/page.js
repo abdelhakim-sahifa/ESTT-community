@@ -57,6 +57,38 @@ export default function ResourcePage() {
         }
     }, [resourceId, user]);
 
+    // Use a ref to prevent multiple Slack notifications during dev mode or re-renders
+    const hasNotifiedSlack = useState(false);
+    useEffect(() => {
+        const notifySlackCall = async () => {
+            if (resource && !hasNotifiedSlack[0]) {
+                hasNotifiedSlack[1](true);
+                try {
+                    const { notifySlack, SLACK_CHANNELS } = await import('@/lib/slack');
+                    await notifySlack(SLACK_CHANNELS.COMMUNITY, {
+                        title: '👀 Consultation de Ressource',
+                        user: {
+                            uid: user?.uid || 'anonymous',
+                            email: user?.email || 'anonymous',
+                            name: profile?.displayName || 'Anonymous'
+                        },
+                        resource: {
+                            id: resource.id,
+                            title: resource.title,
+                            type: resource.type
+                        }
+                    });
+                } catch (err) {
+                    console.error('Failed to send Slack notification:', err);
+                }
+            }
+        };
+
+        if (resource) {
+            notifySlackCall();
+        }
+    }, [resource, user, profile]);
+
     useEffect(() => {
         const fetchFavorite = async () => {
             if (!user || !resourceId) {

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { version } from '@/package.json';
 import {
     Bug,
     Info,
@@ -20,7 +21,8 @@ import {
     HelpCircle,
     ArrowLeft
 } from 'lucide-react';
-import { db, storage, storageRef, uploadBytes, getDownloadURL, push, ref, set, serverTimestamp } from '@/lib/firebase';
+import { db, push, ref, set, serverTimestamp } from '@/lib/firebase';
+import { uploadResourceFile } from '@/lib/drive';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -89,6 +91,7 @@ export default function ReportBugPage() {
                 os: detectedOS,
                 browser: detectedBrowser,
                 deviceType: detectedDevice,
+                appVersion: version, // Auto-detected from package.json
                 email: user?.email || prev.email,
                 userId: user?.uid || ''
             }));
@@ -133,6 +136,7 @@ export default function ReportBugPage() {
 
         setLoading(true);
         setError(null);
+        setUploadProgress(0);
 
         try {
             const refId = generateReferenceId();
@@ -141,19 +145,40 @@ export default function ReportBugPage() {
 
             let uploadedAttachments = [];
 
-            // Upload attachments if any
+            // Upload attachments if any to Google Drive
             if (attachments.length > 0) {
+                const totalFiles = attachments.length;
+                let filesUploaded = 0;
+
                 for (const file of attachments) {
-                    const fileRef = storageRef(storage, `bug-reports/${refId}/${file.name}`);
-                    const snapshot = await uploadBytes(fileRef, file);
-                    const url = await getDownloadURL(snapshot.ref);
-                    uploadedAttachments.push({
-                        name: file.name,
-                        url: url,
-                        type: file.type,
-                        size: file.size
-                    });
+                    try {
+                        const metadata = {
+                            isBugReport: true,
+                            displayTitle: `BUG_${refId}_${file.name.split('.')[0]}`
+                        };
+
+                        const uploaded = await uploadResourceFile(file, metadata, (pc) => {
+                            // Simple calculation for overall progress
+                            const currentProgress = ((filesUploaded / totalFiles) * 100) + (pc / totalFiles);
+                            setUploadProgress(Math.round(currentProgress));
+                        });
+
+                        if (uploaded && uploaded.publicUrl) {
+                            uploadedAttachments.push({
+                                name: file.name,
+                                url: uploaded.publicUrl,
+                                driveId: uploaded.id,
+                                type: file.type,
+                                size: file.size
+                            });
+                        }
+                        filesUploaded++;
+                    } catch (uploadErr) {
+                        console.error(`Error uploading ${file.name}:`, uploadErr);
+                        // We could continue or stop here. Let's continue for other files.
+                    }
                 }
+                setUploadProgress(100);
             }
 
             const reportData = {
@@ -164,10 +189,33 @@ export default function ReportBugPage() {
                 createdAt: serverTimestamp(),
                 timestamp: Date.now(),
                 userId: user.uid,
-                reporterName: profile ? `${profile.firstName} ${profile.lastName}` : (user.displayName || 'Utilisateur ESTT')
+                reporterName: profile ? `${profile.firstName} ${profile.lastName}` : (user.displayName || 'Utilisateur ESTT'),
+                storageType: 'google-drive'
             };
 
             await set(newBugRef, reportData);
+
+            // Notify Slack
+            try {
+                const { notifySlack, SLACK_CHANNELS } = await import('@/lib/slack');
+                await notifySlack(SLACK_CHANNELS.ALERTS, {
+                    title: '🐞 Nouveau Rapport de Bug',
+                    message: `Un bug a été signalé avec une sévérité *${formData.severity}*.`,
+                    user: {
+                        name: reportData.reporterName,
+                        email: user.email,
+                        uid: user.uid
+                    },
+                    resource: {
+                        title: formData.title,
+                        type: 'bug',
+                        severity: formData.severity,
+                        id: refId // Used to build admin link if possible
+                    }
+                });
+            } catch (slackErr) {
+                console.error('Failed to notify Slack about bug:', slackErr);
+            }
 
             setReferenceId(refId);
             setSuccess(true);
@@ -452,6 +500,21 @@ export default function ReportBugPage() {
                                     </div>
                                 )}
                             </div>
+
+                            {loading && uploadProgress > 0 && (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                        <span>Upload en cours...</span>
+                                        <span>{uploadProgress}%</span>
+                                    </div>
+                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-primary transition-all duration-300 ease-out"
+                                            style={{ width: `${uploadProgress}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="flex flex-col gap-4 pt-4">
                                 <Button
