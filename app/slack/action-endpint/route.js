@@ -26,12 +26,15 @@ try {
 export async function POST(req) {
     try {
         const contentType = req.headers.get('content-type') || '';
+        console.log('Incoming Slack Request Content-Type:', contentType);
+        
         let body;
 
         // 1. Handle Slack Interactive Payloads (Form Data)
         if (contentType.includes('application/x-www-form-urlencoded')) {
             const formData = await req.formData();
             const payloadStr = formData.get('payload');
+            console.log('Slack Payload String Found:', !!payloadStr);
             if (payloadStr) {
                 body = JSON.parse(payloadStr);
             }
@@ -41,8 +44,11 @@ export async function POST(req) {
         }
 
         if (!body) {
+            console.error('No body parsed from Slack request');
             return NextResponse.json({ error: 'No body' }, { status: 400 });
         }
+
+        console.log('Slack Request Type:', body.type);
 
         // 2. Handle Slack URL verification challenge
         if (body.type === 'url_verification') {
