@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.9.3...v1.10.0) (2026-03-23)
+
+
+### Features
+
+* add guide page ([6cb7bea](https://github.com/abdelhakim-sahifa/ESTT-community/commit/6cb7bea0c4bfe8926bd76a7fd6b2cfc50957132d))
+
 ## [1.9.3](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.9.2...v1.9.3) (2026-03-13)
 
 
