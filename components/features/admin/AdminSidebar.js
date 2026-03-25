@@ -11,7 +11,8 @@ import {
     ShieldCheck,
     Bell,
     Zap,
-    Bug
+    Bug,
+    Link
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -109,6 +110,14 @@ export default function AdminSidebar({ activeTab, setActiveTab, profile, stats =
                     onClick={() => setActiveTab('notifications')}
                 >
                     <Bell className="w-4 h-4" /> Notifications
+                </Button>
+
+                <Button
+                    variant={activeTab === 'shortUrls' ? 'default' : 'ghost'}
+                    className="justify-start gap-3 h-11"
+                    onClick={() => setActiveTab('shortUrls')}
+                >
+                    <Link className="w-4 h-4" /> URLs Courts
                 </Button>
 
                 <Button

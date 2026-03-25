@@ -50,15 +50,15 @@ export default function GuidePage() {
                         {/* YouTube Video Embed */}
                         <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 group">
                             {/* Placeholder for YouTube Video - Replace src later */}
-                            <iframe 
+                            <iframe
                                 className="absolute inset-0 w-full h-full"
-                                src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-                                title="YouTube video player" 
-                                frameBorder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                src="http://estt-community.vercel.app/re/vedio-guide"
+                                title="YouTube video player"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 allowFullScreen
                             ></iframe>
-                            
+
                             {/* Optional: Placeholder overlay when video link is empty (can remove if iframe src is set) */}
                             {/* 
                             <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
@@ -97,7 +97,7 @@ export default function GuidePage() {
                             <span className="text-xs sm:text-sm font-medium">Compte</span>
                         </TabsTrigger>
                     </TabsList>
-                    
+
                     {/* Tab Content: Trouver des ressources */}
                     <TabsContent value="resources" className="mt-4 focus-visible:outline-none focus-visible:ring-0">
                         <Card className="border-slate-200 dark:border-slate-800 shadow-lg">

@@ -22,6 +22,7 @@ import AdminSettings from './AdminSettings';
 import AdminNotifications from './AdminNotifications';
 import AdminFastContribute from './AdminFastContribute';
 import AdminBugReports from './AdminBugReports';
+import AdminShortUrls from './AdminShortUrls';
 
 
 export default function AdminDashboard() {
@@ -247,6 +248,10 @@ export default function AdminDashboard() {
 
                     {activeTab === 'fastContribute' && (
                         <AdminFastContribute />
+                    )}
+
+                    {activeTab === 'shortUrls' && (
+                        <AdminShortUrls />
                     )}
                 </main>
 
