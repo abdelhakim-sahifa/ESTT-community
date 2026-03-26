@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { db, ref, update, remove, get } from '@/lib/firebase';
+﻿import { useState } from 'react';
+import Link from 'next/link';
+import { db, ref, update, remove, get, push, set } from '@/lib/firebase';
 import {
     Table,
     TableBody,
@@ -12,7 +13,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Search, CheckCircle2, Eye, Trash2, Edit2, Loader2, Link2, Star, MessageCircle } from 'lucide-react';
+import { Search, CheckCircle2, Eye, Trash2, Edit2, Loader2, Link2, Star, MessageCircle, Mail, ExternalLink } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -56,6 +57,11 @@ export default function AdminResources({ resources }) {
     const [linkModalOpen, setLinkModalOpen] = useState(false);
     const [itemToLink, setItemToLink] = useState(null);
     const [selectedFields, setSelectedFields] = useState([]);
+    const [contactModalOpen, setContactModalOpen] = useState(false);
+    const [itemToContact, setItemToContact] = useState(null);
+    const [contactMessage, setContactMessage] = useState('');
+    const [sendingContactEmail, setSendingContactEmail] = useState(false);
+    const [contactError, setContactError] = useState('');
 
     // Ratings state (admin-only view of user feedback)
     const [ratingModalOpen, setRatingModalOpen] = useState(false);
@@ -66,6 +72,13 @@ export default function AdminResources({ resources }) {
         r.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         r.module?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const getResourcePath = (resource) => {
+        if (resource._isNested && resource.moduleId) {
+            return `resources/${resource.moduleId}/${resource.id}`;
+        }
+        return `resources/${resource.id}`;
+    };
 
     const openRatingModal = async (resource) => {
         setItemToRate(resource);
@@ -137,7 +150,7 @@ export default function AdminResources({ resources }) {
                 // Send in-app notification
                 await sendPrivateNotification(resource.authorId, {
                     type: NOTIF_TYPES.RESOURCE,
-                    title: 'Ressource Approuvée 🎉',
+                    title: 'Ressource Approuvée ??',
                     message: `Votre contribution "${resource.title}" a été validée et est maintenant en ligne.`,
                     icon: 'book-open',
                     action: { type: 'navigate', target: `/resource/${resource.id}` }
@@ -268,7 +281,7 @@ export default function AdminResources({ resources }) {
 
                     await sendPrivateNotification(itemToEdit.authorId, {
                         type: NOTIF_TYPES.RESOURCE,
-                        title: 'Ressource Mise à Jour 📝',
+                        title: 'Ressource Mise à Jour ??',
                         message: `Votre contribution "${editData.title}" a été mise à jour par un administrateur. ${changeDescription}`,
                         icon: 'edit-3',
                         action: { type: 'navigate', target: `/resource/${itemToEdit.id}` }
@@ -372,6 +385,144 @@ export default function AdminResources({ resources }) {
         }
     };
 
+    const openContactModal = (resource) => {
+        setItemToContact(resource);
+        setContactMessage('');
+        setContactError('');
+        setContactModalOpen(true);
+    };
+
+    const handleSendContactEmail = async () => {
+        if (!itemToContact) return;
+
+        const trimmedMessage = contactMessage.trim();
+        if (!trimmedMessage) {
+            setContactError("Ecris un message avant d'envoyer l'email.");
+            return;
+        }
+
+        if (!itemToContact.authorId) {
+            setContactError("Cette ressource n'est pas liee a un contributeur identifiable.");
+            return;
+        }
+
+        setSendingContactEmail(true);
+        setContactError('');
+
+        try {
+            const userSnap = await get(ref(db, `users/${itemToContact.authorId}`));
+            if (!userSnap.exists()) {
+                throw new Error('Impossible de retrouver le contributeur de cette ressource.');
+            }
+
+            const userData = userSnap.val();
+            if (!userData.email) {
+                throw new Error("Aucune adresse email n'est disponible pour ce contributeur.");
+            }
+
+            const now = Date.now();
+            const authorName = itemToContact.authorName
+                || `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
+                || 'Etudiant';
+
+            let threadId = itemToContact.contactThreadId || null;
+
+            if (!threadId) {
+                const newThreadRef = push(ref(db, 'resourceContactThreads'));
+                threadId = newThreadRef.key;
+
+                await set(newThreadRef, {
+                    id: threadId,
+                    resourceId: itemToContact.id,
+                    resourceTitle: itemToContact.title || 'Ressource',
+                    resourceModule: itemToContact.fullModuleName || itemToContact.module || '',
+                    resourceStatus: itemToContact.unverified ? 'pending' : 'accepted',
+                    authorId: itemToContact.authorId,
+                    authorName,
+                    authorEmail: userData.email,
+                    status: 'awaiting_user',
+                    lastSender: 'admin',
+                    createdAt: now,
+                    updatedAt: now,
+                    lastMessagePreview: trimmedMessage.slice(0, 180),
+                });
+            } else {
+                await update(ref(db, `resourceContactThreads/${threadId}`), {
+                    resourceTitle: itemToContact.title || 'Ressource',
+                    resourceModule: itemToContact.fullModuleName || itemToContact.module || '',
+                    resourceStatus: itemToContact.unverified ? 'pending' : 'accepted',
+                    authorId: itemToContact.authorId,
+                    authorName,
+                    authorEmail: userData.email,
+                    status: 'awaiting_user',
+                    lastSender: 'admin',
+                    updatedAt: now,
+                    lastMessagePreview: trimmedMessage.slice(0, 180),
+                });
+            }
+
+            const newMessageRef = push(ref(db, `resourceContactThreads/${threadId}/messages`));
+            await set(newMessageRef, {
+                id: newMessageRef.key,
+                senderType: 'admin',
+                senderName: 'Administration ESTT Community',
+                body: trimmedMessage,
+                createdAt: now,
+            });
+
+            await update(ref(db, getResourcePath(itemToContact)), {
+                contactThreadId: threadId,
+                contactThreadUpdatedAt: now,
+                lastAdminContactAt: now,
+            });
+
+            await update(ref(db, `users/${itemToContact.authorId}/contributions/${itemToContact.id}`), {
+                contactThreadId: threadId,
+                contactThreadUpdatedAt: now,
+            });
+
+            const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://estt-community.vercel.app';
+            const replyUrl = `${baseUrl}/resource-contact/${threadId}`;
+
+            const { resourceContactRequestEmail } = await import('@/lib/email-templates');
+            const html = resourceContactRequestEmail(
+                userData.firstName || 'Etudiant',
+                itemToContact.title || 'Ressource',
+                trimmedMessage,
+                replyUrl,
+                itemToContact.unverified ? 'en attente de validation' : 'deja acceptee'
+            );
+
+            await fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: userData.email,
+                    subject: `Question concernant ta ressource : ${itemToContact.title || 'Ressource'}`,
+                    html
+                })
+            });
+
+            await sendPrivateNotification(itemToContact.authorId, {
+                type: NOTIF_TYPES.RESOURCE,
+                title: 'Question sur ta ressource',
+                message: `Un administrateur t'a envoye une question a propos de "${itemToContact.title}".`,
+                icon: 'mail',
+                priority: 'high',
+                action: { type: 'navigate', target: `/resource-contact/${threadId}` }
+            });
+
+            setContactModalOpen(false);
+            setItemToContact(null);
+            setContactMessage('');
+        } catch (err) {
+            console.error(err);
+            setContactError(err.message || "Impossible d'envoyer l'email de contact.");
+        } finally {
+            setSendingContactEmail(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -457,6 +608,22 @@ export default function AdminResources({ resources }) {
                                         <Button size="sm" variant="outline" className="h-8 px-2 text-primary border-primary/10 hover:bg-primary/5" onClick={() => handleLinkResource(res)} title="Lier à d'autres filières">
                                             <Link2 className="w-4 h-4" />
                                         </Button>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="h-8 px-2 text-sky-600 border-sky-100 hover:bg-sky-50"
+                                            onClick={() => openContactModal(res)}
+                                            title="Contacter le contributeur"
+                                        >
+                                            <Mail className="w-4 h-4" />
+                                        </Button>
+                                        {res.contactThreadId && (
+                                            <Button size="sm" variant="outline" className="h-8 px-2" asChild title="Ouvrir la room">
+                                                <Link href={`/resource-contact/${res.contactThreadId}`} target="_blank">
+                                                    <ExternalLink className="w-4 h-4" />
+                                                </Link>
+                                            </Button>
+                                        )}
                                         <Button
                                             size="sm"
                                             variant="outline"
@@ -714,6 +881,54 @@ export default function AdminResources({ resources }) {
                         <Button onClick={handleSaveLinks} disabled={saving}>
                             {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                             Enregistrer les liaisons
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={contactModalOpen} onOpenChange={setContactModalOpen}>
+                <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>Contacter le contributeur</DialogTitle>
+                        <DialogDescription>
+                            Ecris ton message. Une room sera creee automatiquement et un lien de reponse sera envoye par email au contributeur.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        {itemToContact && (
+                            <div className="rounded-xl border bg-slate-50 p-4">
+                                <p className="font-semibold text-slate-900">{itemToContact.title}</p>
+                                <p className="mt-1 text-xs text-slate-500">
+                                    {itemToContact.fullModuleName || itemToContact.module || 'Module non specifie'}
+                                </p>
+                                <p className="mt-2 text-xs text-slate-500">
+                                    Statut: {itemToContact.unverified ? 'En attente de validation' : 'Acceptee'}
+                                </p>
+                            </div>
+                        )}
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="contact-message">Message admin</Label>
+                            <Textarea
+                                id="contact-message"
+                                rows={6}
+                                placeholder="Explique clairement ce que tu souhaites demander."
+                                value={contactMessage}
+                                onChange={(e) => setContactMessage(e.target.value)}
+                            />
+                        </div>
+
+                        {contactError && (
+                            <p className="text-sm text-destructive">{contactError}</p>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setContactModalOpen(false)} disabled={sendingContactEmail}>
+                            Annuler
+                        </Button>
+                        <Button onClick={handleSendContactEmail} disabled={sendingContactEmail}>
+                            {sendingContactEmail ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
+                            Envoyer l'email
                         </Button>
                     </DialogFooter>
                 </DialogContent>
