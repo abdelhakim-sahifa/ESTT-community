@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.11.1...v1.12.0) (2026-03-26)
+
+
+### Features
+
+* implement admin ressource contact ([cb48090](https://github.com/abdelhakim-sahifa/ESTT-community/commit/cb48090e5d9ccbc38e3930a88a6aa171d1f52a66))
+
 ## [1.11.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.11.0...v1.11.1) (2026-03-25)
 
 # [1.11.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.10.0...v1.11.0) (2026-03-25)
