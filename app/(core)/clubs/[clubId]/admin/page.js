@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { sendPrivateNotification, NOTIF_TYPES } from '@/lib/notifications';
 import { generatePDF, generateCertificate, generateAttendanceList, generatePostPDF } from '@/lib/pdfUtils';
+import { uploadToImgBB } from '@/lib/uploadUtils';
 
 
 export default function ClubAdminPage() {
@@ -41,7 +42,7 @@ export default function ClubAdminPage() {
     const [clubInfo, setClubInfo] = useState({ description: '', themeColor: '#64748b', socialLinks: {} });
 
     // Post creation
-    const [newPost, setNewPost] = useState({ type: 'article', title: '', content: '', linkedFormId: '' });
+    const [newPost, setNewPost] = useState({ type: 'article', title: '', content: '', linkedFormId: '', imageUrl: '' });
     const [postImage, setPostImage] = useState(null);
     const [uploadingPostImage, setUploadingPostImage] = useState(false);
     const [submittingPost, setSubmittingPost] = useState(false);
@@ -91,6 +92,7 @@ export default function ClubAdminPage() {
         maxCapacity: '',
         price: 0,
         status: 'published',
+        imageUrl: '',
         fields: [
             { id: 'name', label: 'Nom complet', type: 'text', required: true },
             { id: 'email', label: 'Email', type: 'email', required: true }
@@ -110,6 +112,22 @@ export default function ClubAdminPage() {
     const [rejectionReason, setRejectionReason] = useState('');
     const [ticketToReject, setTicketToReject] = useState(null);
     const [rejecting, setRejecting] = useState(false);
+
+    // Email Sending
+    const [newEmail, setNewEmail] = useState({
+        subject: '',
+        title: '',
+        content: '',
+        ctaLabel: '',
+        ctaLink: '',
+        target: 'members', // 'members' or 'event'
+        eventId: '',
+        coverImageUrl: ''
+    });
+    const [sendingEmails, setSendingEmails] = useState(false);
+    const [emailProgress, setEmailProgress] = useState({ current: 0, total: 0 });
+    const [showEmailPreview, setShowEmailPreview] = useState(false);
+    const [uploadingCoverImage, setUploadingCoverImage] = useState(false);
 
     const handleGeneratePDF = async (data, type, clubInfo, selectedForm = null) => {
         try {
@@ -377,19 +395,31 @@ export default function ClubAdminPage() {
         }
     };
 
+    const handlePostImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploadingPostImage(true);
+        setMessage('');
+
+        try {
+            const url = await uploadToImgBB(file);
+            setNewPost(prev => ({ ...prev, imageUrl: url }));
+            setMessage('Image de la publication téléchargée !');
+        } catch (error) {
+            console.error('Error uploading post image:', error);
+            setMessage(error.message || 'Erreur lors du téléchargement de l\'image');
+        } finally {
+            setUploadingPostImage(false);
+        }
+    };
+
     const handleCreatePost = async (e) => {
         e.preventDefault();
         setMessage('');
         setSubmittingPost(true);
 
         try {
-            let imageUrl = '';
-            if (postImage) {
-                setUploadingPostImage(true);
-                imageUrl = await uploadClubImage(postImage);
-                setUploadingPostImage(false);
-            }
-
             const postsRef = ref(db, `clubPosts/${clubId}`);
             const newPostRef = push(postsRef);
 
@@ -403,7 +433,7 @@ export default function ClubAdminPage() {
             await set(newPostRef, postData);
 
             setPosts(prev => [{ id: newPostRef.key, ...postData }, ...prev]);
-            setNewPost({ type: 'article', title: '', content: '', linkedFormId: '' });
+            setNewPost({ type: 'article', title: '', content: '', linkedFormId: '', imageUrl: '' });
             setPostImage(null);
             setMessage('Publication créée avec succès');
         } catch (error) {
@@ -718,6 +748,23 @@ export default function ClubAdminPage() {
         }));
     };
 
+    const handleEventImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            setUploadingEventImage(true);
+            const url = await uploadToImgBB(file);
+            setNewEvent(prev => ({ ...prev, imageUrl: url }));
+            setMessage('Image de l\'événement téléchargée !');
+        } catch (error) {
+            console.error('Error uploading event image:', error);
+            setMessage('Erreur lors du téléchargement de l\'image');
+        } finally {
+            setUploadingEventImage(false);
+        }
+    };
+
     const handleCreateEvent = async (e) => {
         e.preventDefault();
         setMessage('');
@@ -727,19 +774,11 @@ export default function ClubAdminPage() {
 
             setCreatingEvent(true);
 
-            let imageUrl = '';
-            if (eventImage) {
-                setUploadingEventImage(true);
-                imageUrl = await uploadClubImage(eventImage);
-                setUploadingEventImage(false);
-            }
-
             const eventsRef = ref(db, `clubs/${clubId}/events`);
             const newEventRef = push(eventsRef);
 
             await set(newEventRef, {
                 ...newEvent,
-                imageUrl,
                 registrationCount: 0,
                 createdAt: Date.now()
             });
@@ -757,7 +796,8 @@ export default function ClubAdminPage() {
                 fields: [
                     { id: 'name', label: 'Nom complet', type: 'text', required: true },
                     { id: 'email', label: 'Email', type: 'email', required: true }
-                ]
+                ],
+                imageUrl: ''
             });
             setEventImage(null);
             fetchClubData();
@@ -994,6 +1034,116 @@ export default function ClubAdminPage() {
         }
     };
 
+    const handleSendEmails = async (e) => {
+        e.preventDefault();
+        
+        if (!newEmail.subject || !newEmail.title || !newEmail.content) {
+            setMessage("Veuillez remplir le sujet, le titre et le contenu.");
+            return;
+        }
+        
+        if (newEmail.target === 'event' && !newEmail.eventId) {
+            setMessage("Veuillez sélectionner un événement.");
+            return;
+        }
+
+        let targetEmails = [];
+        if (newEmail.target === 'members') {
+            targetEmails = (club.members || []).map(m => m.email).filter(Boolean);
+        } else {
+            const eventTickets = tickets.filter(t => t.eventId === newEmail.eventId);
+            const emails = new Set();
+            for (const t of eventTickets) {
+                if (t.userEmail && t.userEmail !== 'N/A') {
+                    emails.add(t.userEmail);
+                }
+            }
+            targetEmails = Array.from(emails);
+        }
+
+        if (targetEmails.length === 0) {
+            setMessage("Aucun destinataire trouvé pour cette sélection.");
+            return;
+        }
+
+        if (!confirm(`Envoyer cet email à ${targetEmails.length} destinataire(s) ?`)) return;
+
+        setSendingEmails(true);
+        setEmailProgress({ current: 0, total: targetEmails.length });
+        setMessage('');
+
+        try {
+            const { clubAnnouncementEmail } = await import('@/lib/email-templates');
+            const html = clubAnnouncementEmail(
+                newEmail.title, 
+                newEmail.content, 
+                club.name, 
+                newEmail.ctaLabel, 
+                newEmail.ctaLink,
+                club.logo,
+                club.themeColor,
+                newEmail.coverImageUrl
+            );
+
+            let successCount = 0;
+            for (let i = 0; i < targetEmails.length; i++) {
+                const recipient = targetEmails[i];
+                try {
+                    await fetch('/api/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: recipient,
+                            subject: newEmail.subject,
+                            html
+                        })
+                    });
+                    successCount++;
+                } catch (err) {
+                    console.error(`Failed to send email to ${recipient}:`, err);
+                }
+                setEmailProgress(prev => ({ ...prev, current: i + 1 }));
+            }
+
+            setMessage(`Emails envoyés avec succès à ${successCount}/${targetEmails.length} destinataire(s).`);
+            setNewEmail({
+                subject: '',
+                title: '',
+                content: '',
+                ctaLabel: '',
+                ctaLink: '',
+                target: 'members',
+                eventId: '',
+                coverImageUrl: ''
+            });
+        } catch (error) {
+            console.error("Error sending emails:", error);
+            setMessage("Une erreur est survenue lors de l'envoi des emails.");
+        } finally {
+            setSendingEmails(false);
+        }
+    };
+
+    const handleCoverImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploadingCoverImage(true);
+        setMessage('');
+
+        try {
+            const url = await uploadToImgBB(file);
+            setNewEmail(prev => ({ ...prev, coverImageUrl: url }));
+            setMessage('Image téléchargée avec succès');
+        } catch (error) {
+            console.error('Error uploading cover image:', error);
+            setMessage(error.message || 'Erreur lors du téléchargement de l\'image');
+        } finally {
+            setUploadingCoverImage(false);
+        }
+    };
+
+
     if (authLoading || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -1105,6 +1255,9 @@ export default function ClubAdminPage() {
                                     </TabsTrigger>
                                     <TabsTrigger value="posts" className="justify-start gap-3 h-11 px-4 data-[state=active]:bg-primary data-[state=active]:text-white">
                                         <LayoutDashboard className="w-4 h-4" /> Publications
+                                    </TabsTrigger>
+                                    <TabsTrigger value="emails" className="justify-start gap-3 h-11 px-4 data-[state=active]:bg-primary data-[state=active]:text-white">
+                                        <Megaphone className="w-4 h-4" /> Communiquer
                                     </TabsTrigger>
                                     <TabsTrigger value="create" className="justify-start gap-3 h-11 px-4 data-[state=active]:bg-primary data-[state=active]:text-white">
                                         <Plus className="w-4 h-4" /> Créer
@@ -1340,18 +1493,46 @@ export default function ClubAdminPage() {
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Image de couverture (Optionnel)</Label>
-                                                        <div className="flex items-center gap-4">
-                                                            <Input
-                                                                type="file"
-                                                                accept="image/*"
-                                                                onChange={(e) => {
-                                                                    if (e.target.files?.[0]) setEventImage(e.target.files[0]);
-                                                                }}
-                                                                className="flex-1"
-                                                            />
-                                                            {eventImage && (
-                                                                <div className="w-10 h-10 border rounded bg-slate-50 flex items-center justify-center">
-                                                                    <Upload className="w-4 h-4 text-slate-400" />
+                                                        <div className="flex gap-4 items-start">
+                                                            <div className="flex-1 space-y-2">
+                                                                <Input 
+                                                                    placeholder="URL de l'image (ex: https://i.ibb.co/...)" 
+                                                                    value={newEvent.imageUrl}
+                                                                    onChange={e => setNewEvent(p => ({ ...p, imageUrl: e.target.value }))}
+                                                                    disabled={creatingEvent || uploadingEventImage}
+                                                                />
+                                                                <div className="flex items-center gap-2">
+                                                                    <Button 
+                                                                        type="button" 
+                                                                        variant="outline" 
+                                                                        size="sm"
+                                                                        disabled={creatingEvent || uploadingEventImage}
+                                                                        onClick={() => document.getElementById('event-cover-upload').click()}
+                                                                    >
+                                                                        {uploadingEventImage ? (
+                                                                            <>
+                                                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                                                Téléchargement...
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <Upload className="w-4 h-4 mr-2" />
+                                                                                Choisir une image
+                                                                            </>
+                                                                        )}
+                                                                    </Button>
+                                                                    <input 
+                                                                        id="event-cover-upload" 
+                                                                        type="file" 
+                                                                        className="hidden" 
+                                                                        accept="image/*"
+                                                                        onChange={handleEventImageUpload}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            {newEvent.imageUrl && (
+                                                                <div className="w-24 h-16 rounded border overflow-hidden bg-slate-100 flex-shrink-0 shadow-sm">
+                                                                    <img src={newEvent.imageUrl} alt="Event Preview" className="w-full h-full object-cover" />
                                                                 </div>
                                                             )}
                                                         </div>
@@ -1715,6 +1896,270 @@ export default function ClubAdminPage() {
                                 </Card>
                             </TabsContent>
 
+                            {/* Emails Management Tab */}
+                            <TabsContent value="emails">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle className="flex items-center gap-2">
+                                            <Megaphone className="w-5 h-5 text-primary" />
+                                            Communiquer avec vos membres
+                                        </CardTitle>
+                                        <CardDescription>
+                                            Envoyez des annonces professionnelles par email à vos membres ou aux participants de vos événements.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <form onSubmit={handleSendEmails} className="space-y-6">
+                                            <div className="grid md:grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label>Sujet de l'email</Label>
+                                                    <Input 
+                                                        placeholder="Ex: Nouvelle annonce importante" 
+                                                        value={newEmail.subject}
+                                                        onChange={e => setNewEmail(p => ({ ...p, subject: e.target.value }))}
+                                                        disabled={sendingEmails}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>Titre (Header) de l'email</Label>
+                                                    <Input 
+                                                        placeholder="Ex: Bienvenue à notre prochain atelier" 
+                                                        value={newEmail.title}
+                                                        onChange={e => setNewEmail(p => ({ ...p, title: e.target.value }))}
+                                                        disabled={sendingEmails}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Contenu du message</Label>
+                                                <Textarea 
+                                                    placeholder="Écrivez votre message ici..." 
+                                                    rows={8}
+                                                    value={newEmail.content}
+                                                    onChange={e => setNewEmail(p => ({ ...p, content: e.target.value }))}
+                                                    disabled={sendingEmails}
+                                                />
+                                                <p className="text-xs text-muted-foreground italic">Les sauts de ligne seront convertis en paragraphes.</p>
+                                            </div>
+
+                                            <div className="grid md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg border">
+                                                <div className="space-y-2">
+                                                    <Label>Texte du bouton (Optionnel)</Label>
+                                                    <Input 
+                                                        placeholder="Ex: Rejoindre le groupe Discord" 
+                                                        value={newEmail.ctaLabel}
+                                                        onChange={e => setNewEmail(p => ({ ...p, ctaLabel: e.target.value }))}
+                                                        disabled={sendingEmails}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>Lien du bouton (Optionnel)</Label>
+                                                    <Input 
+                                                        placeholder="Ex: https://discord.gg/..." 
+                                                        value={newEmail.ctaLink}
+                                                        onChange={e => setNewEmail(p => ({ ...p, ctaLink: e.target.value }))}
+                                                        disabled={sendingEmails}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2 md:col-span-2 pt-2 border-t mt-2">
+                                                    <Label>Image de couverture</Label>
+                                                    <div className="flex gap-4 items-start">
+                                                        <div className="flex-1 space-y-2">
+                                                            <Input 
+                                                                placeholder="URL de l'image (ex: https://i.ibb.co/...)" 
+                                                                value={newEmail.coverImageUrl}
+                                                                onChange={e => setNewEmail(p => ({ ...p, coverImageUrl: e.target.value }))}
+                                                                disabled={sendingEmails || uploadingCoverImage}
+                                                            />
+                                                            <div className="flex items-center gap-2">
+                                                                <Button 
+                                                                    type="button" 
+                                                                    variant="outline" 
+                                                                    size="sm"
+                                                                    disabled={sendingEmails || uploadingCoverImage}
+                                                                    onClick={() => document.getElementById('cover-upload').click()}
+                                                                >
+                                                                    {uploadingCoverImage ? (
+                                                                        <>
+                                                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                                            Téléchargement...
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <Upload className="w-4 h-4 mr-2" />
+                                                                            Choisir une image
+                                                                        </>
+                                                                    )}
+                                                                </Button>
+                                                                <input 
+                                                                    id="cover-upload" 
+                                                                    type="file" 
+                                                                    className="hidden" 
+                                                                    accept="image/*"
+                                                                    onChange={handleCoverImageUpload}
+                                                                />
+                                                                <p className="text-xs text-muted-foreground italic">
+                                                                    L'image sera hébergée sur imgbb.com
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        {newEmail.coverImageUrl && (
+                                                            <div className="w-24 h-16 rounded border overflow-hidden bg-slate-100 flex-shrink-0">
+                                                                <img src={newEmail.coverImageUrl} alt="Preview" className="w-full h-full object-cover" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4 pt-4 border-t">
+                                                <Label className="font-bold">Destinataires</Label>
+                                                <div className="flex flex-col sm:flex-row gap-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <input 
+                                                            type="radio" 
+                                                            id="target-members" 
+                                                            name="target" 
+                                                            checked={newEmail.target === 'members'}
+                                                            onChange={() => setNewEmail(p => ({ ...p, target: 'members' }))}
+                                                            disabled={sendingEmails}
+                                                        />
+                                                        <Label htmlFor="target-members" className="cursor-pointer">Tous les membres ({club.members?.length || 0})</Label>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <input 
+                                                            type="radio" 
+                                                            id="target-event" 
+                                                            name="target" 
+                                                            checked={newEmail.target === 'event'}
+                                                            onChange={() => setNewEmail(p => ({ ...p, target: 'event' }))}
+                                                            disabled={sendingEmails}
+                                                        />
+                                                        <Label htmlFor="target-event" className="cursor-pointer">Participants à un événement</Label>
+                                                    </div>
+                                                </div>
+
+                                                {newEmail.target === 'event' && (
+                                                    <div className="space-y-2 max-w-md">
+                                                        <Select 
+                                                            value={newEmail.eventId} 
+                                                            onValueChange={v => setNewEmail(p => ({ ...p, eventId: v }))}
+                                                            disabled={sendingEmails}
+                                                        >
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Choisir un événement..." />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {events.map(event => (
+                                                                    <SelectItem key={event.id} value={event.id}>
+                                                                        {event.title} ({tickets.filter(t => t.eventId === event.id).length} participants)
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {sendingEmails && (
+                                                <div className="space-y-2 pt-4">
+                                                    <div className="flex justify-between text-sm mb-1">
+                                                        <span>Envoi en cours...</span>
+                                                        <span>{Math.round((emailProgress.current / emailProgress.total) * 100)}% ({emailProgress.current}/{emailProgress.total})</span>
+                                                    </div>
+                                                    <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                                        <div 
+                                                            className="bg-primary h-full transition-all duration-300" 
+                                                            style={{ width: `${(emailProgress.current / emailProgress.total) * 100}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div className="flex gap-4 pt-4">
+                                                <Button type="submit" className="flex-1" disabled={sendingEmails}>
+                                                    {sendingEmails ? (
+                                                        <>
+                                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                            Envoi...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                                                            Envoyer l'email
+                                                        </>
+                                                    )}
+                                                </Button>
+                                                
+                                                <Dialog open={showEmailPreview} onOpenChange={setShowEmailPreview}>
+                                                    <DialogTrigger asChild>
+                                                        <Button variant="outline" type="button" disabled={sendingEmails}>
+                                                            <FileText className="w-4 h-4 mr-2" />
+                                                            Aperçu
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+                                                        <DialogHeader>
+                                                            <DialogTitle>Aperçu de l'email</DialogTitle>
+                                                            <DialogDescription>Voici comment vos membres verront votre message.</DialogDescription>
+                                                        </DialogHeader>
+                                                        <div className="bg-slate-100 p-4 rounded-md border text-slate-900 shadow-inner overflow-hidden">
+                                                            <div className="bg-white max-w-xl mx-auto shadow-sm rounded-lg overflow-hidden border">
+                                                                <div 
+                                                                    className="p-4 text-white text-center font-bold text-xl flex items-center justify-between px-8"
+                                                                    style={{ borderTop: `4px solid ${club.themeColor || '#2563eb'}` }}
+                                                                >
+                                                                    {club.logo ? (
+                                                                        <img src={club.logo} alt="Club Logo" className="h-8 w-auto rounded" />
+                                                                    ) : (
+                                                                        <span className="text-slate-900 text-sm">{club.name}</span>
+                                                                    )}
+                                                                    <span className="text-slate-400 font-light mx-2">&times;</span>
+                                                                    <div className="text-slate-900">
+                                                                        ESTT<span className="text-primary">.Community</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                {newEmail.coverImageUrl && (
+                                                                    <div className="w-full">
+                                                                        <img src={newEmail.coverImageUrl} alt="Cover" className="w-full h-48 object-cover" />
+                                                                    </div>
+                                                                )}
+
+                                                                <div className="p-8">
+                                                                    <h2 className="text-2xl font-bold mb-4">{newEmail.title || 'Titre de l\'email'}</h2>
+                                                                    <div className="text-slate-600 mb-6 space-y-4">
+                                                                        {newEmail.content ? newEmail.content.split('\n').map((p, i) => <p key={i}>{p}</p>) : <p>Le contenu de votre message apparaîtra ici...</p>}
+                                                                    </div>
+                                                                    {newEmail.ctaLabel && (
+                                                                        <div className="text-center my-8">
+                                                                            <span 
+                                                                                className="inline-block text-white px-6 py-2 rounded-md font-medium"
+                                                                                style={{ backgroundColor: club.themeColor || '#2563eb' }}
+                                                                            >
+                                                                                {newEmail.ctaLabel}
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="text-slate-500 text-sm italic">
+                                                                        Cordialement,<br />
+                                                                        <strong>L'équipe {club.name}</strong>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <DialogFooter>
+                                                            <Button onClick={() => setShowEmailPreview(false)}>Fermer</Button>
+                                                        </DialogFooter>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </div>
+                                        </form>
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
+
                             {/* Create Post Tab */}
                             <TabsContent value="create">
                                 <Card>
@@ -1759,20 +2204,50 @@ export default function ClubAdminPage() {
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label>Image (optionnel)</Label>
-                                                <div className="flex items-center gap-4">
-                                                    <Input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={(e) => {
-                                                            if (e.target.files?.[0]) setPostImage(e.target.files[0]);
-                                                        }}
-                                                        disabled={submittingPost}
-                                                    />
-                                                    {postImage && (
-                                                        <div className="text-sm text-green-600 flex items-center gap-2">
-                                                            <CheckCircle2 className="w-4 h-4" />
-                                                            Image sélectionnée
+                                                <Label>Image de couverture (Optionnel)</Label>
+                                                <div className="flex gap-4 items-start">
+                                                    <div className="flex-1 space-y-2">
+                                                        <Input 
+                                                            placeholder="URL de l'image (ex: https://i.ibb.co/...)" 
+                                                            value={newPost.imageUrl}
+                                                            onChange={e => setNewPost(p => ({ ...p, imageUrl: e.target.value }))}
+                                                            disabled={submittingPost || uploadingPostImage}
+                                                        />
+                                                        <div className="flex items-center gap-2">
+                                                            <Button 
+                                                                type="button" 
+                                                                variant="outline" 
+                                                                size="sm"
+                                                                disabled={submittingPost || uploadingPostImage}
+                                                                onClick={() => document.getElementById('post-cover-upload').click()}
+                                                            >
+                                                                {uploadingPostImage ? (
+                                                                    <>
+                                                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                                        Téléchargement...
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Upload className="w-4 h-4 mr-2" />
+                                                                        Choisir une image
+                                                                    </>
+                                                                )}
+                                                            </Button>
+                                                            <input 
+                                                                id="post-cover-upload" 
+                                                                type="file" 
+                                                                className="hidden" 
+                                                                accept="image/*"
+                                                                onChange={handlePostImageUpload}
+                                                            />
+                                                            <p className="text-xs text-muted-foreground italic">
+                                                                L'image sera hébergée sur imgbb.com
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    {newPost.imageUrl && (
+                                                        <div className="w-24 h-16 rounded border overflow-hidden bg-slate-100 flex-shrink-0 shadow-sm">
+                                                            <img src={newPost.imageUrl} alt="Post Preview" className="w-full h-full object-cover" />
                                                         </div>
                                                     )}
                                                 </div>
