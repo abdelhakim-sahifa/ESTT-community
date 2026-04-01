@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { IMAGE_SIZES } from '@/lib/image-constants';
 import { db, ref, get, update, onValue } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
+import { useDialog } from '@/context/DialogContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,6 +19,7 @@ import { uploadToImgBB } from '@/lib/uploadUtils';
 export default function PublicProfilePage() {
     const { id } = useParams();
     const { user: currentUser, signOut } = useAuth();
+    const { showWarning, showError, showSuccess, showInfo } = useDialog();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -175,8 +177,8 @@ export default function PublicProfilePage() {
     }, [profile, id]);
 
     const handleStar = async () => {
-        if (!currentUser) { alert("Vous devez être connecté pour liker un profil."); return; }
-        if (currentUser.uid === id) { alert("Vous ne pouvez pas liker votre propre profil."); return; }
+        if (!currentUser) { showWarning("Vous devez être connecté pour liker un profil."); return; }
+        if (currentUser.uid === id) { showWarning("Vous ne pouvez pas liker votre propre profil."); return; }
 
         const newIsStarred = !isStarred;
         const newStarCount = newIsStarred ? starCount + 1 : Math.max(0, starCount - 1);
@@ -190,7 +192,7 @@ export default function PublicProfilePage() {
             setStarCount(newStarCount);
         } catch (err) {
             console.error("Error updating star:", err);
-            alert("Une erreur est survenue lors de la mise à jour des stars.");
+            showError("Une erreur est survenue lors de la mise à jour des stars.");
         }
     };
 
@@ -200,7 +202,7 @@ export default function PublicProfilePage() {
 
         // Check file size (max 10MB for ImgBB/Performance)
         if (file.size > 10 * 1024 * 1024) {
-            alert("L'image est trop volumineuse (max 10 Mo).");
+            showWarning("L'image est trop volumineuse (max 10 Mo).");
             return;
         }
 
@@ -212,7 +214,7 @@ export default function PublicProfilePage() {
             setFormData(prev => ({ ...prev, bannerUrl: url }));
         } catch (err) {
             console.error("Error uploading banner:", err);
-            alert("Erreur lors du téléchargement de la bannière.");
+            showError("Erreur lors du téléchargement de la bannière.");
         } finally {
             setBannerUploading(false);
         }
@@ -224,7 +226,7 @@ export default function PublicProfilePage() {
 
         // Check file size (max 5MB for ImgBB/Performance)
         if (file.size > 5 * 1024 * 1024) {
-            alert("L'image est trop volumineuse (max 5 Mo).");
+            showWarning("L'image est trop volumineuse (max 5 Mo).");
             return;
         }
 
@@ -236,7 +238,7 @@ export default function PublicProfilePage() {
             setFormData(prev => ({ ...prev, photoUrl: url }));
         } catch (err) {
             console.error("Error uploading avatar:", err);
-            alert("Erreur lors du téléchargement de la photo de profil.");
+            showError("Erreur lors du téléchargement de la photo de profil.");
         } finally {
             setAvatarUploading(false);
         }
@@ -250,7 +252,7 @@ export default function PublicProfilePage() {
             setIsEditOpen(false);
         } catch (err) {
             console.error("Error updating profile:", err);
-            alert("Erreur lors de la mise à jour du profil.");
+            showError("Erreur lors de la mise à jour du profil.");
         } finally {
             setSaving(false);
         }
@@ -266,15 +268,16 @@ export default function PublicProfilePage() {
             const url = window.location.href;
             if (navigator.share) {
                 await navigator.share({ title: `Profil de ${profile.firstName} ${profile.lastName} | ESTT Community`, url });
+                showSuccess("Lien du profil copié !");
             } else {
                 await navigator.clipboard.writeText(url);
-                alert("Lien du profil copié !");
+                showSuccess("Lien du profil copié !");
             }
         } catch (err) {
             console.error("Error sharing profile:", err);
             if (err.name !== 'AbortError') {
-                try { await navigator.clipboard.writeText(window.location.href); alert("Lien du profil copié !"); }
-                catch (e) { alert("Impossible de copier le lien."); }
+                try { await navigator.clipboard.writeText(window.location.href); showSuccess("Lien du profil copié !"); }
+                catch (e) { showError("Impossible de copier le lien."); }
             }
         }
     };

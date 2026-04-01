@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { db, ref, onValue, set, push, remove, serverTimestamp } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +11,7 @@ import { Loader2, Link as LinkIcon, Trash2, Copy, ExternalLink, Plus, Search } f
 import { Badge } from '@/components/ui/badge';
 
 export default function AdminShortUrls() {
+    const { showError, showSuccess } = useDialog();
     const [urls, setUrls] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -62,7 +64,7 @@ export default function AdminShortUrls() {
             setNewUrl({ originalUrl: '', customId: '' });
         } catch (error) {
             console.error('Error creating short URL:', error);
-            alert('Erreur lors de la création de l\'URL courte');
+            showError('Erreur lors de la création de l\'URL courte');
         } finally {
             setIsCreating(false);
         }
@@ -81,7 +83,7 @@ export default function AdminShortUrls() {
     const copyToClipboard = (id) => {
         const fullUrl = `${window.location.origin}/re/${id}`;
         navigator.clipboard.writeText(fullUrl);
-        alert('Copié dans le presse-papier !');
+        showSuccess('Copié dans le presse-papier !');
     };
 
     const filteredUrls = urls.filter(u => 

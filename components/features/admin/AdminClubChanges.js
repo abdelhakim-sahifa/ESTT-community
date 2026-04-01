@@ -1,4 +1,5 @@
 import { db, ref, update } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import {
     Card,
     CardContent,
@@ -11,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Trash2 } from 'lucide-react';
 
 export default function AdminClubChanges({ requests }) {
+    const { showSuccess, showError } = useDialog();
 
     const handleApproveChangeRequest = async (request) => {
         if (!confirm("Approuver cette modification ?")) return;
@@ -29,10 +31,10 @@ export default function AdminClubChanges({ requests }) {
                 approvedAt: Date.now()
             });
 
-            alert("Modification approuvée !");
+            showSuccess("Modification approuvée !");
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de l'approbation.");
+            showError("Erreur lors de l'approbation.");
         }
     };
 
@@ -44,10 +46,10 @@ export default function AdminClubChanges({ requests }) {
                 status: 'rejected',
                 rejectedAt: Date.now()
             });
-            alert("Demande rejetée.");
+            showSuccess("Demande rejetée.");
         } catch (err) {
             console.error(err);
-            alert("Erreur lors du rejet.");
+            showError("Erreur lors du rejet.");
         }
     };
 

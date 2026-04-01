@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { db, ref, remove } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import {
     Card,
     CardContent
@@ -10,6 +11,7 @@ import Link from 'next/link';
 import { reportDismissedEmail, reportDeletedEmail } from '@/lib/email-templates';
 
 export default function AdminReports({ reports }) {
+    const { showError, showSuccess } = useDialog();
     const [actionLoading, setActionLoading] = useState(null);
 
     const handleDismissReport = async (report) => {
@@ -30,7 +32,7 @@ export default function AdminReports({ reports }) {
 
         } catch (error) {
             console.error('Error dismissing report:', error);
-            alert('Erreur lors de la suppression du signalement.');
+            showError('Erreur lors de la suppression du signalement.');
         } finally {
             setActionLoading(null);
         }
@@ -59,10 +61,10 @@ export default function AdminReports({ reports }) {
                 })
             }).catch(e => console.error("Email send failed:", e));
 
-            alert('Ressource et signalement supprimés avec succès.');
+            showSuccess('Ressource et signalement supprimés avec succès.');
         } catch (error) {
             console.error('Error deleting resource:', error);
-            alert('Erreur lors de la suppression de la ressource.');
+            showError('Erreur lors de la suppression de la ressource.');
         } finally {
             setActionLoading(null);
         }

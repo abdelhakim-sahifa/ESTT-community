@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { db, ref, get, set, push, update, remove } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
+import { useDialog } from '@/context/DialogContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +19,7 @@ export default function ResourcePage() {
     const params = useParams();
     const { resourceId } = params;
     const { user, profile } = useAuth();
+    const { showWarning, showError, showSuccess } = useDialog();
 
     const [resource, setResource] = useState(null);
     const [comments, setComments] = useState([]);
@@ -278,7 +280,7 @@ export default function ResourcePage() {
 
     const handleAddComment = async () => {
         if (!user) {
-            alert('Veuillez vous connecter pour commenter');
+            showWarning('Veuillez vous connecter pour commenter');
             return;
         }
 
@@ -305,7 +307,7 @@ export default function ResourcePage() {
             fetchComments();
         } catch (err) {
             console.error('Error posting comment:', err);
-            alert('Erreur lors de la publication du commentaire');
+            showError('Erreur lors de la publication du commentaire');
         } finally {
             setSubmitting(false);
         }
@@ -313,13 +315,13 @@ export default function ResourcePage() {
 
     const handleAddReply = async (parentId) => {
         if (!user) {
-            alert('Veuillez vous connecter pour répondre');
+            showWarning('Veuillez vous connecter pour répondre');
             return;
         }
 
         const replyText = replyTexts[parentId];
         if (!replyText?.trim()) {
-            alert('La réponse ne peut pas être vide');
+            showWarning('La réponse ne peut pas être vide');
             return;
         }
 
@@ -343,7 +345,7 @@ export default function ResourcePage() {
             fetchComments();
         } catch (err) {
             console.error('Error posting reply:', err);
-            alert('Erreur lors de la publication de la réponse');
+            showError('Erreur lors de la publication de la réponse');
         } finally {
             setSubmitting(false);
         }
@@ -352,7 +354,7 @@ export default function ResourcePage() {
     const handleShare = async () => {
         try {
             await navigator.clipboard.writeText(window.location.href);
-            alert('Lien copié dans le presse-papiers !');
+            showSuccess('Lien copié dans le presse-papiers !');
         } catch (err) {
             console.error('Failed to copy link: ', err);
             // Fallback for older browsers
@@ -362,7 +364,7 @@ export default function ResourcePage() {
             textArea.select();
             try {
                 document.execCommand('copy');
-                alert('Lien copié dans le presse-papiers !');
+                showSuccess('Lien copié dans le presse-papiers !');
             } catch (fallbackErr) {
                 console.error('Fallback copy failed', fallbackErr);
             }
@@ -372,7 +374,7 @@ export default function ResourcePage() {
 
     const handleReportSubmit = async () => {
         if (!user) {
-            alert('Veuillez vous connecter pour signaler une ressource');
+            showWarning('Veuillez vous connecter pour signaler une ressource');
             return;
         }
 
@@ -399,10 +401,10 @@ export default function ResourcePage() {
             setIsReportDialogOpen(false);
             setReportReason('spam');
             setReportDetails('');
-            alert('Signalement envoyé avec succès. Merci pour votre aide !');
+            showSuccess('Signalement envoyé avec succès. Merci pour votre aide !');
         } catch (err) {
             console.error('Error submitting report:', err);
-            alert('Erreur lors de lenvoi du signalement.');
+            showError('Erreur lors de lenvoi du signalement.');
         } finally {
             setIsSubmittingReport(false);
         }
@@ -410,7 +412,7 @@ export default function ResourcePage() {
 
     const handleToggleFavorite = async () => {
         if (!user) {
-            alert('Connectez-vous pour enregistrer cette ressource dans vos favoris.');
+            showWarning('Connectez-vous pour enregistrer cette ressource dans vos favoris.');
             return;
         }
 
@@ -434,7 +436,7 @@ export default function ResourcePage() {
             }
         } catch (err) {
             console.error('Error toggling favorite:', err);
-            alert('Erreur lors de la mise à jour de vos favoris.');
+            showError('Erreur lors de la mise à jour de vos favoris.');
         } finally {
             setIsTogglingFavorite(false);
         }
@@ -442,12 +444,12 @@ export default function ResourcePage() {
 
     const handleSaveRating = async () => {
         if (!user) {
-            alert('Veuillez vous connecter pour noter cette ressource');
+            showWarning('Veuillez vous connecter pour noter cette ressource');
             return;
         }
 
         if (!userRating || userRating < 1 || userRating > 5) {
-            alert('Veuillez choisir une note entre 1 et 5 étoiles.');
+            showWarning('Veuillez choisir une note entre 1 et 5 étoiles.');
             return;
         }
 
@@ -491,10 +493,10 @@ export default function ResourcePage() {
             // Update local resource state so UI reflects latest numbers
             setResource((prev) => prev ? { ...prev, ratingAverage: roundedAvg, ratingCount: count } : prev);
 
-            alert('Votre note a bien été enregistrée. Merci pour votre retour !');
+            showSuccess('Votre note a bien été enregistrée. Merci pour votre retour !');
         } catch (err) {
             console.error('Error saving rating:', err);
-            alert('Erreur lors de lenregistrement de votre note.');
+            showError('Erreur lors de lenregistrement de votre note.');
         } finally {
             setIsSavingRating(false);
         }

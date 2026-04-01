@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { db, ref, onValue } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import { sendGlobalNotification, sendPrivateNotification, NOTIF_TYPES, NOTIF_PRIORITY } from '@/lib/notifications';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { Search, Bell, Send, User, Loader2, Info, Link as LinkIcon, ExternalLink
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function AdminNotifications({ users }) {
+    const { showSuccess, showError, showWarning } = useDialog();
     const [globalForm, setGlobalForm] = useState({
         title: '',
         message: '',
@@ -120,10 +122,10 @@ export default function AdminNotifications({ users }) {
                 actionButtonText: 'Voir les détails',
                 actionButtonIcon: 'arrow-right'
             });
-            alert("Notification globale envoyée !");
+            showSuccess("Notification globale envoyée !");
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de l'envoi.");
+            showError("Erreur lors de l'envoi.");
         } finally {
             setIsSubmittingGlobal(false);
         }
@@ -132,7 +134,7 @@ export default function AdminNotifications({ users }) {
     const handleSendPrivate = async (e) => {
         e.preventDefault();
         if (!privateForm.userId || !privateForm.title || !privateForm.message) {
-            alert("Veuillez remplir tous les champs et sélectionner un utilisateur.");
+            showWarning("Veuillez remplir tous les champs et sélectionner un utilisateur.");
             return;
         }
         setIsSubmittingPrivate(true);
@@ -161,10 +163,10 @@ export default function AdminNotifications({ users }) {
                 actionButtonIcon: 'arrow-right'
             });
             setUserSearch('');
-            alert("Notification privée envoyée !");
+            showSuccess("Notification privée envoyée !");
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de l'envoi.");
+            showError("Erreur lors de l'envoi.");
         } finally {
             setIsSubmittingPrivate(false);
         }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { db, ref, set, push, remove } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import {
     Card,
     CardContent,
@@ -13,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Plus, Clock, Trash2 } from 'lucide-react';
 
 export default function AdminAnnouncements({ announcements, userEmail }) {
+    const { showWarning, showSuccess, showError } = useDialog();
     const [announcementForm, setAnnouncementForm] = useState({
         title: '',
         content: '',
@@ -23,7 +25,7 @@ export default function AdminAnnouncements({ announcements, userEmail }) {
     const handleAddAnnouncement = async (e) => {
         e.preventDefault();
         if (!announcementForm.title || !announcementForm.content) {
-            alert("Le titre et le contenu sont obligatoires.");
+            showWarning("Le titre et le contenu sont obligatoires.");
             return;
         }
 
@@ -37,10 +39,10 @@ export default function AdminAnnouncements({ announcements, userEmail }) {
                 author: userEmail
             });
             setAnnouncementForm({ title: '', content: '', imageUrl: '' });
-            alert("Annonce publiée !");
+            showSuccess("Annonce publiée !");
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de la publication.");
+            showError("Erreur lors de la publication.");
         } finally {
             setIsSubmitting(false);
         }
@@ -50,10 +52,10 @@ export default function AdminAnnouncements({ announcements, userEmail }) {
         if (!confirm("Supprimer cette annonce ?")) return;
         try {
             await remove(ref(db, `adminAnnouncements/${id}`));
-            alert("Annonce supprimée.");
+            showSuccess("Annonce supprimée.");
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de la suppression.");
+            showError("Erreur lors de la suppression.");
         }
     };
 

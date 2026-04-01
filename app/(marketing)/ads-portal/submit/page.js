@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
+import { useDialog } from '@/context/DialogContext';
 import { db, ref, push, set } from '@/lib/firebase';
 import { uploadResourceFile } from '@/lib/supabase';
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +20,7 @@ import { adNotifications } from '@/lib/ad-notifications';
 export default function SubmitAdPage() {
     const { user, profile } = useAuth();
     const router = useRouter();
+    const { showWarning, showSuccess, showError } = useDialog();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [previewMode, setPreviewMode] = useState(false);
@@ -46,7 +48,7 @@ export default function SubmitAdPage() {
         if (!file) return;
 
         if (file.size > AD_LIMITS.MAX_FILE_SIZE) {
-            alert("Le fichier est trop volumineux (Max 10MB)");
+            showWarning("Le fichier est trop volumineux (Max 10MB)");
             return;
         }
 
@@ -54,7 +56,7 @@ export default function SubmitAdPage() {
         const isVideo = AD_LIMITS.ALLOWED_VIDEO_TYPES.includes(file.type);
 
         if (!isImage && !isVideo) {
-            alert("Format non supporté (JPG, PNG, WebP, MP4, WebM)");
+            showWarning("Format non supporté (JPG, PNG, WebP, MP4, WebM)");
             return;
         }
 
@@ -72,7 +74,7 @@ export default function SubmitAdPage() {
 
     const handleSubmit = async (status = AD_STATUSES.UNDER_REVIEW) => {
         if (!validateForm()) {
-            alert("Veuillez remplir tous les champs correctement.");
+            showWarning("Veuillez remplir tous les champs correctement.");
             return;
         }
 
@@ -110,15 +112,15 @@ export default function SubmitAdPage() {
             if (status === AD_STATUSES.UNDER_REVIEW) {
                 // Fire and forget email notification
                 adNotifications.sendSubmissionConfirmation(user.email, formData.title);
-                alert("Annonce soumise pour review !");
+                showSuccess("Annonce soumise pour review !");
             } else {
-                alert("Brouillon enregistré.");
+                showSuccess("Brouillon enregistré.");
             }
 
             router.push('/ads-portal/dashboard');
         } catch (error) {
             console.error("Submission error:", error);
-            alert("Erreur: " + error.message);
+            showError("Erreur: " + error.message);
         } finally {
             setLoading(false);
         }

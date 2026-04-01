@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { AuthProvider } from '@/context/AuthContext';
+import { DialogProvider } from '@/context/DialogContext';
 import { defaultMetadata } from '@/lib/metadata';
 
 const canela = localFont({
@@ -57,14 +58,16 @@ export default function RootLayout({ children }) {
                 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet" />
             </head>
             <body className={`font-sans ${canela.variable} antialiased`} suppressHydrationWarning={true}>
-                <AuthProvider>
-                    <Header />
-                    {children}
-                    <Footer />
-                    <div id="spinner-overlay" className="spinner-overlay hidden" aria-hidden="true">
-                        <div className="spinner" role="status" aria-label="Chargement"></div>
-                    </div>
-                </AuthProvider>
+                <DialogProvider>
+                    <AuthProvider>
+                        <Header />
+                        {children}
+                        <Footer />
+                        <div id="spinner-overlay" className="spinner-overlay hidden" aria-hidden="true">
+                            <div className="spinner" role="status" aria-label="Chargement"></div>
+                        </div>
+                    </AuthProvider>
+                </DialogProvider>
             </body>
         </html>
     );

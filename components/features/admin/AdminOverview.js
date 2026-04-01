@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { db, ref, set } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import {
     Users,
     FileText,
@@ -14,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
 export default function AdminOverview({ stats, resources, setActiveTab }) {
+    const { showSuccess, showError } = useDialog();
     const [rebuilding, setRebuilding] = useState(false);
 
     const handleRebuildIndex = async () => {
@@ -32,10 +34,10 @@ export default function AdminOverview({ stats, resources, setActiveTab }) {
                     count++;
                 }
             }
-            alert(`Index reconstruit avec succès ! ${count} ressources indexées.`);
+            showSuccess(`Index reconstruit avec succès ! ${count} ressources indexées.`);
         } catch (error) {
             console.error("Error rebuilding index:", error);
-            alert("Erreur lors de la reconstruction de l'index.");
+            showError("Erreur lors de la reconstruction de l'index.");
         } finally {
             setRebuilding(false);
         }

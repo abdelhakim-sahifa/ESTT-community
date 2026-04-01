@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { db, ref, update, remove, get } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import { sendPrivateNotification, NOTIF_TYPES } from '@/lib/notifications';
 import { bugResolvedEmail } from '@/lib/email-templates';
 import {
@@ -36,6 +37,7 @@ import {
 } from '@/components/ui/dialog';
 
 export default function AdminBugReports({ reports = [] }) {
+    const { showError } = useDialog();
     const [actionLoading, setActionLoading] = useState(null);
     const [selectedBug, setSelectedBug] = useState(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -121,7 +123,7 @@ export default function AdminBugReports({ reports = [] }) {
             }
         } catch (error) {
             console.error('Error updating bug status:', error);
-            alert('Erreur lors de la mise à jour du statut.');
+            showError('Erreur lors de la mise à jour du statut.');
         } finally {
             setActionLoading(null);
         }
@@ -136,7 +138,7 @@ export default function AdminBugReports({ reports = [] }) {
             setIsDetailOpen(false);
         } catch (error) {
             console.error('Error deleting bug report:', error);
-            alert('Erreur lors de la suppression du rapport.');
+            showError('Erreur lors de la suppression du rapport.');
         } finally {
             setActionLoading(null);
         }

@@ -1,6 +1,7 @@
 ﻿import { useState } from 'react';
 import Link from 'next/link';
 import { db, ref, update, remove, get, push, set } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import {
     Table,
     TableBody,
@@ -38,6 +39,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 
 export default function AdminResources({ resources }) {
+    const { showSuccess, showError } = useDialog();
     const [searchTerm, setSearchTerm] = useState('');
     const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
     const [itemToReject, setItemToReject] = useState(null);
@@ -158,10 +160,10 @@ export default function AdminResources({ resources }) {
             }
 
 
-            alert("Ressource approuvée !");
+            showSuccess("Ressource approuvée !");
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de l'approbation.");
+            showError("Erreur lors de l'approbation.");
         }
     };
 
@@ -235,7 +237,7 @@ export default function AdminResources({ resources }) {
             // toast success?
         } catch (err) {
             console.error(err);
-            alert("Une erreur est survenue lors du rejet.");
+            showError("Une erreur est survenue lors du rejet.");
         } finally {
             setRejecting(false);
             setRejectionModalOpen(false);
@@ -335,7 +337,7 @@ export default function AdminResources({ resources }) {
             setItemToEdit(null);
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de la mise à jour.");
+            showError("Erreur lors de la mise à jour.");
         } finally {
             setSaving(false);
         }
@@ -379,7 +381,7 @@ export default function AdminResources({ resources }) {
             setItemToLink(null);
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de la liaison des filières.");
+            showError("Erreur lors de la liaison des filières.");
         } finally {
             setSaving(false);
         }

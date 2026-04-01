@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { db, ref, onValue, update } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +31,7 @@ import { sendPrivateNotification, NOTIF_TYPES } from '@/lib/notifications';
 
 
 export default function AdminAds() {
+    const { showError } = useDialog();
     const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
@@ -89,7 +91,7 @@ export default function AdminAds() {
 
             setSelectedAd(null);
         } catch (error) {
-            alert("Erreur lors de l'approbation");
+            showError("Erreur lors de l'approbation");
         }
     };
 
@@ -116,7 +118,7 @@ export default function AdminAds() {
             setSelectedAd(null);
             setRejectReason('');
         } catch (error) {
-            alert("Erreur lors du refus");
+            showError("Erreur lors du refus");
         }
     };
 
@@ -151,7 +153,7 @@ export default function AdminAds() {
 
             setSelectedAd(null);
         } catch (error) {
-            alert("Erreur lors du marquage comme payé");
+            showError("Erreur lors du marquage comme payé");
         }
     };
 

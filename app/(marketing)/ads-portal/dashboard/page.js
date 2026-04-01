@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useDialog } from '@/context/DialogContext';
 import { db, ref, onValue, remove, set } from '@/lib/firebase';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ const StatusBadge = ({ status }) => {
 export default function UserAdsDashboard() {
     const { user } = useAuth();
     const router = useRouter();
+    const { showSuccess, showWarning, showError } = useDialog();
     const searchParams = useSearchParams();
     const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -57,10 +59,10 @@ export default function UserAdsDashboard() {
         const success = searchParams.get('success');
         const canceled = searchParams.get('canceled');
         if (success) {
-            alert("Paiement réussi ! Votre annonce est maintenant en cours d'activation.");
+            showSuccess("Paiement réussi ! Votre annonce est maintenant en cours d'activation.");
         }
         if (canceled) {
-            alert("Paiement annulé.");
+            showWarning("Paiement annulé.");
         }
     }, [searchParams]);
 
@@ -92,7 +94,7 @@ export default function UserAdsDashboard() {
         if (ad.status === AD_STATUSES.LIVE) {
             const code = window.prompt("Cette annonce est en ligne. Pour la désactiver avant expiration, veuillez saisir votre code de vérification (N° Facture envoyé par email) :");
             if (code !== ad.invoiceId) {
-                alert("Code incorrect. Désactivation annulée.");
+                showWarning("Code incorrect. Désactivation annulée.");
                 return;
             }
         } else {
@@ -101,7 +103,7 @@ export default function UserAdsDashboard() {
         try {
             await remove(ref(db, `studentAds/${ad.id}`));
         } catch (error) {
-            alert("Erreur lors de la suppression");
+            showError("Erreur lors de la suppression");
         }
     };
 
@@ -128,7 +130,7 @@ export default function UserAdsDashboard() {
             }
         } catch (error) {
             console.error("Payment error:", error);
-            alert("Erreur: " + error.message);
+            showError("Erreur: " + error.message);
         } finally {
             setPayLoading(null);
         }

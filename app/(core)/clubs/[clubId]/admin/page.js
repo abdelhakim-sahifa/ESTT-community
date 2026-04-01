@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { db, ref, get, push, set, update, remove, query, orderByChild, equalTo, onValue } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
+import { useDialog } from '@/context/DialogContext';
 import { isClubAdmin, uploadClubImage } from '@/lib/clubUtils';
 import { db as staticDb } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,7 @@ import { uploadToImgBB } from '@/lib/uploadUtils';
 export default function ClubAdminPage() {
     const params = useParams();
     const router = useRouter();
+    const { showError, showConfirm } = useDialog();
     const { user, loading: authLoading } = useAuth();
     const clubId = params.clubId;
 
@@ -593,7 +595,7 @@ export default function ClubAdminPage() {
             await executeTicketRejection(ticketToReject, rejectionReason);
         } catch (error) {
             console.error(error);
-            alert("Une erreur est survenue lors du rejet.");
+            showError("Une erreur est survenue lors du rejet.");
         } finally {
             setRejecting(false);
             setRejectionModalOpen(false);
@@ -709,7 +711,8 @@ export default function ClubAdminPage() {
     };
 
     const handleDeleteForm = async (formId) => {
-        if (!confirm('Êtes-vous sûr ? Cela supprimera également toutes les soumissions associées.')) return;
+        const confirmed = await showConfirm('Êtes-vous sûr ? Cela supprimera également toutes les soumissions associées.');
+        if (!confirmed) return;
 
         try {
             await remove(ref(db, `clubs/${clubId}/forms/${formId}`));
@@ -810,7 +813,8 @@ export default function ClubAdminPage() {
     };
 
     const handleDeleteEvent = async (eventId) => {
-        if (!confirm('Êtes-vous sûr ? Les tickets associés resteront en base mais ne seront plus liés à un événement actif.')) return;
+        const confirmed = await showConfirm('Êtes-vous sûr ? Les tickets associés resteront en base mais ne seront plus liés à un événement actif.');
+        if (!confirmed) return;
 
         try {
             await remove(ref(db, `clubs/${clubId}/events/${eventId}`));
@@ -886,7 +890,8 @@ export default function ClubAdminPage() {
     };
 
     const handleRemoveMember = async (memberEmail) => {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')) return;
+        const confirmed = await showConfirm('Êtes-vous sûr de vouloir supprimer ce membre ?');
+        if (!confirmed) return;
 
         try {
             const currentMembers = club.members || [];
@@ -906,7 +911,8 @@ export default function ClubAdminPage() {
 
     // Manual event reminders (no automation – triggered from admin UI)
     const handleSendEventReminders = async (eventId) => {
-        if (!confirm("Envoyer un email de rappel à tous les participants inscrits à cet événement ?")) return;
+        const confirmed = await showConfirm("Envoyer un email de rappel à tous les participants inscrits à cet événement ?");
+        if (!confirmed) return;
 
         try {
             setSendingRemindersForEventId(eventId);
@@ -1066,7 +1072,8 @@ export default function ClubAdminPage() {
             return;
         }
 
-        if (!confirm(`Envoyer cet email à ${targetEmails.length} destinataire(s) ?`)) return;
+        const confirmed = await showConfirm(`Envoyer cet email à ${targetEmails.length} destinataire(s) ?`);
+        if (!confirmed) return;
 
         setSendingEmails(true);
         setEmailProgress({ current: 0, total: targetEmails.length });

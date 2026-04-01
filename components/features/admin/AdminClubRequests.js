@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { db, ref, update } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import {
     Card,
     CardContent,
@@ -13,6 +14,7 @@ import { CheckCircle2 } from 'lucide-react';
 import RejectionDialog from './RejectionDialog';
 
 export default function AdminClubRequests({ requests }) {
+    const { showSuccess, showError, showWarning } = useDialog();
     const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
     const [itemToReject, setItemToReject] = useState(null);
     const [rejectionReason, setRejectionReason] = useState('');
@@ -24,10 +26,10 @@ export default function AdminClubRequests({ requests }) {
         try {
             const { createClubFromRequest } = await import('@/lib/clubUtils');
             await createClubFromRequest(requestId);
-            alert("Club créé avec succès !");
+            showSuccess("Club créé avec succès !");
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de la création du club.");
+            showError("Erreur lors de la création du club.");
         }
     };
 
@@ -74,7 +76,7 @@ export default function AdminClubRequests({ requests }) {
             }
         } catch (err) {
             console.error(err);
-            alert("Erreur lors du rejet.");
+            showError("Erreur lors du rejet.");
         } finally {
             setRejecting(false);
             setRejectionModalOpen(false);

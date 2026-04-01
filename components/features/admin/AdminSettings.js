@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { db, ref, update } from '@/lib/firebase';
+import { useDialog } from '@/context/DialogContext';
 import {
     Card,
     CardContent,
@@ -13,16 +14,17 @@ import { Loader2 } from 'lucide-react';
 
 export default function AdminSettings({ settings, setSettings }) {
     const [savingSettings, setSavingSettings] = useState(false);
+    const { showSuccess, showError } = useDialog();
 
     const handleSaveSettings = async (e) => {
         e.preventDefault();
         setSavingSettings(true);
         try {
             await update(ref(db, 'adminSettings/notifications'), settings);
-            alert("Paramètres de notification mis à jour !");
+            showSuccess("Paramètres de notification mis à jour !");
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de la sauvegarde.");
+            showError("Erreur lors de la sauvegarde.");
         } finally {
             setSavingSettings(false);
         }
