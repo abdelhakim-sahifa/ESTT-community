@@ -20,7 +20,8 @@ export default function UnifiedDialog({
     actions = [],
     onClose,
     autoClose,
-    icon
+    icon,
+    children
 }) {
     useEffect(() => {
         if (isOpen && autoClose) {
@@ -90,6 +91,7 @@ export default function UnifiedDialog({
                                     {message}
                                 </DialogDescription>
                             )}
+                            {children}
                         </div>
                     </div>
                 </DialogHeader>

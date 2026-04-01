@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, X, Megaphone, ArrowRight, FileText, Award, Camera, Upload } from 'lucide-react';
+import UnifiedDialog from '@/components/ui/UnifiedDialog';
+import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, X, Megaphone, ArrowRight, FileText, Award, Camera, Upload, BadgeCheck, ShieldCheck } from 'lucide-react';
 import { cn, getUserLevel } from '@/lib/utils';
 import { uploadToImgBB } from '@/lib/uploadUtils';
 
@@ -43,6 +44,13 @@ export default function PublicProfilePage() {
     const [avatarUploading, setAvatarUploading] = useState(false);
     const [favorites, setFavorites] = useState([]);
     const [loadingFavorites, setLoadingFavorites] = useState(false);
+    
+    // Verification state
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [verificationCode, setVerificationCode] = useState('');
+    const [cooldown, setCooldown] = useState(0);
+    const [isVerificationDialogOpen, setIsVerificationDialogOpen] = useState(false);
+    const [affiliatedClub, setAffiliatedClub] = useState(null);
 
     useEffect(() => {
         if (!id) return;
@@ -165,6 +173,23 @@ export default function PublicProfilePage() {
                     }).filter(Boolean);
 
                     setUserClubs(associatedClubs);
+
+                    // Find primary affiliation (part of bureau)
+                    const primaryAffiliate = Object.entries(allClubs).find(([cId, club]) => {
+                        const inOrg = club.organizationalChart && Object.values(club.organizationalChart).find(m =>
+                            m?.email?.toLowerCase() === userEmail
+                        );
+                        return !!inOrg;
+                    });
+
+                    if (primaryAffiliate) {
+                        setAffiliatedClub({
+                            id: primaryAffiliate[0],
+                            ...primaryAffiliate[1]
+                        });
+                    } else {
+                        setAffiliatedClub(null);
+                    }
                 }
             } catch (e) {
                 console.error("Error fetching user clubs:", e);
@@ -262,6 +287,75 @@ export default function PublicProfilePage() {
         const confirmed = await showConfirm("Êtes-vous sûr de vouloir vous déconnecter ?", { type: 'danger', title: 'Déconnexion', confirmLabel: 'Déconnexion' });
         if (!confirmed) return;
         try { await signOut(); } catch (error) { console.error("Error signing out", error); }
+    };
+
+    // Verification Logic
+    useEffect(() => {
+        let timer;
+        if (cooldown > 0) {
+            timer = setInterval(() => setCooldown(prev => prev - 1), 1000);
+        }
+        return () => clearInterval(timer);
+    }, [cooldown]);
+
+    const handleSendVerificationCode = async () => {
+        if (!profile?.email || isVerifying || cooldown > 0) return;
+        
+        setIsVerifying(true);
+        try {
+            const res = await fetch('/api/auth/verify-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'send',
+                    uid: id,
+                    email: profile.email,
+                    firstName: profile.firstName
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showSuccess("Code de vérification envoyé à votre email académique.");
+                setIsVerificationDialogOpen(true);
+                setCooldown(60);
+            } else {
+                showError(data.error || "Erreur lors de l'envoi du code.");
+            }
+        } catch (err) {
+            showError("Impossible d'envoyer le code.");
+        } finally {
+            setIsVerifying(false);
+        }
+    };
+
+    const handleVerifyCode = async () => {
+        if (!verificationCode || isVerifying) return;
+        
+        setIsVerifying(true);
+        try {
+            const res = await fetch('/api/auth/verify-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'verify',
+                    uid: id,
+                    email: profile.email,
+                    code: verificationCode
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showSuccess("Votre email a été vérifié avec succès !");
+                setIsVerificationDialogOpen(false);
+                setVerificationCode('');
+            } else {
+                showError(data.error || "Code incorrect ou expiré.");
+            }
+        } catch (err) {
+            showError("Erreur lors de la vérification.");
+        } finally {
+            setIsVerifying(false);
+        }
     };
 
     const copyProfileLink = async () => {
@@ -399,8 +493,41 @@ export default function PublicProfilePage() {
                                         onChange={handleAvatarUpload} 
                                     />
                                 </div>
-                                <h1 className="text-xl font-bold text-slate-900">
+                                <h1 className="text-xl font-bold text-slate-900 flex items-center justify-center gap-1.5">
                                     {profile.firstName} {profile.lastName}
+                                    {profile.verifiedEmail && (
+                                        <div className="group relative flex items-center">
+                                            <span className="material-symbols-outlined text-emerald-500 select-none" style={{ fontVariationSettings: "'FILL' 1", fontSize: '18px' }}>
+                                                verified
+                                            </span>
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
+                                                Email académique vérifié
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {affiliatedClub && (
+                                        <Link href={`/clubs/${affiliatedClub.id}`} className="group relative flex items-center">
+                                            <div className="w-[18px] h-[18px] rounded-[3px] overflow-hidden border border-slate-100 bg-white">
+                                                {affiliatedClub.logo ? (
+                                                    <Image 
+                                                        src={affiliatedClub.logo} 
+                                                        alt={affiliatedClub.name} 
+                                                        width={18} 
+                                                        height={18} 
+                                                        className="object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center bg-slate-100 text-[10px] font-bold text-slate-500">
+                                                        {affiliatedClub.name.charAt(0)}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
+                                                Membre du bureau de {affiliatedClub.name}
+                                            </div>
+                                        </Link>
+                                    )}
                                 </h1>
                                 <p className="text-slate-500 text-sm mt-1">
                                     {profile.filiere} · {level === 1 ? 'S1/S2' : 'S3/S4'}
@@ -595,10 +722,45 @@ export default function PublicProfilePage() {
                             </div>
                         </div>
 
-                        {/* Logout */}
+                        {/* Account & Verification */}
                         {currentUser && currentUser.uid === id && (
-                            <div className="border border-slate-200 rounded-xl p-5">
-                                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Compte</h3>
+                            <div className="border border-slate-200 rounded-xl p-5 space-y-4">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Compte</h3>
+                                
+                                {!profile.verifiedEmail && (
+                                    <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                                        <div className="flex items-start gap-3">
+                                            <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                                            <div className="space-y-1">
+                                                <p className="text-sm font-bold text-amber-900">Email non vérifié</p>
+                                                <p className="text-xs text-amber-700 leading-relaxed">Vérifiez votre email académique pour obtenir votre badge de confiance.</p>
+                                                <Button 
+                                                    onClick={handleSendVerificationCode}
+                                                    disabled={isVerifying || cooldown > 0}
+                                                    variant="link" 
+                                                    className="p-0 h-auto text-amber-600 font-bold hover:text-amber-700 text-xs mt-1"
+                                                >
+                                                    {isVerifying ? "Envoi..." : cooldown > 0 ? `Renvoyer (${cooldown}s)` : "Vérifier maintenant →"}
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {profile.verifiedEmail && (
+                                    <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
+                                        <div className="flex items-center gap-3">
+                                            <span className="material-symbols-outlined text-emerald-500 select-none" style={{ fontVariationSettings: "'FILL' 1" }}>
+                                                verified
+                                            </span>
+                                            <div className="space-y-0.5">
+                                                <p className="text-sm font-bold text-emerald-900">Profil Vérifié</p>
+                                                <p className="text-[10px] text-emerald-700">Votre identité académique est confirmée.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <Button
                                     variant="outline"
                                     onClick={handleLogout}
@@ -609,6 +771,46 @@ export default function PublicProfilePage() {
                                 </Button>
                             </div>
                         )}
+                        
+                        {/* Verification Dialog */}
+                        <UnifiedDialog
+                            isOpen={isVerificationDialogOpen}
+                            onClose={() => setIsVerificationDialogOpen(false)}
+                            type="info"
+                            title="Vérification de l'email"
+                            message={`Un code de 6 chiffres a été envoyé à ${profile?.email}.`}
+                            actions={[
+                                {
+                                    label: "Vérifier",
+                                    variant: "primary",
+                                    onClick: handleVerifyCode
+                                }
+                            ]}
+                        >
+                            <div className="mt-4 space-y-3">
+                                <Label htmlFor="vcode" className="text-xs font-bold text-slate-500 uppercase">Code de vérification</Label>
+                                <Input 
+                                    id="vcode"
+                                    placeholder="Ex: 123456"
+                                    value={verificationCode}
+                                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                    className="text-center text-2xl tracking-[0.5em] font-mono h-14 rounded-xl border-slate-200 focus:border-primary"
+                                />
+                                <div className="flex justify-between items-center px-1">
+                                    <p className="text-[10px] text-slate-400">Pensez à vérifier vos spams.</p>
+                                    {cooldown > 0 ? (
+                                        <span className="text-[10px] font-bold text-slate-400">Renvoyer dans {cooldown}s</span>
+                                    ) : (
+                                        <button 
+                                            onClick={handleSendVerificationCode}
+                                            className="text-[10px] font-bold text-primary hover:underline"
+                                        >
+                                            Renvoyer le code
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </UnifiedDialog>
                     </div>
 
                     {/* Right Column */}
