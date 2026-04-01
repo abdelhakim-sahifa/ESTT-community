@@ -81,8 +81,22 @@ export default function AdminBugReports({ reports = [] }) {
                 updatedAt: Date.now()
             });
 
-            // Send notifications if bug is fixed
+            // Send notifications and update stats if bug is fixed
             if (newStatus === 'fixed' && bugData) {
+                // Update reporter stats
+                if (bugData.userId) {
+                    try {
+                        const statsRef = ref(db, `users/${bugData.userId}/stats`);
+                        const statsSnap = await get(statsRef);
+                        const currentBugsCount = (statsSnap.exists() ? statsSnap.val().reportedBugsFixed : 0) || 0;
+                        await update(statsRef, {
+                            reportedBugsFixed: currentBugsCount + 1
+                        });
+                    } catch (statsErr) {
+                        console.error('Failed to update bug hunter stats:', statsErr);
+                    }
+                }
+
                 // 1. In-App Notification
                 if (bugData.userId) {
                     await sendPrivateNotification(bugData.userId, {

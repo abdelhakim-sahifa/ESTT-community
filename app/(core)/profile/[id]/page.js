@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import UnifiedDialog from '@/components/ui/UnifiedDialog';
-import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, X, Megaphone, ArrowRight, FileText, Award, Camera, Upload, BadgeCheck, ShieldCheck } from 'lucide-react';
+import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, X, Megaphone, ArrowRight, FileText, Award, Camera, Upload, BadgeCheck, ShieldCheck, Trophy, Zap, LogOut } from 'lucide-react';
 import { cn, getUserLevel } from '@/lib/utils';
 import { uploadToImgBB } from '@/lib/uploadUtils';
 
@@ -44,7 +44,7 @@ export default function PublicProfilePage() {
     const [avatarUploading, setAvatarUploading] = useState(false);
     const [favorites, setFavorites] = useState([]);
     const [loadingFavorites, setLoadingFavorites] = useState(false);
-    
+
     // Verification state
     const [isVerifying, setIsVerifying] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');
@@ -300,7 +300,7 @@ export default function PublicProfilePage() {
 
     const handleSendVerificationCode = async () => {
         if (!profile?.email || isVerifying || cooldown > 0) return;
-        
+
         setIsVerifying(true);
         try {
             const res = await fetch('/api/auth/verify-email', {
@@ -330,7 +330,7 @@ export default function PublicProfilePage() {
 
     const handleVerifyCode = async () => {
         if (!verificationCode || isVerifying) return;
-        
+
         setIsVerifying(true);
         try {
             const res = await fetch('/api/auth/verify-email', {
@@ -393,6 +393,10 @@ export default function PublicProfilePage() {
     const contributionsCount = Object.keys(profile?.contributions || {}).length;
     const isMentor = level === 2 && contributionsCount > 5;
 
+    // New stats for badges
+    const verifiedReports = profile?.stats?.verifiedReports || 0;
+    const reportedBugsFixed = profile?.stats?.reportedBugsFixed || 0;
+
     return (
         <main className="min-h-screen bg-white py-12 border-t border-slate-100">
             <div className="container max-w-5xl mx-auto px-4">
@@ -406,28 +410,28 @@ export default function PublicProfilePage() {
                             {/* Banner Area */}
                             <div className="h-28 bg-slate-50 relative group">
                                 {profile.bannerUrl ? (
-                                    <Image 
-                                        src={profile.bannerUrl} 
-                                        alt="Profile Banner" 
-                                        fill 
+                                    <Image
+                                        src={profile.bannerUrl}
+                                        alt="Profile Banner"
+                                        fill
                                         priority
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <Image 
-                                        src="https://i.ibb.co/hRFNsKvJ/default.png" 
-                                        alt="Default Profile Banner" 
-                                        fill 
+                                    <Image
+                                        src="https://i.ibb.co/hRFNsKvJ/default.png"
+                                        alt="Default Profile Banner"
+                                        fill
                                         priority
                                         className="object-cover"
                                     />
                                 )}
-                                
+
                                 {currentUser && currentUser.uid === id && (
                                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px]">
-                                        <Button 
-                                            variant="secondary" 
-                                            size="sm" 
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
                                             className="rounded-full shadow-lg h-8 text-[11px] font-bold"
                                             disabled={bannerUploading}
                                             onClick={() => document.getElementById('banner-upload').click()}
@@ -439,12 +443,12 @@ export default function PublicProfilePage() {
                                             )}
                                             {bannerUploading ? 'Téléchargement...' : 'Changer la bannière'}
                                         </Button>
-                                        <input 
-                                            id="banner-upload" 
-                                            type="file" 
-                                            className="hidden" 
-                                            accept="image/*" 
-                                            onChange={handleBannerUpload} 
+                                        <input
+                                            id="banner-upload"
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleBannerUpload}
                                         />
                                     </div>
                                 )}
@@ -459,10 +463,10 @@ export default function PublicProfilePage() {
                                 <div className="w-24 h-24 bg-white rounded-full border-4 border-white flex items-center justify-center mx-auto mb-4 shadow-sm z-10 overflow-hidden relative group">
                                     <div className="w-full h-full bg-slate-100 rounded-full flex items-center justify-center relative">
                                         {profile.photoUrl ? (
-                                            <Image 
-                                                src={profile.photoUrl} 
-                                                alt={`Photo de ${profile.firstName}`} 
-                                                fill 
+                                            <Image
+                                                src={profile.photoUrl}
+                                                alt={`Photo de ${profile.firstName}`}
+                                                fill
                                                 className="object-cover"
                                             />
                                         ) : (
@@ -473,7 +477,7 @@ export default function PublicProfilePage() {
                                     {currentUser && currentUser.uid === id && (
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center cursor-pointer" onClick={async () => {
                                             const confirmed = await showConfirm("Cette image sera hébergée sur un service tiers (ImgBB). Voulez-vous continuer ?", { type: 'info', title: 'Upload d\'image', confirmLabel: 'Continuer' });
-                                            if(confirmed) {
+                                            if (confirmed) {
                                                 document.getElementById('avatar-quick-upload').click();
                                             }
                                         }}>
@@ -484,13 +488,13 @@ export default function PublicProfilePage() {
                                             )}
                                         </div>
                                     )}
-                                    
-                                    <input 
-                                        id="avatar-quick-upload" 
-                                        type="file" 
-                                        className="hidden" 
-                                        accept="image/*" 
-                                        onChange={handleAvatarUpload} 
+
+                                    <input
+                                        id="avatar-quick-upload"
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleAvatarUpload}
                                     />
                                 </div>
                                 <h1 className="text-xl font-bold text-slate-900 flex items-center justify-center gap-1.5">
@@ -510,11 +514,11 @@ export default function PublicProfilePage() {
                                         <Link href={`/clubs/${affiliatedClub.id}`} className="group relative flex items-center">
                                             <div className="w-[18px] h-[18px] rounded-[3px] overflow-hidden border border-slate-100 bg-white">
                                                 {affiliatedClub.logo ? (
-                                                    <Image 
-                                                        src={affiliatedClub.logo} 
-                                                        alt={affiliatedClub.name} 
-                                                        width={18} 
-                                                        height={18} 
+                                                    <Image
+                                                        src={affiliatedClub.logo}
+                                                        alt={affiliatedClub.name}
+                                                        width={18}
+                                                        height={18}
                                                         className="object-cover"
                                                     />
                                                 ) : (
@@ -534,63 +538,63 @@ export default function PublicProfilePage() {
                                 </p>
 
                                 <div className="flex justify-center gap-2 mt-6">
-                                {currentUser && currentUser.uid === id ? (
-                                    <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                                        <DialogTrigger asChild>
-                                            <Button className="rounded-full px-5 gap-2" size="sm">
-                                                <Edit2 className="w-3.5 h-3.5" />
-                                                Modifier
+                                    {currentUser && currentUser.uid === id ? (
+                                        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button className="rounded-full px-5 gap-2" size="sm">
+                                                    <Edit2 className="w-3.5 h-3.5" />
+                                                    Modifier
+                                                </Button>
+                                            </DialogTrigger>
+                                            <Button asChild variant="outline" size="sm" className="rounded-full px-5 gap-2">
+                                                <Link href="/ads-portal/dashboard">
+                                                    <Megaphone className="w-3.5 h-3.5" />
+                                                    Annonces
+                                                </Link>
                                             </Button>
-                                        </DialogTrigger>
-                                        <Button asChild variant="outline" size="sm" className="rounded-full px-5 gap-2">
-                                            <Link href="/ads-portal/dashboard">
-                                                <Megaphone className="w-3.5 h-3.5" />
-                                                Annonces
-                                            </Link>
-                                        </Button>
-                                        <DialogContent className="sm:max-w-md rounded-2xl">
-                                            <DialogHeader>
-                                                <DialogTitle className="text-xl font-bold">Modifier mon profil</DialogTitle>
-                                                <DialogDescription>Mettez à jour vos informations publiques.</DialogDescription>
-                                            </DialogHeader>
-                                            <div className="grid gap-4 py-4">
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="space-y-1.5">
-                                                        <Label htmlFor="firstName">Prénom</Label>
-                                                        <Input id="firstName" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} className="rounded-lg" />
+                                            <DialogContent className="sm:max-w-md rounded-2xl">
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-xl font-bold">Modifier mon profil</DialogTitle>
+                                                    <DialogDescription>Mettez à jour vos informations publiques.</DialogDescription>
+                                                </DialogHeader>
+                                                <div className="grid gap-4 py-4">
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="space-y-1.5">
+                                                            <Label htmlFor="firstName">Prénom</Label>
+                                                            <Input id="firstName" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} className="rounded-lg" />
+                                                        </div>
+                                                        <div className="space-y-1.5">
+                                                            <Label htmlFor="lastName">Nom</Label>
+                                                            <Input id="lastName" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} className="rounded-lg" />
+                                                        </div>
                                                     </div>
                                                     <div className="space-y-1.5">
-                                                        <Label htmlFor="lastName">Nom</Label>
-                                                        <Input id="lastName" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} className="rounded-lg" />
+                                                        <Label htmlFor="email">Email</Label>
+                                                        <Input id="email" value={profile.email} disabled className="rounded-lg bg-slate-50 text-slate-500" />
                                                     </div>
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <Label htmlFor="email">Email</Label>
-                                                    <Input id="email" value={profile.email} disabled className="rounded-lg bg-slate-50 text-slate-500" />
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="space-y-1.5">
+                                                            <Label htmlFor="filiere">Filière</Label>
+                                                            <Input id="filiere" value={formData.filiere} onChange={(e) => setFormData({ ...formData, filiere: e.target.value })} className="rounded-lg uppercase" />
+                                                        </div>
+                                                        <div className="space-y-1.5">
+                                                            <Label htmlFor="startYear">Début</Label>
+                                                            <Input id="startYear" type="number" value={formData.startYear} onChange={(e) => setFormData({ ...formData, startYear: e.target.value })} className="rounded-lg" />
+                                                        </div>
+                                                    </div>
                                                     <div className="space-y-1.5">
-                                                        <Label htmlFor="filiere">Filière</Label>
-                                                        <Input id="filiere" value={formData.filiere} onChange={(e) => setFormData({ ...formData, filiere: e.target.value })} className="rounded-lg uppercase" />
-                                                    </div>
-                                                    <div className="space-y-1.5">
-                                                        <Label htmlFor="startYear">Début</Label>
-                                                        <Input id="startYear" type="number" value={formData.startYear} onChange={(e) => setFormData({ ...formData, startYear: e.target.value })} className="rounded-lg" />
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <Label htmlFor="photoUrl">Photo de profil</Label>
+                                                        <Label htmlFor="photoUrl">Photo de profil</Label>
                                                         <div className="flex gap-2">
-                                                            <Input 
-                                                                id="photoUrl" 
-                                                                value={formData.photoUrl} 
-                                                                onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })} 
+                                                            <Input
+                                                                id="photoUrl"
+                                                                value={formData.photoUrl}
+                                                                onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })}
                                                                 placeholder="https://i.ibb.co/..."
-                                                                className="rounded-lg flex-1" 
+                                                                className="rounded-lg flex-1"
                                                             />
-                                                            <Button 
+                                                            <Button
                                                                 type="button"
-                                                                variant="outline" 
+                                                                variant="outline"
                                                                 className="rounded-lg gap-2 shrink-0 bg-slate-50"
                                                                 disabled={avatarUploading}
                                                                 onClick={() => document.getElementById('dialog-avatar-upload').click()}
@@ -598,17 +602,17 @@ export default function PublicProfilePage() {
                                                                 {avatarUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
                                                                 Uploader
                                                             </Button>
-                                                            <input 
-                                                                id="dialog-avatar-upload" 
-                                                                type="file" 
-                                                                className="hidden" 
-                                                                accept="image/*" 
-                                                                onChange={handleAvatarUpload} 
+                                                            <input
+                                                                id="dialog-avatar-upload"
+                                                                type="file"
+                                                                className="hidden"
+                                                                accept="image/*"
+                                                                onChange={handleAvatarUpload}
                                                             />
                                                             {formData.photoUrl && (
-                                                                <Button 
-                                                                    variant="outline" 
-                                                                    size="icon" 
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="icon"
                                                                     onClick={() => setFormData({ ...formData, photoUrl: '' })}
                                                                     className="shrink-0 text-destructive hover:bg-red-50 border-red-100"
                                                                 >
@@ -616,20 +620,20 @@ export default function PublicProfilePage() {
                                                                 </Button>
                                                             )}
                                                         </div>
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <Label htmlFor="bannerUrl">URL de la bannière (Optionnel)</Label>
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        <Label htmlFor="bannerUrl">URL de la bannière (Optionnel)</Label>
                                                         <div className="flex gap-2">
-                                                            <Input 
-                                                                id="bannerUrl" 
-                                                                value={formData.bannerUrl} 
-                                                                onChange={(e) => setFormData({ ...formData, bannerUrl: e.target.value })} 
+                                                            <Input
+                                                                id="bannerUrl"
+                                                                value={formData.bannerUrl}
+                                                                onChange={(e) => setFormData({ ...formData, bannerUrl: e.target.value })}
                                                                 placeholder="https://i.ibb.co/..."
-                                                                className="rounded-lg flex-1" 
+                                                                className="rounded-lg flex-1"
                                                             />
-                                                            <Button 
+                                                            <Button
                                                                 type="button"
-                                                                variant="outline" 
+                                                                variant="outline"
                                                                 className="rounded-lg gap-2 shrink-0 bg-slate-50"
                                                                 disabled={bannerUploading}
                                                                 onClick={() => document.getElementById('dialog-banner-upload').click()}
@@ -637,17 +641,17 @@ export default function PublicProfilePage() {
                                                                 {bannerUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
                                                                 Uploader
                                                             </Button>
-                                                            <input 
-                                                                id="dialog-banner-upload" 
-                                                                type="file" 
-                                                                className="hidden" 
-                                                                accept="image/*" 
-                                                                onChange={handleBannerUpload} 
+                                                            <input
+                                                                id="dialog-banner-upload"
+                                                                type="file"
+                                                                className="hidden"
+                                                                accept="image/*"
+                                                                onChange={handleBannerUpload}
                                                             />
                                                             {formData.bannerUrl && (
-                                                                <Button 
-                                                                    variant="outline" 
-                                                                    size="icon" 
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="icon"
                                                                     onClick={() => setFormData({ ...formData, bannerUrl: '' })}
                                                                     className="shrink-0 text-destructive hover:bg-red-50 border-red-100"
                                                                 >
@@ -656,38 +660,38 @@ export default function PublicProfilePage() {
                                                             )}
                                                         </div>
                                                         <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Taille reco: 800x200 max 10 Mo</p>
-                                                </div>
+                                                    </div>
 
-                                                <div className="mt-4 p-3 bg-blue-50/50 border border-blue-100 rounded-lg text-xs leading-5 text-slate-500">
-                                                    <strong>Mise en garde :</strong> L'outil d'upload d'images utilise <a href="https://imgbb.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">ImgBB</a>, un service tiers. Veuillez ne pas télécharger d'images contenant des informations personnelles sensibles.
+                                                    <div className="mt-4 p-3 bg-blue-50/50 border border-blue-100 rounded-lg text-xs leading-5 text-slate-500">
+                                                        <strong>Mise en garde :</strong> L'outil d'upload d'images utilise <a href="https://imgbb.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">ImgBB</a>, un service tiers. Veuillez ne pas télécharger d'images contenant des informations personnelles sensibles.
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <DialogFooter className="flex gap-2">
-                                                <Button variant="ghost" onClick={() => setIsEditOpen(false)} className="rounded-lg">Annuler</Button>
-                                                <Button onClick={handleSaveProfile} disabled={saving} className="rounded-lg bg-primary text-white">
-                                                    {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                                                    Enregistrer
-                                                </Button>
-                                            </DialogFooter>
-                                        </DialogContent>
-                                    </Dialog>
-                                ) : (
-                                    <Button
-                                        variant={isStarred ? "default" : "outline"}
-                                        size="sm"
-                                        className={cn("rounded-full px-5 transition-all", isStarred && "bg-yellow-500 hover:bg-yellow-600 border-none text-white")}
-                                        onClick={handleStar}
-                                    >
-                                        <Star className={cn("w-3.5 h-3.5 mr-2", isStarred && "fill-current")} />
-                                        <span>{starCount}</span>
+                                                <DialogFooter className="flex gap-2">
+                                                    <Button variant="ghost" onClick={() => setIsEditOpen(false)} className="rounded-lg">Annuler</Button>
+                                                    <Button onClick={handleSaveProfile} disabled={saving} className="rounded-lg bg-primary text-white">
+                                                        {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                                        Enregistrer
+                                                    </Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
+                                    ) : (
+                                        <Button
+                                            variant={isStarred ? "default" : "outline"}
+                                            size="sm"
+                                            className={cn("rounded-full px-5 transition-all", isStarred && "bg-yellow-500 hover:bg-yellow-600 border-none text-white")}
+                                            onClick={handleStar}
+                                        >
+                                            <Star className={cn("w-3.5 h-3.5 mr-2", isStarred && "fill-current")} />
+                                            <span>{starCount}</span>
+                                        </Button>
+                                    )}
+                                    <Button variant="outline" size="icon" className="rounded-full w-8 h-8" onClick={copyProfileLink}>
+                                        <Share2 className="w-3.5 h-3.5" />
                                     </Button>
-                                )}
-                                <Button variant="outline" size="icon" className="rounded-full w-8 h-8" onClick={copyProfileLink}>
-                                    <Share2 className="w-3.5 h-3.5" />
-                                </Button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
                         {/* About */}
                         <div className="border border-slate-200 rounded-xl p-5">
@@ -712,11 +716,43 @@ export default function PublicProfilePage() {
                         <div className="border border-slate-200 rounded-xl p-5">
                             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Succès</h3>
                             <div className="flex flex-wrap gap-2">
-                                {contributionsCount >= 1 && <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-green-50 text-green-700">Contributeur</span>}
-                                {contributionsCount >= 10 && <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-orange-50 text-orange-700">Major Contrib</span>}
-                                {starCount >= 5 && <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-yellow-50 text-yellow-700">Populaire</span>}
-                                {level === 2 && <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600">Ancien</span>}
-                                {contributionsCount === 0 && starCount < 5 && level !== 2 && (
+                                {contributionsCount >= 1 && (
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-green-50 text-green-700">
+                                        <Award className="w-3.5 h-3.5" />
+                                        Contributeur
+                                    </span>
+                                )}
+                                {contributionsCount >= 10 && (
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-orange-50 text-orange-700">
+                                        <Trophy className="w-3.5 h-3.5" />
+                                        Major Contrib
+                                    </span>
+                                )}
+                                {starCount >= 5 && (
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-yellow-50 text-yellow-700">
+                                        <Star className="w-3.5 h-3.5 fill-current" />
+                                        Populaire
+                                    </span>
+                                )}
+                                {level === 2 && (
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600">
+                                        <GraduationCap className="w-3.5 h-3.5" />
+                                        Ancien
+                                    </span>
+                                )}
+                                {verifiedReports >= 1 && (
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700">
+                                        <ShieldCheck className="w-3.5 h-3.5" />
+                                        Modérateur
+                                    </span>
+                                )}
+                                {reportedBugsFixed >= 1 && (
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-rose-50 text-rose-700">
+                                        <Bug className="w-3.5 h-3.5" />
+                                        Bug Hunter
+                                    </span>
+                                )}
+                                {contributionsCount === 0 && starCount < 5 && level !== 2 && verifiedReports === 0 && reportedBugsFixed === 0 && (
                                     <span className="text-xs text-slate-400 italic">Aucun succès pour le moment.</span>
                                 )}
                             </div>
@@ -726,7 +762,7 @@ export default function PublicProfilePage() {
                         {currentUser && currentUser.uid === id && (
                             <div className="border border-slate-200 rounded-xl p-5 space-y-4">
                                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Compte</h3>
-                                
+
                                 {!profile.verifiedEmail && (
                                     <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl">
                                         <div className="flex items-start gap-3">
@@ -734,10 +770,10 @@ export default function PublicProfilePage() {
                                             <div className="space-y-1">
                                                 <p className="text-sm font-bold text-amber-900">Email non vérifié</p>
                                                 <p className="text-xs text-amber-700 leading-relaxed">Vérifiez votre email académique pour obtenir votre badge de confiance.</p>
-                                                <Button 
+                                                <Button
                                                     onClick={handleSendVerificationCode}
                                                     disabled={isVerifying || cooldown > 0}
-                                                    variant="link" 
+                                                    variant="link"
                                                     className="p-0 h-auto text-amber-600 font-bold hover:text-amber-700 text-xs mt-1"
                                                 >
                                                     {isVerifying ? "Envoi..." : cooldown > 0 ? `Renvoyer (${cooldown}s)` : "Vérifier maintenant →"}
@@ -771,7 +807,7 @@ export default function PublicProfilePage() {
                                 </Button>
                             </div>
                         )}
-                        
+
                         {/* Verification Dialog */}
                         <UnifiedDialog
                             isOpen={isVerificationDialogOpen}
@@ -789,7 +825,7 @@ export default function PublicProfilePage() {
                         >
                             <div className="mt-4 space-y-3">
                                 <Label htmlFor="vcode" className="text-xs font-bold text-slate-500 uppercase">Code de vérification</Label>
-                                <Input 
+                                <Input
                                     id="vcode"
                                     placeholder="Ex: 123456"
                                     value={verificationCode}
@@ -801,7 +837,7 @@ export default function PublicProfilePage() {
                                     {cooldown > 0 ? (
                                         <span className="text-[10px] font-bold text-slate-400">Renvoyer dans {cooldown}s</span>
                                     ) : (
-                                        <button 
+                                        <button
                                             onClick={handleSendVerificationCode}
                                             className="text-[10px] font-bold text-primary hover:underline"
                                         >

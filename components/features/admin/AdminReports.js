@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { db, ref, remove } from '@/lib/firebase';
+import { db, ref, remove, get, update } from '@/lib/firebase';
 import { useDialog } from '@/context/DialogContext';
 import {
     Card,
@@ -50,6 +50,21 @@ export default function AdminReports({ reports }) {
 
         try {
             setActionLoading(report.id);
+            
+            // Increment reporter success counter if reporterId exists
+            if (report.reporterId) {
+                try {
+                    const statsRef = ref(db, `users/${report.reporterId}/stats`);
+                    const snap = await get(statsRef);
+                    const currentCount = (snap.exists() ? snap.val().verifiedReports : 0) || 0;
+                    await update(statsRef, {
+                        verifiedReports: currentCount + 1
+                    });
+                } catch (statsErr) {
+                    console.error('Failed to update reporter stats:', statsErr);
+                }
+            }
+
             // Delete the resource
             await remove(ref(db, `resources/${report.resourceId}`));
             // Delete the report
