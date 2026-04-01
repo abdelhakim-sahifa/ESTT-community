@@ -35,23 +35,23 @@ export default function UnifiedDialog({
     const typeConfig = {
         success: {
             icon: CheckCircle,
-            iconColor: 'text-green-600'
+            iconColor: 'text-emerald-500'
         },
         error: {
             icon: AlertCircle,
-            iconColor: 'text-red-600'
+            iconColor: 'text-rose-500'
         },
         warning: {
             icon: AlertTriangle,
-            iconColor: 'text-orange-600'
+            iconColor: 'text-amber-500'
         },
         info: {
             icon: Info,
-            iconColor: 'text-blue-600'
+            iconColor: 'text-sky-500'
         },
         danger: {
             icon: AlertTriangle,
-            iconColor: 'text-red-600'
+            iconColor: 'text-rose-500'
         }
     };
 
@@ -72,23 +72,21 @@ export default function UnifiedDialog({
         <Dialog open={isOpen} onOpenChange={(open) => {
             if (!open) onClose?.();
         }}>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <div className="flex items-start gap-4">
-                        {type !== 'warning' && (
-                            <Icon
-                                className={`mt-0.5 h-6 w-6 flex-shrink-0 ${config.iconColor}`}
-                                strokeWidth={2}
-                            />
-                        )}
-                        <div className="flex-1 space-y-2">
+            <DialogContent className="sm:max-w-[400px] border-none shadow-xl rounded-2xl p-6">
+                <DialogHeader className="space-y-3">
+                    <div className="flex gap-4">
+                        <Icon
+                            className={`h-6 w-6 shrink-0 ${config.iconColor}`}
+                            strokeWidth={2}
+                        />
+                        <div className="space-y-1">
                             {title && (
-                                <DialogTitle className="text-left leading-tight">
+                                <DialogTitle className="text-lg font-bold text-left leading-tight">
                                     {title}
                                 </DialogTitle>
                             )}
                             {message && (
-                                <DialogDescription className="text-left text-sm leading-relaxed">
+                                <DialogDescription className="text-left text-sm text-slate-500 leading-relaxed">
                                     {message}
                                 </DialogDescription>
                             )}
@@ -102,6 +100,8 @@ export default function UnifiedDialog({
                             <Button
                                 key={idx}
                                 variant={getButtonVariant(action.variant)}
+                                className={`rounded-lg px-5 h-10 text-sm font-semibold transition-all ${action.variant === 'danger' || type === 'danger' ? 'destructive' : ''
+                                    }`}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     action.onClick?.();
