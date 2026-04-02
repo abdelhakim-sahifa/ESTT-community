@@ -19,6 +19,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
+
 
 export default function SignupPage() {
     const router = useRouter();
@@ -31,7 +33,9 @@ export default function SignupPage() {
         filiere: '',
         startYear: ''
     });
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
     const [message, setMessage] = useState('');
+
     const [loading, setLoading] = useState(false);
 
     const currentYear = new Date().getFullYear();
@@ -50,7 +54,14 @@ export default function SignupPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!acceptedTerms) {
+            setMessage('Vous devez accepter les conditions d\'utilisation et la politique de confidentialité.');
+            return;
+        }
+
         setMessage('');
+
 
         const email = formData.email;
         let isAllowed = false;
@@ -278,7 +289,22 @@ export default function SignupPage() {
                                 </div>
                             </div>
 
+                            <div className="flex items-center space-x-2 py-4">
+                                <Checkbox 
+                                    id="terms" 
+                                    checked={acceptedTerms} 
+                                    onCheckedChange={setAcceptedTerms} 
+                                />
+                                <Label 
+                                    htmlFor="terms" 
+                                    className="text-sm text-muted-foreground font-normal leading-tight peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    J'accepte les <Link href="/terms" target="_blank" className="text-primary font-medium hover:underline">Conditions d'utilisation</Link> et la <Link href="/privacy" target="_blank" className="text-primary font-medium hover:underline">Politique de confidentialité</Link>.
+                                </Label>
+                            </div>
+
                             <Button type="submit" className="w-full h-12 text-lg font-medium shadow-sm transition-all hover:shadow-md" disabled={loading}>
+
                                 {loading ? (
                                     <>
                                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />

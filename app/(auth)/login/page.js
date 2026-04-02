@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, GraduationCap, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+
 
 
 
@@ -21,6 +23,8 @@ export default function LoginPage() {
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
+
 
     const validateEmail = (email) => {
         return email.toLowerCase().endsWith('@etu.uae.ac.ma');
@@ -69,7 +73,14 @@ export default function LoginPage() {
     const isSuccess = message.includes('réussie') || message.includes('envoyé') || message.includes('Google');
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        if (!acceptedTerms) {
+            setMessage('Vous devez accepter les conditions d\'utilisation et la politique de confidentialité.');
+            return;
+        }
+
         setMessage('');
+
         setLoading(true); // Start loading immediately for UX
 
         let isAllowed = false;
@@ -172,7 +183,23 @@ export default function LoginPage() {
                                 Pas forcément le mot de passe de l’e-mail académique
                             </p>
                         </div>
+
+                        <div className="flex items-center space-x-2 py-2">
+                            <Checkbox 
+                                id="terms" 
+                                checked={acceptedTerms} 
+                                onCheckedChange={setAcceptedTerms} 
+                            />
+                            <Label 
+                                htmlFor="terms" 
+                                className="text-xs text-muted-foreground font-normal leading-tight peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                                J'accepte les <Link href="/terms" target="_blank" className="text-primary hover:underline">Conditions d'utilisation</Link> et la <Link href="/privacy" target="_blank" className="text-primary hover:underline">Politique de confidentialité</Link>.
+                            </Label>
+                        </div>
+
                         <Button type="submit" className="w-full h-11 text-base font-medium" disabled={loading || googleLoading}>
+
                             {loading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
