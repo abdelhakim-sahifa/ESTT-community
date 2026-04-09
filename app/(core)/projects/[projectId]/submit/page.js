@@ -23,18 +23,6 @@ import {
 import { uploadToImgBB } from '@/lib/uploadUtils';
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 
-async function fetchProjectByRest(projectId) {
-    const response = await fetch(`https://estt-community-default-rtdb.firebaseio.com/projects/${projectId}.json`, {
-        cache: 'no-store',
-    });
-
-    if (!response.ok) {
-        throw new Error('REST project fetch failed');
-    }
-
-    return response.json();
-}
-
 const initialState = {
     title: '',
     description: '',
@@ -75,8 +63,7 @@ export default function SubmitProjectImplementationPage() {
 
             try {
                 const projectSnap = await get(ref(db, `projects/${projectId}`));
-                const projectData = projectSnap.exists() ? projectSnap.val() : await fetchProjectByRest(projectId);
-                setProject(projectData ? normalizeProject(projectId, projectData) : null);
+                setProject(projectSnap.exists() ? normalizeProject(projectId, projectSnap.val()) : null);
             } catch (error) {
                 console.error('Error loading project before submission:', error);
                 setProject(null);

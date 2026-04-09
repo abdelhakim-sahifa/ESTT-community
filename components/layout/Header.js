@@ -57,7 +57,7 @@ export default function Header() {
     const navItems = [
         { href: '/', label: 'Accueil' },
         { href: '/events', label: 'Événements' },
-        { href: '/projects', label: 'Projects' },
+       // { href: '/projects', label: 'Projects' },
         { href: '/contribute', label: 'Contribuer' },
         { href: '/contributors', label: 'Contributeurs' },
     ];

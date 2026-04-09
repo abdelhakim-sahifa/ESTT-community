@@ -9,18 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { normalizeShowcase, getProjectCategoryLabel, formatProjectDate } from '@/lib/projects';
 import { ArrowLeft, ExternalLink, Github, Loader2, Sparkles } from 'lucide-react';
 
-async function fetchShowcaseByRest(showcaseId) {
-    const response = await fetch(`https://estt-community-default-rtdb.firebaseio.com/projectShowcases/${showcaseId}.json`, {
-        cache: 'no-store',
-    });
-
-    if (!response.ok) {
-        throw new Error('REST showcase fetch failed');
-    }
-
-    return response.json();
-}
-
 export default function ShowcaseDetailPage() {
     const params = useParams();
     const showcaseId = Array.isArray(params?.showcaseId) ? params.showcaseId[0] : params?.showcaseId;
@@ -40,8 +28,7 @@ export default function ShowcaseDetailPage() {
 
             try {
                 const snapshot = await get(ref(db, `projectShowcases/${showcaseId}`));
-                const showcaseData = snapshot.exists() ? snapshot.val() : await fetchShowcaseByRest(showcaseId);
-                setShowcase(showcaseData ? normalizeShowcase(showcaseId, showcaseData) : null);
+                setShowcase(snapshot.exists() ? normalizeShowcase(showcaseId, snapshot.val()) : null);
             } catch (error) {
                 console.error('Error loading showcase detail:', error);
                 setShowcase(null);

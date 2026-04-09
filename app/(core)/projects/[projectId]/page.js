@@ -27,31 +27,6 @@ import { AlertCircle, ArrowLeft, CalendarDays, CheckCircle2, Loader2, Trophy } f
 const sortSubmissions = (items) =>
     [...items].sort((first, second) => (second.votesCount - first.votesCount) || sortByNewest(first, second));
 
-async function fetchProjectByRest(projectId) {
-    const response = await fetch(`https://estt-community-default-rtdb.firebaseio.com/projects/${projectId}.json`, {
-        cache: 'no-store',
-    });
-
-    if (!response.ok) {
-        throw new Error('REST project fetch failed');
-    }
-
-    return response.json();
-}
-
-async function fetchProjectSubmissionsByRest(projectId) {
-    const response = await fetch(
-        `https://estt-community-default-rtdb.firebaseio.com/projectSubmissions.json?orderBy="projectId"&equalTo="${projectId}"`,
-        { cache: 'no-store' }
-    );
-
-    if (!response.ok) {
-        throw new Error('REST submissions fetch failed');
-    }
-
-    return response.json();
-}
-
 export default function ProjectDetailPage() {
     const params = useParams();
     const router = useRouter();
@@ -64,60 +39,145 @@ export default function ProjectDetailPage() {
     const [loading, setLoading] = useState(true);
     const [votingId, setVotingId] = useState('');
     const [message, setMessage] = useState(null);
+    const [error, setError] = useState(null); // { type: 'notFound' | 'loadError', message: string }
+    const [refreshingSubmissions, setRefreshingSubmissions] = useState(false);
+
+    const refreshSubmissions = async () => {
+        if (!db || !projectId) return;
+        setRefreshingSubmissions(true);
+
+        try {
+            const submissionsSnap = await get(
+                query(ref(db, 'projectSubmissions'), orderByChild('projectId'), equalTo(projectId))
+            );
+
+            let submissionsList = [];
+
+            if (submissionsSnap.exists()) {
+                submissionsList = Object.entries(submissionsSnap.val())
+                    .map(([id, item]) => normalizeSubmission(id, item))
+                    .filter((item) => item.status === 'approved');
+            }
+
+            // If query returned nothing, try fetching all submissions as fallback
+            if (submissionsList.length === 0) {
+                console.warn('Query returned no submissions, trying fallback method...');
+                try {
+                    const allSubmissionsSnap = await get(ref(db, 'projectSubmissions'));
+                    if (allSubmissionsSnap.exists()) {
+                        submissionsList = Object.entries(allSubmissionsSnap.val())
+                            .map(([id, item]) => normalizeSubmission(id, item))
+                            .filter((item) => item.projectId === projectId && item.status === 'approved');
+                    }
+                } catch (fallbackError) {
+                    console.warn('Fallback method also failed:', fallbackError);
+                }
+            }
+
+            setSubmissions(sortSubmissions(submissionsList));
+        } catch (error) {
+            console.error('Error refreshing submissions:', error);
+        } finally {
+            setRefreshingSubmissions(false);
+        }
+    };
 
     useEffect(() => {
         if (!projectId) return;
 
-        const fetchProject = async () => {
+        const fetchProjectData = async () => {
             setLoading(true);
+            setError(null);
 
             if (!db) {
+                setLoading(false);
+                setError({
+                    type: 'loadError',
+                    message: 'Impossible de charger le projet pour le moment. Verifiez votre connexion internet et reessayez.',
+                });
+                return;
+            }
+
+            try {
+                const projectSnap = await get(ref(db, `projects/${projectId}`));
+
+                if (!projectSnap.exists()) {
+                    setProject(null);
+                    setSubmissions([]);
+                    setCurrentVote(null);
+                    setError({
+                        type: 'notFound',
+                        message: 'Ce challenge n\'existe plus ou son identifiant est invalide.',
+                    });
+                    setLoading(false);
+                    return;
+                }
+
+                setProject(normalizeProject(projectId, projectSnap.val()));
+            } catch (error) {
+                console.error('Error loading project detail:', error);
+                setProject(null);
+                setSubmissions([]);
+                setCurrentVote(null);
+                setError({
+                    type: 'loadError',
+                    message: 'Impossible de charger le projet pour le moment. Verifiez votre connexion internet et reessayez.',
+                });
                 setLoading(false);
                 return;
             }
 
             try {
-                const [projectSnap, submissionsSnap, voteSnap] = await Promise.all([
-                    get(ref(db, `projects/${projectId}`)),
-                    get(query(ref(db, 'projectSubmissions'), orderByChild('projectId'), equalTo(projectId))),
-                    user ? get(ref(db, `projectVotes/${projectId}/${user.uid}`)) : Promise.resolve(null),
-                ]);
+                const submissionsSnap = await get(
+                    query(ref(db, 'projectSubmissions'), orderByChild('projectId'), equalTo(projectId))
+                );
 
-                let projectData = projectSnap.exists() ? projectSnap.val() : null;
-                let submissionsData = submissionsSnap?.exists() ? submissionsSnap.val() : null;
-
-                if (!projectData) {
-                    projectData = await fetchProjectByRest(projectId);
-                }
-
-                if (!submissionsData) {
-                    submissionsData = await fetchProjectSubmissionsByRest(projectId);
-                }
-
-                if (!projectData) {
-                    setProject(null);
-                    setSubmissions([]);
-                    return;
-                }
-
-                setProject(normalizeProject(projectId, projectData));
-
-                const submissionsList = submissionsData
-                    ? Object.entries(submissionsData)
+                let submissionsList = [];
+                
+                if (submissionsSnap.exists()) {
+                    submissionsList = Object.entries(submissionsSnap.val())
                         .map(([id, item]) => normalizeSubmission(id, item))
-                        .filter((item) => item.status === 'approved')
-                    : [];
+                        .filter((item) => item.status === 'approved');
+                }
+                
+                // If query returned nothing, try fetching all submissions as fallback
+                if (submissionsList.length === 0) {
+                    console.warn('Query returned no submissions, trying fallback method...');
+                    try {
+                        const allSubmissionsSnap = await get(ref(db, 'projectSubmissions'));
+                        if (allSubmissionsSnap.exists()) {
+                            submissionsList = Object.entries(allSubmissionsSnap.val())
+                                .map(([id, item]) => normalizeSubmission(id, item))
+                                .filter((item) => item.projectId === projectId && item.status === 'approved');
+                        }
+                    } catch (fallbackError) {
+                        console.warn('Fallback method also failed:', fallbackError);
+                    }
+                }
 
                 setSubmissions(sortSubmissions(submissionsList));
-                setCurrentVote(voteSnap?.exists() ? voteSnap.val() : null);
             } catch (error) {
-                console.error('Error loading project detail:', error);
-            } finally {
-                setLoading(false);
+                console.error('Error loading project submissions:', error);
+                setSubmissions([]);
             }
+
+            if (user) {
+                try {
+                    const voteSnap = await get(ref(db, `projectVotes/${projectId}/${user.uid}`));
+                    setCurrentVote(voteSnap.exists() ? voteSnap.val() : null);
+                } catch (error) {
+                    console.error('Error loading current project vote:', error);
+                    setCurrentVote(null);
+                }
+            } else {
+                setCurrentVote(null);
+            }
+
+            setError(null);
+            setLoading(false);
         };
 
-        fetchProject();
+        fetchProjectData();
     }, [projectId, user]);
 
     const runtimeStatus = useMemo(() => getProjectRuntimeStatus(project), [project]);
@@ -223,6 +283,46 @@ export default function ProjectDetailPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </main>
         );
+    }
+
+    // Handle different error states
+    if (error) {
+        if (error.type === 'notFound') {
+            return (
+                <main className="container max-w-3xl px-4 py-16 text-center md:px-6">
+                    <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10">
+                        <h1 className="text-3xl font-black text-slate-950">Projet introuvable</h1>
+                        <p className="mt-3 text-sm text-slate-500">{error.message}</p>
+                        <Button asChild className="mt-6 rounded-full">
+                            <Link href="/projects">Retour au hub</Link>
+                        </Button>
+                    </div>
+                </main>
+            );
+        }
+
+        // Load error - show error with retry option
+        if (error.type === 'loadError') {
+            return (
+                <main className="container max-w-3xl px-4 py-16 text-center md:px-6">
+                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-10">
+                        <div className="inline-flex items-center justify-center rounded-full bg-amber-100 p-3">
+                            <AlertCircle className="h-6 w-6 text-amber-600" />
+                        </div>
+                        <h1 className="mt-4 text-3xl font-black text-slate-950">Erreur de chargement</h1>
+                            <p className="mt-3 text-sm text-slate-600">{error.message}</p>
+                        <div className="mt-6 flex flex-wrap justify-center gap-3">
+                            <Button className="rounded-full" onClick={() => window.location.reload()}>
+                                Reessayer
+                            </Button>
+                            <Button asChild variant="outline" className="rounded-full">
+                                <Link href="/projects">Retour au hub</Link>
+                            </Button>
+                        </div>
+                    </div>
+                </main>
+            );
+        }
     }
 
     if (!project) {
@@ -405,9 +505,26 @@ export default function ProjectDetailPage() {
                                 La communaute vote sur la meilleure execution du meme brief.
                             </p>
                         </div>
-                        <Button asChild variant="outline" className="rounded-full">
-                            <Link href={`/projects/${project.id}/submit`}>Ajouter une implementation</Link>
-                        </Button>
+                        <div className="flex flex-wrap gap-2">
+                            <Button 
+                                variant="outline" 
+                                className="rounded-full"
+                                onClick={refreshSubmissions}
+                                disabled={refreshingSubmissions}
+                            >
+                                {refreshingSubmissions ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Rafraichissement...
+                                    </>
+                                ) : (
+                                    'Rafraichir'
+                                )}
+                            </Button>
+                            <Button asChild variant="outline" className="rounded-full">
+                                <Link href={`/projects/${project.id}/submit`}>Ajouter une implementation</Link>
+                            </Button>
+                        </div>
                     </div>
 
                     {message && (
