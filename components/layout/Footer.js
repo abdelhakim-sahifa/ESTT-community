@@ -23,6 +23,7 @@ export default function Footer() {
                 { label: "Cours & Examens", href: "/browse?type=course" },
             ]
         },
+        
         {
             title: "Communauté",
             links: [
