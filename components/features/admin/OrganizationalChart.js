@@ -1,10 +1,53 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getInitials } from '@/lib/clubUtils';
 import { db as staticDb } from '@/lib/data';
+import { db, ref, query, orderByChild, equalTo, get } from '@/lib/firebase';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function OrganizationalChart({ organizationalChart }) {
+    const [linkedProfiles, setLinkedProfiles] = useState({});
+
+    useEffect(() => {
+        const fetchLinkedProfiles = async () => {
+            if (!organizationalChart || !db) return;
+
+            const emails = Object.values(organizationalChart)
+                .map(m => m.email)
+                .filter(email => email && typeof email === 'string');
+
+            const uniqueEmails = [...new Set(emails)];
+            const newProfiles = {};
+
+            try {
+                const usersRef = ref(db, 'users');
+                await Promise.all(
+                    uniqueEmails.map(async (email) => {
+                        const q = query(usersRef, orderByChild('email'), equalTo(email.toLowerCase()));
+                        const snap = await get(q);
+                        if (snap.exists()) {
+                            const data = snap.val();
+                            const userId = Object.keys(data)[0];
+                            newProfiles[email.toLowerCase()] = {
+                                id: userId,
+                                ...data[userId]
+                            };
+                        }
+                    })
+                );
+                setLinkedProfiles(newProfiles);
+            } catch (error) {
+                console.error("Error fetching linked profiles:", error);
+            }
+        };
+
+        fetchLinkedProfiles();
+    }, [organizationalChart]);
+
     if (!organizationalChart || Object.keys(organizationalChart).length === 0) {
         return (
             <div className="text-center py-8 text-muted-foreground">
@@ -45,44 +88,60 @@ export default function OrganizationalChart({ organizationalChart }) {
     };
 
     // Render a member card
-    const MemberCard = ({ member, positionKey }) => (
-        <Card className="text-center hover:shadow-lg transition-shadow border-primary/20">
-            <CardContent className="pt-6 pb-4 px-4">
-                <div className="flex flex-col items-center gap-3">
-                    {/* Avatar */}
-                    <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-primary/20 to-primary/10 border-2 border-primary/30">
-                        {member.photo ? (
-                            <Image
-                                src={member.photo}
-                                alt={member.name}
-                                fill
-                                className="object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-xl font-bold text-primary">
-                                {getInitials(member.name)}
-                            </div>
+    const MemberCard = ({ member, positionKey }) => {
+        const linkedProfile = member.email ? linkedProfiles[member.email.toLowerCase()] : null;
+        const displayPhoto = member.photo || linkedProfile?.photoUrl;
+        const displayName = linkedProfile ? `${linkedProfile.firstName} ${linkedProfile.lastName}` : member.name;
+        
+        const CardContentWrapper = (
+            <Card className="text-center hover:shadow-lg transition-shadow border-primary/20 h-full">
+                <CardContent className="pt-6 pb-4 px-4 h-full flex flex-col items-center justify-between">
+                    <div className="flex flex-col items-center gap-3 w-full">
+                        {/* Avatar */}
+                        <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-primary/20 to-primary/10 border-2 border-primary/30 shrink-0">
+                            {displayPhoto ? (
+                                <Image
+                                    src={displayPhoto}
+                                    alt={displayName}
+                                    fill
+                                    className="object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-xl font-bold text-primary">
+                                    {getInitials(displayName)}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Name */}
+                        <div className="space-y-1 w-full">
+                            <h4 className="font-semibold text-sm leading-tight line-clamp-2">{displayName}</h4>
+                            <p className="text-xs font-medium text-primary line-clamp-2">
+                                {getRoleDisplay(positionKey, member.role)}
+                            </p>
+                        </div>
+
+                        {/* Filiere Badge */}
+                        {member.filiere && (
+                            <Badge variant="outline" className="text-[10px] px-2 py-0.5 mt-auto">
+                                {getFiliereName(member.filiere)}
+                            </Badge>
                         )}
                     </div>
+                </CardContent>
+            </Card>
+        );
 
-                    {/* Name */}
-                    <div className="space-y-1">
-                        <h4 className="font-semibold text-sm leading-tight">{member.name}</h4>
-                        <p className="text-xs font-medium text-primary">
-                            {getRoleDisplay(positionKey, member.role)}
-                        </p>
-                    </div>
+        if (linkedProfile?.id) {
+            return (
+                <Link href={`/profile/${linkedProfile.id}`} className="block h-full transition-transform hover:-translate-y-1">
+                    {CardContentWrapper}
+                </Link>
+            );
+        }
 
-                    {/* Filiere Badge */}
-                    {member.filiere && (
-                        <Badge variant="outline" className="text-[10px] px-2 py-0.5">
-                            {getFiliereName(member.filiere)}
-                        </Badge>
-                    )}
-                </div>
-            </CardContent>
-        </Card>
-    );
+        return <div className="h-full">{CardContentWrapper}</div>;
+    };
 
     // Render a level of the hierarchy
     const renderLevel = (levelKeys) => {
@@ -148,9 +207,11 @@ export default function OrganizationalChart({ organizationalChart }) {
             {/* Custom positions */}
             {customPositions.length > 0 && (
                 <>
-                    <div className="flex justify-center">
-                        <div className="w-0.5 h-8 bg-gradient-to-b from-primary/50 to-primary/20"></div>
-                    </div>
+                    {allPredefinedKeys.some(k => organizationalChart[k]) && (
+                        <div className="flex justify-center">
+                            <div className="w-0.5 h-8 bg-gradient-to-b from-primary/50 to-primary/20"></div>
+                        </div>
+                    )}
                     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {customPositions.map(member => (
                             <MemberCard key={member.key} member={member} positionKey={member.key} />
