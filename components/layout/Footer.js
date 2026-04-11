@@ -8,7 +8,7 @@ import LatestReleaseBadge from '../LatestReleaseBadge';
 
 export default function Footer() {
     const pathname = usePathname();
-    if (pathname === '/downloadAndroid' || pathname === '/docs') return null;
+    if (pathname === '/downloadAndroid' || pathname === '/docs' || pathname === '/chat') return null;
     const isAdsPage = pathname === '/ads-portal';
 
     const currentYear = new Date().getFullYear();
