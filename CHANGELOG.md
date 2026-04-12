@@ -1,3 +1,10 @@
+## [1.18.7](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.18.6...v1.18.7) (2026-04-12)
+
+
+### Bug Fixes
+
+* add missing keys to dycrypt ([67d9c02](https://github.com/abdelhakim-sahifa/ESTT-community/commit/67d9c025ccef3107ce3e0f28bf8ca9127c9245c1))
+
 ## [1.18.6](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.18.5...v1.18.6) (2026-04-12)
 
 
