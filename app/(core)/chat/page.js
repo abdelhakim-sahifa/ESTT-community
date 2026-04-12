@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { db, ref, onValue, push, set, serverTimestamp, update, query, limitToLast } from '@/lib/firebase';
 import ChatBubble from '@/components/features/chat/ChatBubble';
 import ChatInput from '@/components/features/chat/ChatInput';
+import ChatTermsDialog from '@/components/features/chat/ChatTermsDialog';
 import { Loader2, Hash, Lock, Menu, Bell, Search, User as UserIcon, LogOut } from 'lucide-react';
 import { cn, getUserLevel } from '@/lib/utils';
 import { db as staticData } from '@/lib/data';
@@ -331,6 +332,7 @@ export default function DiscussionPage() {
 
     return (
         <main className="fixed inset-0 z-[100] h-[100dvh] bg-white flex flex-col font-sans overflow-hidden overscroll-none">
+            <ChatTermsDialog />
             {/* Header Area */}
             <div className="bg-white border-b border-slate-100 px-4 py-3 md:px-12 md:py-4 shrink-0">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">

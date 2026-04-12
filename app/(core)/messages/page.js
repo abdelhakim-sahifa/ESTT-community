@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { db, ref, onValue, get } from '@/lib/firebase';
+import ChatTermsDialog from '@/components/features/chat/ChatTermsDialog';
 import { Loader2, Search, MessageSquare, User, ArrowRight, Plus, Hash } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -101,6 +102,7 @@ export default function MessagesHub() {
 
     return (
         <main className="min-h-screen bg-white md:bg-slate-50/50">
+            <ChatTermsDialog />
             <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
                 
                 {/* Header */}
@@ -218,9 +220,10 @@ export default function MessagesHub() {
                                                 </span>
                                             </div>
                                             <p className={cn(
-                                                "text-sm truncate",
-                                                conv.unread ? "text-slate-900 font-semibold" : "text-slate-500 font-medium"
+                                                "text-sm truncate font-medium",
+                                                conv.unread ? "text-slate-900 font-bold" : "text-slate-500"
                                             )}>
+                                                {conv.lastMessageSenderId === user.uid && <span className="font-bold text-slate-700">Vous: </span>}
                                                 {conv.lastMessage || "Nouveau message"}
                                             </p>
                                         </div>

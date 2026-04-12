@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { db, ref, onValue, push, set, serverTimestamp, update, query, limitToLast, get } from '@/lib/firebase';
 import ChatBubble from '@/components/features/chat/ChatBubble';
 import ChatInput from '@/components/features/chat/ChatInput';
+import ChatTermsDialog from '@/components/features/chat/ChatTermsDialog';
 import { Loader2, ArrowLeft, MoreVertical, Phone, Video, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { onDisconnect, remove } from 'firebase/database';
@@ -243,6 +244,7 @@ export default function DirectMessagePage() {
             // Update Conversation Hub (for both users)
             const hubUpdate = {
                 lastMessage: text || (imageUrl ? "Image" : (sharedResource ? "Ressource" : (sharedEvent ? "Événement" : "Message"))),
+                lastMessageSenderId: user.uid,
                 lastMessageId: newMessageRef.key,
                 timestamp: serverTimestamp(),
                 otherUserId: recipientId,
@@ -316,6 +318,7 @@ export default function DirectMessagePage() {
 
     return (
         <main className="fixed inset-0 z-[100] h-[100dvh] bg-white flex flex-col font-sans overflow-hidden overscroll-none">
+            <ChatTermsDialog />
             {/* DM Header */}
             <div className="bg-white border-b border-slate-100 px-4 py-3 shrink-0">
                 <div className="max-w-4xl mx-auto flex items-center justify-between">

@@ -22,7 +22,16 @@ export default function PrivacyPolicy() {
                 </section>
 
                 <section>
-                    <h2 className="text-2xl font-bold text-foreground mb-4">3. Protection des données</h2>
+                    <h2 className="text-2xl font-bold text-foreground mb-4">3. Confidentialité des messages</h2>
+                    <p>Dans le cadre de nos services de communication interne :</p>
+                    <ul className="list-disc pl-6 space-y-2 mt-2">
+                        <li><strong>Discussions de groupe :</strong> Les messages partagés dans les espaces de discussion communs ne sont pas chiffrés de bout en bout. En utilisant ces espaces, vous donnez expressément votre accord pour que nous puissions collecter et utiliser ces messages en vue d'entraîner et d'améliorer des modèles d'intelligence artificielle (notamment des modèles linguistiques en darija).</li>
+                        <li><strong>Messages directs (DMs) :</strong> Nous appliquons un chiffrement strict pour vos conversations privées. Nous nous engageons formellement à respecter leur totale confidentialité : nous n'accédons pas à leur contenu, et nous garantissons que ces messages ne seront jamais exploités ou analysés à d'autres fins.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 className="text-2xl font-bold text-foreground mb-4">4. Protection des données</h2>
                     <p>Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos informations personnelles contre tout accès, modification, divulgation ou destruction non autorisé.</p>
                 </section>
 
