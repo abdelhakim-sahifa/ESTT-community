@@ -233,10 +233,6 @@ export default function BrowsePage() {
                     </div>
                 </div>
 
-                {resource.description && (
-                    <p className="text-sm text-slate-500 line-clamp-2 mb-4 italic">"{resource.description}"</p>
-                )}
-
                 <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
                     {resource.professor && (
                         <div className="flex items-center gap-1.5 text-xs text-slate-400">
@@ -257,8 +253,8 @@ export default function BrowsePage() {
     };
 
     return (
-        <main className="container py-12">
-            <section className="mb-12 text-center">
+        <main className="container py-6 md:py-10">
+            <section className="mb-8 md:mb-10 text-center">
                 <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl mb-4">
                     Parcourir les ressources
                 </h1>
@@ -267,7 +263,7 @@ export default function BrowsePage() {
                 </p>
             </section>
 
-            <section className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6 bg-card p-6 rounded-xl border shadow-sm">
+            <section className="mb-8 md:mb-10 grid grid-cols-1 md:grid-cols-3 gap-6 bg-card p-6 rounded-xl border shadow-sm">
                 <div className="space-y-2">
                     <label className="text-sm font-medium leading-none">Filière</label>
                     <Select
@@ -339,7 +335,7 @@ export default function BrowsePage() {
 
             {selectedModule && (
                 <section>
-                    <div className="flex items-center justify-between mb-8 border-b pb-4">
+                    <div className="flex items-center justify-between mb-6 border-b pb-3">
                         <h2 className="text-2xl font-semibold tracking-tight">
                             Ressources : <span className="text-primary">{selectedModuleData?.name}</span>
                         </h2>
@@ -365,7 +361,7 @@ export default function BrowsePage() {
                             </Link>
                         </div>
                     ) : (
-                        <div className="space-y-16">
+                        <div className="space-y-8 md:space-y-10">
                             {/* Student Ad Card - Hero Position if available */}
                             {ads.length > 0 && (
                                 <div className="bg-gradient-to-r from-primary/5 to-transparent border border-primary/10 rounded-2xl overflow-hidden p-6 relative">

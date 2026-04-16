@@ -146,7 +146,11 @@ Do not log:
 
 ---
 
-## 8) Quality Checklist Before Finishing
+
+## 8) UI/UX Rules
+
+* we use flat design compenents without elevation or shadows 
+## 9) Quality Checklist Before Finishing
 
 Before marking a task complete:
 
@@ -156,3 +160,6 @@ Before marking a task complete:
 * [ ] The fix addresses the root cause
 * [ ] Useful lessons were added to `experience.md`
 * [ ] No duplicate experience entries were added
+
+
+

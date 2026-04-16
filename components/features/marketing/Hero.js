@@ -1,9 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Hero({ stats }) {
+    const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
+
     return (
         <section id="hero" className="bg-white pt-20 pb-16 lg:pt-32 lg:pb-24 border-b border-slate-100">
             <div className="container px-4 md:px-6 flex flex-col items-center text-center">
@@ -31,18 +44,29 @@ export default function Hero({ stats }) {
                     </div>
                 </div>
 
+                <form onSubmit={handleSearch} className="mt-8 w-full max-w-xl mx-auto relative flex items-center">
+                    <Search className="w-5 h-5 absolute left-5 text-slate-400" />
+                    <input
+                        type="search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Rechercher un module, un cours..."
+                        className="w-full h-14 pl-14 pr-6 rounded-full bg-slate-100/80 hover:bg-slate-100 text-slate-900 border-0 focus:ring-0 outline-none transition-colors placeholder:text-slate-500 shadow-none"
+                    />
+                </form>
+
                 <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                    <Button size="lg" className="rounded-full px-8 text-lg h-12" asChild>
+                    <Button size="lg" className="rounded-full px-8 text-lg h-12 shadow-none" asChild>
                         <Link href="/contribute">
                             Contribuer une ressource
                         </Link>
                     </Button>
-                    <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12" asChild>
+                    <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12 shadow-none bg-slate-50" asChild>
                         <Link href="/browse">
                             Parcourir les ressources
                         </Link>
                     </Button>
-                    <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12" asChild>
+                    <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12 shadow-none bg-slate-50" asChild>
                         <Link href="/clubs">
                             Découvrir les clubs
                         </Link>

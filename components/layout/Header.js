@@ -5,9 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { cn } from '@/lib/utils';
+import { cn, getUserLevel } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Bell, LogOut, User as UserIcon, Search, MessageSquare } from 'lucide-react';
+import { Menu, X, Bell, LogOut, User as UserIcon, Search, MessageSquare, Home, Calendar, PlusCircle, ShieldCheck } from 'lucide-react';
 import { db, ref, onValue } from '@/lib/firebase';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -29,6 +29,11 @@ export default function Header() {
     const [unreadCount, setUnreadCount] = useState(0);
     const [unreadDMCount, setUnreadDMCount] = useState(0);
     const [open, setOpen] = useState(false);
+
+    const level = getUserLevel(profile?.startYear);
+    const contributionsCount = profile?.contributions ? Object.keys(profile.contributions).length : 0;
+    const isMentor = level === 2 && contributionsCount > 5;
+    const isSubscribed = profile?.subscription?.expiresAt && profile.subscription.expiresAt > Date.now();
 
     useEffect(() => {
         if (!user || !db) return;
@@ -77,15 +82,14 @@ export default function Header() {
     };
 
     const navItems = [
-        { href: '/', label: 'Accueil' },
-        { href: '/events', label: 'Événements' },
-       // { href: '/projects', label: 'Projects' },
-        { href: '/contribute', label: 'Contribuer' },
-        { href: '/chat', label: 'Discussion' },
+        { href: '/', label: 'Accueil', icon: Home },
+        { href: '/events', label: 'Événements', icon: Calendar },
+        { href: '/contribute', label: 'Contribuer', icon: PlusCircle },
+        { href: '/chat', label: 'Discussion', icon: MessageSquare },
     ];
 
     if (user) {
-        navItems.push({ href: '/profile', label: 'Profil' });
+        navItems.push({ href: '/profile', label: 'Profil', icon: UserIcon });
     }
 
     const isChatPage = pathname === '/chat';
@@ -126,9 +130,7 @@ export default function Header() {
                 </nav>
 
                 <div className="flex items-center gap-4">
-                    <Link href="/search" className="p-2 text-muted-foreground hover:text-primary transition-colors hidden md:flex">
-                        <Search className="h-5 w-5" />
-                    </Link>
+
                     
                     <div className="hidden md:flex items-center gap-4">
                         {!user ? (
@@ -196,10 +198,7 @@ export default function Header() {
                         </>
                     )}
 
-                    {/* Mobile Search Button */}
-                    <Link href="/search" className="p-2 text-muted-foreground hover:text-primary transition-colors md:hidden">
-                        <Search className="h-5 w-5" />
-                    </Link>
+
 
                     {/* Mobile Menu Toggle via Sheet */}
                     <Sheet open={open} onOpenChange={setOpen}>
@@ -225,62 +224,77 @@ export default function Header() {
                                     />
                                 </SheetTitle>
                             </SheetHeader>
-                            <nav className="flex flex-col gap-4 mt-4">
+                            <nav className="flex flex-col gap-1 mt-2">
                                 {navItems.map((item) => (
                                     <Link
                                         key={item.href}
                                         href={item.href}
                                         className={cn(
-                                            "flex items-center py-3 text-lg font-semibold transition-colors hover:text-primary border-b border-slate-50",
-                                            isActive(item.href) ? "text-primary" : "text-slate-600"
+                                            "flex items-center gap-3 px-3 py-3 text-base font-medium transition-colors rounded-xl shadow-none",
+                                            isActive(item.href) ? "text-primary font-semibold bg-primary/5" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                                         )}
                                         onClick={() => setOpen(false)}
                                     >
+                                        <item.icon className={cn("w-[22px] h-[22px]", isActive(item.href) ? "opacity-100" : "opacity-70")} />
                                         {item.label}
                                     </Link>
                                 ))}
                             </nav>
 
-                            <div className="mt-auto pt-6">
+                            <div className="mt-auto pt-4 border-t border-slate-100 pb-2">
                                 {!user ? (
-                                    <div className="flex flex-col gap-3">
-                                        <Button variant="outline" className="w-full justify-center h-12 rounded-xl" asChild onClick={() => setOpen(false)}>
+                                    <div className="flex flex-col gap-2">
+                                        <Button variant="outline" className="w-full justify-center h-11 shadow-none" asChild onClick={() => setOpen(false)}>
                                             <Link href="/login">Se connecter</Link>
                                         </Button>
-                                        <Button className="w-full justify-center h-12 rounded-xl bg-primary hover:bg-primary/90 shadow-md" asChild onClick={() => setOpen(false)}>
+                                        <Button className="w-full justify-center h-11 bg-primary hover:bg-primary/90 shadow-none" asChild onClick={() => setOpen(false)}>
                                             <Link href="/signup">S'inscrire</Link>
                                         </Button>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col gap-4">
-                                        <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shadow-inner">
-                                                {profile?.firstName?.charAt(0) || user.email?.charAt(0).toUpperCase()}
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-3 px-3 py-2 mb-2">
+                                            <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border border-slate-200">
+                                                {profile?.photoUrl || profile?.photoURL || user?.photoURL ? (
+                                                    <Image src={profile?.photoUrl || profile?.photoURL || user?.photoURL} alt="Profile" fill className="object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                                                        {profile?.firstName?.charAt(0) || user.email?.charAt(0).toUpperCase()}
+                                                    </div>
+                                                )}
                                             </div>
-                                            <div className="flex flex-col min-w-0">
-                                                <span className="text-sm font-bold text-slate-900 truncate">
-                                                    {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : 'Étudiant'}
-                                                </span>
-                                                <span className="text-[10px] text-slate-500 truncate leading-tight">{user.email}</span>
+                                            <div className="flex flex-col min-w-0 flex-1">
+                                                <div className="flex items-center gap-1.5 flex-wrap">
+                                                    <span className="text-sm font-semibold text-slate-900 truncate">
+                                                        {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : 'Étudiant'}
+                                                    </span>
+
+                                                    {isSubscribed && (
+                                                        <span className="bg-gradient-to-r from-violet-600 to-indigo-500 text-white text-[8px] font-bold px-1 py-0.5 rounded shadow-sm uppercase leading-none">
+                                                            PLUS+
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <span className="text-xs text-slate-500 truncate leading-relaxed opacity-90">{user.email}</span>
                                             </div>
                                         </div>
-                                        <div className="grid grid-cols-1 gap-2">
-                                            <Button variant="ghost" className="w-full justify-start h-11 px-4 text-slate-600 hover:text-primary hover:bg-primary/5 rounded-xl gap-3" asChild onClick={() => setOpen(false)}>
+                                        <div className="grid grid-cols-1 gap-1">
+                                            <Button variant="ghost" className="w-full justify-start h-11 px-3 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-xl gap-3 shadow-none" asChild onClick={() => setOpen(false)}>
                                                 <Link href="/profile">
-                                                    <UserIcon className="w-4 h-4" />
-                                                    Mon Profil
+                                                    <UserIcon className="w-5 h-5 opacity-70" />
+                                                    <span className="font-medium text-sm">Mon Profil</span>
                                                 </Link>
                                             </Button>
                                             <Button
                                                 variant="ghost"
-                                                className="w-full justify-start h-11 px-4 text-destructive hover:text-destructive hover:bg-destructive/5 rounded-xl gap-3"
+                                                className="w-full justify-start h-11 px-3 text-destructive hover:text-destructive hover:bg-red-50 rounded-xl gap-3 shadow-none"
                                                 onClick={() => {
                                                     signOut();
                                                     setOpen(false);
                                                 }}
                                             >
-                                                <LogOut className="w-4 h-4" />
-                                                Se déconnecter
+                                                <LogOut className="w-5 h-5 opacity-70" />
+                                                <span className="font-medium text-sm">Se déconnecter</span>
                                             </Button>
                                         </div>
                                     </div>
