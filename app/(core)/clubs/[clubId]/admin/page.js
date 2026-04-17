@@ -427,7 +427,6 @@ export default function ClubAdminPage() {
 
             const postData = {
                 ...newPost,
-                imageUrl,
                 author: user.email,
                 createdAt: Date.now()
             };

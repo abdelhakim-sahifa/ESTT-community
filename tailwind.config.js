@@ -105,6 +105,10 @@ module.exports = {
     			heading: [
     				'var(--font-canela)',
     				'serif'
+    			],
+    			arabic: [
+    				'var(--font-lateef)',
+    				'serif'
     			]
     		}
     	}

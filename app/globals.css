@@ -191,4 +191,16 @@
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Arabic Text Support */
+[lang="ar"], 
+.font-arabic {
+  font-family: var(--font-lateef), serif;
+}
+
+/* Adjust font size/line-height for Lateef as it can be small */
+[lang="ar"] {
+  line-height: 1.6;
+  font-size: 1.1em;
 }
