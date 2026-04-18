@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { version } from '@/package.json';
+import packageInfo from '@/package.json';
+const { version } = packageInfo;
 import {
     Bug,
     Info,
