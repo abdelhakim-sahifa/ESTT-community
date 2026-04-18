@@ -234,6 +234,7 @@ export default function AdminDashboard() {
                         <AdminOverview
                             stats={stats}
                             resources={resources}
+                            users={users}
                             setActiveTab={setActiveTab}
                         />
                     )}

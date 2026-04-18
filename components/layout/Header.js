@@ -153,6 +153,13 @@ export default function Header() {
                                             </Badge>
                                         </Link>
                                     )}
+                                    {profile?.role === 'moderator' && (
+                                        <Link href="/moderator">
+                                            <Badge variant="secondary" className="bg-blue-600 text-white border-none text-[8px] px-1 animate-pulse hover:bg-blue-700 cursor-pointer">
+                                                MODERATEUR
+                                            </Badge>
+                                        </Link>
+                                    )}
                                 </span>
 
                                 <Link href="/messages" className="relative p-2 text-muted-foreground hover:text-primary transition-colors">
