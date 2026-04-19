@@ -74,7 +74,7 @@ export async function POST(request) {
         if (Array.isArray(last10Viewers) && last10Viewers.length > 0) {
             blocks.push({ type: "divider" });
             const viewerLines = last10Viewers
-                .map((v, i) => `*${i + 1}.* ${v.name || 'Anonyme'} — ${v.email || 'N/A'} — _${v.viewedAt}_`)
+                .map((v, i) => `*${i + 1}.* ${v.name || 'Anonyme'} (${v.ip || 'N/A'}) — ${v.email || 'N/A'} — _${v.viewedAt}_`)
                 .join('\n');
             blocks.push({
                 type: "section",

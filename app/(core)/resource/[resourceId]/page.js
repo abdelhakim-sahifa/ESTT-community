@@ -67,28 +67,47 @@ export default function ResourcePage() {
             hasTrackedView[1](true);
 
             try {
+                // Get user IP first for anonymous tracking/uniqueness
+                let userIp = '127.0.0.1';
+                try {
+                    const ipRes = await fetch('/api/utils/ip');
+                    if (ipRes.ok) {
+                        const ipData = await ipRes.json();
+                        userIp = ipData.ip;
+                    }
+                } catch (ipErr) {
+                    console.error('Failed to fetch IP:', ipErr);
+                }
+
                 // 1. Fetch existing views to check for duplicates/abuse
                 const viewsRef = ref(db, `resourceViews/${resourceId}/views`);
                 const snapshot = await get(viewsRef);
                 const allViews = snapshot.exists() ? Object.values(snapshot.val()) : [];
 
-                // 2. Filter for views by the current user in the last hour (3600000ms)
+                // 2. Filter for views by the current user OR same IP (for anonymous) in the last hour
                 const oneHourAgo = Date.now() - 3600000;
-                const recentUserView = allViews.find(v => v.uid === (user?.uid || 'anonymous') && v.viewedAt > oneHourAgo);
+                const userId = user?.uid || 'anonymous';
+                
+                const recentUserView = allViews.find(v => {
+                    // Match by UID if logged in
+                    if (userId !== 'anonymous' && v.uid === userId) return v.viewedAt > oneHourAgo;
+                    // Match by IP if anonymous (or cross-check IP for all)
+                    return v.ip === userIp && v.viewedAt > oneHourAgo;
+                });
 
                 if (recentUserView) {
-                    // console.log('User already viewed this resource in the last hour, skipping count.');
                     return;
                 }
 
                 // 3. Record this new view in Firebase
                 const newViewRef = push(viewsRef);
                 const viewData = {
-                    uid: user?.uid || 'anonymous',
+                    uid: userId,
+                    ip: userIp,
                     email: user?.email || 'anonymous',
-                    name: profile?.displayName || profile?.firstName
-                        ? `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim()
-                        : (user?.email || 'Anonyme'),
+                    name: userId === 'anonymous' 
+                        ? `Anonyme (${userIp})`
+                        : (profile?.displayName || `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim() || user?.email || 'Étudiant'),
                     viewedAt: Date.now(),
                 };
                 await set(newViewRef, viewData);
@@ -98,10 +117,7 @@ export default function ResourcePage() {
 
                 // 5. Notify Slack only on every 10th view milestone
                 if (updatedTotalViews >= 10) {
-                    // Combine old views with the new one for the list
                     const latestBatch = [...allViews, viewData];
-                    
-                    // Get the 10 viewers for this milestone
                     const last10 = latestBatch
                         .sort((a, b) => (b.viewedAt || 0) - (a.viewedAt || 0))
                         .slice(0, 10);
@@ -114,15 +130,16 @@ export default function ResourcePage() {
                             title: resource.title,
                             type: resource.type,
                         },
-                        totalViews: updatedTotalViews, // This represents views in this batch
+                        totalViews: updatedTotalViews,
                         last10Viewers: last10.map((v) => ({
                             name: v.name,
                             email: v.email,
+                            ip: v.ip,
                             viewedAt: new Date(v.viewedAt).toLocaleString('fr-FR'),
                         })),
                     });
 
-                    // Clear views after notification to reset counter to 0 (Optimization)
+                    // Clear views after notification to reset counter to 0
                     await remove(viewsRef);
                 }
             } catch (err) {
