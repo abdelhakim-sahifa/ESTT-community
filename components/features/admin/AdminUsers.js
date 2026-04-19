@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useMemo } from 'react';
 import {
     Table,
     TableBody,
@@ -9,18 +12,212 @@ import {
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+    DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu';
+import { ExternalLink, Search, ArrowUpDown, Users, BookOpen } from 'lucide-react';
+
+const ROLE_OPTIONS = [
+    { value: 'all', label: 'Tous les rôles' },
+    { value: 'admin', label: 'Admin' },
+    { value: 'moderator', label: 'Modérateur' },
+    { value: 'contributor', label: 'Contributeur' },
+    { value: 'student', label: 'Étudiant' },
+];
+
+const SORT_OPTIONS = [
+    { value: 'newest', label: 'Plus récents' },
+    { value: 'oldest', label: 'Plus anciens' },
+    { value: 'name_asc', label: 'Nom (A → Z)' },
+    { value: 'name_desc', label: 'Nom (Z → A)' },
+];
+
+const ROLE_BADGE_VARIANT = {
+    admin: 'default',
+    moderator: 'secondary',
+    contributor: 'outline',
+};
 
 export default function AdminUsers({ users }) {
+    const [search, setSearch] = useState('');
+    const [sortBy, setSortBy] = useState('newest');
+    const [roleFilter, setRoleFilter] = useState('all');
+    const [filiereFilter, setFiliereFilter] = useState('all');
+
+    // Derive unique filières dynamically from data
+    const filiereOptions = useMemo(() => {
+        const set = new Set(users.map((u) => u.filiere).filter(Boolean));
+        return ['all', ...[...set].sort()];
+    }, [users]);
+
+    const filtered = useMemo(() => {
+        let list = [...users];
+
+        // Role filter
+        if (roleFilter !== 'all') {
+            list = list.filter((u) => {
+                const role = (u.role || 'student').toLowerCase();
+                return role === roleFilter;
+            });
+        }
+
+        // Filière filter
+        if (filiereFilter !== 'all') {
+            list = list.filter((u) => (u.filiere || '') === filiereFilter);
+        }
+
+        // Search filter
+        if (search.trim()) {
+            const q = search.toLowerCase();
+            list = list.filter(
+                (u) =>
+                    `${u.firstName} ${u.lastName}`.toLowerCase().includes(q) ||
+                    (u.email || '').toLowerCase().includes(q) ||
+                    (u.filiere || '').toLowerCase().includes(q)
+            );
+        }
+
+        // Sort
+        list.sort((a, b) => {
+            if (sortBy === 'newest') return (b.createdAt || 0) - (a.createdAt || 0);
+            if (sortBy === 'oldest') return (a.createdAt || 0) - (b.createdAt || 0);
+            if (sortBy === 'name_asc') return `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`);
+            if (sortBy === 'name_desc') return `${b.firstName} ${b.lastName}`.localeCompare(`${a.firstName} ${a.lastName}`);
+            return 0;
+        });
+
+        return list;
+    }, [users, search, sortBy, roleFilter, filiereFilter]);
+
+    const activeFilterCount = (roleFilter !== 'all' ? 1 : 0) + (filiereFilter !== 'all' ? 1 : 0);
+
     return (
         <div className="space-y-6">
+            {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-black tracking-tight">Utilisateurs</h1>
-                    <p className="text-muted-foreground">Liste des membres de la communauté.</p>
+                    <p className="text-muted-foreground">
+                        {filtered.length} membre{filtered.length !== 1 ? 's' : ''} trouvé{filtered.length !== 1 ? 's' : ''}
+                        {users.length !== filtered.length ? ` sur ${users.length}` : ''}
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-2 w-full md:w-auto">
+                    {/* Search */}
+                    <div className="relative flex-grow md:w-56">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                        <Input
+                            placeholder="Rechercher..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-8 h-9 text-sm"
+                        />
+                    </div>
+
+                    {/* Role filter */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-9 gap-1.5 shrink-0">
+                                <Users className="w-4 h-4" />
+                                {roleFilter === 'all'
+                                    ? 'Rôle'
+                                    : ROLE_OPTIONS.find((r) => r.value === roleFilter)?.label}
+                                {activeFilterCount > 0 && (
+                                    <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold">
+                                        {activeFilterCount}
+                                    </span>
+                                )}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-44">
+                            <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                Filtrer par rôle
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuRadioGroup value={roleFilter} onValueChange={setRoleFilter}>
+                                {ROLE_OPTIONS.map((opt) => (
+                                    <DropdownMenuRadioItem key={opt.value} value={opt.value} className="text-sm cursor-pointer">
+                                        {opt.label}
+                                    </DropdownMenuRadioItem>
+                                ))}
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Filière filter */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-9 gap-1.5 shrink-0">
+                                <BookOpen className="w-4 h-4" />
+                                {filiereFilter === 'all' ? 'Filière' : filiereFilter}
+                                {filiereFilter !== 'all' && (
+                                    <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold">
+                                        1
+                                    </span>
+                                )}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 max-h-72 overflow-y-auto">
+                            <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                Filtrer par filière
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuRadioGroup value={filiereFilter} onValueChange={setFiliereFilter}>
+                                {filiereOptions.map((f) => (
+                                    <DropdownMenuRadioItem key={f} value={f} className="text-sm cursor-pointer">
+                                        {f === 'all' ? 'Toutes les filières' : f}
+                                    </DropdownMenuRadioItem>
+                                ))}
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Sort */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-9 gap-1.5 shrink-0">
+                                <ArrowUpDown className="w-4 h-4" />
+                                {SORT_OPTIONS.find((s) => s.value === sortBy)?.label ?? 'Tri'}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-44">
+                            <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                Trier par
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuRadioGroup value={sortBy} onValueChange={setSortBy}>
+                                {SORT_OPTIONS.map((opt) => (
+                                    <DropdownMenuRadioItem key={opt.value} value={opt.value} className="text-sm cursor-pointer">
+                                        {opt.label}
+                                    </DropdownMenuRadioItem>
+                                ))}
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Reset filters */}
+                    {(search || roleFilter !== 'all' || filiereFilter !== 'all' || sortBy !== 'newest') && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-9 text-muted-foreground shrink-0"
+                            onClick={() => { setSearch(''); setRoleFilter('all'); setFiliereFilter('all'); setSortBy('newest'); }}
+                        >
+                            Réinitialiser
+                        </Button>
+                    )}
                 </div>
             </div>
 
+            {/* Table */}
             <Card className="border-none shadow-sm overflow-hidden">
                 <Table>
                     <TableHeader className="bg-slate-50">
@@ -33,23 +230,36 @@ export default function AdminUsers({ users }) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {users.map((u) => (
-                            <TableRow key={u.id} className="hover:bg-slate-50/50 transition-colors">
-                                <TableCell className="font-bold text-sm">{u.firstName} {u.lastName}</TableCell>
-                                <TableCell className="text-xs text-muted-foreground">{u.email}</TableCell>
-                                <TableCell className="text-xs font-bold uppercase">{u.filiere}</TableCell>
-                                <TableCell>
-                                    <Badge variant={u.role === 'admin' ? 'default' : 'outline'} className="text-[8px] font-black uppercase tracking-tighter">
-                                        {u.role || 'Étudiant'}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <Button size="sm" variant="ghost" asChild>
-                                        <a href={`/profile/${u.id}`} target="_blank"><ExternalLink className="w-4 h-4" /></a>
-                                    </Button>
+                        {filtered.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={5} className="text-center py-12 text-muted-foreground text-sm">
+                                    Aucun utilisateur ne correspond à votre recherche.
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            filtered.map((u) => (
+                                <TableRow key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <TableCell className="font-bold text-sm">{u.firstName} {u.lastName}</TableCell>
+                                    <TableCell className="text-xs text-muted-foreground">{u.email}</TableCell>
+                                    <TableCell className="text-xs font-bold uppercase">{u.filiere}</TableCell>
+                                    <TableCell>
+                                        <Badge
+                                            variant={ROLE_BADGE_VARIANT[u.role] ?? 'outline'}
+                                            className="text-[8px] font-black uppercase tracking-tighter"
+                                        >
+                                            {u.role || 'Étudiant'}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Button size="sm" variant="ghost" asChild>
+                                            <a href={`/profile/${u.id}`} target="_blank">
+                                                <ExternalLink className="w-4 h-4" />
+                                            </a>
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </Card>

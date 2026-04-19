@@ -59,35 +59,79 @@ export default function ResourcePage() {
         }
     }, [resourceId, user]);
 
-    // Use a ref to prevent multiple Slack notifications during dev mode or re-renders
-    const hasNotifiedSlack = useState(false);
+    // Track views and notify Slack every 10 views milestone
+    const hasTrackedView = useState(false);
     useEffect(() => {
-        const notifySlackCall = async () => {
-            if (resource && !hasNotifiedSlack[0]) {
-                hasNotifiedSlack[1](true);
-                try {
+        const trackView = async () => {
+            if (!resource || hasTrackedView[0]) return;
+            hasTrackedView[1](true);
+
+            try {
+                // 1. Fetch existing views to check for duplicates/abuse
+                const viewsRef = ref(db, `resourceViews/${resourceId}/views`);
+                const snapshot = await get(viewsRef);
+                const allViews = snapshot.exists() ? Object.values(snapshot.val()) : [];
+
+                // 2. Filter for views by the current user in the last hour (3600000ms)
+                const oneHourAgo = Date.now() - 3600000;
+                const recentUserView = allViews.find(v => v.uid === (user?.uid || 'anonymous') && v.viewedAt > oneHourAgo);
+
+                if (recentUserView) {
+                    // console.log('User already viewed this resource in the last hour, skipping count.');
+                    return;
+                }
+
+                // 3. Record this new view in Firebase
+                const newViewRef = push(viewsRef);
+                const viewData = {
+                    uid: user?.uid || 'anonymous',
+                    email: user?.email || 'anonymous',
+                    name: profile?.displayName || profile?.firstName
+                        ? `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim()
+                        : (user?.email || 'Anonyme'),
+                    viewedAt: Date.now(),
+                };
+                await set(newViewRef, viewData);
+
+                // 4. Count total views in the current batch
+                const updatedTotalViews = allViews.length + 1;
+
+                // 5. Notify Slack only on every 10th view milestone
+                if (updatedTotalViews >= 10) {
+                    // Combine old views with the new one for the list
+                    const latestBatch = [...allViews, viewData];
+                    
+                    // Get the 10 viewers for this milestone
+                    const last10 = latestBatch
+                        .sort((a, b) => (b.viewedAt || 0) - (a.viewedAt || 0))
+                        .slice(0, 10);
+
                     const { notifySlack, SLACK_CHANNELS } = await import('@/lib/slack');
                     await notifySlack(SLACK_CHANNELS.COMMUNITY, {
-                        title: '👀 Consultation de Ressource',
-                        user: {
-                            uid: user?.uid || 'anonymous',
-                            email: user?.email || 'anonymous',
-                            name: profile?.displayName || 'Anonymous'
-                        },
+                        title: `🎯 Milestone : 10 nouvelles vues sur une ressource`,
                         resource: {
                             id: resource.id,
                             title: resource.title,
-                            type: resource.type
-                        }
+                            type: resource.type,
+                        },
+                        totalViews: updatedTotalViews, // This represents views in this batch
+                        last10Viewers: last10.map((v) => ({
+                            name: v.name,
+                            email: v.email,
+                            viewedAt: new Date(v.viewedAt).toLocaleString('fr-FR'),
+                        })),
                     });
-                } catch (err) {
-                    console.error('Failed to send Slack notification:', err);
+
+                    // Clear views after notification to reset counter to 0 (Optimization)
+                    await remove(viewsRef);
                 }
+            } catch (err) {
+                console.error('Failed to track resource view or send Slack notification:', err);
             }
         };
 
         if (resource) {
-            notifySlackCall();
+            trackView();
         }
     }, [resource, user, profile]);
 

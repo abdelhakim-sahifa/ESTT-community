@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { channel, user, resource, message, title } = body;
+        const { channel, user, resource, message, title, totalViews, last10Viewers } = body;
 
         // Map channel IDs to environment variable keys
         const channelMap = {
@@ -53,7 +53,13 @@ export async function POST(request) {
         if (resource) {
             fields.push({
                 type: "mrkdwn",
-                text: `*Cible:*\n${resource.title || 'N/A'} (${resource.type || 'item'})`
+                text: `*Ressource:*\n${resource.title || 'N/A'} · \`${resource.id || 'N/A'}\` (${resource.type || 'item'})`
+            });
+        }
+        if (totalViews !== undefined) {
+            fields.push({
+                type: "mrkdwn",
+                text: `*Total de vues (cumulé):*\n${totalViews} vues`
             });
         }
 
@@ -61,6 +67,21 @@ export async function POST(request) {
             blocks.push({
                 type: "section",
                 fields: fields
+            });
+        }
+
+        // Render the last 10 viewers list
+        if (Array.isArray(last10Viewers) && last10Viewers.length > 0) {
+            blocks.push({ type: "divider" });
+            const viewerLines = last10Viewers
+                .map((v, i) => `*${i + 1}.* ${v.name || 'Anonyme'} — ${v.email || 'N/A'} — _${v.viewedAt}_`)
+                .join('\n');
+            blocks.push({
+                type: "section",
+                text: {
+                    type: "mrkdwn",
+                    text: `*👥 Derniers visiteurs (${last10Viewers.length}) :*\n${viewerLines}`
+                }
             });
         }
 
