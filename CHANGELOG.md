@@ -1,3 +1,11 @@
+# [1.21.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.20.6...v1.21.0) (2026-04-22)
+
+
+### Features
+
+* filter in admin dashboard ([8b9e307](https://github.com/abdelhakim-sahifa/ESTT-community/commit/8b9e3077d953330b663cba07faec3c48892fd597))
+* Merge pull request [#8](https://github.com/abdelhakim-sahifa/ESTT-community/issues/8) from wailxt/main ([c56c05f](https://github.com/abdelhakim-sahifa/ESTT-community/commit/c56c05f6074d0663d077bb73f8f4b36ccf5d1dd7))
+
 ## [1.20.6](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.20.5...v1.20.6) (2026-04-21)
 
 ## [1.20.5](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.20.4...v1.20.5) (2026-04-19)
