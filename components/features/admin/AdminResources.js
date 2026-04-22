@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { logModeratorAction } from '@/lib/moderator-logs';
 import { useDialog } from '@/context/DialogContext';
@@ -16,7 +16,16 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Search, CheckCircle2, Eye, Trash2, Edit2, Loader2, Link2, Star, MessageCircle, Mail, ExternalLink } from 'lucide-react';
+import { Search, CheckCircle2, Eye, Trash2, Edit2, Loader2, Link2, Star, MessageCircle, Mail, ExternalLink, ArrowUpDown, BookOpen, Layers } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+    DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu';
 import {
     Dialog,
     DialogContent,
@@ -39,10 +48,20 @@ import { sendPrivateNotification, NOTIF_TYPES } from '@/lib/notifications';
 import { db as staticDb } from '@/lib/data';
 import { Checkbox } from '@/components/ui/checkbox';
 
+const SORT_OPTIONS = [
+    { value: 'newest', label: 'Plus récents' },
+    { value: 'oldest', label: 'Plus anciens' },
+    { value: 'name_asc', label: 'Nom (A → Z)' },
+    { value: 'name_desc', label: 'Nom (Z → A)' },
+];
+
 export default function AdminResources({ resources }) {
-    const { user } = useAuth();
+    const { user, profile } = useAuth();
     const { showSuccess, showError } = useDialog();
     const [searchTerm, setSearchTerm] = useState('');
+    const [sortBy, setSortBy] = useState('newest');
+    const [filiereFilter, setFiliereFilter] = useState('all');
+    const [moduleFilter, setModuleFilter] = useState('all');
     const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
     const [itemToReject, setItemToReject] = useState(null);
     const [rejectionReason, setRejectionReason] = useState('');
@@ -72,10 +91,77 @@ export default function AdminResources({ resources }) {
     const [itemToRate, setItemToRate] = useState(null);
     const [currentRatings, setCurrentRatings] = useState([]);
 
-    const filteredResources = resources.filter(r =>
-        r.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        r.module?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const userRole = profile?.role || 'student';
+    const userFiliere = profile?.filiere || '';
+
+    const canSeeResource = (resource) => {
+        if (userRole === 'admin') return true;
+        if (userRole === 'moderator') {
+            if (resource.field === userFiliere) return true;
+            if (resource.fields && Array.isArray(resource.fields)) {
+                return resource.fields.some(link => link.fieldId === userFiliere);
+            }
+            return false;
+        }
+        return false;
+    };
+
+    const allowedResources = resources.filter(canSeeResource);
+
+    const filiereOptions = useMemo(() => {
+        const set = new Set();
+        allowedResources.forEach(r => {
+            if (r.field) set.add(r.field);
+            if (r.fields && Array.isArray(r.fields)) {
+                r.fields.forEach(f => f.fieldId && set.add(f.fieldId));
+            }
+        });
+        return ['all', ...Array.from(set)].sort();
+    }, [allowedResources]);
+
+    const moduleOptions = useMemo(() => {
+        const set = new Set();
+        allowedResources.forEach(r => {
+            if (r.module) set.add(r.module);
+        });
+        return ['all', ...Array.from(set)].sort();
+    }, [allowedResources]);
+
+    const filteredResources = useMemo(() => {
+        let list = [...allowedResources];
+
+        if (filiereFilter !== 'all') {
+            list = list.filter(r => {
+                if (r.field === filiereFilter) return true;
+                if (r.fields && Array.isArray(r.fields)) {
+                    return r.fields.some(f => f.fieldId === filiereFilter);
+                }
+                return false;
+            });
+        }
+
+        if (moduleFilter !== 'all') {
+            list = list.filter(r => r.module === moduleFilter);
+        }
+
+        if (searchTerm.trim()) {
+            const q = searchTerm.toLowerCase();
+            list = list.filter(r =>
+                r.title?.toLowerCase().includes(q) ||
+                r.module?.toLowerCase().includes(q)
+            );
+        }
+
+        list.sort((a, b) => {
+            if (sortBy === 'newest') return (b.createdAt || 0) - (a.createdAt || 0);
+            if (sortBy === 'oldest') return (a.createdAt || 0) - (b.createdAt || 0);
+            if (sortBy === 'name_asc') return (a.title || '').localeCompare(b.title || '');
+            if (sortBy === 'name_desc') return (b.title || '').localeCompare(a.title || '');
+            return 0;
+        });
+
+        return list;
+    }, [allowedResources, searchTerm, sortBy, filiereFilter, moduleFilter]);
 
     const getResourcePath = (resource) => {
         if (resource._isNested && resource.moduleId) {
@@ -569,16 +655,120 @@ export default function AdminResources({ resources }) {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-black tracking-tight">Gestion des Ressources</h1>
-                    <p className="text-muted-foreground">Approuvez, modifiez ou supprimez les ressources partagées.</p>
+                    <p className="text-muted-foreground">
+                        {filteredResources.length} ressource{filteredResources.length !== 1 ? 's' : ''} trouvée{filteredResources.length !== 1 ? 's' : ''}
+                        {allowedResources.length !== filteredResources.length ? ` sur ${allowedResources.length}` : ''}
+                    </p>
                 </div>
-                <div className="relative w-full md:w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Rechercher..."
-                        className="pl-9 h-10 rounded-xl"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+
+                <div className="flex items-center gap-2 w-full md:w-auto">
+                    {/* Search */}
+                    <div className="relative flex-grow md:w-56">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                        <Input
+                            placeholder="Rechercher..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-8 h-9 text-sm"
+                        />
+                    </div>
+
+                    {/* Filière filter */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${filiereFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
+                                <BookOpen className="w-4 h-4" />
+                                <span className="hidden sm:inline truncate max-w-[100px]">
+                                    {filiereFilter === 'all' ? 'Filière' : filiereFilter}
+                                </span>
+                                {filiereFilter !== 'all' && (
+                                    <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] text-white font-bold">
+                                        1
+                                    </span>
+                                )}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 max-h-72 overflow-y-auto">
+                            <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                Filtrer par filière
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuRadioGroup value={filiereFilter} onValueChange={setFiliereFilter}>
+                                {filiereOptions.map((f) => (
+                                    <DropdownMenuRadioItem key={f} value={f} className={`text-sm cursor-pointer ${filiereFilter === f && f !== 'all' ? 'text-blue-600 font-bold' : ''}`}>
+                                        {f === 'all' ? 'Toutes les filières' : f}
+                                    </DropdownMenuRadioItem>
+                                ))}
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Module filter */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${moduleFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
+                                <Layers className="w-4 h-4" />
+                                <span className="hidden sm:inline truncate max-w-[100px]">
+                                    {moduleFilter === 'all' ? 'Module' : moduleFilter}
+                                </span>
+                                {moduleFilter !== 'all' && (
+                                    <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] text-white font-bold">
+                                        1
+                                    </span>
+                                )}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56 max-h-72 overflow-y-auto">
+                            <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                Filtrer par module
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuRadioGroup value={moduleFilter} onValueChange={setModuleFilter}>
+                                {moduleOptions.map((m) => (
+                                    <DropdownMenuRadioItem key={m} value={m} className={`text-sm cursor-pointer ${moduleFilter === m && m !== 'all' ? 'text-blue-600 font-bold' : ''}`}>
+                                        {m === 'all' ? 'Tous les modules' : m}
+                                    </DropdownMenuRadioItem>
+                                ))}
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Sort */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${sortBy !== 'newest' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
+                                <ArrowUpDown className="w-4 h-4" />
+                                <span className="hidden sm:inline">
+                                    {SORT_OPTIONS.find((s) => s.value === sortBy)?.label ?? 'Tri'}
+                                </span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-44">
+                            <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                Trier par
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuRadioGroup value={sortBy} onValueChange={setSortBy}>
+                                {SORT_OPTIONS.map((opt) => (
+                                    <DropdownMenuRadioItem key={opt.value} value={opt.value} className={`text-sm cursor-pointer ${sortBy === opt.value ? 'text-blue-600 font-bold' : ''}`}>
+                                        {opt.label}
+                                    </DropdownMenuRadioItem>
+                                ))}
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Reset */}
+                    {(searchTerm || filiereFilter !== 'all' || moduleFilter !== 'all' || sortBy !== 'newest') && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-9 text-red-500 hover:text-red-600 hover:bg-red-50 shrink-0"
+                            onClick={() => { setSearchTerm(''); setFiliereFilter('all'); setModuleFilter('all'); setSortBy('newest'); }}
+                        >
+                            Réinitialiser
+                        </Button>
+                    )}
                 </div>
             </div>
 

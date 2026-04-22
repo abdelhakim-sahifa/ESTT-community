@@ -125,13 +125,15 @@ export default function AdminUsers({ users }) {
                     {/* Role filter */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-9 gap-1.5 shrink-0">
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${roleFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
                                 <Users className="w-4 h-4" />
-                                {roleFilter === 'all'
-                                    ? 'Rôle'
-                                    : ROLE_OPTIONS.find((r) => r.value === roleFilter)?.label}
+                                <span className="hidden sm:inline">
+                                    {roleFilter === 'all'
+                                        ? 'Rôle'
+                                        : ROLE_OPTIONS.find((r) => r.value === roleFilter)?.label}
+                                </span>
                                 {activeFilterCount > 0 && (
-                                    <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold">
+                                    <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] text-white font-bold">
                                         {activeFilterCount}
                                     </span>
                                 )}
@@ -144,7 +146,7 @@ export default function AdminUsers({ users }) {
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={roleFilter} onValueChange={setRoleFilter}>
                                 {ROLE_OPTIONS.map((opt) => (
-                                    <DropdownMenuRadioItem key={opt.value} value={opt.value} className="text-sm cursor-pointer">
+                                    <DropdownMenuRadioItem key={opt.value} value={opt.value} className={`text-sm cursor-pointer ${roleFilter === opt.value && opt.value !== 'all' ? 'text-blue-600 font-bold' : ''}`}>
                                         {opt.label}
                                     </DropdownMenuRadioItem>
                                 ))}
@@ -155,11 +157,13 @@ export default function AdminUsers({ users }) {
                     {/* Filière filter */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-9 gap-1.5 shrink-0">
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${filiereFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
                                 <BookOpen className="w-4 h-4" />
-                                {filiereFilter === 'all' ? 'Filière' : filiereFilter}
+                                <span className="hidden sm:inline truncate max-w-[100px]">
+                                    {filiereFilter === 'all' ? 'Filière' : filiereFilter}
+                                </span>
                                 {filiereFilter !== 'all' && (
-                                    <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold">
+                                    <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] text-white font-bold">
                                         1
                                     </span>
                                 )}
@@ -172,7 +176,7 @@ export default function AdminUsers({ users }) {
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={filiereFilter} onValueChange={setFiliereFilter}>
                                 {filiereOptions.map((f) => (
-                                    <DropdownMenuRadioItem key={f} value={f} className="text-sm cursor-pointer">
+                                    <DropdownMenuRadioItem key={f} value={f} className={`text-sm cursor-pointer ${filiereFilter === f && f !== 'all' ? 'text-blue-600 font-bold' : ''}`}>
                                         {f === 'all' ? 'Toutes les filières' : f}
                                     </DropdownMenuRadioItem>
                                 ))}
@@ -183,9 +187,11 @@ export default function AdminUsers({ users }) {
                     {/* Sort */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-9 gap-1.5 shrink-0">
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${sortBy !== 'newest' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
                                 <ArrowUpDown className="w-4 h-4" />
-                                {SORT_OPTIONS.find((s) => s.value === sortBy)?.label ?? 'Tri'}
+                                <span className="hidden sm:inline">
+                                    {SORT_OPTIONS.find((s) => s.value === sortBy)?.label ?? 'Tri'}
+                                </span>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-44">
@@ -195,7 +201,7 @@ export default function AdminUsers({ users }) {
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={sortBy} onValueChange={setSortBy}>
                                 {SORT_OPTIONS.map((opt) => (
-                                    <DropdownMenuRadioItem key={opt.value} value={opt.value} className="text-sm cursor-pointer">
+                                    <DropdownMenuRadioItem key={opt.value} value={opt.value} className={`text-sm cursor-pointer ${sortBy === opt.value ? 'text-blue-600 font-bold' : ''}`}>
                                         {opt.label}
                                     </DropdownMenuRadioItem>
                                 ))}
@@ -208,7 +214,7 @@ export default function AdminUsers({ users }) {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-9 text-muted-foreground shrink-0"
+                            className="h-9 text-red-500 hover:text-red-600 hover:bg-red-50 shrink-0"
                             onClick={() => { setSearch(''); setRoleFilter('all'); setFiliereFilter('all'); setSortBy('newest'); }}
                         >
                             Réinitialiser
