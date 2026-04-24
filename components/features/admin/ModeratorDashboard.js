@@ -155,7 +155,7 @@ export default function ModeratorDashboard() {
                     setIsOpen={setIsSidebarOpen}
                 />
 
-                <main className="flex-grow p-4 md:p-10 overflow-auto">
+                <main className="flex-grow p-4 md:p-10 overflow-auto custom-scrollbar">
                     {activeTab === 'overview' && (
                         <AdminOverview
                             stats={stats}

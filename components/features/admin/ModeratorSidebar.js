@@ -36,7 +36,7 @@ export default function ModeratorSidebar({
                 w-64 bg-white border-r border-slate-200 p-6 
                 flex flex-col gap-8 transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-                overflow-y-auto shrink-0
+                overflow-y-auto shrink-0 custom-scrollbar
             `}>
                 <div className="flex items-center justify-between px-2">
                     <div className="flex items-center gap-2">
