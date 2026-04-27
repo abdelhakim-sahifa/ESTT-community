@@ -146,14 +146,14 @@ export default function Header() {
                             <>
                                 <span className="text-sm font-medium text-muted-foreground hidden lg:flex items-center gap-2">
                                     {profile?.firstName ? `Salut, ${profile.firstName}` : user.email}
-                                    {profile?.role === 'admin' && (
+                                    {(profile?.role || '').toLowerCase() === 'admin' && (
                                         <Link href="/admin">
                                             <Badge variant="secondary" className="bg-yellow-400 text-white border-none text-[8px] px-1 animate-pulse hover:bg-yellow-500 cursor-pointer">
-                                                MENTOR
+                                                ADMIN
                                             </Badge>
                                         </Link>
                                     )}
-                                    {profile?.role === 'moderator' && (
+                                    {(profile?.role || '').toLowerCase() === 'moderator' && (
                                         <Link href="/moderator">
                                             <Badge variant="secondary" className="bg-blue-600 text-white border-none text-[8px] px-1 animate-pulse hover:bg-blue-700 cursor-pointer">
                                                 MODERATEUR

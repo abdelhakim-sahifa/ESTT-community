@@ -509,11 +509,11 @@ export default function PublicProfilePage() {
                                     {profile.firstName} {profile.lastName}
                                     {profile.verifiedEmail && (
                                         <div className="group relative flex items-center">
-                                            <span className={`material-symbols-outlined select-none ${profile.role === 'admin' ? 'text-yellow-500' : 'text-emerald-500'}`} style={{ fontVariationSettings: "'FILL' 1", fontSize: '18px' }}>
+                                            <span className={`material-symbols-outlined select-none ${(profile.role || '').toLowerCase() === 'admin' ? 'text-yellow-500' : 'text-emerald-500'}`} style={{ fontVariationSettings: "'FILL' 1", fontSize: '18px' }}>
                                                 verified
                                             </span>
                                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
-                                                {profile.role === 'admin' ? 'Modérateur Vérifié' : 'Email académique vérifié'}
+                                                {(profile.role || '').toLowerCase() === 'admin' ? 'Administrateur Vérifié' : (profile.role || '').toLowerCase() === 'moderator' ? 'Modérateur Vérifié' : 'Email académique vérifié'}
                                             </div>
                                         </div>
                                     )}
@@ -824,17 +824,17 @@ export default function PublicProfilePage() {
                                 )}
 
                                 {profile.verifiedEmail && (
-                                    <div className={`p-4 border rounded-xl ${profile.role === 'admin' ? 'bg-yellow-50 border-yellow-100' : 'bg-emerald-50 border-emerald-100'}`}>
+                                    <div className={`p-4 border rounded-xl ${(profile.role || '').toLowerCase() === 'admin' ? 'bg-yellow-50 border-yellow-100' : 'bg-emerald-50 border-emerald-100'}`}>
                                         <div className="flex items-center gap-3">
-                                            <span className={`material-symbols-outlined select-none ${profile.role === 'admin' ? 'text-yellow-500' : 'text-emerald-500'}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                                            <span className={`material-symbols-outlined select-none ${(profile.role || '').toLowerCase() === 'admin' ? 'text-yellow-500' : 'text-emerald-500'}`} style={{ fontVariationSettings: "'FILL' 1" }}>
                                                 verified
                                             </span>
                                             <div className="space-y-0.5">
-                                                <p className={`text-sm font-bold ${profile.role === 'admin' ? 'text-yellow-900' : 'text-emerald-900'}`}>
-                                                    {profile.role === 'admin' ? 'Modérateur Vérifié' : 'Profil Vérifié'}
+                                                <p className={`text-sm font-bold ${(profile.role || '').toLowerCase() === 'admin' ? 'text-yellow-900' : 'text-emerald-900'}`}>
+                                                    {(profile.role || '').toLowerCase() === 'admin' ? 'Administrateur Vérifié' : (profile.role || '').toLowerCase() === 'moderator' ? 'Modérateur Vérifié' : 'Profil Vérifié'}
                                                 </p>
-                                                <p className={`text-[10px] ${profile.role === 'admin' ? 'text-yellow-700' : 'text-emerald-700'}`}>
-                                                    {profile.role === 'admin' ? "Vous avez le rôle d'administrateur sur la plateforme." : 'Votre identité académique est confirmée.'}
+                                                <p className={`text-[10px] ${(profile.role || '').toLowerCase() === 'admin' ? 'text-yellow-700' : 'text-emerald-700'}`}>
+                                                    {(profile.role || '').toLowerCase() === 'admin' ? "Vous avez le rôle d'administrateur sur la plateforme." : (profile.role || '').toLowerCase() === 'moderator' ? "Vous avez le rôle de modérateur sur la plateforme." : 'Votre identité académique est confirmée.'}
                                                 </p>
                                             </div>
                                         </div>

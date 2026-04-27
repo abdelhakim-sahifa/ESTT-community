@@ -39,10 +39,10 @@ const SORT_OPTIONS = [
     { value: 'name_desc', label: 'Nom (Z → A)' },
 ];
 
-const ROLE_BADGE_VARIANT = {
-    admin: 'default',
-    moderator: 'secondary',
-    contributor: 'outline',
+const ROLE_BADGE_CLASSES = {
+    admin: 'bg-yellow-400 text-white hover:bg-yellow-500 border-none',
+    moderator: 'bg-blue-600 text-white hover:bg-blue-700 border-none',
+    contributor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
 };
 
 export default function AdminUsers({ users }) {
@@ -250,8 +250,8 @@ export default function AdminUsers({ users }) {
                                     <TableCell className="text-xs font-bold uppercase">{u.filiere}</TableCell>
                                     <TableCell>
                                         <Badge
-                                            variant={ROLE_BADGE_VARIANT[u.role] ?? 'outline'}
-                                            className="text-[8px] font-black uppercase tracking-tighter"
+                                            variant="outline"
+                                            className={`text-[8px] font-black uppercase tracking-tighter ${ROLE_BADGE_CLASSES[(u.role || '').toLowerCase()] || 'bg-slate-100 text-slate-800 border-slate-200'}`}
                                         >
                                             {u.role || 'Étudiant'}
                                         </Badge>
