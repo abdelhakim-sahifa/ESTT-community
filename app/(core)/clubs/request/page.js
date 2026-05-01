@@ -12,13 +12,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Plus, Trash2, Upload, CheckCircle2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Loader2, Plus, Trash2, Upload, CheckCircle2, AlertCircle, ArrowLeft, Info } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ClubRequestPage() {
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, profile } = useAuth();
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -246,7 +246,44 @@ export default function ClubRequestPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <Button asChild className="w-full">
-                            <Link href="/login">Se connecter</Link>
+                            <Link href="/login?redirect=/clubs/request">Se connecter</Link>
+                        </Button>
+                        <Button variant="outline" asChild className="w-full">
+                            <Link href="/clubs">Retour aux clubs</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </main>
+        );
+    }
+
+    const isAuthorized = profile && (profile.verified || profile.role === 'admin' || profile.role === 'moderator');
+
+    if (!isAuthorized) {
+        return (
+            <main className="container py-12 px-4 md:px-6 min-h-screen flex items-center justify-center">
+                <Card className="max-w-md w-full border-destructive/20">
+                    <CardHeader>
+                        <div className="mb-4 flex justify-center">
+                            <div className="p-3 bg-destructive/10 rounded-full">
+                                <AlertCircle className="w-10 h-10 text-destructive" />
+                            </div>
+                        </div>
+                        <CardTitle className="text-center text-destructive">Accès refusé</CardTitle>
+                        <CardDescription className="text-center">
+                            Vous devez être un utilisateur vérifié pour pouvoir proposer un nouveau club.
+                            Cela nous aide à garantir la légitimité des demandes.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-4">
+                        <Alert variant="destructive" className="bg-destructive/5 border-destructive/10">
+                            <Info className="h-4 w-4" />
+                            <AlertDescription>
+                                Veuillez vérifier votre compte dans votre profil avant de continuer.
+                            </AlertDescription>
+                        </Alert>
+                        <Button asChild className="w-full">
+                            <Link href={`/profile/${user.uid}`}>Mon profil</Link>
                         </Button>
                         <Button variant="outline" asChild className="w-full">
                             <Link href="/clubs">Retour aux clubs</Link>
