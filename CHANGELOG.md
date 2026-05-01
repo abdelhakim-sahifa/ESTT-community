@@ -1,3 +1,11 @@
+# [1.22.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.21.4...v1.22.0) (2026-05-01)
+
+
+### Features
+
+* restrict club requests to verified users and admins ([358bc21](https://github.com/abdelhakim-sahifa/ESTT-community/commit/358bc21d7352a67c7884034cba3aaedca2c7fc4c))
+* restrict club requests to verified users and admins ([b03eaab](https://github.com/abdelhakim-sahifa/ESTT-community/commit/b03eaab59b5eb7982f7b5d4d3cdf4b1a1ad11201))
+
 ## [1.21.4](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.21.3...v1.21.4) (2026-05-01)
 
 
