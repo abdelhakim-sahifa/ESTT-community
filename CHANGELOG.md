@@ -1,3 +1,10 @@
+## [1.21.4](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.21.3...v1.21.4) (2026-05-01)
+
+
+### Bug Fixes
+
+* prevent unauthorized/unverified resource contributions ([29f3755](https://github.com/abdelhakim-sahifa/ESTT-community/commit/29f3755960907447dbc35c134a167898a42862a6))
+
 ## [1.21.3](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.21.2...v1.21.3) (2026-04-27)
 
 ## [1.21.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.21.1...v1.21.2) (2026-04-24)
