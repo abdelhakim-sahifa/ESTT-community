@@ -240,6 +240,56 @@ export default function ContributePage() {
         ? staticDb.modules[`${formData.field}-${formData.semester}`] || []
         : [];
 
+    if (!user) {
+        return (
+            <main className="container py-12 max-w-4xl text-center">
+                <Alert className="max-w-2xl mx-auto mb-6 text-left">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Connexion requise</AlertTitle>
+                    <AlertDescription className="flex flex-col gap-4 mt-2">
+                        <p>Vous devez être connecté pour contribuer une ressource.</p>
+                        <div className="flex gap-3">
+                            <Button variant="outline" onClick={() => router.push('/login?redirect=/contribute-legacy')} className="w-fit">
+                                Se connecter
+                            </Button>
+                            <Button onClick={() => router.push('/signup')} className="w-fit">
+                                S'inscrire
+                            </Button>
+                        </div>
+                    </AlertDescription>
+                </Alert>
+            </main>
+        );
+    }
+
+    const isAuthorized = profile && (profile.verified || profile.role === 'admin' || profile.role === 'moderator');
+
+    if (!isAuthorized) {
+        return (
+            <main className="container py-12 max-w-4xl text-center">
+                <Alert variant="destructive" className="max-w-2xl mx-auto mb-6 text-left border-destructive/50 bg-destructive/10 text-destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Accès refusé</AlertTitle>
+                    <AlertDescription className="flex flex-col gap-4 mt-2">
+                        <p>
+                            Vous devez être un utilisateur vérifié pour pouvoir contribuer des ressources.<br />
+                            Cela nous aide à maintenir la qualité des documents partagés.<br />
+                            Veuillez vérifier votre compte dans votre profil.
+                        </p>
+                        <div className="flex gap-3">
+                            <Button onClick={() => router.push(`/profile/${user.uid}`)} className="w-fit bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                Mon profil
+                            </Button>
+                            <Button variant="outline" onClick={() => router.push('/')} className="w-fit border-destructive/30 hover:bg-destructive/20 text-destructive">
+                                Retour à l'accueil
+                            </Button>
+                        </div>
+                    </AlertDescription>
+                </Alert>
+            </main>
+        );
+    }
+
     return (
         <main className="container py-12 max-w-4xl">
             <section className="mb-12 text-center">
