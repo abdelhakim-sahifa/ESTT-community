@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { Groq } from 'groq-sdk';
 import {
     ESTT_AI_MODEL,
     ESTT_AI_SYSTEM_INSTRUCTION,
@@ -8,9 +7,36 @@ import { searchResourcesAction } from '@/lib/resourceUtils';
 
 export const dynamic = 'force-dynamic';
 
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY,
-});
+async function extractTextFromServer(file) {
+    try {
+        const parse = require('pdf-parse/lib/pdf-parse.js');
+        
+        if (typeof parse !== 'function') {
+            console.error('❌ [ESTT-AI] pdf-parse structure:', typeof parse);
+            throw new Error('pdf-parse core is not a function');
+        }
+
+        console.log(`📄 [ESTT-AI] Extracting text locally via pdf-parse core...`);
+        
+        // Convert the File object to a Buffer
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        // Parse the PDF
+        const data = await parse(buffer);
+        
+        if (!data || !data.text) {
+            console.warn("⚠️ [ESTT-AI] pdf-parse returned no text.");
+            return null;
+        }
+
+        console.log(`✅ [ESTT-AI] Local extraction successful. Length: ${data.text.length} characters.`);
+        return data.text;
+    } catch (error) {
+        console.error(`❌ [ESTT-AI] Local extraction failed:`, error.message);
+        throw error;
+    }
+}
 
 function extractAiResponse(text) {
     if (!text) return { reply: null, action: null };
@@ -34,65 +60,110 @@ function extractAiResponse(text) {
     return { reply: text, action: null };
 }
 
-async function callGroq(messages, systemInstruction) {
+async function callOllama(prompt) {
+    const OLLAMA_URL = 'https://ollama.com/api/generate';
+    const OLLAMA_KEY = '8a64838fe32644c687ef1681e7a8a6f5.YqaEPBHJMqXQnjdqSdH8Gkrx';
+    const OLLAMA_MODEL = 'gemma4:31b-cloud';
+
     try {
-        console.log(`📡 [ESTT-AI] Calling Groq with model: ${ESTT_AI_MODEL}`);
-        
-        const chatCompletion = await groq.chat.completions.create({
-            messages: [
-                { role: 'system', content: systemInstruction },
-                ...messages
-            ],
-            model: ESTT_AI_MODEL,
-            temperature: 1,
-            max_completion_tokens: 1024,
-            top_p: 1,
-            stream: true,
-            compound_custom: {
-                tools: {
-                    enabled_tools: [
-                        "web_search",
-                        "code_interpreter",
-                        "visit_website"
-                    ]
-                }
-            }
+        console.log(`📡 [ESTT-AI] Calling Ollama Cloud with model: ${OLLAMA_MODEL}`);
+        const response = await fetch(OLLAMA_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${OLLAMA_KEY}`
+            },
+            body: JSON.stringify({
+                model: OLLAMA_MODEL,
+                prompt: prompt,
+                stream: false
+            })
         });
 
-        let fullContent = '';
-        for await (const chunk of chatCompletion) {
-            fullContent += chunk.choices[0]?.delta?.content || '';
+        if (!response.ok) {
+            const err = await response.text();
+            throw new Error(`Ollama API Error (${response.status}): ${err}`);
         }
-        
-        if (!fullContent && !messages.some(m => m.role === 'assistant')) {
-            throw new Error('Groq returned an empty response. This might be due to tool execution failure or safety filters.');
-        }
-        
-        return fullContent;
+
+        const data = await response.json();
+        return data.response;
     } catch (error) {
-        console.error(`🚨 [Groq API Error]:`, {
-            message: error.message,
-            status: error.status,
-            name: error.name,
-            code: error.code
-        });
-
-        if (error.status === 401) throw new Error('Invalid Groq API Key. Please verify your .env.local configuration.');
-        if (error.status === 429) throw new Error('Groq Rate Limit reached. Please wait a moment before trying again.');
-        if (error.status === 404) throw new Error(`Model "${ESTT_AI_MODEL}" not found. Verify the model name in lib/estt-ai.js.`);
-        if (error.status === 400) throw new Error(`Bad Request: ${error.message}`);
-        
-        throw new Error(`Groq API Error: ${error.message}`);
+        console.error(`🚨 [Ollama API Error]:`, error.message);
+        throw error;
     }
 }
 
+async function callOllamaChat(messages, systemInstruction) {
+    // Format messages into a single prompt for Ollama
+    let prompt = `System Instruction:\n${systemInstruction}\n\n`;
+    
+    messages.forEach(msg => {
+        const role = msg.role === 'assistant' ? 'Assistant' : 'User';
+        prompt += `${role}: ${msg.content}\n`;
+    });
+    
+    prompt += "Assistant:";
+
+    return await callOllama(prompt);
+}
+
 export async function POST(request) {
+    console.log('🚀 [ESTT-AI] POST request received');
     try {
-        if (!process.env.GROQ_API_KEY) {
-            return NextResponse.json({ error: 'GROQ_API_KEY missing' }, { status: 500 });
+        let message, history = [], userProfile = null, purpose = 'chat';
+        
+        const contentType = request.headers.get('content-type') || '';
+        
+        if (contentType.includes('multipart/form-data')) {
+            const formData = await request.formData();
+            purpose = formData.get('purpose');
+            const file = formData.get('file');
+            const context = formData.get('context'); // Extra info like system prompt
+
+            if (purpose === 'pdf-analysis' && file) {
+                console.log('🤖 [ESTT-AI] Processing PDF analysis request with file:', file.name);
+                const extractedText = await extractTextFromServer(file);
+                
+                if (!extractedText) throw new Error('No text extracted from PDF');
+
+                console.log('🤖 [ESTT-AI] Analyzing extracted text via Ollama...');
+                // The context sent from client includes the system prompt + any previous text
+                const aiResultText = await callOllama(`${context}\n\nTexte extrait :\n${extractedText.substring(0, 5000)}`);
+                const { action } = extractAiResponse(aiResultText);
+
+                return NextResponse.json({
+                    action,
+                    reply: aiResultText,
+                    model: 'gemma4:31b-cloud'
+                });
+            }
+        } else {
+            const body = await request.json();
+            message = body.message;
+            history = body.history || [];
+            userProfile = body.userProfile || null;
+            purpose = body.purpose || 'chat';
+
+            console.log('📦 [ESTT-AI] Request body purpose:', purpose);
+
+            // Legacy path for text-only analysis (if needed)
+            if (purpose === 'pdf-analysis') {
+                console.log('🤖 [ESTT-AI] Starting text-only PDF analysis via Ollama...');
+                const text = await callOllama(message);
+                const { action } = extractAiResponse(text);
+                
+                return NextResponse.json({
+                    action,
+                    reply: text,
+                    model: 'gemma4:31b-cloud'
+                });
+            }
         }
 
-        const { message, history = [], userProfile = null } = await request.json();
+        // We no longer require GROQ_API_KEY as we switched to Ollama Cloud
+        // if (!process.env.GROQ_API_KEY) {
+        //     return NextResponse.json({ error: 'GROQ_API_KEY missing' }, { status: 500 });
+        // }
         
         // Prepare formatted history for Groq (role must be 'user' or 'assistant')
         const formattedHistory = Array.isArray(history) 
@@ -117,9 +188,9 @@ export async function POST(request) {
             ? `${ESTT_AI_SYSTEM_INSTRUCTION}\n\nCurrent user context:\n${userContext}` 
             : ESTT_AI_SYSTEM_INSTRUCTION;
 
-        // Phase 1: Call Groq
-        console.log(`🤖 [ESTT-AI] Phase 1 START`);
-        const text = await callGroq(messages, systemInstruction);
+        // Phase 1: Call Ollama
+        console.log(`🤖 [ESTT-AI] Phase 1 START (Ollama)`);
+        const text = await callOllamaChat(messages, systemInstruction);
         const { reply, action } = extractAiResponse(text);
 
         // Check if we need to perform a search (Phase 2 & 3)
@@ -134,7 +205,7 @@ export async function POST(request) {
                 content: `[SYSTEM DATA FETCH RESULTS]\nQuery: "${action.query}"\nFound: ${JSON.stringify(searchResults.map(r => ({id: r.id, title: r.title, description: r.description})))}\n\nTASK: Recommend 2-5 resources using "display_resources" action.`
             };
 
-            const finalText = await callGroq([...messages, { role: 'assistant', content: text || "Searching..." }, systemResultsMessage], systemInstruction);
+            const finalText = await callOllamaChat([...messages, { role: 'assistant', content: text || "Searching..." }, systemResultsMessage], systemInstruction);
             const final = extractAiResponse(finalText);
 
             console.log(`✅ [ESTT-AI] Pipeline COMPLETE`);

@@ -31,7 +31,8 @@ export default function DirectMessagePage() {
     const { isSupported, permission, requestPermission } = useNotifications();
     const router = useRouter();
     const isEsttAiChat = isEsttAiAgent(recipientId);
-    
+    const isPremium = currentUserProfile?.subscription?.expiresAt && currentUserProfile.subscription.expiresAt > Date.now();
+
     const [messages, setMessages] = useState([]);
     const [profiles, setProfiles] = useState(() => ({
         [ESTT_AI_AGENT_ID]: ESTT_AI_PROFILE,
@@ -47,14 +48,14 @@ export default function DirectMessagePage() {
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [isGeneratingAiResponse, setIsGeneratingAiResponse] = useState(false);
     const [isAiSearching, setIsAiSearching] = useState(false);
-    
+
     const messagesEndRef = useRef(null);
     const scrollContainerRef = useRef(null);
     const profilesListeners = useRef({});
     const [sharedKey, setSharedKey] = useState(null);
     // Track last notified DM so we don't spam
     const lastNotifiedMsgIdRef = useRef(null);
-    
+
     // Mirror recipientProfile in a ref to avoid stale closures in Firebase listeners
     const recipientProfileRef = useRef(null);
     useEffect(() => { recipientProfileRef.current = recipientProfile; }, [recipientProfile]);
@@ -67,7 +68,7 @@ export default function DirectMessagePage() {
     }, [isSupported, permission, requestPermission]);
 
     // Unique Room ID for 1-on-1 interaction
-    const roomId = user && recipientId 
+    const roomId = user && recipientId
         ? (user.uid < recipientId ? `dm_${user.uid}_${recipientId}` : `dm_${recipientId}_${user.uid}`)
         : null;
 
@@ -174,7 +175,7 @@ export default function DirectMessagePage() {
                         replyTo
                     });
                 }
-                
+
                 const sortedList = messageList.sort((a, b) => a.timestamp - b.timestamp);
                 setMessages(sortedList);
                 setHasMore(sortedList.length >= messageLimit);
@@ -187,14 +188,14 @@ export default function DirectMessagePage() {
                         latestMsg.id !== lastNotifiedMsgIdRef.current
                     ) {
                         lastNotifiedMsgIdRef.current = latestMsg.id;
-                        
+
                         (async () => {
                             let senderProfile = recipientProfileRef.current;
                             if (!senderProfile && !isEsttAiChat) {
                                 const snap = await get(ref(db, `users/${recipientId}`));
                                 if (snap.exists()) senderProfile = snap.val();
                             }
-                            
+
                             const senderName = senderProfile
                                 ? `${senderProfile.firstName} ${senderProfile.lastName || ''}`.trim()
                                 : 'Message';
@@ -368,10 +369,10 @@ export default function DirectMessagePage() {
                 ciphertext,
                 iv
             };
-            
-            await update(ref(db, `userConversations/${user.uid}/${recipientId}`), { 
-                ...hubUpdate, 
-                unread: false 
+
+            await update(ref(db, `userConversations/${user.uid}/${recipientId}`), {
+                ...hubUpdate,
+                unread: false
             });
 
             if (isEsttAiChat) {
@@ -404,9 +405,9 @@ export default function DirectMessagePage() {
                     }
 
                     const payload = await fetchAiResponse(text, aiHistory);
-                    
+
                     setIsAiSearching(false);
-                    
+
                     if (payload.reply || payload.action) {
                         await persistAiReply(payload.reply, payload.action, !document.hasFocus());
                     }
@@ -425,9 +426,9 @@ export default function DirectMessagePage() {
                 return;
             }
 
-            await update(ref(db, `userConversations/${recipientId}/${user.uid}`), { 
-                ...hubUpdate, 
-                otherUserId: user.uid 
+            await update(ref(db, `userConversations/${recipientId}/${user.uid}`), {
+                ...hubUpdate,
+                otherUserId: user.uid
             });
 
         } catch (error) {
@@ -451,7 +452,7 @@ export default function DirectMessagePage() {
         try {
             await update(messageRef, {
                 isDeleted: true,
-                text: "" 
+                text: ""
             });
         } catch (error) {
             console.error("Error deleting message:", error);
@@ -595,16 +596,15 @@ export default function DirectMessagePage() {
                                     permission === 'granted'
                                         ? 'Notifications activées'
                                         : permission === 'denied'
-                                        ? 'Notifications bloquées par le navigateur'
-                                        : 'Activer les notifications'
+                                            ? 'Notifications bloquées par le navigateur'
+                                            : 'Activer les notifications'
                                 }
-                                className={`p-2 rounded-full transition-all ${
-                                    permission === 'granted'
+                                className={`p-2 rounded-full transition-all ${permission === 'granted'
                                         ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
                                         : permission === 'denied'
-                                        ? 'text-slate-300 cursor-not-allowed'
-                                        : 'text-slate-400 hover:text-primary hover:bg-primary/5'
-                                }`}
+                                            ? 'text-slate-300 cursor-not-allowed'
+                                            : 'text-slate-400 hover:text-primary hover:bg-primary/5'
+                                    }`}
                                 disabled={permission === 'denied'}
                             >
                                 {permission === 'denied'
@@ -701,7 +701,7 @@ export default function DirectMessagePage() {
                             </span>
                         </div>
                     )}
-                    
+
                     {replyingTo && (
                         <div className="mb-3 p-3 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-between">
                             <div className="flex items-center gap-3 overflow-hidden">
@@ -717,13 +717,42 @@ export default function DirectMessagePage() {
                         </div>
                     )}
 
-                    <ChatInput
-                        onSendMessage={handleSendMessage}
-                        onTypingChange={handleTypingChange}
-                        disabled={loading || isGeneratingAiResponse}
-                        textOnly={isEsttAiChat}
-                        placeholder={isEsttAiChat ? "Envoyez un message a ESTT-AI..." : "Ecrivez votre message..."}
-                    />
+                    {(isEsttAiChat && !isPremium) ? (
+                        <div className="bg-gradient-to-br from-violet-600/90 to-indigo-600/90 backdrop-blur-sm p-6 rounded-3xl border border-white/20 shadow-2xl animate-in zoom-in-95 duration-300">
+                            <div className="flex flex-col md:flex-row items-center gap-6">
+                                <div className="p-4 bg-white/10 rounded-2xl border border-white/20 shadow-inner group">
+                                    <Gem className="w-8 h-8 text-white animate-pulse" />
+                                </div>
+                                <div className="flex-1 text-center md:text-left space-y-2">
+                                    <h3 className="text-xl font-black text-white tracking-tight flex items-center justify-center md:justify-start gap-2">
+                                        Accès Premium ESTT-AI
+                                        <span className="text-[10px] bg-white text-violet-600 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter shadow-sm">Plus+</span>
+                                    </h3>
+                                    <p className="text-sm text-white/80 font-medium leading-relaxed max-w-lg">
+                                        Notre assistant intelligent est réservé aux membres <strong>ESTTPlus+</strong>.
+                                        Débloquez l'IA pour obtenir des résumés, des conseils d'étude et une recherche de ressources ultra-rapide.
+                                    </p>
+                                </div>
+                                <div className="shrink-0 w-full md:w-auto">
+                                    <Button
+                                        // onClick={() => router.push(`/profile/${user?.uid}`)}
+                                        onClick={() => router.push(`/?from=qr11434`)}
+                                        className="w-full md:w-auto bg-white text-violet-600 hover:bg-white/90 font-bold px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                    >
+                                        Devenir Membre Plus+
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <ChatInput
+                            onSendMessage={handleSendMessage}
+                            onTypingChange={handleTypingChange}
+                            disabled={loading || isGeneratingAiResponse}
+                            textOnly={isEsttAiChat}
+                            placeholder={isEsttAiChat ? "Envoyez un message a ESTT-AI..." : "Ecrivez votre message..."}
+                        />
+                    )}
                 </div>
             </div>
         </main>

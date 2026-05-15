@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { db as staticDb } from '@/lib/data';
 import { uploadResourceFile } from '@/lib/drive'; // SWAPPED FROM SUPABASE TO DRIVE
@@ -20,7 +20,9 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Sparkles, Plus, Trash2, HardDrive } from 'lucide-react';
+import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Plus, Trash2, HardDrive, FileText, FileSpreadsheet, Presentation, File } from 'lucide-react';
+
+const AI_MAX_WORDS = 50; // Restored to a higher limit for the new provider
 
 export default function ContributePage() {
     const router = useRouter();
@@ -39,10 +41,12 @@ export default function ContributePage() {
         fields: []
     });
     const [file, setFile] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
     const [message, setMessage] = useState('');
     const [isError, setIsError] = useState(false);
     const [loading, setLoading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const dropRef = useRef(null);
     const [professors, setProfessors] = useState([]);
 
     useEffect(() => {
@@ -67,6 +71,44 @@ export default function ContributePage() {
     }, [db]);
 
 
+    // Returns the MIME/extension accept string for the <input> based on the selected type
+    const getAcceptString = (type) => {
+        switch (type) {
+            case 'pdf': return '.pdf,application/pdf';
+            case 'image': return 'image/*';
+            case 'powerpoint': return '.ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation';
+            case 'excel': return '.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            case 'word': return '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+            case 'autre': return '*';
+            default: return '*';
+        }
+    };
+
+    // Human-readable label for the accepted formats
+    const getFileTypeLabel = (type) => {
+        switch (type) {
+            case 'pdf': return 'PDF uniquement';
+            case 'image': return 'Images (PNG, JPG, GIF…)';
+            case 'powerpoint': return 'PowerPoint (.ppt, .pptx)';
+            case 'excel': return 'Excel (.xls, .xlsx)';
+            case 'word': return 'Word (.doc, .docx)';
+            case 'autre': return 'Tout format (auto-détecté)';
+            default: return 'Fichier';
+        }
+    };
+
+    // Auto-detect type from file extension when "autre" is selected
+    const detectFileType = (f) => {
+        if (!f) return formData.type;
+        const ext = f.name.split('.').pop().toLowerCase();
+        if (ext === 'pdf') return 'pdf';
+        if (['ppt', 'pptx'].includes(ext)) return 'powerpoint';
+        if (['xls', 'xlsx', 'csv'].includes(ext)) return 'excel';
+        if (['doc', 'docx'].includes(ext)) return 'word';
+        if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return 'image';
+        return 'autre';
+    };
+
     const handleChange = (name, value) => {
         setFormData(prev => ({
             ...prev,
@@ -74,8 +116,45 @@ export default function ContributePage() {
         }));
     };
 
+    const applyFile = async (selectedFile) => {
+        console.log("📂 [Client] applyFile started for:", selectedFile?.name);
+        if (!selectedFile) return;
+        setFile(selectedFile);
+
+        // If auto-detect mode, update the type in formData
+        const detected = detectFileType(selectedFile);
+        console.log("📂 [Client] Detected file type:", detected);
+        if (formData.type === 'autre' && detected !== 'autre') {
+            handleChange('type', detected);
+        }
+    };
+
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+        applyFile(e.target.files[0]);
+    };
+
+    // Drag & Drop handlers
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Only clear if leaving the drop zone entirely
+        if (dropRef.current && !dropRef.current.contains(e.relatedTarget)) {
+            setIsDragging(false);
+        }
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+        const dropped = e.dataTransfer.files[0];
+        if (dropped) applyFile(dropped);
     };
 
     const handleSubmit = async (e) => {
@@ -573,9 +652,13 @@ export default function ContributePage() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="pdf">PDF</SelectItem>
+                                            <SelectItem value="powerpoint">PowerPoint</SelectItem>
+                                            <SelectItem value="excel">Excel / Tableur</SelectItem>
+                                            <SelectItem value="word">Word</SelectItem>
                                             <SelectItem value="image">Image</SelectItem>
                                             <SelectItem value="video">Vidéo (lien)</SelectItem>
                                             <SelectItem value="link">Lien externe</SelectItem>
+                                            <SelectItem value="autre">Autre (auto-détecté)</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -614,17 +697,50 @@ export default function ContributePage() {
                                 ) : (
                                     <div className="space-y-2">
                                         <Label htmlFor="file">Fichier *</Label>
-                                        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-muted-foreground/20 border-dashed rounded-md hover:bg-muted/50 transition-colors cursor-pointer relative group">
-                                            <div className="space-y-1 text-center">
-                                                <CloudUpload className="mx-auto h-12 w-12 text-muted-foreground group-hover:text-primary transition-colors" />
-                                                <div className="flex text-sm text-muted-foreground">
-                                                    <label htmlFor="file" className="relative cursor-pointer bg-transparent rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none">
-                                                        <span>{file ? file.name : "Cliquez pour uploader un fichier"}</span>
-                                                        <input id="file" name="file" type="file" className="sr-only" onChange={handleFileChange} accept={formData.type === 'pdf' ? '.pdf' : 'image/*'} required={!formData.url} />
-                                                    </label>
+                                        <div
+                                            ref={dropRef}
+                                            onDragOver={handleDragOver}
+                                            onDragLeave={handleDragLeave}
+                                            onDrop={handleDrop}
+                                            className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-all cursor-pointer relative group ${isDragging
+                                                ? 'border-primary bg-primary/10 scale-[1.01]'
+                                                : file
+                                                    ? 'border-green-400 bg-green-50/50'
+                                                    : 'border-muted-foreground/20 hover:bg-muted/50 hover:border-primary/40'
+                                                }`}
+                                        >
+                                            <div className="space-y-2 text-center pointer-events-none">
+                                                {isDragging ? (
+                                                    <CloudUpload className="mx-auto h-12 w-12 text-primary animate-bounce" />
+                                                ) : file ? (
+                                                    <CheckCircle2 className="mx-auto h-12 w-12 text-green-500" />
+                                                ) : (
+                                                    <CloudUpload className="mx-auto h-12 w-12 text-muted-foreground group-hover:text-primary transition-colors" />
+                                                )}
+                                                <div className="flex flex-col items-center gap-1 text-sm text-muted-foreground pointer-events-auto">
+                                                    {isDragging ? (
+                                                        <span className="font-semibold text-primary">Déposez le fichier ici</span>
+                                                    ) : file ? (
+                                                        <>
+                                                            <span className="font-medium text-green-600 truncate max-w-[220px]">{file.name}</span>
+                                                            <span className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                                                            <label htmlFor="file" className="cursor-pointer text-xs text-primary hover:underline">
+                                                                Changer de fichier
+                                                                <input id="file" name="file" type="file" className="sr-only" onChange={handleFileChange} accept={getAcceptString(formData.type)} />
+                                                            </label>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <label htmlFor="file" className="cursor-pointer font-medium text-primary hover:text-primary/80">
+                                                                Cliquez pour choisir un fichier
+                                                                <input id="file" name="file" type="file" className="sr-only" onChange={handleFileChange} accept={getAcceptString(formData.type)} required={!formData.url} />
+                                                            </label>
+                                                            <span className="text-xs">ou glissez-déposez ici</span>
+                                                        </>
+                                                    )}
                                                 </div>
                                                 <p className="text-xs text-muted-foreground">
-                                                    {formData.type === 'pdf' ? 'PDF uniquement' : 'Images uniquement'} jusqu'à 10MB
+                                                    {getFileTypeLabel(formData.type)} — jusqu'à 10 MB
                                                 </p>
                                             </div>
                                         </div>

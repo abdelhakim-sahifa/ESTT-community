@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { db, ref, get, set, push, update, remove } from '@/lib/firebase';
+import { db, ref, get, set, push, update, remove, runTransaction } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { useDialog } from '@/context/DialogContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, Download, ExternalLink, User, Share2, GraduationCap, Play, MessageCircle, Send, X, Flag, AlertTriangle, Star, Bookmark } from 'lucide-react';
+import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, Download, ExternalLink, User, Share2, GraduationCap, Play, MessageCircle, Send, X, Flag, AlertTriangle, Star, Bookmark, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -42,6 +42,9 @@ export default function ResourcePage() {
     const [isLoadingRating, setIsLoadingRating] = useState(false);
     const [isSavingRating, setIsSavingRating] = useState(false);
 
+    // View count state
+    const [viewCount, setViewCount] = useState(null);
+
     // Favorites state
     const [isFavorite, setIsFavorite] = useState(false);
     const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
@@ -50,6 +53,15 @@ export default function ResourcePage() {
         if (resourceId) {
             fetchResource();
             fetchComments();
+            // Load persisted view count
+            const loadViewCount = async () => {
+                try {
+                    const vcRef = ref(db, `resourceViews/${resourceId}/viewCount`);
+                    const snap = await get(vcRef);
+                    if (snap.exists()) setViewCount(snap.val());
+                } catch (_) {}
+            };
+            loadViewCount();
         }
     }, [resourceId]);
 
@@ -112,7 +124,12 @@ export default function ResourcePage() {
                 };
                 await set(newViewRef, viewData);
 
-                // 4. Count total views in the current batch
+                // 4. Increment persistent view counter atomically (never reset)
+                const viewCountRef = ref(db, `resourceViews/${resourceId}/viewCount`);
+                const txResult = await runTransaction(viewCountRef, (current) => (current || 0) + 1);
+                if (txResult.committed) setViewCount(txResult.snapshot.val());
+
+                // 5. Count total views in the current batch
                 const updatedTotalViews = allViews.length + 1;
 
                 // 5. Notify Slack only on every 10th view milestone
@@ -717,6 +734,12 @@ export default function ResourcePage() {
                                     )}
                                     {resource.createdAt && (
                                         <span>{new Date(resource.createdAt).toLocaleDateString('fr-FR')}</span>
+                                    )}
+                                    {viewCount !== null && (
+                                        <span className="flex items-center gap-1 text-xs text-slate-500">
+                                            <Eye className="w-3 h-3" />
+                                            {viewCount.toLocaleString('fr-FR')} vue{viewCount > 1 ? 's' : ''}
+                                        </span>
                                     )}
                                     {resource.ratingAverage && resource.ratingCount > 0 && (
                                         <div className="flex items-center gap-1 text-xs text-slate-600">
