@@ -48,6 +48,7 @@ export default function DirectMessagePage() {
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [isGeneratingAiResponse, setIsGeneratingAiResponse] = useState(false);
     const [isAiSearching, setIsAiSearching] = useState(false);
+    const [aiMessageCount, setAiMessageCount] = useState(0);
 
     const messagesEndRef = useRef(null);
     const scrollContainerRef = useRef(null);
@@ -280,6 +281,20 @@ export default function DirectMessagePage() {
         return () => clearUnread();
     }, [user, recipientId, messages.length]);
 
+    // Track AI Usage Limit
+    useEffect(() => {
+        if (!user || !isEsttAiChat) return;
+
+        const today = new Date().toISOString().split('T')[0];
+        const usageRef = ref(db, `users/${user.uid}/ai_usage/${today}`);
+
+        const unsubscribe = onValue(usageRef, (snapshot) => {
+            setAiMessageCount(snapshot.val() || 0);
+        });
+
+        return () => unsubscribe();
+    }, [user, isEsttAiChat]);
+
     const scrollToBottom = () => {
         setTimeout(() => {
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -376,6 +391,11 @@ export default function DirectMessagePage() {
             });
 
             if (isEsttAiChat) {
+                // Update usage count
+                const today = new Date().toISOString().split('T')[0];
+                const usageRef = ref(db, `users/${user.uid}/ai_usage/${today}`);
+                set(usageRef, aiMessageCount + 1);
+
                 setIsGeneratingAiResponse(true);
 
                 try {
@@ -600,10 +620,10 @@ export default function DirectMessagePage() {
                                             : 'Activer les notifications'
                                 }
                                 className={`p-2 rounded-full transition-all ${permission === 'granted'
-                                        ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
-                                        : permission === 'denied'
-                                            ? 'text-slate-300 cursor-not-allowed'
-                                            : 'text-slate-400 hover:text-primary hover:bg-primary/5'
+                                    ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
+                                    : permission === 'denied'
+                                        ? 'text-slate-300 cursor-not-allowed'
+                                        : 'text-slate-400 hover:text-primary hover:bg-primary/5'
                                     }`}
                                 disabled={permission === 'denied'}
                             >
@@ -742,6 +762,28 @@ export default function DirectMessagePage() {
                                         Devenir Membre Plus+
                                     </Button>
                                 </div>
+                            </div>
+                        </div>
+                    ) : isEsttAiChat && aiMessageCount >= 2 ? (
+                        <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 shadow-sm animate-in fade-in duration-300">
+                            <div className="flex flex-col items-center text-center gap-3">
+                                <div className="w-12 h-12 rounded-2xl bg-slate-200 flex items-center justify-center">
+                                    <Lock className="w-6 h-6 text-slate-400" />
+                                </div>
+                                <div className="space-y-1">
+                                    <h3 className="text-base font-bold text-slate-900">Limite quotidienne atteinte</h3>
+                                    <p className="text-sm text-slate-500">
+                                        Vous avez utilisé vos 2 messages gratuits pour aujourd'hui.
+                                        Revenez demain ou passez à <strong>ESTTPlus+</strong> pour un accès illimité.
+                                    </p>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => router.push(`/`)}
+                                    className="mt-2 rounded-xl font-bold"
+                                >
+                                    En savoir plus sur ESTTPlus+
+                                </Button>
                             </div>
                         </div>
                     ) : (
