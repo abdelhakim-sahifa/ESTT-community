@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { cn, getUserLevel } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Bell, LogOut, User as UserIcon, Search, MessageSquare, Home, Calendar, PlusCircle, ShieldCheck } from 'lucide-react';
+import { Menu, X, Bell, LogOut, User as UserIcon, Search, MessageSquare, Home, Calendar, PlusCircle, ShieldCheck, BookOpen } from 'lucide-react';
 import { db, ref, onValue } from '@/lib/firebase';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -83,6 +83,7 @@ export default function Header() {
 
     const navItems = [
         { href: '/', label: 'Accueil', icon: Home },
+        { href: '/browse', label: 'Ressources', icon: BookOpen },
         { href: '/events', label: 'Événements', icon: Calendar },
         { href: '/contribute', label: 'Contribuer', icon: PlusCircle },
         { href: '/chat', label: 'Discussion', icon: MessageSquare },
