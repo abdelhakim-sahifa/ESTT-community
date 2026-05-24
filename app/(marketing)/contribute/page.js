@@ -21,8 +21,8 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Plus, Trash2, HardDrive, FileText, FileSpreadsheet, Presentation, File } from 'lucide-react';
-
 const AI_MAX_WORDS = 50; // Restored to a higher limit for the new provider
+import { Sparkles } from 'lucide-react';
 
 export default function ContributePage() {
     const router = useRouter();
