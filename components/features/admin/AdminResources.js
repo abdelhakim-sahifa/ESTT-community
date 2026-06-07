@@ -219,7 +219,7 @@ export default function AdminResources({ resources }) {
                         const userData = userSnap.val();
                         if (userData.email) {
                             const { resourceApprovedEmail } = await import('@/lib/email-templates');
-                            const resourceUrl = `https://estt-community.vercel.app/resource/${resource.id}`;
+                            const resourceUrl = `https://estt.ma/resource/${resource.id}`;
                             const html = resourceApprovedEmail(userData.firstName || 'Étudiant', resource.title, resourceUrl);
 
                             await fetch('/api/send-email', {
@@ -399,7 +399,7 @@ export default function AdminResources({ resources }) {
                         const userData = userSnap.val();
                         if (userData.email) {
                             const { resourceUpdatedEmail } = await import('@/lib/email-templates');
-                            const resourceUrl = `https://estt-community.vercel.app/resource/${itemToEdit.id}`;
+                            const resourceUrl = `https://estt.ma/resource/${itemToEdit.id}`;
                             const html = resourceUpdatedEmail(
                                 userData.firstName || 'Étudiant',
                                 editData.title,
@@ -599,7 +599,7 @@ export default function AdminResources({ resources }) {
                 contactThreadUpdatedAt: now,
             });
 
-            const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://estt-community.vercel.app';
+            const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://estt.ma';
             const replyUrl = `${baseUrl}/resource-contact/${threadId}`;
 
             const { resourceContactRequestEmail } = await import('@/lib/email-templates');

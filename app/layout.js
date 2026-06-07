@@ -26,13 +26,13 @@ export const metadata = {
     openGraph: {
         type: 'website',
         locale: 'fr_FR',
-        url: 'https://estt-community.vercel.app',
+        url: 'https://estt.ma',
         siteName: 'EST Tétouan Community',
         title: 'EST Tétouan - Ressources Étudiants',
         description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
         images: [
             {
-                url: 'https://estt-community.vercel.app/favicon.ico',
+                url: 'https://estt.ma/favicon.ico',
                 width: 1200,
                 height: 630,
                 alt: 'EST Tétouan Community',
@@ -43,7 +43,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'EST Tétouan - Ressources Étudiants',
         description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
-        images: ['https://estt-community.vercel.app/favicon.ico'],
+        images: ['https://estt.ma/favicon.ico'],
     },
 };
 

@@ -12,4 +12,4 @@ Disallow: /private/
 Crawl-delay: 1
 
 # Sitemap location
-Sitemap: https://estt-community.vercel.app/sitemap.xml
+Sitemap: https://estt.ma/sitemap.xml

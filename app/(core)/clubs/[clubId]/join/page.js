@@ -162,7 +162,7 @@ export default function ClubJoinPage() {
                         'Admin Club', // The Club admin name 
                         'Nouvelle Adhésion',
                         `Une nouvelle demande d'adhésion a été reçue de <strong>${formData.name}</strong> (${formData.email}). <br/>Raison: "<em>${formData.reason}</em>"`,
-                        `https://estt-community.vercel.app/clubs/${clubId}/admin`
+                        `https://estt.ma/clubs/${clubId}/admin`
                     );
 
                     await fetch('/api/send-email', {

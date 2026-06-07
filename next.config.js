@@ -41,6 +41,18 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // Redirect old domain to new domain
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'estt-community.vercel.app',
+          },
+        ],
+        destination: 'https://estt.ma/:path*',
+        permanent: true,
+      },
       // Redirect old .html URLs to new routes
       {
         source: '/index.html',

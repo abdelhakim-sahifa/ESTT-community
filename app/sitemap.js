@@ -1,6 +1,6 @@
 // This will be called at build time or on-demand in production
 export default async function sitemap() {
-    const baseUrl = 'https://estt-community.vercel.app';
+    const baseUrl = 'https://estt.ma';
 
     // Core application pages
     const staticPages = [

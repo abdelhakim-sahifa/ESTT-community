@@ -3,8 +3,8 @@ import { getMetadata, pageMetadata } from '@/lib/metadata';
 export const metadata = getMetadata(
     pageMetadata.terms.title,
     pageMetadata.terms.description,
-    'https://estt-community.vercel.app/favicon.ico',
-    'https://estt-community.vercel.app/terms'
+    'https://estt.ma/favicon.ico',
+    'https://estt.ma/terms'
 );
 
 export default function TermsLayout({ children }) {

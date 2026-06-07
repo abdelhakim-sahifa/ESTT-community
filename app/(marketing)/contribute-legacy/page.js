@@ -210,7 +210,7 @@ export default function ContributePage() {
                             'Admin',
                             'Nouvelle Ressource',
                             `Une nouvelle ressource "<strong>${contributionData.title}</strong>" a été soumise pour le module ${contributionData.module} par ${contributionData.authorName}.`,
-                            'https://estt-community.vercel.app/admin'
+                            'https://estt.ma/admin'
                         );
 
                         await fetch('/api/send-email', {

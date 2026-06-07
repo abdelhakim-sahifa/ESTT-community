@@ -246,7 +246,7 @@ export default function AdminRewardCodes() {
 
                 // ---------- QR CODE FRAME ----------
                 const qrId = 'qr' + Math.floor(100000 + Math.random() * 900000);
-                const qrUrl = `https://estt-community.vercel.app/?from=${qrId}`;
+                const qrUrl = `https://estt.ma/?from=${qrId}`;
                 const qrImage = await QRCode.toDataURL(qrUrl, { margin: 1, width: 400 });
 
                 const qrSize = 65;
@@ -296,7 +296,7 @@ export default function AdminRewardCodes() {
 
                     // --- Tiny QR Code ---
                     // Generates a specific URL for this code to allow instant claiming via scan
-                    const tabQrUrl = `https://estt-community.vercel.app/?from=${qrId}&code=${codeItem.code}`;
+                    const tabQrUrl = `https://estt.ma/?from=${qrId}&code=${codeItem.code}`;
                     const tabQrImage = await QRCode.toDataURL(tabQrUrl, { margin: 1, width: 120 });
 
                     const tinyQrSize = 15;

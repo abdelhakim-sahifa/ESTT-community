@@ -1,4 +1,4 @@
-import { ArrowUp, Image as ImageIcon, Loader2, Library, Search, FileText, Video, Link as LinkIcon, ArrowRight, BookOpen, Sticker } from 'lucide-react';
+import { ArrowUp, Image as ImageIcon, Loader2, Library, Search, FileText, Video, Link as LinkIcon, ArrowRight, BookOpen, Sticker, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { uploadToImgBB } from '@/lib/uploadUtils';
 import { db, ref, get, onValue } from '@/lib/firebase';
@@ -208,6 +208,7 @@ export default function ChatInput({
             case 'pdf': return <FileText className="w-5 h-5" />;
             case 'video': return <Video className="w-5 h-5" />;
             case 'link': return <LinkIcon className="w-5 h-5" />;
+            case 'html': return <Globe className="w-5 h-5" />;
             default: return <BookOpen className="w-5 h-5" />;
         }
     };

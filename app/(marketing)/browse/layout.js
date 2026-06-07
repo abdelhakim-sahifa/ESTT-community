@@ -3,8 +3,8 @@ import { getMetadata, pageMetadata } from '@/lib/metadata';
 export const metadata = getMetadata(
     pageMetadata.browse.title,
     pageMetadata.browse.description,
-    'https://estt-community.vercel.app/favicon.ico',
-    'https://estt-community.vercel.app/browse'
+    'https://estt.ma/favicon.ico',
+    'https://estt.ma/browse'
 );
 
 export default function BrowseLayout({ children }) {

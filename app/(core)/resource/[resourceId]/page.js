@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, Download, ExternalLink, User, Share2, GraduationCap, Play, MessageCircle, Send, X, Flag, AlertTriangle, Star, Bookmark, Eye } from 'lucide-react';
+import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, Download, ExternalLink, User, Share2, GraduationCap, Play, MessageCircle, Send, X, Flag, AlertTriangle, Star, Bookmark, Eye, Globe } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -264,6 +264,7 @@ export default function ResourcePage() {
             case 'video': return <Video className="w-12 h-12 text-primary" />;
             case 'image': return <ImageIcon className="w-12 h-12 text-primary" />;
             case 'link': return <LinkIcon className="w-12 h-12 text-primary" />;
+            case 'html': return <Globe className="w-12 h-12 text-primary" />;
             default: return <FileText className="w-12 h-12 text-primary" />;
         }
     };
@@ -848,6 +849,29 @@ export default function ResourcePage() {
                             </div>
                         )}
 
+                        {/* Interactive HTML page preview box */}
+                        {downloadUrl && !getYouTubeEmbedUrl(downloadUrl) && !isPdfUrl(downloadUrl) && !getGoogleWorkspaceEmbedUrl(downloadUrl) && resource.type === 'html' && (
+                            <div className="border rounded-xl p-5 sm:p-6 bg-slate-50 hover:bg-slate-100/80 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-4 shadow-sm hover:shadow-md mt-6">
+                                <div className="flex items-start sm:items-center gap-4 w-full sm:w-auto">
+                                    <div className="p-3 bg-primary/10 rounded-full text-primary shrink-0 mt-1 sm:mt-0">
+                                        <Globe className="w-6 h-6" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="font-semibold text-slate-900 mb-1 text-base sm:text-lg">Page HTML Interactive</h4>
+                                        <p className="text-sm text-slate-500 truncate w-full max-w-[200px] xs:max-w-xs sm:max-w-sm md:max-w-md">
+                                            {resource.fileName || 'page.html'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <Button asChild className="w-full sm:w-auto shrink-0 gap-2 font-medium">
+                                    <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="w-4 h-4" />
+                                        Ouvrir la page
+                                    </a>
+                                </Button>
+                            </div>
+                        )}
+
                         {((resource.fields && resource.fields.length > 0) || resource.field) && (
                             <div className="border-t pt-4">
                                 <p className="text-xs font-semibold text-slate-600 mb-3">Filières</p>
@@ -870,8 +894,8 @@ export default function ResourcePage() {
                     <CardFooter className="py-4 border-t flex flex-wrap gap-4 justify-between items-center">
                         <Button asChild className="gap-2 flex-1 sm:flex-none">
                             <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
-                                {resource.type === 'link' ? <ExternalLink className="w-4 h-4" /> : resource.type === 'video' ? <Play className="w-4 h-4" /> : <Download className="w-4 h-4" />}
-                                {resource.type === 'link' ? 'Accéder' : resource.type === 'video' ? 'Ouvrir' : 'Télécharger'}
+                                {(resource.type === 'link' || resource.type === 'html') ? <ExternalLink className="w-4 h-4" /> : resource.type === 'video' ? <Play className="w-4 h-4" /> : <Download className="w-4 h-4" />}
+                                {(resource.type === 'link' || resource.type === 'html' || resource.type === 'video') ? 'Ouvrir' : 'Télécharger'}
                             </a>
                         </Button>
                         <Button variant="outline" size="sm" onClick={handleShare} className="gap-2 text-slate-600 hover:text-primary flex-1 sm:flex-none">

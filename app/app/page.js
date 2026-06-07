@@ -194,8 +194,8 @@ export default function AppHome() {
                 "@context": "https://schema.org",
                 "@type": "EducationalOrganization",
                 "name": "EST Tétouan Community App",
-                "url": "https://estt-community.vercel.app/app",
-                "logo": "https://estt-community.vercel.app/favicon.ico",
+                "url": "https://estt.ma/app",
+                "logo": "https://estt.ma/favicon.ico",
                 "description": "Version optimisée pour mobile de la plateforme collaborative EST Tétouan Community",
             }} />
 

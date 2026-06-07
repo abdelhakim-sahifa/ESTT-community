@@ -48,7 +48,7 @@ export async function generateMetadata({ params }) {
                 title: post.title,
                 description: post.content?.substring(0, 160) || `${typeLabel} publiée par ${clubName}`,
                 type: 'article',
-                url: `https://estt-community.vercel.app/clubs/${clubId}/posts/${postId}`,
+                url: `https://estt.ma/clubs/${clubId}/posts/${postId}`,
                 publishedTime: post.createdAt ? new Date(post.createdAt).toISOString() : undefined,
                 authors: post.author ? [post.author] : undefined,
                 images: post.imageUrl ? [

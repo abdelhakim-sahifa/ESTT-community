@@ -171,7 +171,7 @@ export default function ClubProfilePage() {
         "@type": "Organization",
         "name": club.name,
         "description": club.description,
-        "url": `https://estt-community.vercel.app/clubs/${clubId}`,
+        "url": `https://estt.ma/clubs/${clubId}`,
         "logo": club.logo,
         "parentOrganization": {
             "@type": "EducationalOrganization",

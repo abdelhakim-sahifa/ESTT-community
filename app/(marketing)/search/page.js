@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, Search as SearchIcon, User, BookOpen, Sparkles } from 'lucide-react';
+import { Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, Search as SearchIcon, User, BookOpen, Sparkles, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 function SearchContent() {
     const searchParams = useSearchParams();
@@ -138,6 +138,7 @@ function SearchContent() {
             case 'video': return <Video className="w-5 h-5" />;
             case 'image': return <ImageIcon className="w-5 h-5" />;
             case 'link': return <LinkIcon className="w-5 h-5" />;
+            case 'html': return <Globe className="w-5 h-5" />;
             default: return <FileText className="w-5 h-5" />;
         }
     };

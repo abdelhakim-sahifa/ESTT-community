@@ -207,7 +207,7 @@ export default function ClubRequestPage() {
                             'Admin',
                             'Nouvelle Demande de Club',
                             `Une nouvelle demande de club "<strong>${requestData.clubName}</strong>" a été soumise par ${requestData.requestedBy}.`,
-                            'https://estt-community.vercel.app/admin'
+                            'https://estt.ma/admin'
                         );
 
                         await fetch('/api/send-email', {

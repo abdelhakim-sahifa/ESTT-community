@@ -13,7 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Badge, Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User, Star, BookOpen, ClipboardList, FlaskConical, FileCheck, Layers } from 'lucide-react';
+import { Badge, Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User, Star, BookOpen, ClipboardList, FlaskConical, FileCheck, Layers, Globe } from 'lucide-react';
 
 const RESOURCE_CATEGORIES = [
     { id: 'Cours', label: 'Cours', icon: <BookOpen className="w-5 h-5 text-blue-500" /> },
@@ -167,6 +167,7 @@ export default function BrowsePage() {
             case 'video': return <Video className="w-5 h-5" />;
             case 'image': return <ImageIcon className="w-5 h-5" />;
             case 'link': return <LinkIcon className="w-5 h-5" />;
+            case 'html': return <Globe className="w-5 h-5" />;
             default: return <FileText className="w-5 h-5" />;
         }
     };

@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { db as staticDb } from '@/lib/data';
-import { uploadResourceFile } from '@/lib/drive'; // SWAPPED FROM SUPABASE TO DRIVE
+import { uploadResourceFile as uploadResourceFileToDrive } from '@/lib/drive';
+import { uploadResourceFile as uploadResourceFileToSupabase } from '@/lib/supabase';
 import { db, ref, push, set, get } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -79,6 +80,7 @@ export default function ContributePage() {
             case 'powerpoint': return '.ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation';
             case 'excel': return '.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
             case 'word': return '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+            case 'html': return '.html,.htm,text/html';
             case 'autre': return '*';
             default: return '*';
         }
@@ -92,6 +94,7 @@ export default function ContributePage() {
             case 'powerpoint': return 'PowerPoint (.ppt, .pptx)';
             case 'excel': return 'Excel (.xls, .xlsx)';
             case 'word': return 'Word (.doc, .docx)';
+            case 'html': return 'Page HTML (.html)';
             case 'autre': return 'Tout format (auto-détecté)';
             default: return 'Fichier';
         }
@@ -106,6 +109,7 @@ export default function ContributePage() {
         if (['xls', 'xlsx', 'csv'].includes(ext)) return 'excel';
         if (['doc', 'docx'].includes(ext)) return 'word';
         if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return 'image';
+        if (['html', 'htm'].includes(ext)) return 'html';
         return 'autre';
     };
 
@@ -171,28 +175,37 @@ export default function ContributePage() {
                     throw new Error("Le fichier dépasse la taille maximale de 10 Mo.");
                 }
 
-                // Get human readable names for folder creation
-                const fieldObj = staticDb.fields.find(f => f.id === formData.field);
-                const moduleId = formData.module;
-                const moduleObj = staticDb.modules[`${formData.field}-${formData.semester}`]?.find(m => m.id === moduleId);
+                if (formData.type === 'html') {
+                    // Upload to Supabase
+                    const uploaded = await uploadResourceFileToSupabase(file);
+                    if (!uploaded || !uploaded.publicUrl) {
+                        throw new Error("Erreur lors de l'upload du fichier HTML.");
+                    }
+                    resourceUrl = uploaded.publicUrl;
+                } else {
+                    // Get human readable names for folder creation
+                    const fieldObj = staticDb.fields.find(f => f.id === formData.field);
+                    const moduleId = formData.module;
+                    const moduleObj = staticDb.modules[`${formData.field}-${formData.semester}`]?.find(m => m.id === moduleId);
 
-                const folderMetadata = {
-                    fieldName: fieldObj ? fieldObj.name : formData.field,
-                    semester: formData.semester,
-                    moduleName: moduleObj ? moduleObj.name : moduleId,
-                    professorName: formData.professor,
-                    displayTitle: formData.title
-                };
+                    const folderMetadata = {
+                        fieldName: fieldObj ? fieldObj.name : formData.field,
+                        semester: formData.semester,
+                        moduleName: moduleObj ? moduleObj.name : moduleId,
+                        professorName: formData.professor,
+                        displayTitle: formData.title
+                    };
 
-                // Uses the new lib/drive.js which calls /api/upload-drive with metadata
-                const uploaded = await uploadResourceFile(file, folderMetadata, (progress) => {
-                    setUploadProgress(progress);
-                });
+                    // Uses the new lib/drive.js which calls /api/upload-drive with metadata
+                    const uploaded = await uploadResourceFileToDrive(file, folderMetadata, (progress) => {
+                        setUploadProgress(progress);
+                    });
 
-                if (!uploaded || !uploaded.publicUrl) {
-                    throw new Error("Erreur lors de l'upload du fichier.");
+                    if (!uploaded || !uploaded.publicUrl) {
+                        throw new Error("Erreur lors de l'upload du fichier.");
+                    }
+                    resourceUrl = uploaded.publicUrl;
                 }
-                resourceUrl = uploaded.publicUrl;
                 setUploadProgress(100);
             }
 
@@ -215,7 +228,7 @@ export default function ContributePage() {
                 authorName: formData.anonymous ? 'Anonyme' : (profile?.firstName ? `${profile.firstName} ${profile.lastName}` : 'Étudiant'),
                 createdAt: timestamp,
                 unverified: true,
-                storageType: 'google-drive'
+                storageType: formData.type === 'html' ? 'supabase' : 'google-drive'
             };
 
             const resourcesRef = ref(db, 'resources');
@@ -254,7 +267,7 @@ export default function ContributePage() {
                     title: formData.title,
                     timestamp: timestamp,
                     unverified: true,
-                    storageType: 'google-drive'
+                    storageType: formData.type === 'html' ? 'supabase' : 'google-drive'
                 });
             }
 
@@ -299,7 +312,7 @@ export default function ContributePage() {
                             'Admin',
                             'Nouvelle Ressource (Drive)',
                             `Une nouvelle ressource "<strong>${contributionData.title}</strong>" a été soumise pour le module ${contributionData.module} par ${contributionData.authorName}.`,
-                            'https://estt-community.vercel.app/admin'
+                            'https://estt.ma/admin'
                         );
 
                         await fetch('/api/send-email', {
@@ -656,6 +669,7 @@ export default function ContributePage() {
                                             <SelectItem value="excel">Excel / Tableur</SelectItem>
                                             <SelectItem value="word">Word</SelectItem>
                                             <SelectItem value="image">Image</SelectItem>
+                                            <SelectItem value="html">Page HTML (.html)</SelectItem>
                                             <SelectItem value="video">Vidéo (lien)</SelectItem>
                                             <SelectItem value="link">Lien externe</SelectItem>
                                             <SelectItem value="autre">Autre (auto-détecté)</SelectItem>

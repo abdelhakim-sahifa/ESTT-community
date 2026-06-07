@@ -37,7 +37,7 @@ export async function generateMetadata({ params }) {
                 title: club.name,
                 description: club.description || `Découvrez ${club.name}, un club étudiant de l'EST Tétouan`,
                 type: 'website',
-                url: `https://estt-community.vercel.app/clubs/${clubId}`,
+                url: `https://estt.ma/clubs/${clubId}`,
                 images: club.logo ? [
                     {
                         url: club.logo,
