@@ -543,6 +543,11 @@ export default function PublicProfilePage() {
                                         </Link>
                                     )}
                                 </h1>
+                                {profile.email && (
+                                    <p className="text-slate-400 text-sm mt-0.5 select-all font-normal">
+                                        @{profile.email.split('@')[0]}
+                                    </p>
+                                )}
                                 <p className="text-slate-500 text-sm mt-1">
                                     {profile.filiere} · {level === 1 ? 'S1/S2' : 'S3/S4'}
                                 </p>
