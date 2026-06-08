@@ -26,8 +26,8 @@ export const metadata = {
     openGraph: {
         type: 'website',
         locale: 'fr_FR',
-        url: 'https://estt.ma',
-        siteName: 'EST Tétouan Community',
+        url: 'https://www.estt.ma',
+        siteName: 'EST Tétouan - Ressources Étudiants',
         title: 'EST Tétouan - Ressources Étudiants',
         description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
         images: [
@@ -43,14 +43,26 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'EST Tétouan - Ressources Étudiants',
         description: 'Plateforme collaborative de partage de ressources académiques pour les étudiants de l\'EST Tétouan',
-        images: ['https://estt.ma/favicon.ico'],
+        images: ['https://www.estt.ma/favicon.ico'],
     },
+};
+
+const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    'name': 'EST Tétouan - Ressources Étudiants',
+    'alternateName': ['EST Tétouan', 'EST Tétouan Community'],
+    'url': 'https://www.estt.ma/',
 };
 
 export default function RootLayout({ children }) {
     return (
         <html lang="fr" suppressHydrationWarning>
             <head>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+                />
                 <link rel="manifest" href="/manifest.json" />
                 <meta name="theme-color" content="#2563eb" />
                 <meta name="mobile-web-app-capable" content="yes" />
