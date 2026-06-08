@@ -157,7 +157,6 @@ export default function ProfileProjectsPage() {
 
                     <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
                         <div className="space-y-3 sm:space-y-4">
-                            <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Portfolio projets</p>
                             <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
                                 Les projets de {displayName}
                             </h1>

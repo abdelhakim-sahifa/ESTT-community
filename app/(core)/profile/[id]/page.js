@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import UnifiedDialog from '@/components/ui/UnifiedDialog';
-import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, X, Megaphone, ArrowRight, FileText, Award, Camera, Upload, BadgeCheck, ShieldCheck, Trophy, Zap, LogOut, Bug, Gem, MessageSquare } from 'lucide-react';
+import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, X, Megaphone, ArrowRight, FileText, Award, Camera, Upload, BadgeCheck, ShieldCheck, Trophy, Zap, LogOut, Bug, Gem, MessageSquare, Settings } from 'lucide-react';
 import { cn, getUserLevel } from '@/lib/utils';
 import { uploadToImgBB } from '@/lib/uploadUtils';
 
@@ -549,7 +549,7 @@ export default function PublicProfilePage() {
                                     </p>
                                 )}
                                 <p className="text-slate-500 text-sm mt-1">
-                                    {profile.filiere} · {level === 1 ? 'S1/S2' : 'S3/S4'}
+                                    {profile.filiere?.toUpperCase()} · {level === 1 ? 'S1/S2' : 'S3/S4'}
                                 </p>
                                 
                                 {isSubscribed && (
@@ -575,11 +575,9 @@ export default function PublicProfilePage() {
                                                     Modifier
                                                 </Button>
                                             </DialogTrigger>
-                                            <Button asChild variant="outline" size="sm" className="rounded-full px-5 gap-2">
-                                                <Link href="/ads-portal/dashboard">
-                                                    <Megaphone className="w-3.5 h-3.5" />
-                                                    Annonces
-                                                </Link>
+                                            <Button variant="outline" size="sm" className="rounded-full px-5 gap-2">
+                                                <Settings className="w-3.5 h-3.5" />
+                                                Paramètres
                                             </Button>
                                             <DialogContent className="sm:max-w-md rounded-2xl">
                                                 <DialogHeader>
@@ -901,23 +899,7 @@ export default function PublicProfilePage() {
                     {/* Right Column */}
                     <div className="lg:col-span-2 space-y-8">
 
-                        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                <div className="space-y-2">
-                                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Portfolio projets</p>
-                                    <h2 className="text-2xl font-black text-slate-950">Challenges, builds et showcase</h2>
-                                    <p className="max-w-2xl text-sm leading-relaxed text-slate-600">
-                                        Un espace dedie pour voir les projets proposes, les implementations publiees et les creations partagees dans le showcase.
-                                    </p>
-                                </div>
-                                <Button asChild className="rounded-full">
-                                    <Link href={`/profile/${id}/projects`}>
-                                        <Trophy className="mr-2 h-4 w-4" />
-                                        Voir les projets
-                                    </Link>
-                                </Button>
-                            </div>
-                        </section>
+
 
                         {/* Contributions (horizontal scroll) */}
                         <section>
