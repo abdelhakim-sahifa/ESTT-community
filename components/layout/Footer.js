@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Heart, Github, Globe, MessageCircle, BookOpen, ExternalLink, ShieldCheck, Mail, Info } from 'lucide-react';
+import { Heart, Github, Globe, MessageCircle, BookOpen, ExternalLink, ShieldCheck, Mail, Info, Phone } from 'lucide-react';
 import LatestReleaseBadge from '../LatestReleaseBadge';
 
 export default function Footer() {
@@ -86,6 +86,18 @@ export default function Footer() {
                             <a href="mailto:estt.community+dev@gmail.com"
                                 className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                 <Mail className="w-5 h-5" />
+                            </a>
+                        </div>
+
+                        {/* Contact Info */}
+                        <div className="flex flex-col items-center lg:items-start gap-2 pt-1">
+                            <a href="tel:+212715307349" className="flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors">
+                                <Phone className="w-4 h-4 shrink-0" />
+                                +212 715 307 349
+                            </a>
+                            <a href="mailto:contact@estt.ma" className="flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors">
+                                <Mail className="w-4 h-4 shrink-0" />
+                                contact@estt.ma
                             </a>
                         </div>
                     </div>
