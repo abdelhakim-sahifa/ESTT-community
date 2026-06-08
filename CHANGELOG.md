@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.22.4...v1.23.0) (2026-06-07)
+
+
+### Features
+
+* redirect old domain to estt.ma + update all domain references ([7515b54](https://github.com/abdelhakim-sahifa/ESTT-community/commit/7515b54579f551c44e93c44607031e832e721da1))
+
 ## [1.22.4](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.22.3...v1.22.4) (2026-05-24)
 
 
