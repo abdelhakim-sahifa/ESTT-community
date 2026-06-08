@@ -12,6 +12,7 @@ import ProjectSubmissionCard from '@/components/features/projects/ProjectSubmiss
 import ProjectShowcaseCard from '@/components/features/projects/ProjectShowcaseCard';
 import { normalizeProject, normalizeShowcase, normalizeSubmission, sortByNewest } from '@/lib/projects';
 import { ArrowLeft, Layers3, Loader2, Sparkles, Trophy } from 'lucide-react';
+import { resolveUidFromIdentifier } from '@/lib/utils';
 
 export default function ProfileProjectsPage() {
     const params = useParams();
@@ -19,27 +20,36 @@ export default function ProfileProjectsPage() {
     const profileId = params.id;
 
     const [profile, setProfile] = useState(null);
+    const [resolvedUid, setResolvedUid] = useState(null);
     const [projects, setProjects] = useState([]);
     const [submissions, setSubmissions] = useState([]);
     const [showcases, setShowcases] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!profileId) return;
+        resolveUidFromIdentifier(db, ref, get, profileId).then(uid => {
+            if (uid) setResolvedUid(uid);
+            else setLoading(false);
+        });
+    }, [profileId]);
+
+    useEffect(() => {
         const fetchPortfolio = async () => {
-            if (!profileId || !db) {
+            if (!resolvedUid || !db) {
                 setLoading(false);
                 return;
             }
 
             try {
                 const [profileSnap, projectsSnap] = await Promise.all([
-                    get(ref(db, `users/${profileId}`)),
-                    get(query(ref(db, 'projects'), orderByChild('createdBy'), equalTo(profileId))),
+                    get(ref(db, `users/${resolvedUid}`)),
+                    get(query(ref(db, 'projects'), orderByChild('createdBy'), equalTo(resolvedUid))),
                 ]);
 
                 setProfile(profileSnap.exists() ? profileSnap.val() : null);
 
-                const isOwner = user?.uid === profileId;
+                const isOwner = user?.uid === resolvedUid;
 
                 setProjects(
                     projectsSnap.exists()
@@ -54,7 +64,7 @@ export default function ProfileProjectsPage() {
                 let submissionsList = [];
                 try {
                     const submissionsSnap = await get(
-                        query(ref(db, 'projectSubmissions'), orderByChild('authorId'), equalTo(profileId))
+                        query(ref(db, 'projectSubmissions'), orderByChild('authorId'), equalTo(resolvedUid))
                     );
                     if (submissionsSnap.exists()) {
                         submissionsList = Object.entries(submissionsSnap.val())
@@ -73,7 +83,7 @@ export default function ProfileProjectsPage() {
                                 .map(([id, item]) => normalizeSubmission(id, item))
                                 .filter(
                                     (item) =>
-                                        item.authorId === profileId &&
+                                        item.authorId === resolvedUid &&
                                         (isOwner || item.status === 'approved')
                                 );
                         }
@@ -93,7 +103,7 @@ export default function ProfileProjectsPage() {
                 let showcasesList = [];
                 try {
                     const showcasesSnap = await get(
-                        query(ref(db, 'projectShowcases'), orderByChild('authorId'), equalTo(profileId))
+                        query(ref(db, 'projectShowcases'), orderByChild('authorId'), equalTo(resolvedUid))
                     );
                     if (showcasesSnap.exists()) {
                         showcasesList = Object.entries(showcasesSnap.val())
@@ -112,7 +122,7 @@ export default function ProfileProjectsPage() {
                                 .map(([id, item]) => normalizeShowcase(id, item))
                                 .filter(
                                     (item) =>
-                                        item.authorId === profileId &&
+                                        item.authorId === resolvedUid &&
                                         (isOwner || item.status === 'approved')
                                 );
                         }
@@ -130,7 +140,7 @@ export default function ProfileProjectsPage() {
         };
 
         fetchPortfolio();
-    }, [profileId, user]);
+    }, [resolvedUid, user]);
 
     const displayName = profile?.firstName
         ? `${profile.firstName}${profile?.lastName ? ` ${profile.lastName}` : ''}`
@@ -149,7 +159,7 @@ export default function ProfileProjectsPage() {
             <section className="border-b border-slate-200 bg-white/80 backdrop-blur">
                 <div className="container px-4 py-12 md:px-6 md:py-16">
                     <Button asChild variant="ghost" className="mb-6 rounded-full">
-                        <Link href={`/profile/${profileId}`}>
+                        <Link href={`/profile/${id}`}>
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Retour au profil
                         </Link>

@@ -5,19 +5,29 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { db, ref, get } from '@/lib/firebase';
 import { Loader2, ArrowLeft, ArrowRight, FileText } from 'lucide-react';
+import { resolveUidFromIdentifier } from '@/lib/utils';
 
 export default function ContributionsPage() {
     const { id } = useParams();
+    const [resolvedUid, setResolvedUid] = useState(null);
     const [contributions, setContributions] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!id || !db) return;
+        if (!id) return;
+        resolveUidFromIdentifier(db, ref, get, id).then(uid => {
+            if (uid) setResolvedUid(uid);
+            else setLoading(false);
+        });
+    }, [id]);
+
+    useEffect(() => {
+        if (!resolvedUid || !db) return;
 
         const fetchContributions = async () => {
             setLoading(true);
             try {
-                const userRef = ref(db, `users/${id}/contributions`);
+                const userRef = ref(db, `users/${resolvedUid}/contributions`);
                 const snap = await get(userRef);
                 if (snap.exists()) {
                     const data = snap.val();
@@ -38,7 +48,8 @@ export default function ContributionsPage() {
         };
 
         fetchContributions();
-    }, [id]);
+    }, [resolvedUid]);
+
 
     return (
         <main className="min-h-screen bg-white py-12 border-t border-slate-100">

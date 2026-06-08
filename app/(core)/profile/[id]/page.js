@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { IMAGE_SIZES } from '@/lib/image-constants';
@@ -14,11 +14,12 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import UnifiedDialog from '@/components/ui/UnifiedDialog';
 import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, X, Megaphone, ArrowRight, FileText, Award, Camera, Upload, BadgeCheck, ShieldCheck, Trophy, Zap, LogOut, Bug, Gem, MessageSquare, Settings } from 'lucide-react';
-import { cn, getUserLevel } from '@/lib/utils';
+import { cn, getUserLevel, resolveUidFromIdentifier } from '@/lib/utils';
 import { uploadToImgBB } from '@/lib/uploadUtils';
 
 export default function PublicProfilePage() {
     const { id } = useParams();
+    const router = useRouter();
     const { user: currentUser, signOut } = useAuth();
     const { showWarning, showError, showSuccess, showInfo, showConfirm } = useDialog();
     const [profile, setProfile] = useState(null);
@@ -52,16 +53,40 @@ export default function PublicProfilePage() {
     const [isVerificationDialogOpen, setIsVerificationDialogOpen] = useState(false);
     const [affiliatedClub, setAffiliatedClub] = useState(null);
 
+    const [resolvedUid, setResolvedUid] = useState(null);
+    const decodedId = id ? decodeURIComponent(id) : null;
+    const isUsername = decodedId && decodedId.startsWith('@');
+
     useEffect(() => {
         if (!id) return;
+        const resolve = async () => {
+            const uid = await resolveUidFromIdentifier(db, ref, get, id);
+            if (uid) {
+                setResolvedUid(uid);
+            } else {
+                setError("Profil introuvable");
+                setLoading(false);
+            }
+        };
+        resolve();
+    }, [id]);
 
-        const profileRef = ref(db, `users/${id}`);
+    useEffect(() => {
+        if (!resolvedUid) return;
+
+        const profileRef = ref(db, `users/${resolvedUid}`);
         const unsubscribe = onValue(profileRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 setProfile(data);
                 setStarCount(data.stars || 0);
                 setIsStarred(data.starredBy && currentUser && data.starredBy[currentUser.uid]);
+                
+                // Redirect legacy UID URLs to new @username URLs
+                if (!isUsername && data.email) {
+                    const username = data.email.split('@')[0];
+                    router.replace(`/profile/@${username}`);
+                }
             } else {
                 setError("Profil introuvable");
             }
@@ -69,7 +94,7 @@ export default function PublicProfilePage() {
         });
 
         return () => unsubscribe();
-    }, [id, currentUser]);
+    }, [resolvedUid, isUsername, currentUser, router]);
 
     useEffect(() => {
         if (profile) {
@@ -86,12 +111,12 @@ export default function PublicProfilePage() {
 
     // Fetch saved resources for own profile
     useEffect(() => {
-        if (!id || !currentUser || currentUser.uid !== id || !db) return;
+        if (!resolvedUid || !currentUser || currentUser.uid !== resolvedUid || !db) return;
 
         const fetchFavorites = async () => {
             setLoadingFavorites(true);
             try {
-                const favRef = ref(db, `userFavorites/${id}`);
+                const favRef = ref(db, `userFavorites/${resolvedUid}`);
                 const snap = await get(favRef);
                 if (snap.exists()) {
                     const data = snap.val();
@@ -114,10 +139,10 @@ export default function PublicProfilePage() {
         };
 
         fetchFavorites();
-    }, [id, currentUser]);
+    }, [resolvedUid, currentUser]);
 
     useEffect(() => {
-        if (!id || !currentUser || currentUser.uid !== id) return;
+        if (!resolvedUid || !currentUser || currentUser.uid !== resolvedUid) return;
 
         const fetchTickets = async () => {
             setLoadingTickets(true);
@@ -128,7 +153,7 @@ export default function PublicProfilePage() {
                     const data = snap.val();
                     const userTickets = Object.entries(data)
                         .map(([tid, t]) => ({ id: tid, ...t }))
-                        .filter(t => t.userId === id)
+                        .filter(t => t.userId === resolvedUid)
                         .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                     setTickets(userTickets);
                 }
@@ -139,10 +164,10 @@ export default function PublicProfilePage() {
             }
         };
         fetchTickets();
-    }, [id, currentUser]);
+    }, [resolvedUid, currentUser]);
 
     useEffect(() => {
-        if (!profile || !id) return;
+        if (!profile || !resolvedUid) return;
 
         const fetchUserClubs = async () => {
             setLoadingClubs(true);
@@ -152,7 +177,7 @@ export default function PublicProfilePage() {
                 if (snap.exists()) {
                     const allClubs = snap.val();
                     const userEmail = profile.email?.toLowerCase();
-                    const userId = id;
+                    const userId = resolvedUid;
 
                     const associatedClubs = Object.entries(allClubs).map(([cId, club]) => {
                         const inOrg = club.organizationalChart && Object.values(club.organizationalChart).find(m =>
@@ -199,17 +224,17 @@ export default function PublicProfilePage() {
         };
 
         fetchUserClubs();
-    }, [profile, id]);
+    }, [profile, resolvedUid]);
 
     const handleStar = async () => {
         if (!currentUser) { showWarning("Vous devez être connecté pour liker un profil."); return; }
-        if (currentUser.uid === id) { showWarning("Vous ne pouvez pas liker votre propre profil."); return; }
+        if (currentUser.uid === resolvedUid) { showWarning("Vous ne pouvez pas liker votre propre profil."); return; }
 
         const newIsStarred = !isStarred;
         const newStarCount = newIsStarred ? starCount + 1 : Math.max(0, starCount - 1);
 
         try {
-            await update(ref(db, `users/${id}`), {
+            await update(ref(db, `users/${resolvedUid}`), {
                 stars: newStarCount,
                 [`starredBy/${currentUser.uid}`]: newIsStarred || null
             });
@@ -234,7 +259,7 @@ export default function PublicProfilePage() {
         setBannerUploading(true);
         try {
             const url = await uploadToImgBB(file);
-            await update(ref(db, `users/${id}`), { bannerUrl: url, updatedAt: Date.now() });
+            await update(ref(db, `users/${resolvedUid}`), { bannerUrl: url, updatedAt: Date.now() });
             setProfile(prev => ({ ...prev, bannerUrl: url }));
             setFormData(prev => ({ ...prev, bannerUrl: url }));
         } catch (err) {
@@ -258,7 +283,7 @@ export default function PublicProfilePage() {
         setAvatarUploading(true);
         try {
             const url = await uploadToImgBB(file);
-            await update(ref(db, `users/${id}`), { photoUrl: url, updatedAt: Date.now() });
+            await update(ref(db, `users/${resolvedUid}`), { photoUrl: url, updatedAt: Date.now() });
             setProfile(prev => ({ ...prev, photoUrl: url }));
             setFormData(prev => ({ ...prev, photoUrl: url }));
         } catch (err) {
@@ -270,10 +295,10 @@ export default function PublicProfilePage() {
     };
 
     const handleSaveProfile = async () => {
-        if (!currentUser || currentUser.uid !== id) return;
+        if (!currentUser || currentUser.uid !== resolvedUid) return;
         setSaving(true);
         try {
-            await update(ref(db, `users/${id}`), { ...formData, updatedAt: Date.now() });
+            await update(ref(db, `users/${resolvedUid}`), { ...formData, updatedAt: Date.now() });
             setIsEditOpen(false);
         } catch (err) {
             console.error("Error updating profile:", err);
@@ -308,7 +333,7 @@ export default function PublicProfilePage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'send',
-                    uid: id,
+                    uid: resolvedUid,
                     email: profile.email,
                     firstName: profile.firstName
                 })
@@ -338,7 +363,7 @@ export default function PublicProfilePage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'verify',
-                    uid: id,
+                    uid: resolvedUid,
                     email: profile.email,
                     code: verificationCode
                 })
@@ -435,7 +460,7 @@ export default function PublicProfilePage() {
                                     />
                                 )}
 
-                                {currentUser && currentUser.uid === id && (
+                                {currentUser && currentUser.uid === resolvedUid && (
                                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px]">
                                         <Button
                                             variant="secondary"
@@ -482,7 +507,7 @@ export default function PublicProfilePage() {
                                         )}
                                     </div>
 
-                                    {currentUser && currentUser.uid === id && (
+                                    {currentUser && currentUser.uid === resolvedUid && (
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center cursor-pointer" onClick={async () => {
                                             const confirmed = await showConfirm("Cette image sera hébergée sur un service tiers (ImgBB). Voulez-vous continuer ?", { type: 'info', title: 'Upload d\'image', confirmLabel: 'Continuer' });
                                             if (confirmed) {
@@ -567,7 +592,7 @@ export default function PublicProfilePage() {
                                 )}
 
                                 <div className="flex justify-center gap-2 mt-6">
-                                    {currentUser && currentUser.uid === id ? (
+                                    {currentUser && currentUser.uid === resolvedUid ? (
                                         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                                             <DialogTrigger asChild>
                                                 <Button className="rounded-full px-5 gap-2" size="sm">
@@ -715,7 +740,7 @@ export default function PublicProfilePage() {
                                             </Button>
 
                                             <Button asChild variant="outline" size="sm" className="rounded-full px-5 gap-2 text-[11px] font-bold">
-                                                <Link href={`/messages/${id}`}>
+                                                <Link href={`/messages/${resolvedUid}`}>
                                                     <MessageSquare className="w-3.5 h-3.5" />
                                                     Message
                                                 </Link>
@@ -802,7 +827,7 @@ export default function PublicProfilePage() {
                         </div>
 
                         {/* Account & Verification */}
-                        {currentUser && currentUser.uid === id && (
+                        {currentUser && currentUser.uid === resolvedUid && (
                             <div className="border border-slate-200 rounded-xl p-5 space-y-4">
                                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Compte</h3>
 
@@ -955,7 +980,7 @@ export default function PublicProfilePage() {
                         </section>
 
                         {/* Saved resources (own profile) */}
-                        {currentUser && currentUser.uid === id && (
+                        {currentUser && currentUser.uid === resolvedUid && (
                             <section>
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
@@ -1043,7 +1068,7 @@ export default function PublicProfilePage() {
                                                 <p className="text-xs font-bold text-slate-700 truncate group-hover:text-primary transition-colors">{club.name}</p>
                                             </Link>
 
-                                            {currentUser && currentUser.uid === id && club.userMemberId && (
+                                            {currentUser && currentUser.uid === resolvedUid && club.userMemberId && (
                                                 <Link
                                                     href={`/clubs/${club.id}/certificate/${club.userMemberId}`}
                                                     className="mt-2 text-[10px] font-bold text-primary flex items-center justify-center gap-1 hover:underline pt-2 border-t border-slate-50"
@@ -1063,7 +1088,7 @@ export default function PublicProfilePage() {
                         </section>
 
                         {/* Tickets (own profile only) */}
-                        {currentUser && currentUser.uid === id && (
+                        {currentUser && currentUser.uid === resolvedUid && (
                             <section>
                                 <h2 className="text-base font-bold text-slate-900 mb-4">Mes Tickets</h2>
                                 <div className="grid gap-2">

@@ -6,20 +6,30 @@ import Link from 'next/link';
 import { db, ref, get } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Loader2, FileText, ArrowLeft, ArrowRight } from 'lucide-react';
+import { resolveUidFromIdentifier } from '@/lib/utils';
 
 export default function FavoritesPage() {
     const { id } = useParams();
     const { user: currentUser } = useAuth();
+    const [resolvedUid, setResolvedUid] = useState(null);
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!id || !db) return;
+        if (!id) return;
+        resolveUidFromIdentifier(db, ref, get, id).then(uid => {
+            if (uid) setResolvedUid(uid);
+            else setLoading(false);
+        });
+    }, [id]);
+
+    useEffect(() => {
+        if (!resolvedUid || !db) return;
 
         const fetchFavorites = async () => {
             setLoading(true);
             try {
-                const favRef = ref(db, `userFavorites/${id}`);
+                const favRef = ref(db, `userFavorites/${resolvedUid}`);
                 const snap = await get(favRef);
                 if (snap.exists()) {
                     const data = snap.val();
@@ -41,9 +51,10 @@ export default function FavoritesPage() {
         };
 
         fetchFavorites();
-    }, [id]);
+    }, [resolvedUid]);
 
-    const isOwnProfile = currentUser && currentUser.uid === id;
+    const isOwnProfile = currentUser && currentUser.uid === resolvedUid;
+
 
     return (
         <main className="min-h-screen bg-white py-12 border-t border-slate-100">
