@@ -1,3 +1,10 @@
+## [1.24.3](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.24.2...v1.24.3) (2026-06-08)
+
+
+### Bug Fixes
+
+* **seo:** fixing seo for google search console ([43d75a4](https://github.com/abdelhakim-sahifa/ESTT-community/commit/43d75a462d83de66f12ff1bb79e02f26a5712e12))
+
 ## [1.24.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.24.1...v1.24.2) (2026-06-08)
 
 ## [1.24.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.24.0...v1.24.1) (2026-06-08)
