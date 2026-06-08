@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.23.0...v1.24.0) (2026-06-08)
+
+
+### Features
+
+* **profile:** chaging id with username ([461e194](https://github.com/abdelhakim-sahifa/ESTT-community/commit/461e19498883f85bd95535dc4e1fea2f67d6b6f4))
+
 # [1.23.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.22.4...v1.23.0) (2026-06-07)
 
 
