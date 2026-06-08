@@ -363,11 +363,38 @@ export default function BrowsePage() {
                         </div>
                     ) : (
                         <div className="space-y-8 md:space-y-10">
-                            {/* Student Ad Card - Hero Position if available */}
+                            {/* Student Ad Card - compact on mobile, hero on md+ */}
                             {ads.length > 0 && (
-                                <div className="bg-gradient-to-r from-primary/5 to-transparent border border-primary/10 rounded-2xl overflow-hidden p-6 relative">
-                                    <div className="flex flex-col md:flex-row gap-8 items-center">
-                                        <div className="w-full md:w-1/3 aspect-video relative rounded-xl overflow-hidden shadow-2xl border-4 border-white">
+                                <div className="bg-gradient-to-r from-primary/5 to-transparent border border-primary/10 rounded-xl overflow-hidden relative">
+
+                                    {/* ── Mobile layout (< md) ── 16:4 banner + content below */}
+                                    <div className="flex md:hidden flex-col">
+                                        {ads[0].url && (
+                                            <div className="w-full aspect-video overflow-hidden">
+                                                <img src={ads[0].url} alt="" className="w-full h-full object-cover" />
+                                            </div>
+                                        )}
+                                        <div className="flex items-center gap-3 p-3">
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-1.5 mb-0.5">
+                                                    <Badge className="bg-primary/10 text-primary border-0 text-[9px] font-black uppercase py-0 px-1.5">Focus</Badge>
+                                                </div>
+                                                <p className="text-sm font-bold text-slate-900 line-clamp-1">{ads[0].title}</p>
+                                                <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">{ads[0].description}</p>
+                                            </div>
+                                            {ads[0].link && (
+                                                <a href={ads[0].link} target="_blank" rel="noopener noreferrer" className="shrink-0">
+                                                    <span className="text-xs font-bold text-primary flex items-center gap-1 bg-primary/5 px-2.5 py-1 rounded-full whitespace-nowrap">
+                                                        Voir <ArrowRight className="w-3 h-3" />
+                                                    </span>
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* ── Desktop layout (md+) ── hero card */}
+                                    <div className="hidden md:flex flex-row gap-8 items-center p-6">
+                                        <div className="w-1/3 aspect-video relative rounded-xl overflow-hidden shadow-2xl border-4 border-white">
                                             <img src={ads[0].url} alt="" className="w-full h-full object-cover" />
                                             <div className="absolute top-3 left-3">
                                                 <Badge className="bg-white/90 text-primary hover:bg-white text-[10px] font-black uppercase shadow-sm">Focus</Badge>
@@ -387,7 +414,8 @@ export default function BrowsePage() {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="absolute top-4 right-4 opacity-5">
+
+                                    <div className="absolute top-4 right-4 opacity-5 hidden md:block">
                                         <Star className="w-24 h-24 fill-primary text-primary rotate-12" />
                                     </div>
                                 </div>

@@ -21,7 +21,7 @@ export default function AdsPreview({ ads }) {
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                     {ads.map((ad) => (
                         <div key={ad.id} className="group border border-slate-200 rounded-xl overflow-hidden hover:border-primary/50 transition-colors">
                             <div className="relative aspect-video overflow-hidden bg-slate-100">
@@ -48,7 +48,7 @@ export default function AdsPreview({ ads }) {
                                     </span>
                                 </div>
                             </div>
-                            <div className="p-5">
+                            <div className="p-3 md:p-5">
                                 <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors mb-2 line-clamp-1">
                                     {ad.title}
                                 </h3>
