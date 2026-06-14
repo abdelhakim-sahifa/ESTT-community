@@ -104,7 +104,7 @@ export default function Header() {
                 <div className="flex items-center gap-2">
                     <Link href="/" className="flex items-center space-x-2">
                         <Image
-                            src="/assets/images/logo__five.svg"
+                            src="/assets/images/platform_logo.svg"
                             alt="EST Tétouan Logo"
                             className="h-10 w-auto"
                             width={150}
@@ -224,7 +224,7 @@ export default function Header() {
                             <SheetHeader className="text-left mb-6">
                                 <SheetTitle className="flex items-center gap-2">
                                     <Image
-                                        src="/assets/images/logo__five.svg"
+                                        src="/assets/images/platform_logo.svg"
                                         alt="EST Tétouan Logo"
                                         className="h-8 w-auto"
                                         width={120}

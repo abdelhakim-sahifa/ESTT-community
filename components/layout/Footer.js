@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Heart, Github, Globe, MessageCircle, BookOpen, ExternalLink, ShieldCheck, Mail, Info, Phone } from 'lucide-react';
+import { Heart, Github, Globe, MessageCircle, BookOpen, ExternalLink, ShieldCheck, Mail, Info, Phone , Copyright } from 'lucide-react';
 import LatestReleaseBadge from '../LatestReleaseBadge';
 
 export default function Footer() {
@@ -40,10 +40,13 @@ export default function Footer() {
         {
             title: "Support",
             links: [
-                { label: "Documentation", href: "/docs" },
-                { label: "App Android", href: "/downloadAndroid" },
-                { label: "Aide / FAQ", href: "/docs#faq" },
+             //   { label: "Documentation", href: "/docs" },
+             //   { label: "App Android", href: "/downloadAndroid" },
+              //  { label: "Aide / FAQ", href: "/docs#faq" },
                 { label: "Signaler un bug", href: "/report-bug" },
+                { label: "Vie privée ", href: "/privacy" }, 
+                { label: "Conditions", href: "/terms" },  
+                { label: "Contact", href: "/re/contact" },  
             ]
         }
     ];
@@ -71,7 +74,8 @@ export default function Footer() {
                         </Link>
 
                         <p className="text-base text-slate-500 leading-relaxed max-w-sm mx-auto lg:mx-0">
-                            La plateforme collaborative pour les étudiants de l'École Supérieure de Technologie de Tétouan.
+                            La plateforme collaborative pour les étudiants de l'École Supérieure de Technologie de Tétouan. <br/>
+                            Projet indépendant non affilié officiellement à l'administration de l'ESTT.
                         </p>
 
                         <div className="flex items-center justify-center lg:justify-start gap-4 pt-2">
@@ -83,7 +87,7 @@ export default function Footer() {
                                 className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                 <Globe className="w-5 h-5" />
                             </a>
-                            <a href="mailto:estt.community+dev@gmail.com"
+                            <a href="mailto:contact@estt.ma"
                                 className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                 <Mail className="w-5 h-5" />
                             </a>
@@ -106,7 +110,7 @@ export default function Footer() {
                     <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-12 lg:col-span-3">
                         {sections.map((section, idx) => (
                             <div key={idx} className="space-y-4 sm:space-y-6 flex flex-col items-start text-left">
-                                <h4 className="text-[10px] sm:text-sm font-bold uppercase tracking-widest text-slate-900">
+                                <h4 className="text-[10px]  sm:text-sm font-bold uppercase tracking-widest text-slate-900">
                                     {section.title}
                                 </h4>
                                 <ul className="space-y-3 sm:space-y-4">
@@ -133,7 +137,11 @@ export default function Footer() {
                 <div className="pt-8 border-t border-slate-200 flex flex-col lg:flex-row justify-between items-center gap-8 text-sm">
                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-center md:text-left">
                         <p className="text-[11px] sm:text-sm text-slate-500 font-medium flex items-center gap-1.5">
-                            &copy; {currentYear} EST Tétouan. Fait avec <Heart className="w-3.5 h-3.5 text-slate-400" /> par les étudiants.
+                          Codé avec <Heart className="w-3.5 h-3.5 text-rose-500"/> Par des étudiants de l'EST Tétouan.
+                        
+                        {
+                            //  Copyright {currentYear} <Copyright className="w-3.5 h-3.5" /> ESTT.Community  — Codé avec <Heart className="w-3.5 h-3.5 text-rose-500"/> par des étudiants de l'EST Tétouan.
+                        }
                         </p>
 
                         <div className="flex items-center justify-center gap-6">
