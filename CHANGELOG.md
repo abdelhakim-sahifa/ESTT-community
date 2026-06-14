@@ -1,3 +1,5 @@
+## [1.24.4](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.24.3...v1.24.4) (2026-06-14)
+
 ## [1.24.3](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.24.2...v1.24.3) (2026-06-08)
 
 
