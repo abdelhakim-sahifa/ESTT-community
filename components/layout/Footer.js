@@ -74,8 +74,7 @@ export default function Footer() {
                         </Link>
 
                         <p className="text-base text-slate-500 leading-relaxed max-w-sm mx-auto lg:mx-0">
-                            La plateforme collaborative pour les étudiants de l'École Supérieure de Technologie de Tétouan. <br/>
-                            Projet indépendant non affilié officiellement à l'administration de l'ESTT.
+                            La plateforme collaborative pour les étudiants de l'École Supérieure de Technologie de Tétouan.
                         </p>
 
                         <div className="flex items-center justify-center lg:justify-start gap-4 pt-2">
