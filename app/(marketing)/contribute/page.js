@@ -378,17 +378,21 @@ export default function ContributePage() {
         : [];
 
     const getAiPrompt = () => {
-        let prompt = `Analyse le document fourni et génère un titre concis et une brève description pour cette ressource académique.\nRenvoie UNIQUEMENT un objet JSON valide avec les clés suivantes :\n- "title": (Le titre de la ressource, max 10 mots)\n- "description": (Une description pertinente, max 50 mots)`;
+        let prompt = `Voici ta mission : tu vas devoir analyser un document académique que je vais te fournir dans mon prochain message.\n\n`;
+        prompt += `POUR L'INSTANT : Ne génère aucun JSON. Réponds UNIQUEMENT "J'ai bien compris la mission. Veuillez m'envoyer le document à analyser." et attends mon document.\n\n`;
+        prompt += `UNE FOIS LE DOCUMENT REÇU : Analyse-le et génère un titre concis et une brève description.\n`;
+        prompt += `Tu devras renvoyer UNIQUEMENT un objet JSON valide avec les clés suivantes :\n`;
+        prompt += `- "title": (Le titre de la ressource, max 10 mots)\n`;
+        prompt += `- "description": (Une description pertinente, max 50 mots)\n`;
 
         if (formData.field && formData.semester && modules.length > 0) {
-            prompt += `\n- "module": l'ID du module correspondant. Modules disponibles : ${modules.map(m => `"${m.id}" (${m.name})`).join(', ')}.`;
+            prompt += `- "module": l'ID du module correspondant. Modules disponibles : ${modules.map(m => `"${m.id}" (${m.name})`).join(', ')}.\n`;
             const profNames = professors.map(p => typeof p === 'string' ? p : p.name);
-            prompt += `\n- "professor": Le nom du professeur. Professeurs connus : ${profNames.join(', ')}. (Mettre "Non spécifié" si non trouvé)`;
-            prompt += `\n- "docType": Le type de document. Choisir parmi : "Cours", "TD", "TP", "Exam".`;
+            prompt += `- "professor": Le nom du professeur. Professeurs connus : ${profNames.join(', ')}. (Mettre "Non spécifié" si non trouvé)\n`;
+            prompt += `- "docType": Le type de document. Choisir parmi : "Cours", "TD", "TP", "Exam".\n`;
         }
 
-        prompt += `\n\nImportant : Si je n'ai pas fourni de fichier, demande-moi de l'attacher avant de générer le JSON.`;
-        prompt += `\n\nN'inclus aucun texte supplémentaire ni de formatage markdown, juste le JSON brut.`;
+        prompt += `\nRappel : Pour ce premier message, demande juste le document. Ne génère aucun JSON ni texte supplémentaire.`;
         return prompt;
     };
 
@@ -940,20 +944,34 @@ export default function ContributePage() {
                         <div className="space-y-3">
                             <h3 className="font-semibold text-sm flex items-center gap-2"><span className="flex items-center justify-center bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs">2</span> Demandez à votre IA</h3>
                             <p className="text-xs text-muted-foreground pl-7">
-                                Allez sur ChatGPT, Claude ou Gemini, collez le prompt copié ci-dessus, et <strong>attachez votre document</strong> (PDF, Image, etc.).
+                                Allez sur ChatGPT ou Google, collez le prompt copié ci-dessus, et <strong>attachez votre document</strong> (PDF, Image, etc.).
                             </p>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="ml-7 mt-2 gap-2 font-semibold bg-white text-black hover:bg-gray-50 border-gray-200"
-                                onClick={() => {
-                                    const encodedPrompt = encodeURIComponent(getAiPrompt());
-                                    window.open(`https://chatgpt.com/?prompt=${encodedPrompt}`, '_blank');
-                                }}
-                            >
-                                <Image src="/assets/images/chatgpt_logo.svg" alt="ChatGPT" width={16} height={16} />
-                                Ouvrir ChatGPT
-                            </Button>
+                            <div className="flex flex-wrap gap-2 pl-7 mt-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="gap-2 font-semibold bg-white text-black hover:bg-gray-50 border-gray-200"
+                                    onClick={() => {
+                                        const encodedPrompt = encodeURIComponent(getAiPrompt());
+                                        window.open(`https://chatgpt.com/?prompt=${encodedPrompt}`, '_blank');
+                                    }}
+                                >
+                                    <Image src="/assets/images/chatgpt_logo.svg" alt="ChatGPT" width={16} height={16} />
+                                    Ouvrir ChatGPT
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="gap-2 font-semibold bg-white text-black hover:bg-gray-50 border-gray-200"
+                                    onClick={() => {
+                                        const encodedPrompt = encodeURIComponent(getAiPrompt().replace(/\n/g, ' '));
+                                        window.open(`https://www.google.com/search?udm=50&aep=11&q=${encodedPrompt}`, '_blank');
+                                    }}
+                                >
+                                    <Image src="/assets/images/Google__G__logo.svg" alt="Google" width={16} height={16} />
+                                    Ouvrir Google
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="space-y-3">
