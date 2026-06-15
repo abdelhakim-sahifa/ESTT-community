@@ -21,7 +21,15 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Plus, Trash2, HardDrive, FileText, FileSpreadsheet, Presentation, File } from 'lucide-react';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import Image from 'next/image';
+import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Plus, Trash2, HardDrive, FileText, FileSpreadsheet, Presentation, File, Copy, Check } from 'lucide-react';
 const AI_MAX_WORDS = 50; // Restored to a higher limit for the new provider
 import { Sparkles } from 'lucide-react';
 
@@ -49,6 +57,12 @@ export default function ContributePage() {
     const [uploadProgress, setUploadProgress] = useState(0);
     const dropRef = useRef(null);
     const [professors, setProfessors] = useState([]);
+
+    // AI Autofill State
+    const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+    const [aiResponseText, setAiResponseText] = useState('');
+    const [aiParseError, setAiParseError] = useState('');
+    const [copiedPrompt, setCopiedPrompt] = useState(false);
 
     useEffect(() => {
         if (!db) return;
@@ -363,6 +377,79 @@ export default function ContributePage() {
         ? staticDb.modules[`${formData.field}-${formData.semester}`] || []
         : [];
 
+    const getAiPrompt = () => {
+        let prompt = `Analyse le document fourni et génère un titre concis et une brève description pour cette ressource académique.\nRenvoie UNIQUEMENT un objet JSON valide avec les clés suivantes :\n- "title": (Le titre de la ressource, max 10 mots)\n- "description": (Une description pertinente, max 50 mots)`;
+
+        if (formData.field && formData.semester && modules.length > 0) {
+            prompt += `\n- "module": l'ID du module correspondant. Modules disponibles : ${modules.map(m => `"${m.id}" (${m.name})`).join(', ')}.`;
+            const profNames = professors.map(p => typeof p === 'string' ? p : p.name);
+            prompt += `\n- "professor": Le nom du professeur. Professeurs connus : ${profNames.join(', ')}. (Mettre "Non spécifié" si non trouvé)`;
+            prompt += `\n- "docType": Le type de document. Choisir parmi : "Cours", "TD", "TP", "Exam".`;
+        }
+
+        prompt += `\n\nImportant : Si je n'ai pas fourni de fichier, demande-moi de l'attacher avant de générer le JSON.`;
+        prompt += `\n\nN'inclus aucun texte supplémentaire ni de formatage markdown, juste le JSON brut.`;
+        return prompt;
+    };
+
+    const handleAiAutofill = () => {
+        setAiParseError('');
+        try {
+            let textToParse = aiResponseText.trim();
+            if (textToParse.startsWith('```json')) {
+                textToParse = textToParse.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+            } else if (textToParse.startsWith('```')) {
+                textToParse = textToParse.replace(/^```\n?/, '').replace(/\n?```$/, '');
+            }
+
+            const parsed = JSON.parse(textToParse);
+            if (!parsed.title && !parsed.description && !parsed.module && !parsed.professor && !parsed.docType) {
+                setAiParseError('Le JSON ne contient aucune clé valide ("title", "description", etc.).');
+                return;
+            }
+
+            let matchedProf = formData.professor;
+            if (parsed.professor) {
+                const profInput = String(parsed.professor).toLowerCase().trim();
+                if (profInput === 'non spécifié' || profInput === 'non specifie' || profInput === 'non-specifie') {
+                    matchedProf = 'non-specifie';
+                } else {
+                    const profNames = professors.map(p => typeof p === 'string' ? p : p.name);
+                    const exactMatch = profNames.find(p => p.toLowerCase() === profInput);
+                    if (exactMatch) {
+                        matchedProf = exactMatch;
+                    } else {
+                        const partialMatch = profNames.find(p => profInput.includes(p.toLowerCase()) || p.toLowerCase().includes(profInput));
+                        if (partialMatch) matchedProf = partialMatch;
+                    }
+                }
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                title: parsed.title || prev.title,
+                description: parsed.description || prev.description,
+                module: parsed.module && modules.some(m => m.id === parsed.module) ? parsed.module : prev.module,
+                professor: matchedProf,
+                docType: parsed.docType || prev.docType
+            }));
+
+            setIsAiModalOpen(false);
+            setAiResponseText('');
+            setIsError(false);
+            setMessage('Champs remplis avec succès via l\'IA !');
+        } catch (error) {
+            setAiParseError('Format JSON invalide. Assurez-vous de coller uniquement le JSON renvoyé par l\'IA.');
+        }
+    };
+
+    const copyPromptToClipboard = () => {
+        const prompt = getAiPrompt();
+        navigator.clipboard.writeText(prompt);
+        setCopiedPrompt(true);
+        setTimeout(() => setCopiedPrompt(false), 2000);
+    };
+
     if (!user) {
         return (
             <main className="container py-12 max-w-4xl text-center">
@@ -426,11 +513,23 @@ export default function ContributePage() {
 
             <section>
                 <Card className="shadow-lg border-muted-foreground/10">
-                    <CardHeader>
-                        <CardTitle>Formulaire de contribution</CardTitle>
-                        <CardDescription>
-                            Les champs marqués d'une astérisque (*) sont obligatoires.
-                        </CardDescription>
+                    <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between space-y-4 sm:space-y-0 pb-6">
+                        <div className="space-y-1.5">
+                            <CardTitle>Formulaire de contribution</CardTitle>
+                            <CardDescription>
+                                Les champs marqués d'une astérisque (*) sont obligatoires.
+                            </CardDescription>
+                        </div>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setIsAiModalOpen(true)}
+                            className="bg-primary/5 text-primary border-primary/20 hover:bg-primary/10 hover:border-primary/30 font-semibold shadow-sm shrink-0"
+                        >
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Remplir avec l'IA
+                        </Button>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-8">
@@ -802,6 +901,88 @@ export default function ContributePage() {
                     </CardContent>
                 </Card>
             </section>
+
+            {/* AI Autofill Modal */}
+            <Dialog open={isAiModalOpen} onOpenChange={setIsAiModalOpen}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Sparkles className="w-5 h-5 text-primary" />
+                            Remplir avec l'IA
+                        </DialogTitle>
+                        <DialogDescription>
+                            Générez automatiquement le titre et la description en demandant à votre IA préférée (ChatGPT, Claude, Gemini, etc.).
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-6 mt-4">
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <h3 className="font-semibold text-sm flex items-center gap-2"><span className="flex items-center justify-center bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs">1</span> Copiez ce prompt</h3>
+                                {!(formData.field && formData.semester) && (
+                                    <span className="text-[10px] text-muted-foreground italic px-2 py-0.5 bg-muted rounded-full">Sélectionnez d'abord une filière et un semestre pour un prompt avancé.</span>
+                                )}
+                            </div>
+                            <div className="relative bg-muted/50 p-4 rounded-lg font-mono text-xs text-muted-foreground border border-muted whitespace-pre-wrap">
+                                {getAiPrompt()}
+                                <Button
+                                    type="button"
+                                    size="icon"
+                                    variant="ghost"
+                                    className="absolute top-2 right-2 h-6 w-6"
+                                    onClick={copyPromptToClipboard}
+                                >
+                                    {copiedPrompt ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3" />}
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <h3 className="font-semibold text-sm flex items-center gap-2"><span className="flex items-center justify-center bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs">2</span> Demandez à votre IA</h3>
+                            <p className="text-xs text-muted-foreground pl-7">
+                                Allez sur ChatGPT, Claude ou Gemini, collez le prompt copié ci-dessus, et <strong>attachez votre document</strong> (PDF, Image, etc.).
+                            </p>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="ml-7 mt-2 gap-2 font-semibold bg-white text-black hover:bg-gray-50 border-gray-200"
+                                onClick={() => {
+                                    const encodedPrompt = encodeURIComponent(getAiPrompt());
+                                    window.open(`https://chatgpt.com/?prompt=${encodedPrompt}`, '_blank');
+                                }}
+                            >
+                                <Image src="/assets/images/chatgpt_logo.svg" alt="ChatGPT" width={16} height={16} />
+                                Ouvrir ChatGPT
+                            </Button>
+                        </div>
+
+                        <div className="space-y-3">
+                            <h3 className="font-semibold text-sm flex items-center gap-2"><span className="flex items-center justify-center bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs">3</span> Collez la réponse JSON ici</h3>
+                            <div className="pl-7 space-y-3">
+                                {aiParseError && (
+                                    <Alert variant="destructive" className="py-2">
+                                        <AlertCircle className="h-4 w-4" />
+                                        <AlertDescription className="text-xs">{aiParseError}</AlertDescription>
+                                    </Alert>
+                                )}
+                                <Textarea
+                                    placeholder='{"title": "Mon Titre", "description": "Ma description"}'
+                                    className="font-mono text-xs min-h-[120px]"
+                                    value={aiResponseText}
+                                    onChange={(e) => setAiResponseText(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-4 border-t mt-6">
+                            <Button variant="ghost" onClick={() => setIsAiModalOpen(false)}>Annuler</Button>
+                            <Button onClick={handleAiAutofill} disabled={!aiResponseText.trim()}>
+                                Appliquer et remplir
+                            </Button>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </main>
     );
 }

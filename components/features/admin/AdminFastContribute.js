@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { db as staticDb } from '@/lib/data';
-import { uploadResourceFile } from '@/lib/supabase';
+import { uploadResourceFile as uploadResourceFileToDrive } from '@/lib/drive';
+import { uploadResourceFile as uploadResourceFileToSupabase } from '@/lib/supabase';
 import { db, ref, push, set, get } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -128,13 +129,6 @@ export default function AdminFastContribute() {
             try {
                 updateResource(resource.id, { loading: true, error: '' });
 
-                let resourceUrl = resource.url;
-                if (resource.file) {
-                    const uploaded = await uploadResourceFile(resource.file);
-                    if (!uploaded || !uploaded.publicUrl) throw new Error("Upload failed");
-                    resourceUrl = uploaded.publicUrl;
-                }
-
                 // Merge common and specific data
                 const finalData = { ...commonData };
                 variableFields.forEach(field => {
@@ -150,6 +144,29 @@ export default function AdminFastContribute() {
                 const firstWord = fullModuleName.trim().split(/\s+/)[0];
                 const shortModuleName = `${firstWord}... - ${finalData.semester}`;
 
+                const finalType = variableFields.has('type') ? resource.type : commonData.type;
+
+                let resourceUrl = resource.url;
+                if (resource.file) {
+                    if (finalType === 'html') {
+                        const uploaded = await uploadResourceFileToSupabase(resource.file);
+                        if (!uploaded || !uploaded.publicUrl) throw new Error("Upload failed");
+                        resourceUrl = uploaded.publicUrl;
+                    } else {
+                        const fieldObj = staticDb.fields.find(f => f.id === finalData.field);
+                        const folderMetadata = {
+                            fieldName: fieldObj ? fieldObj.name : finalData.field,
+                            semester: finalData.semester,
+                            moduleName: fullModuleName,
+                            professorName: finalData.professor,
+                            displayTitle: resource.title
+                        };
+                        const uploaded = await uploadResourceFileToDrive(resource.file, folderMetadata);
+                        if (!uploaded || !uploaded.publicUrl) throw new Error("Upload failed");
+                        resourceUrl = uploaded.publicUrl;
+                    }
+                }
+
                 const contributionData = {
                     ...commonData,
                     title: resource.title,
@@ -160,6 +177,10 @@ export default function AdminFastContribute() {
                     authorName: 'Admin',
                     createdAt: timestamp,
                     unverified: false,
+                    storageType: finalType === 'html' ? 'supabase' : 'google-drive',
+                    module: shortModuleName,
+                    fullModuleName: fullModuleName,
+                    moduleId: moduleId,
                     fields: [
                         ...(variableFields.has('field') ? [resource.field] : [commonData.field]),
                         ...(resource.fields || [])
@@ -229,21 +250,13 @@ export default function AdminFastContribute() {
 
     return (
         <div className="space-y-6">
-            {/* Flat Maintenance Banner */}
-            <div className="bg-amber-400 text-amber-950 px-4 py-3 flex items-center gap-3 rounded-none border-none">
-                <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                <div className="text-sm font-medium">
-                    <span className="font-bold">Avertissement :</span> Cette fonctionnalité est actuellement en maintenance. L'envoi direct est temporairement désactivé. Veuillez utiliser l'onglet "/contribuer" pour vos contributions.
-                </div>
-            </div>
-
             <div className="flex items-center justify-between px-1">
                 <div>
                     <h2 className="text-2xl font-bold">Contribution Rapide</h2>
                     <p className="text-muted-foreground text-sm">Ajoutez plusieurs ressources d'un coup. Pas d'emails, pas de vérification.</p>
                 </div>
-                <Button onClick={handleSubmitAll} disabled={true} className="rounded-none shadow-none">
-                    Tout envoyer (Désactivé)
+                <Button onClick={handleSubmitAll} className="rounded-none shadow-none">
+                    Tout envoyer
                 </Button>
             </div>
 
@@ -290,9 +303,14 @@ export default function AdminFastContribute() {
                             <SelectTrigger className="bg-white rounded-none shadow-none"><SelectValue placeholder="Type" /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="pdf">PDF</SelectItem>
+                                <SelectItem value="powerpoint">PowerPoint</SelectItem>
+                                <SelectItem value="excel">Excel</SelectItem>
+                                <SelectItem value="word">Word</SelectItem>
                                 <SelectItem value="image">Image</SelectItem>
+                                <SelectItem value="html">Page HTML</SelectItem>
                                 <SelectItem value="video">Vidéo</SelectItem>
                                 <SelectItem value="link">Lien</SelectItem>
+                                <SelectItem value="autre">Autre</SelectItem>
                             </SelectContent>
                         </Select>
                     </FieldHeader>
@@ -421,9 +439,14 @@ export default function AdminFastContribute() {
                                                     <SelectTrigger className="h-8 text-xs bg-white rounded-none shadow-none"><SelectValue placeholder="Type" /></SelectTrigger>
                                                     <SelectContent>
                                                         <SelectItem value="pdf">PDF</SelectItem>
+                                                        <SelectItem value="powerpoint">PowerPoint</SelectItem>
+                                                        <SelectItem value="excel">Excel</SelectItem>
+                                                        <SelectItem value="word">Word</SelectItem>
                                                         <SelectItem value="image">Image</SelectItem>
+                                                        <SelectItem value="html">Page HTML</SelectItem>
                                                         <SelectItem value="video">Vidéo</SelectItem>
                                                         <SelectItem value="link">Lien</SelectItem>
+                                                        <SelectItem value="autre">Autre</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </div>

@@ -448,7 +448,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                                         </div>
                                         <div className="overflow-hidden">
                                             <p className="text-sm font-bold truncate">{res.title}</p>
-                                            <p className="text-[10px] text-muted-foreground uppercase font-black truncate">{res.module}</p>
+                                            <p className="text-[10px] text-muted-foreground uppercase font-black truncate" title={res.fullModuleName || res.module}>{res.fullModuleName || res.module}</p>
                                         </div>
                                     </div>
                                     <div className="shrink-0 ml-4">

@@ -789,7 +789,9 @@ export default function AdminResources({ resources }) {
                         {filteredResources.map((res) => (
                             <TableRow key={res.id} className="hover:bg-slate-50/50 transition-colors">
                                 <TableCell className="font-bold text-sm">{res.title}</TableCell>
-                                <TableCell className="text-xs text-muted-foreground font-medium uppercase">{res.module}</TableCell>
+                                <TableCell className="text-xs text-muted-foreground font-medium uppercase" title={res.fullModuleName || res.module}>
+                                    {res.fullModuleName || res.module}
+                                </TableCell>
                                 <TableCell>
                                     {res.docType && <Badge variant="secondary" className="text-[9px] font-bold">{res.docType}</Badge>}
                                 </TableCell>
