@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.24.4...v1.25.0) (2026-06-15)
+
+
+### Features
+
+* add auto fill by ai , and fix fast contrubution ([6e7dbb1](https://github.com/abdelhakim-sahifa/ESTT-community/commit/6e7dbb1d6932789527baba3291dd23d9fa9fc840))
+
 ## [1.24.4](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.24.3...v1.24.4) (2026-06-14)
 
 ## [1.24.3](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.24.2...v1.24.3) (2026-06-08)
