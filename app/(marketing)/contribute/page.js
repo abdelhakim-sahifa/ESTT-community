@@ -377,10 +377,16 @@ export default function ContributePage() {
         ? staticDb.modules[`${formData.field}-${formData.semester}`] || []
         : [];
 
-    const getAiPrompt = () => {
-        let prompt = `Voici ta mission : tu vas devoir analyser un document académique que je vais te fournir dans mon prochain message.\n\n`;
-        prompt += `POUR L'INSTANT : Ne génère aucun JSON. Réponds UNIQUEMENT "J'ai bien compris la mission. Veuillez m'envoyer le document à analyser." et attends mon document.\n\n`;
-        prompt += `UNE FOIS LE DOCUMENT REÇU : Analyse-le et génère un titre concis et une brève description.\n`;
+    const getAiPrompt = (isGoogle = false) => {
+        let prompt = '';
+        if (isGoogle) {
+            prompt += `Voici ta mission : tu vas devoir analyser un document académique que je vais te fournir dans mon prochain message.\n\n`;
+            prompt += `POUR L'INSTANT : Ne génère aucun JSON. Réponds UNIQUEMENT "J'ai bien compris la mission. Veuillez m'envoyer le document à analyser." et attends mon document.\n\n`;
+            prompt += `UNE FOIS LE DOCUMENT REÇU : Analyse-le et génère un titre concis et une brève description.\n`;
+        } else {
+            prompt += `Analyse le document fourni et génère un titre concis et une brève description pour cette ressource académique.\n`;
+        }
+
         prompt += `Tu devras renvoyer UNIQUEMENT un objet JSON valide avec les clés suivantes :\n`;
         prompt += `- "title": (Le titre de la ressource, max 10 mots)\n`;
         prompt += `- "description": (Une description pertinente, max 50 mots)\n`;
@@ -392,7 +398,13 @@ export default function ContributePage() {
             prompt += `- "docType": Le type de document. Choisir parmi : "Cours", "TD", "TP", "Exam".\n`;
         }
 
-        prompt += `\nRappel : Pour ce premier message, demande juste le document. Ne génère aucun JSON ni texte supplémentaire.`;
+        if (isGoogle) {
+            prompt += `\nRappel : Pour ce premier message, demande juste le document. Ne génère aucun JSON ni texte supplémentaire.`;
+        } else {
+            prompt += `\nImportant : Si je n'ai pas fourni de fichier, demande-moi de l'attacher avant de générer le JSON.\n`;
+            prompt += `\nN'inclus aucun texte supplémentaire ni de formatage markdown, juste le JSON brut.`;
+        }
+
         return prompt;
     };
 
@@ -448,7 +460,7 @@ export default function ContributePage() {
     };
 
     const copyPromptToClipboard = () => {
-        const prompt = getAiPrompt();
+        const prompt = getAiPrompt(false);
         navigator.clipboard.writeText(prompt);
         setCopiedPrompt(true);
         setTimeout(() => setCopiedPrompt(false), 2000);
@@ -952,7 +964,7 @@ export default function ContributePage() {
                                     size="sm"
                                     className="gap-2 font-semibold bg-white text-black hover:bg-gray-50 border-gray-200"
                                     onClick={() => {
-                                        const encodedPrompt = encodeURIComponent(getAiPrompt());
+                                        const encodedPrompt = encodeURIComponent(getAiPrompt(false));
                                         window.open(`https://chatgpt.com/?prompt=${encodedPrompt}`, '_blank');
                                     }}
                                 >
@@ -964,7 +976,7 @@ export default function ContributePage() {
                                     size="sm"
                                     className="gap-2 font-semibold bg-white text-black hover:bg-gray-50 border-gray-200"
                                     onClick={() => {
-                                        const encodedPrompt = encodeURIComponent(getAiPrompt().replace(/\n/g, ' '));
+                                        const encodedPrompt = encodeURIComponent(getAiPrompt(true).replace(/\n/g, ' '));
                                         window.open(`https://www.google.com/search?udm=50&aep=11&q=${encodedPrompt}`, '_blank');
                                     }}
                                 >
