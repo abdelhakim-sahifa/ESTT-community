@@ -16,6 +16,7 @@ import UnifiedDialog from '@/components/ui/UnifiedDialog';
 import { Loader2, User, Mail, GraduationCap, Calendar, Share2, Star, Ticket, Edit2, X, Megaphone, ArrowRight, FileText, Award, Camera, Upload, BadgeCheck, ShieldCheck, Trophy, Zap, LogOut, Bug, Gem, MessageSquare, Settings } from 'lucide-react';
 import { cn, getUserLevel, resolveUidFromIdentifier } from '@/lib/utils';
 import { uploadToImgBB } from '@/lib/uploadUtils';
+import SettingsModal from '@/components/profile/SettingsModal';
 
 export default function PublicProfilePage() {
     const { id } = useParams();
@@ -32,6 +33,7 @@ export default function PublicProfilePage() {
     const [userClubs, setUserClubs] = useState([]);
     const [loadingClubs, setLoadingClubs] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
@@ -600,7 +602,7 @@ export default function PublicProfilePage() {
                                                     Modifier
                                                 </Button>
                                             </DialogTrigger>
-                                            <Button variant="outline" size="sm" className="rounded-full px-5 gap-2">
+                                            <Button variant="outline" size="sm" className="rounded-full px-5 gap-2" onClick={() => setIsSettingsOpen(true)}>
                                                 <Settings className="w-3.5 h-3.5" />
                                                 Paramètres
                                             </Button>
@@ -919,6 +921,14 @@ export default function PublicProfilePage() {
                                 </div>
                             </div>
                         </UnifiedDialog>
+
+                        {/* Settings Modal */}
+                        <SettingsModal
+                            isOpen={isSettingsOpen}
+                            onClose={() => setIsSettingsOpen(false)}
+                            profile={profile}
+                            resolvedUid={resolvedUid}
+                        />
                     </div>
 
                     {/* Right Column */}
