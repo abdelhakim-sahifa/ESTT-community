@@ -593,7 +593,40 @@ function NotificationsTab({ profile, resolvedUid }) {
     );
 }
 
-function AdvancedTab() {
+function AdvancedTab({ profile, resolvedUid }) {
+    const { showSuccess, showError } = useDialog();
+    const [capturing, setCapturing] = useState(false);
+
+    const handleTakeScreenshot = async () => {
+        if (!profile?.email) {
+            showError("Impossible d'identifier l'email de l'utilisateur pour le profil.");
+            return;
+        }
+        setCapturing(true);
+        try {
+            const username = profile.email.split('@')[0];
+            // Resolve public URL of user profile
+            const profileUrl = `${window.location.origin}/profile/@${username}`;
+            
+            // Build direct download link through proxy API
+            const downloadUrl = `/api/profile-screenshot?url=${encodeURIComponent(profileUrl)}`;
+            
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = `screenshot_${username}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showSuccess("Capture d'écran lancée ! Elle sera téléchargée automatiquement d'ici quelques secondes.");
+        } catch (err) {
+            console.error('[Screenshot Error]:', err);
+            showError("Erreur lors du lancement de la capture d'écran.");
+        } finally {
+            setCapturing(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <section>
@@ -603,6 +636,25 @@ function AdvancedTab() {
                     description="Fonctionnalités avancées réservées aux développeurs et aux utilisateurs expérimentés."
                 />
                 <div className="space-y-2">
+                    {/* Active: Take profile screenshot */}
+                    <button
+                        onClick={handleTakeScreenshot}
+                        disabled={capturing}
+                        className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold hover:bg-blue-100 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                        <span className="flex items-center gap-2">
+                            {capturing ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <Camera className="w-4 h-4" />
+                            )}
+                            {capturing ? 'Génération de la capture…' : 'Capturer et télécharger mon profil public'}
+                        </span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 border border-blue-200 uppercase tracking-wide">
+                            Site-Shot API
+                        </span>
+                    </button>
+
                     <DisabledButton icon={KeyRound}     label="Gestion des clés API"                />
                     <DisabledButton icon={Webhook}      label="Configuration des webhooks"          />
                     <DisabledButton icon={Terminal}     label="Journal de console (Debug logs)"     />
@@ -658,7 +710,7 @@ export default function SettingsModal({ isOpen, onClose, profile, resolvedUid })
             case 'account':       return <AccountTab profile={profile} resolvedUid={resolvedUid} onClose={onClose} />;
             case 'appearance':    return <AppearanceTab />;
             case 'notifications': return <NotificationsTab profile={profile} resolvedUid={resolvedUid} />;
-            case 'advanced':      return <AdvancedTab />;
+            case 'advanced':      return <AdvancedTab profile={profile} resolvedUid={resolvedUid} />;
             default:              return null;
         }
     };

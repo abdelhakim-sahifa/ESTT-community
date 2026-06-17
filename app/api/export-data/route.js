@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { db, ref, set } from '@/lib/firebase';
 import { dataExportEmail } from '@/lib/email-templates/data-export';
+import { fetchScreenshot } from '@/lib/screenshotUtils';
+import { uploadToImgBB } from '@/lib/uploadUtils';
 
 export async function POST(req) {
     try {
@@ -36,7 +38,32 @@ export async function POST(req) {
             hour: '2-digit', minute: '2-digit',
         });
 
-        // ── 4. Send email ─────────────────────────────────────────────────
+        // ── 4. Resilient Profile Screenshot Generation & Upload ───────────
+        let screenshotUrl = null;
+        try {
+            const profileUrl = `${baseUrl}/profile/@${username || uid}`;
+            console.log(`[export-data] Capturing profile screenshot for: ${profileUrl}`);
+            
+            const blob = await fetchScreenshot(profileUrl, {
+                format: 'png',
+                width: 1280,
+                height: 960,
+                fullPage: true,
+                delay: 1500
+            });
+
+            // Convert to base64 for ImgBB upload
+            const buffer = Buffer.from(await blob.arrayBuffer());
+            const base64 = buffer.toString('base64');
+
+            screenshotUrl = await uploadToImgBB(base64);
+            console.log(`[export-data] Screenshot successfully uploaded to ImgBB: ${screenshotUrl}`);
+        } catch (screenshotErr) {
+            console.error('[export-data] Resilient screenshot upload failed:', screenshotErr);
+            // We proceed with email delivery even if screenshot generation fails
+        }
+
+        // ── 5. Send email ─────────────────────────────────────────────────
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -50,6 +77,7 @@ export async function POST(req) {
             email,
             downloadUrl,
             exportDate,
+            screenshotUrl,
         });
 
         await transporter.sendMail({
@@ -69,3 +97,4 @@ export async function POST(req) {
         );
     }
 }
+
