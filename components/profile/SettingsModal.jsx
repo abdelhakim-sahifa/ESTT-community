@@ -211,7 +211,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
 
                 {/* Avatar picker */}
                 <FieldRow label="Photo de profil">
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
                         <div className="relative group shrink-0">
                             <div className="w-16 h-16 rounded-full overflow-hidden bg-slate-100 border-2 border-slate-200 flex items-center justify-center">
                                 {formData.photoUrl ? (
@@ -244,11 +244,11 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                                 onChange={handleAvatarUpload}
                             />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 w-full sm:w-auto">
                             <button
                                 onClick={() => avatarInputRef.current?.click()}
                                 disabled={avatarUploading}
-                                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <Upload className="w-3.5 h-3.5" />
                                 {avatarUploading ? 'Téléchargement...' : 'Changer la photo'}
@@ -258,13 +258,13 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                     </div>
                 </FieldRow>
 
-                <div className="grid grid-cols-2 gap-3 mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                     <FieldRow label="Prénom" htmlFor="s-firstName">
                         <input
                             id="s-firstName"
                             value={formData.firstName}
                             onChange={e => setFormData(p => ({ ...p, firstName: e.target.value }))}
-                            className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white"
+                            className="w-full px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white"
                             placeholder="Prénom"
                         />
                     </FieldRow>
@@ -273,7 +273,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                             id="s-lastName"
                             value={formData.lastName}
                             onChange={e => setFormData(p => ({ ...p, lastName: e.target.value }))}
-                            className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white"
+                            className="w-full px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white"
                             placeholder="Nom de famille"
                         />
                     </FieldRow>
@@ -285,23 +285,23 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                             id="s-email"
                             value={formData.email}
                             readOnly
-                            className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed"
+                            className="w-full px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed"
                         />
                         <p className="text-[10px] text-slate-400 mt-1">L'adresse email ne peut pas être modifiée ici.</p>
                     </FieldRow>
                 </div>
 
                 {/* Language — disabled */}
-                <div className="mt-4 p-3 rounded-xl border border-slate-200 bg-slate-50/70 opacity-70">
-                    <div className="flex items-center justify-between">
+                <div className="mt-4 p-3 sm:p-4 rounded-xl border border-slate-200 bg-slate-50/70 opacity-70">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
                         <div className="flex items-center gap-2">
-                            <Globe className="w-4 h-4 text-slate-400" />
+                            <Globe className="w-4 h-4 text-slate-400 shrink-0" />
                             <div>
                                 <p className="text-sm font-medium text-slate-700">Langue de l'interface</p>
                                 <p className="text-xs text-slate-400">Français</p>
                             </div>
                         </div>
-                        <span className="text-xs text-slate-400 bg-white border border-slate-200 px-2 py-1 rounded-md font-medium">FR</span>
+                        <span className="text-xs text-slate-400 bg-white border border-slate-200 px-2 py-1 rounded-md font-medium w-fit">FR</span>
                     </div>
                     <p className="text-[10px] text-slate-400 mt-2 leading-relaxed border-t border-slate-200 pt-2">
                         Pour l'instant, seule la langue française est disponible.
@@ -311,7 +311,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                     {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
@@ -350,7 +350,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                     <button
                         onClick={handlePasswordReset}
                         disabled={passwordLoading || passwordSent}
-                        className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-blue-200 text-blue-600 text-sm font-semibold hover:bg-blue-50 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg border border-blue-200 text-blue-600 text-sm font-semibold hover:bg-blue-50 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {passwordLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
                         {passwordLoading ? 'Envoi en cours...' : passwordSent ? 'Lien envoyé ✓' : 'Envoyer le lien de réinitialisation'}
@@ -394,7 +394,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
 
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-start gap-2 px-4 py-3 rounded-xl border border-red-100 text-red-500 text-sm font-semibold hover:bg-red-50 active:scale-[0.98] transition-all"
+                    className="w-full flex items-center justify-start gap-2 px-4 py-3 sm:py-2.5 rounded-xl border border-red-100 text-red-500 text-sm font-semibold hover:bg-red-50 active:scale-[0.98] transition-all"
                 >
                     <LogOut className="w-4 h-4" />
                     Se déconnecter
@@ -719,27 +719,27 @@ export default function SettingsModal({ isOpen, onClose, profile, resolvedUid })
         <div
             ref={overlayRef}
             onClick={handleOverlayClick}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Paramètres"
         >
-            <div className="relative w-full max-w-3xl max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-sm sm:max-w-2xl lg:max-w-3xl max-h-[85vh] sm:max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
 
                 {/* ── Header ─────────────────────────────────────────── */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
-                    <div className="flex items-center gap-2.5">
-                        <div className="p-1.5 bg-primary/10 rounded-lg">
-                            <UserCog className="w-4 h-4 text-primary" />
+                <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 shrink-0">
+                    <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                        <div className="p-1.5 bg-primary/10 rounded-lg shrink-0">
+                            <UserCog className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                         </div>
-                        <div>
-                            <h2 className="text-base font-bold text-slate-900">Paramètres</h2>
-                            <p className="text-xs text-slate-500">Gérez votre compte et vos préférences</p>
+                        <div className="min-w-0">
+                            <h2 className="text-sm sm:text-base font-bold text-slate-900 truncate">Paramètres</h2>
+                            <p className="text-[10px] sm:text-xs text-slate-500 truncate">Gérez votre compte</p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors shrink-0 ml-2"
                         aria-label="Fermer"
                     >
                         <X className="w-4 h-4" />
@@ -747,10 +747,10 @@ export default function SettingsModal({ isOpen, onClose, profile, resolvedUid })
                 </div>
 
                 {/* ── Body ───────────────────────────────────────────── */}
-                <div className="flex flex-1 min-h-0">
+                <div className="flex flex-col lg:flex-row flex-1 min-h-0">
 
-                    {/* Sidebar Navigation */}
-                    <nav className="w-52 shrink-0 border-r border-slate-100 bg-slate-50/70 p-3 flex flex-col gap-0.5 overflow-y-auto">
+                    {/* Sidebar Navigation - Hidden on mobile, shown on lg screens */}
+                    <nav className="hidden lg:flex lg:w-52 lg:shrink-0 border-r border-slate-100 bg-slate-50/70 p-3 flex-col gap-0.5 overflow-y-auto">
                         {TABS.map(tab => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
@@ -777,8 +777,33 @@ export default function SettingsModal({ isOpen, onClose, profile, resolvedUid })
                         })}
                     </nav>
 
+                    {/* Mobile Tab Navigation - Shown on small screens, hidden on lg */}
+                    <nav className="lg:hidden border-b border-slate-100 bg-white px-2 py-2 overflow-x-auto shrink-0">
+                        <div className="flex gap-1 min-w-min">
+                            {TABS.map(tab => {
+                                const Icon = tab.icon;
+                                const isActive = activeTab === tab.id;
+                                return (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`
+                                            flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap shrink-0
+                                            ${isActive
+                                                ? 'bg-primary text-white shadow-sm'
+                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}
+                                        `}
+                                    >
+                                        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                                        <span className="hidden sm:inline">{tab.label}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </nav>
+
                     {/* Content Area */}
-                    <main className="flex-1 overflow-y-auto p-6">
+                    <main className="flex-1 overflow-y-auto p-4 sm:p-6">
                         <TabContent />
                     </main>
                 </div>
