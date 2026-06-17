@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.25.2...v1.26.0) (2026-06-17)
+
+
+### Features
+
+* **settings:** add settings ([dd3bf64](https://github.com/abdelhakim-sahifa/ESTT-community/commit/dd3bf648a8f1d08e32f24d9f1cde6e991ba1d7a1))
+
 ## [1.25.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.25.1...v1.25.2) (2026-06-16)
 
 ## [1.25.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.25.0...v1.25.1) (2026-06-15)
