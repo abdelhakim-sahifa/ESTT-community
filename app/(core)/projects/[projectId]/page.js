@@ -27,7 +27,8 @@ import {
     normalizeSubmission,
     sortByNewest,
 } from '@/lib/projects';
-import { ChevronDown, AlertCircle, ArrowLeft, CalendarDays, CheckCircle2, Loader2, RotateCw, Trophy } from 'lucide-react';
+import { generateProjectPDF } from '@/lib/generateProjectPDF';
+import { ChevronDown, AlertCircle, ArrowLeft, CalendarDays, CheckCircle2, Loader2, RotateCw, Trophy, FileDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const sortSubmissions = (items) =>
@@ -46,6 +47,7 @@ export default function ProjectDetailPage() {
     const [error, setError] = useState(null); // { type: 'notFound' | 'loadError', message: string }
     const [refreshingSubmissions, setRefreshingSubmissions] = useState(false);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+    const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
     const refreshSubmissions = async () => {
         if (!db || !projectId) return;
@@ -81,6 +83,18 @@ export default function ProjectDetailPage() {
 
         setSubmissions(sortSubmissions(submissionsList));
         setRefreshingSubmissions(false);
+    };
+
+    const handleDownloadPDF = async () => {
+        if (!project) return;
+        setIsGeneratingPDF(true);
+        try {
+            await generateProjectPDF(project);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+        } finally {
+            setIsGeneratingPDF(false);
+        }
     };
 
     useEffect(() => {
@@ -370,6 +384,15 @@ export default function ProjectDetailPage() {
                                     )}
                                     <Button asChild variant="outline" className="w-full rounded-full">
                                         <Link href="/projects/showcase/new">Publier un projet libre</Link>
+                                    </Button>
+                                    <Button 
+                                        onClick={handleDownloadPDF} 
+                                        disabled={isGeneratingPDF}
+                                        variant="outline" 
+                                        className="w-full rounded-full"
+                                    >
+                                        <FileDown className="mr-2 h-4 w-4" />
+                                        {isGeneratingPDF ? 'Génération en cours...' : 'Télécharger le PDF'}
                                     </Button>
                                 </div>
                             </div>
