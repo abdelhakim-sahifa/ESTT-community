@@ -40,9 +40,6 @@ export default function Footer() {
         {
             title: "Support",
             links: [
-             //   { label: "Documentation", href: "/docs" },
-             //   { label: "App Android", href: "/downloadAndroid" },
-              //  { label: "Aide / FAQ", href: "/docs#faq" },
                 { label: "Signaler un bug", href: "/report-bug" },
                 { label: "Vie privée ", href: "/privacy" }, 
                 { label: "Conditions", href: "/terms" },  
