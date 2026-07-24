@@ -490,11 +490,6 @@ export default function PublicProfilePage() {
                             </div>
 
                             <div className="p-8 -mt-12 relative">
-                                {isMentor && (
-                                    <div className="absolute top-3 right-3 bg-yellow-400 text-white px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm z-10 border border-white/20">
-                                        Mentor
-                                    </div>
-                                )}
                                 <div className="w-24 h-24 bg-white rounded-full border-4 border-white flex items-center justify-center mx-auto mb-4 shadow-sm z-10 overflow-hidden relative group">
                                     <div className="w-full h-full bg-slate-100 rounded-full flex items-center justify-center relative">
                                         {profile.photoUrl ? (
