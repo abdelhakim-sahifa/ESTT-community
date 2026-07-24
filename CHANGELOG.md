@@ -1,3 +1,10 @@
+## [1.26.8](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.7...v1.26.8) (2026-07-24)
+
+
+### Bug Fixes
+
+* change name to Guide ([5d7dd46](https://github.com/abdelhakim-sahifa/ESTT-community/commit/5d7dd460527642a14da213cd7e00746e66440f00))
+
 ## [1.26.7](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.6...v1.26.7) (2026-07-24)
 
 
