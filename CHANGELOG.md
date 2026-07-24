@@ -1,3 +1,10 @@
+## [1.26.7](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.6...v1.26.7) (2026-07-24)
+
+
+### Bug Fixes
+
+* Guide ([8bf0d29](https://github.com/abdelhakim-sahifa/ESTT-community/commit/8bf0d297b363bb1bb9ed4d16a25323bcf3e989e8))
+
 ## [1.26.6](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.5...v1.26.6) (2026-07-24)
 
 
