@@ -130,18 +130,6 @@ const nextConfig = {
         destination: '/privacy',
         permanent: true,
       },
-      {
-        source: '/Guide',
-        destination: '/guide',
-        permanent: true,
-        caseSensitive: true,
-      },
-      {
-        source: '/Guide/:path*',
-        destination: '/guide/:path*',
-        permanent: true,
-        caseSensitive: true,
-      },
     ];
   },
 };

@@ -7,7 +7,7 @@ export default async function sitemap() {
         '',
         '/browse',
         '/clubs',
-        '/guide',
+        '/Guide',
         '/search',
         '/terms',
         '/privacy',
