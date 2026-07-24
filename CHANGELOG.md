@@ -1,3 +1,10 @@
+## [1.26.6](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.5...v1.26.6) (2026-07-24)
+
+
+### Bug Fixes
+
+* redrecting /Guide to /guide ([0fa5520](https://github.com/abdelhakim-sahifa/ESTT-community/commit/0fa552040f4404e1443442d2c17d3fe42db018fd))
+
 ## [1.26.5](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.4...v1.26.5) (2026-07-24)
 
 ## [1.26.4](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.3...v1.26.4) (2026-07-17)
