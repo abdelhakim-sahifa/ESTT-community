@@ -47,7 +47,7 @@ const nextConfig = {
         has: [
           {
             type: 'host',
-            value: 'estt-community.vercel.app',
+            value: 'estt.ma',
           },
         ],
         destination: 'https://estt.ma/:path*',
