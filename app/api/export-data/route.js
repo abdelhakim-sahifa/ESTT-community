@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import { sendEmail } from '@/lib/email-service';
 import { db, ref, set } from '@/lib/firebase';
 import { dataExportEmail } from '@/lib/email-templates/data-export';
 import { fetchScreenshot } from '@/lib/screenshotUtils';
@@ -64,14 +64,6 @@ export async function POST(req) {
         }
 
         // ── 5. Send email ─────────────────────────────────────────────────
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'estt.community@gmail.com',
-                pass: 'akhe qiyr tkbv zwpd',
-            },
-        });
-
         const html = dataExportEmail({
             firstName: firstName || 'Utilisateur',
             email,
@@ -80,8 +72,7 @@ export async function POST(req) {
             screenshotUrl,
         });
 
-        await transporter.sendMail({
-            from:    '"ESTT Community" <estt.community@gmail.com>',
+        await sendEmail({
             to:      email,
             subject: '📦 Votre export de données personnelles est prêt',
             html,

@@ -1,38 +1,38 @@
-
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { sendEmail } from '@/lib/email-service';
 
 export async function POST(req) {
     try {
-        const { to, subject, html } = await req.json();
+        const body = await req.json().catch(() => ({}));
+        const { to, subject, html, replyTo, from, provider } = body;
+
+        console.log(`\n📨 [POST /api/send-email] Incoming email request received:`);
+        console.log(`   - Recipient: ${to}`);
+        console.log(`   - Subject: ${subject}`);
 
         if (!to || !subject || !html) {
+            console.warn(`⚠️ [POST /api/send-email] Missing fields in payload:`, { to: !!to, subject: !!subject, html: !!html });
             return NextResponse.json(
                 { error: 'Missing required fields: to, subject, html' },
                 { status: 400 }
             );
         }
 
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'estt.community@gmail.com',
-                pass: 'akhe qiyr tkbv zwpd',
-            },
+        const result = await sendEmail({ to, subject, html, replyTo, from, provider });
+
+        console.log(`✅ [POST /api/send-email] Successfully processed. Provider: ${result.provider}, Message ID: ${result.messageId}`);
+
+        return NextResponse.json({
+            success: true,
+            messageId: result.messageId,
+            provider: result.provider,
         });
-
-        const mailOptions = {
-            from: `"ESTT Community" <estt.community@gmail.com>`,
-            to,
-            subject,
-            html,
-        };
-
-        const info = await transporter.sendMail(mailOptions);
-
-        return NextResponse.json({ success: true, messageId: info.messageId });
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error('❌ [POST /api/send-email] Execution Exception:', error.message);
+        if (error.stack) {
+            console.error(error.stack);
+        }
+
         return NextResponse.json(
             { error: 'Failed to send email', details: error.message },
             { status: 500 }
