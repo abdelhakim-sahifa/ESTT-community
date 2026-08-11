@@ -1,3 +1,10 @@
+## [1.27.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.27.0...v1.27.1) (2026-08-11)
+
+
+### Bug Fixes
+
+* build err ([d3836be](https://github.com/abdelhakim-sahifa/ESTT-community/commit/d3836be1738db433dff70e9784c730971b3732ef))
+
 # [1.27.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.9...v1.27.0) (2026-08-11)
 
 
