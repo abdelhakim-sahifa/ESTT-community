@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.9...v1.27.0) (2026-08-11)
+
+
+### Features
+
+* migration to brevo instade of  Legacy Gmail SMTP ([f86d9ad](https://github.com/abdelhakim-sahifa/ESTT-community/commit/f86d9ada01da298da443442082e33fba2cb73315))
+
 ## [1.26.9](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.26.8...v1.26.9) (2026-07-25)
 
 
