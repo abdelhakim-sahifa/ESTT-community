@@ -240,7 +240,7 @@ export default function AdminResources({ resources }) {
                 // Send in-app notification
                 await sendPrivateNotification(resource.authorId, {
                     type: NOTIF_TYPES.RESOURCE,
-                    title: 'Ressource Approuvée ??',
+                    title: 'Ressource Approuvée',
                     message: `Votre contribution "${resource.title}" a été validée et est maintenant en ligne.`,
                     icon: 'book-open',
                     action: { type: 'navigate', target: `/resource/${resource.id}` }
@@ -387,7 +387,7 @@ export default function AdminResources({ resources }) {
 
                     await sendPrivateNotification(itemToEdit.authorId, {
                         type: NOTIF_TYPES.RESOURCE,
-                        title: 'Ressource Mise à Jour ??',
+                        title: 'Ressource Mise à Jour',
                         message: `Votre contribution "${editData.title}" a été mise à jour par un administrateur. ${changeDescription}`,
                         icon: 'edit-3',
                         action: { type: 'navigate', target: `/resource/${itemToEdit.id}` }

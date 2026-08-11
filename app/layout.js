@@ -1,5 +1,4 @@
 import localFont from 'next/font/local';
-import { Lateef } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 
@@ -14,12 +13,6 @@ import { defaultMetadata } from '@/lib/metadata';
 const canela = localFont({
     src: '../public/fonts/Canela-Medium.woff2', // Assuming this path, verified in globals.css
     variable: '--font-canela',
-});
-
-const lateef = Lateef({
-    subsets: ['arabic'],
-    weight: ['200', '300', '400', '500', '600', '700', '800'],
-    variable: '--font-lateef',
 });
 
 export const metadata = {
@@ -78,9 +71,10 @@ export default function RootLayout({ children }) {
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Lateef:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet" />
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=verified" />
             </head>
-            <body className={`font-sans ${canela.variable} ${lateef.variable} antialiased`} suppressHydrationWarning={true}>
+            <body className={`font-sans ${canela.variable} antialiased`} suppressHydrationWarning={true}>
                 <DialogProvider>
                     <AuthProvider>
                         <NotificationProvider>
