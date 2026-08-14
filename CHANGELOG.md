@@ -1,3 +1,10 @@
+## [1.27.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.27.1...v1.27.2) (2026-08-14)
+
+
+### Bug Fixes
+
+* allow non-admin users to contribute ([ae80819](https://github.com/abdelhakim-sahifa/ESTT-community/commit/ae80819c02f2538db714559bb3f3685a5e1096c5))
+
 ## [1.27.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.27.0...v1.27.1) (2026-08-11)
 
 
