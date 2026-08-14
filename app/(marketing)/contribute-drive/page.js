@@ -24,7 +24,7 @@ import { Loader2, CheckCircle2, AlertCircle, CloudUpload, Info, Sparkles, Plus, 
 
 export default function ContributeDrivePage() {
     const router = useRouter();
-    const { user, profile } = useAuth();
+    const { user, profile, loading: authLoading } = useAuth();
     const [formData, setFormData] = useState({
         field: '',
         semester: '',
@@ -178,6 +178,14 @@ export default function ContributeDrivePage() {
         ? staticDb.modules[`${formData.field}-${formData.semester}`] || []
         : [];
 
+    if (authLoading) {
+        return (
+            <main className="container py-12 max-w-4xl text-center flex items-center justify-center min-h-[400px]">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </main>
+        );
+    }
+
     if (!user) {
         return (
             <main className="container py-12 max-w-4xl text-center">
@@ -200,7 +208,7 @@ export default function ContributeDrivePage() {
         );
     }
 
-    const isAuthorized = profile && (profile.verified || profile.role === 'admin' || profile.role === 'moderator');
+    const isAuthorized = (user && user.emailVerified) || (profile && (profile.verifiedEmail || profile.verified || profile.role === 'admin' || profile.role === 'moderator'));
 
     if (!isAuthorized) {
         return (

@@ -18,7 +18,7 @@ import Link from 'next/link';
 
 export default function ClubRequestPage() {
     const router = useRouter();
-    const { user, profile } = useAuth();
+    const { user, profile, loading: authLoading } = useAuth();
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -234,6 +234,14 @@ export default function ClubRequestPage() {
 
     const isSuccess = message === 'success';
 
+    if (authLoading) {
+        return (
+            <main className="container py-12 px-4 md:px-6 min-h-screen flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </main>
+        );
+    }
+
     if (!user) {
         return (
             <main className="container py-12 px-4 md:px-6 min-h-screen flex items-center justify-center">
@@ -257,7 +265,7 @@ export default function ClubRequestPage() {
         );
     }
 
-    const isAuthorized = profile && (profile.verified || profile.role === 'admin' || profile.role === 'moderator');
+    const isAuthorized = (user && user.emailVerified) || (profile && (profile.verifiedEmail || profile.verified || profile.role === 'admin' || profile.role === 'moderator'));
 
     if (!isAuthorized) {
         return (
