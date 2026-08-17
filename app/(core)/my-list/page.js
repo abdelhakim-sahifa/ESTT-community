@@ -36,9 +36,9 @@ export default function MyListPage() {
     const [togglingFav, setTogglingFav] = useState(null);
 
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedField, setSelectedField] = useState('');
-    const [selectedSemester, setSelectedSemester] = useState('');
-    const [selectedModule, setSelectedModule] = useState('');
+    const [selectedField, setSelectedField] = useState('all');
+    const [selectedSemester, setSelectedSemester] = useState('all');
+    const [selectedModule, setSelectedModule] = useState('all');
     const [selectedType, setSelectedType] = useState('all');
 
     useEffect(() => {
@@ -170,15 +170,15 @@ export default function MyListPage() {
                 if (!title.includes(q)) return false;
             }
 
-            if (selectedField && resource.field !== selectedField) {
+            if (selectedField !== 'all' && resource.field !== selectedField) {
                 const matchesInFields = resource.fields && Array.isArray(resource.fields) &&
                     resource.fields.some(f => f.fieldId === selectedField);
                 if (!matchesInFields) return false;
             }
 
-            if (selectedSemester && resource.semester !== selectedSemester) return false;
+            if (selectedSemester !== 'all' && resource.semester !== selectedSemester) return false;
 
-            if (selectedModule && resource.moduleId !== selectedModule && resource.module !== selectedModule) {
+            if (selectedModule !== 'all' && resource.moduleId !== selectedModule && resource.module !== selectedModule) {
                 const matchesInFields = resource.fields && Array.isArray(resource.fields) &&
                     resource.fields.some(f => f.moduleId === selectedModule);
                 if (!matchesInFields) return false;
@@ -204,7 +204,7 @@ export default function MyListPage() {
         return groups;
     }, [filteredFavorites, resources]);
 
-    const modules = selectedField && selectedSemester
+    const modules = selectedField !== 'all' && selectedSemester !== 'all'
         ? staticDb.modules[`${selectedField}-${selectedSemester}`] || []
         : [];
 
@@ -320,14 +320,15 @@ export default function MyListPage() {
                         value={selectedField}
                         onValueChange={(value) => {
                             setSelectedField(value);
-                            setSelectedSemester('');
-                            setSelectedModule('');
+                            setSelectedSemester('all');
+                            setSelectedModule('all');
                         }}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Toutes les filières" />
                         </SelectTrigger>
                         <SelectContent>
+                            <SelectItem value="all">Toutes les filières</SelectItem>
                             {staticDb.fields.map((field) => (
                                 <SelectItem key={field.id} value={field.id}>
                                     {field.name}
@@ -343,14 +344,15 @@ export default function MyListPage() {
                         value={selectedSemester}
                         onValueChange={(value) => {
                             setSelectedSemester(value);
-                            setSelectedModule('');
+                            setSelectedModule('all');
                         }}
-                        disabled={!selectedField}
+                        disabled={selectedField === 'all'}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Tous les semestres" />
                         </SelectTrigger>
                         <SelectContent>
+                            <SelectItem value="all">Tous les semestres</SelectItem>
                             {staticDb.semesters.map((sem) => (
                                 <SelectItem key={sem} value={sem}>
                                     {sem}
@@ -364,13 +366,16 @@ export default function MyListPage() {
                     <label className="text-sm font-medium leading-none">Module</label>
                     <Select
                         value={selectedModule}
-                        onValueChange={setSelectedModule}
-                        disabled={!selectedSemester}
+                        onValueChange={(value) => {
+                            setSelectedModule(value);
+                        }}
+                        disabled={selectedSemester === 'all'}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Tous les modules" />
                         </SelectTrigger>
                         <SelectContent>
+                            <SelectItem value="all">Tous les modules</SelectItem>
                             {modules.map((mod) => (
                                 <SelectItem key={mod.id} value={mod.id}>
                                     {mod.name}
