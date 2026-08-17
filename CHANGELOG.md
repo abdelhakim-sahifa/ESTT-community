@@ -1,3 +1,11 @@
+# [1.28.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.27.2...v1.28.0) (2026-08-17)
+
+
+### Features
+
+* v1.27.3 - AI agent, Ma Liste, contact page, proactive resource search ([f278375](https://github.com/abdelhakim-sahifa/ESTT-community/commit/f27837562fcca175e4b6df77a8723464deb1a0b6)), closes [#12](https://github.com/abdelhakim-sahifa/ESTT-community/issues/12)
+* v1.27.3 - AI agent, Ma Liste, contact page, proactive resource search ([e40e308](https://github.com/abdelhakim-sahifa/ESTT-community/commit/e40e3086fcf483568bf375a44ac47b3124100be1))
+
 ## [1.27.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.27.1...v1.27.2) (2026-08-14)
 
 
