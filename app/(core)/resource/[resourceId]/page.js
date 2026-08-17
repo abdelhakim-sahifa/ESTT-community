@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { db, ref, get, set, push, update, remove, runTransaction } from '@/lib/firebase';
+import { useParams, useRouter } from 'next/navigation';
+import { db, ref, get, set, push, update, remove, runTransaction, onValue } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { useDialog } from '@/context/DialogContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, Download, ExternalLink, User, Share2, GraduationCap, Play, MessageCircle, Send, X, Flag, AlertTriangle, Star, Bookmark, Eye, Globe } from 'lucide-react';
+import { Loader2, FileText, Video, Image as ImageIcon, Link as LinkIcon, Download, ExternalLink, User, Share2, GraduationCap, Play, MessageCircle, Send, X, Flag, AlertTriangle, Star, Bookmark, Eye, Globe, ListPlus } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -17,6 +17,7 @@ import Link from 'next/link';
 
 export default function ResourcePage() {
     const params = useParams();
+    const router = useRouter();
     const { resourceId } = params;
     const { user, profile } = useAuth();
     const { showWarning, showError, showSuccess } = useDialog();
@@ -170,24 +171,18 @@ export default function ResourcePage() {
     }, [resource, user, profile]);
 
     useEffect(() => {
-        const fetchFavorite = async () => {
-            if (!user || !resourceId) {
-                setIsFavorite(false);
-                return;
-            }
+        if (!user || !resourceId || !db) {
+            setIsFavorite(false);
+            return;
+        }
 
-            try {
-                const favRef = ref(db, `userFavorites/${user.uid}/${resourceId}`);
-                const snapshot = await get(favRef);
-                setIsFavorite(snapshot.exists());
-            } catch (err) {
-                console.error('Error fetching favorite state:', err);
-                setIsFavorite(false);
-            }
-        };
+        const favRef = ref(db, `userFavorites/${user.uid}/${resourceId}`);
+        const unsubscribe = onValue(favRef, (snapshot) => {
+            setIsFavorite(snapshot.exists());
+        });
 
-        fetchFavorite();
-    }, [user, resourceId]);
+        return () => unsubscribe();
+    }, [user, resourceId, db]);
 
     const fetchResource = async () => {
         try {
@@ -491,7 +486,7 @@ export default function ResourcePage() {
 
     const handleToggleFavorite = async () => {
         if (!user) {
-            showWarning('Connectez-vous pour enregistrer cette ressource dans vos favoris.');
+            showWarning('Connectez-vous pour ajouter cette ressource à votre liste.');
             return;
         }
 
@@ -509,13 +504,16 @@ export default function ResourcePage() {
                     type: resource.type || '',
                     docType: resource.docType || '',
                     field: resource.field || null,
+                    moduleId: resource.moduleId || resource.module || null,
+                    semester: resource.semester || null,
+                    professor: resource.professor || '',
                     createdAt: Date.now(),
                 });
                 setIsFavorite(true);
             }
         } catch (err) {
             console.error('Error toggling favorite:', err);
-            showError('Erreur lors de la mise à jour de vos favoris.');
+            showError('Erreur lors de la mise à jour de votre liste.');
         } finally {
             setIsTogglingFavorite(false);
         }
@@ -606,8 +604,8 @@ export default function ResourcePage() {
         <main className="min-h-screen bg-slate-50/50 py-8 px-4">
             <div className="max-w-4xl mx-auto space-y-6">
                 <div className="flex justify-between items-center w-full">
-                    <Button variant="ghost" asChild size="sm">
-                        <Link href="/browse">← Retour</Link>
+                    <Button variant="ghost" size="sm" onClick={() => router.back()}>
+                        ← Retour
                     </Button>
 
                     <div className="flex items-center gap-1 sm:gap-2">
@@ -622,12 +620,12 @@ export default function ResourcePage() {
                                 {isTogglingFavorite ? (
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                 ) : (
-                                    <Bookmark
+                                    <ListPlus
                                         className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`}
                                     />
                                 )}
                                 <span className="hidden sm:inline">
-                                    {isFavorite ? 'Enregistré' : 'Enregistrer'}
+                                    {isFavorite ? 'Ajouté à ma liste' : 'Ajouter à ma liste'}
                                 </span>
                             </Button>
                         )}

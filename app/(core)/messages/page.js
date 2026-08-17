@@ -4,10 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { db, ref, onValue, get } from '@/lib/firebase';
 import ChatTermsDialog from '@/components/features/chat/ChatTermsDialog';
-import { Loader2, Search, MessageSquare, User, ArrowRight, Plus, Hash } from 'lucide-react';
+import { Loader2, Search, MessageSquare, User, ArrowRight, Plus, Hash, ArrowLeft, Sparkles } from 'lucide-react';
+import { PeopleIcon } from '@primer/octicons-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { cn, getUserLevel } from '@/lib/utils';
+import { db as staticData } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { getSharedKey, decryptText } from '@/lib/crypto';
@@ -28,6 +30,11 @@ export default function MessagesHub() {
     }));
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+
+    const chatFiliere = currentUserProfile?.filiere?.toLowerCase() || 'general';
+    const chatFiliereAbbrev = { ia: 'AI', casi: 'CASI', insem: 'INSEM', idd: 'IDD' }[chatFiliere] || chatFiliere.toUpperCase();
+    const chatLevel = getUserLevel(currentUserProfile?.startYear);
+    const chatSemesterLabel = chatLevel === 1 ? 'S1/S2' : 'S3/S4';
 
     const lastNotifiedMsgIdsRef = useRef({});
     const profilesRef = useRef(profiles);
@@ -200,14 +207,47 @@ export default function MessagesHub() {
                             {!searchQuery && (
                                 <Button asChild variant="outline" className="rounded-full border-slate-200 px-6 gap-2">
                                     <Link href="/chat">
-                                        <Hash className="w-4 h-4" />
+                                        <PeopleIcon size={16} className="text-primary" />
                                         Aller au chat général
                                     </Link>
                                 </Button>
                             )}
                         </div>
                     ) : (
-                        filteredConversations.map((conv) => {
+                        <>
+                            {/* Discussion shortcut */}
+                            <Link
+                                href="/chat"
+                                className="group block bg-white border border-slate-100 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-primary/20 hover:bg-primary/[0.01] transition-all duration-300"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="relative shrink-0">
+                                        <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 overflow-hidden flex items-center justify-center">
+                                            <PeopleIcon size={24} className="text-primary" />
+                                        </div>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between mb-0.5">
+                                            <h3 className="text-base font-bold text-slate-900 truncate flex items-center gap-1.5">
+                                                EST {chatFiliereAbbrev}
+                                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary whitespace-nowrap">
+                                                    {chatSemesterLabel}
+                                                </span>
+                                            </h3>
+                                        </div>
+                                        <p className="text-sm text-slate-500 truncate font-medium">
+                                            Discussion de groupe
+                                        </p>
+                                    </div>
+                                    <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0 hidden md:block">
+                                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                            <ArrowRight className="w-5 h-5" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+
+                            {filteredConversations.map((conv) => {
                             const otherId = conv.otherUserId || conv.id;
                             const p = profiles[otherId];
                             const initials = p ? `${p.firstName?.[0] || ''}${p.lastName?.[0] || ''}` : '?';
@@ -294,7 +334,8 @@ export default function MessagesHub() {
                                     </div>
                                 </Link>
                             );
-                        })
+                            })}
+                        </>
                     )}
                 </div>
             </div>

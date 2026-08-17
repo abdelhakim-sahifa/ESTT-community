@@ -45,8 +45,6 @@ export default function PublicProfilePage() {
     });
     const [bannerUploading, setBannerUploading] = useState(false);
     const [avatarUploading, setAvatarUploading] = useState(false);
-    const [favorites, setFavorites] = useState([]);
-    const [loadingFavorites, setLoadingFavorites] = useState(false);
 
     // Verification state
     const [isVerifying, setIsVerifying] = useState(false);
@@ -110,38 +108,6 @@ export default function PublicProfilePage() {
             });
         }
     }, [profile]);
-
-    // Fetch saved resources for own profile
-    useEffect(() => {
-        if (!resolvedUid || !currentUser || currentUser.uid !== resolvedUid || !db) return;
-
-        const fetchFavorites = async () => {
-            setLoadingFavorites(true);
-            try {
-                const favRef = ref(db, `userFavorites/${resolvedUid}`);
-                const snap = await get(favRef);
-                if (snap.exists()) {
-                    const data = snap.val();
-                    const list = Object.entries(data).map(([favId, value]) => ({
-                        id: favId,
-                        ...value,
-                    }));
-                    // Newest saved first
-                    list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                    setFavorites(list);
-                } else {
-                    setFavorites([]);
-                }
-            } catch (e) {
-                console.error('Error fetching favorites:', e);
-                setFavorites([]);
-            } finally {
-                setLoadingFavorites(false);
-            }
-        };
-
-        fetchFavorites();
-    }, [resolvedUid, currentUser]);
 
     useEffect(() => {
         if (!resolvedUid || !currentUser || currentUser.uid !== resolvedUid) return;
@@ -983,73 +949,6 @@ export default function PublicProfilePage() {
                                 </div>
                             )}
                         </section>
-
-                        {/* Saved resources (own profile) */}
-                        {currentUser && currentUser.uid === resolvedUid && (
-                            <section>
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="flex items-center gap-2">
-                                        <h2 className="text-base font-bold text-slate-900">Ressources enregistrées</h2>
-                                        <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
-                                            {favorites.length}
-                                        </span>
-                                    </div>
-                                    {favorites.length > 0 && (
-                                        <Link
-                                            href={`/profile/${id}/favorites`}
-                                            className="text-xs font-semibold text-primary flex items-center gap-1 hover:underline"
-                                        >
-                                            Tout voir
-                                            <ArrowRight className="w-3 h-3" />
-                                        </Link>
-                                    )}
-                                </div>
-                                {loadingFavorites ? (
-                                    <div className="flex items-center justify-center py-6">
-                                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                                    </div>
-                                ) : favorites.length === 0 ? (
-                                    <div className="text-center py-10 border border-dashed border-slate-200 rounded-xl">
-                                        <p className="text-slate-400 text-sm">
-                                            Aucune ressource enregistrée pour le moment.
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <div className="flex gap-3 overflow-x-auto pb-3 no-scrollbar">
-                                        {favorites.map((fav) => (
-                                            <Link
-                                                key={fav.id}
-                                                href={`/resource/${fav.resourceId}`}
-                                                className="min-w-[260px] max-w-xs group p-4 border border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white flex flex-col justify-between"
-                                            >
-                                                <div className="flex items-start gap-3 mb-3">
-                                                    <div className="p-2 bg-slate-100 rounded-lg text-slate-500 shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                                                        <FileText className="w-4 h-4" />
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <h3 className="text-sm font-semibold text-slate-900 group-hover:text-primary transition-colors line-clamp-2">
-                                                            {fav.title || 'Ressource'}
-                                                        </h3>
-                                                        <div className="flex flex-wrap gap-1 mt-1 text-[10px] uppercase text-slate-400">
-                                                            {fav.type && <span>{fav.type}</span>}
-                                                            {fav.docType && (
-                                                                <span className="text-primary">· {fav.docType}</span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {fav.createdAt && (
-                                                    <div className="mt-auto pt-2 border-t border-slate-100 text-[11px] text-slate-400">
-                                                        Enregistrée le{' '}
-                                                        {new Date(fav.createdAt).toLocaleDateString()}
-                                                    </div>
-                                                )}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                )}
-                            </section>
-                        )}
 
                         {/* Clubs */}
                         <section>

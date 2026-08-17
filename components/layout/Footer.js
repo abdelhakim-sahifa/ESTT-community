@@ -43,7 +43,7 @@ export default function Footer() {
                 { label: "Signaler un bug", href: "/report-bug" },
                 { label: "Vie privée ", href: "/privacy" }, 
                 { label: "Conditions", href: "/terms" },  
-                { label: "Contact", href: "/re/contact" },  
+                { label: "Contact", href: "/contact" },  
             ]
         }
     ];
