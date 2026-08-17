@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
     ESTT_AI_MODEL,
     ESTT_AI_SYSTEM_INSTRUCTION,
@@ -7,36 +8,7 @@ import { searchResourcesAction } from '@/lib/resourceUtils';
 
 export const dynamic = 'force-dynamic';
 
-async function extractTextFromServer(file) {
-    try {
-        const parse = require('pdf-parse/lib/pdf-parse.js');
-        
-        if (typeof parse !== 'function') {
-            console.error('❌ [ESTT-AI] pdf-parse structure:', typeof parse);
-            throw new Error('pdf-parse core is not a function');
-        }
-
-        console.log(`📄 [ESTT-AI] Extracting text locally via pdf-parse core...`);
-        
-        // Convert the File object to a Buffer
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-
-        // Parse the PDF
-        const data = await parse(buffer);
-        
-        if (!data || !data.text) {
-            console.warn("⚠️ [ESTT-AI] pdf-parse returned no text.");
-            return null;
-        }
-
-        console.log(`✅ [ESTT-AI] Local extraction successful. Length: ${data.text.length} characters.`);
-        return data.text;
-    } catch (error) {
-        console.error(`❌ [ESTT-AI] Local extraction failed:`, error.message);
-        throw error;
-    }
-}
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 function extractAiResponse(text) {
     if (!text) return { reply: null, action: null };
@@ -47,94 +19,161 @@ function extractAiResponse(text) {
             const rawJson = jsonMatch[0];
             const actionData = JSON.parse(rawJson);
             const reply = text.replace(rawJson, '').trim();
-            
+
             return {
                 reply: reply || actionData.message || null,
-                action: actionData
+                action: actionData,
             };
         }
     } catch (e) {
-        console.warn('AI returned malformed JSON or plain text.');
+        console.warn('[ESTT-AI] Malformed JSON in response, treating as plain text.');
     }
 
     return { reply: text, action: null };
 }
 
-async function callOllama(prompt) {
-    const OLLAMA_URL = 'https://ollama.com/api/generate';
-    const OLLAMA_KEY = '8a64838fe32644c687ef1681e7a8a6f5.YqaEPBHJMqXQnjdqSdH8Gkrx';
-    const OLLAMA_MODEL = 'gemma4:31b-cloud';
-
+async function extractTextFromServer(file) {
     try {
-        console.log(`📡 [ESTT-AI] Calling Ollama Cloud with model: ${OLLAMA_MODEL}`);
-        const response = await fetch(OLLAMA_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OLLAMA_KEY}`
-            },
-            body: JSON.stringify({
-                model: OLLAMA_MODEL,
-                prompt: prompt,
-                stream: false
-            })
-        });
-
-        if (!response.ok) {
-            const err = await response.text();
-            throw new Error(`Ollama API Error (${response.status}): ${err}`);
+        const parse = require('pdf-parse/lib/pdf-parse.js');
+        if (typeof parse !== 'function') {
+            throw new Error('pdf-parse core is not a function');
         }
 
-        const data = await response.json();
-        return data.response;
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const data = await parse(buffer);
+
+        if (!data || !data.text) return null;
+        return data.text;
     } catch (error) {
-        console.error(`🚨 [Ollama API Error]:`, error.message);
+        console.error('[ESTT-AI] PDF extraction failed:', error.message);
         throw error;
     }
 }
 
-async function callOllamaChat(messages, systemInstruction) {
-    // Format messages into a single prompt for Ollama
-    let prompt = `System Instruction:\n${systemInstruction}\n\n`;
-    
-    messages.forEach(msg => {
-        const role = msg.role === 'assistant' ? 'Assistant' : 'User';
-        prompt += `${role}: ${msg.content}\n`;
-    });
-    
-    prompt += "Assistant:";
+async function extractTextFromPdfUrl(url) {
+    try {
+        const parse = require('pdf-parse/lib/pdf-parse.js');
+        if (typeof parse !== 'function') return null;
 
-    return await callOllama(prompt);
+        const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        if (!response.ok) return null;
+
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const data = await parse(buffer);
+
+        if (!data || !data.text) return null;
+        return data.text.substring(0, 8000);
+    } catch (error) {
+        console.warn(`[ESTT-AI] Failed to extract text from ${url}:`, error.message);
+        return null;
+    }
+}
+
+async function enrichResourcesWithText(searchResults) {
+    return Promise.all(
+        searchResults.map(async (res) => {
+            let rawText = null;
+            const pdfUrl = res.file || res.url;
+            if (pdfUrl && pdfUrl.endsWith('.pdf')) {
+                rawText = await extractTextFromPdfUrl(pdfUrl);
+            }
+            return { ...res, rawText };
+        })
+    );
+}
+
+function buildResourceContext(searchResults) {
+    if (!searchResults || searchResults.length === 0) return '';
+
+    const sections = searchResults.map((res, i) => {
+        const parts = [
+            `[${i + 1}] ID: ${res.id}`,
+            `Title: ${res.title}`,
+            `Module: ${res.module || 'N/A'}`,
+            `Professor: ${res.professor || 'N/A'}`,
+            `Type: ${res.docType || res.type || 'N/A'}`,
+        ];
+
+        if (res.description) parts.push(`Description: ${res.description}`);
+        if (res.file) parts.push(`File URL: ${res.file}`);
+        if (res.url) parts.push(`Link: ${res.url}`);
+        if (res.rawText) parts.push(`Content:\n${res.rawText}`);
+
+        return parts.join('\n');
+    });
+
+    return sections.join('\n\n---\n\n');
+}
+
+const ACADEMIC_INTENT_PATTERNS = [
+    /r[eé]sume/i, /sommaire/i, /r[eé]capitulatif/i, /synth[iè]se/i,
+    /cours/i, /module/i, /mati[eè]re/i, /chapitre/i, /leçon/i,
+    /td\b/i, /tp\b/i, /exam/i, /exercice/i,
+    /professeur/i, /prof\b/i,
+    /je veux/i, /je cherche/i, /je voudrais/i, /donne[ -]moi/i,
+    /montre[ -]moi/i, /affiche/i, /liste des/i, /trouve/i,
+    /t[ée]l[ée]charge/i, /pdf/i, /document/i,
+    /cours du module/i, /cours de/i, /td de/i, /tp de/i, /exam de/i, /examen de/i,
+    /resume/i, /summary/i, /summarize/i,
+];
+
+function detectAcademicIntent(message) {
+    if (!message) return { isAcademic: false, searchQuery: '', intent: 'chat' };
+
+    const matched = ACADEMIC_INTENT_PATTERNS.some(p => p.test(message));
+    if (!matched) return { isAcademic: false, searchQuery: '', intent: 'chat' };
+
+    const isSummary = /r[eé]sume|sommaire|synth[eè]se|récapitulatif|summary|summarize/i.test(message);
+    const isFind = /je veux|je cherche|donne|montre|affiche|liste|trouve|t[eé]l[eé]charge|cherche/i.test(message);
+
+    let intent = 'general';
+    if (isSummary) intent = 'summarize';
+    else if (isFind) intent = 'find';
+
+    // Extract search keywords: remove filler words and common French stopwords
+    const stopwords = /^(je|veux|les|le|la|l[e']|un|une|des|du|de|d[e']|sur|pour|avec|et|que|qui|est|sont|a|au|aux|en|y|ça|mon|ma|mes|son|sa|ses|notre|votre|leur|leurs|tout|tous|toute|toutes|plus|moins|très|bien|bon|mauvais|nouveau|nouvelle|ancien|ancienne|premier|première|dernier|dernière|autre|autres|même|mêmes|quel|quelle|quels|quelles|comment|pourquoi|quand|où|combien|r[eé]sume|sommaire|synth[eè]se|récapitulatif|cours|module|mati[eè]re|chapitre|leçon|td|tp|exam|exercice|professeur|prof|donne|montre|affiche|liste|trouve|t[eé]l[eé]charge|cherche|pdf|document|je|veux|les|du|de|d[e']|le|la|l[e']|un|une|des|au|aux|en|y|sur|pour|avec|et|que|qui|a|mon|ma|son|sa|notre|votre|leur|leurs|ce|cette|ces|celui|ceux|qui|quoi|où|comment|pourquoi|quand|combien|sont|est|fait|faire|avoir|être|pas|ne|pas|oui|non|très|trop|peu|bien|mal|mal|nouveau|nouvelle|ancien|ancienne|autre|autres|premier|première|dernier|dernière|même|mêmes|tel|telle|tels|telles|quel|quelle|quels|quelles|sera|serait|seront|seraient|peut|pourrait|pourraient|doit|devrait|devraient|faut|fais|fait|font|ai|as|avons|avez|ont|suis|es|sommes|êtes|sont)$/i;
+
+    const words = message
+        .replace(/[?!.,;:()]/g, '')
+        .split(/\s+/)
+        .filter(w => w.length > 1 && !stopwords.test(w));
+
+    const searchQuery = words.join(' ').trim();
+
+    return { isAcademic: true, searchQuery, intent };
 }
 
 export async function POST(request) {
     console.log('🚀 [ESTT-AI] POST request received');
     try {
         let message, history = [], userProfile = null, purpose = 'chat';
-        
+
         const contentType = request.headers.get('content-type') || '';
-        
+
         if (contentType.includes('multipart/form-data')) {
             const formData = await request.formData();
             purpose = formData.get('purpose');
             const file = formData.get('file');
-            const context = formData.get('context'); // Extra info like system prompt
+            const context = formData.get('context');
 
             if (purpose === 'pdf-analysis' && file) {
-                console.log('🤖 [ESTT-AI] Processing PDF analysis request with file:', file.name);
+                console.log('🤖 [ESTT-AI] Processing PDF analysis:', file.name);
                 const extractedText = await extractTextFromServer(file);
-                
                 if (!extractedText) throw new Error('No text extracted from PDF');
 
-                console.log('🤖 [ESTT-AI] Analyzing extracted text via Ollama...');
-                // The context sent from client includes the system prompt + any previous text
-                const aiResultText = await callOllama(`${context}\n\nTexte extrait :\n${extractedText.substring(0, 5000)}`);
-                const { action } = extractAiResponse(aiResultText);
+                const model = genAI.getGenerativeModel({ model: ESTT_AI_MODEL });
+                const result = await model.generateContent(
+                    `${context}\n\nTexte extrait :\n${extractedText.substring(0, 30000)}`
+                );
+                const aiText = result.response.text();
+                const { action } = extractAiResponse(aiText);
 
                 return NextResponse.json({
                     action,
-                    reply: aiResultText,
-                    model: 'gemma4:31b-cloud'
+                    reply: aiText,
+                    model: ESTT_AI_MODEL,
                 });
             }
         } else {
@@ -144,39 +183,19 @@ export async function POST(request) {
             userProfile = body.userProfile || null;
             purpose = body.purpose || 'chat';
 
-            console.log('📦 [ESTT-AI] Request body purpose:', purpose);
-
-            // Legacy path for text-only analysis (if needed)
             if (purpose === 'pdf-analysis') {
-                console.log('🤖 [ESTT-AI] Starting text-only PDF analysis via Ollama...');
-                const text = await callOllama(message);
-                const { action } = extractAiResponse(text);
-                
+                const model = genAI.getGenerativeModel({ model: ESTT_AI_MODEL });
+                const result = await model.generateContent(message);
+                const aiText = result.response.text();
+                const { action } = extractAiResponse(aiText);
+
                 return NextResponse.json({
                     action,
-                    reply: text,
-                    model: 'gemma4:31b-cloud'
+                    reply: aiText,
+                    model: ESTT_AI_MODEL,
                 });
             }
         }
-
-        // We no longer require GROQ_API_KEY as we switched to Ollama Cloud
-        // if (!process.env.GROQ_API_KEY) {
-        //     return NextResponse.json({ error: 'GROQ_API_KEY missing' }, { status: 500 });
-        // }
-        
-        // Prepare formatted history for Groq (role must be 'user' or 'assistant')
-        const formattedHistory = Array.isArray(history) 
-            ? history
-                .filter((item) => item && (item.content || item.text))
-                .slice(-12)
-                .map((item) => ({
-                    role: item.role === 'assistant' || item.role === 'model' ? 'assistant' : 'user',
-                    content: item.content || item.text || "",
-                }))
-            : [];
-
-        const messages = [...formattedHistory, { role: 'user', content: message?.trim() || "" }];
 
         const userContext = [
             userProfile?.firstName ? `First name: ${userProfile.firstName}` : null,
@@ -184,40 +203,129 @@ export async function POST(request) {
             userProfile?.filiere ? `Field: ${userProfile.filiere}` : null,
         ].filter(Boolean).join('\n');
 
-        const systemInstruction = userContext 
-            ? `${ESTT_AI_SYSTEM_INSTRUCTION}\n\nCurrent user context:\n${userContext}` 
+        const systemInstruction = userContext
+            ? `${ESTT_AI_SYSTEM_INSTRUCTION}\n\nCurrent user context:\n${userContext}`
             : ESTT_AI_SYSTEM_INSTRUCTION;
 
-        // Phase 1: Call Ollama
-        console.log(`🤖 [ESTT-AI] Phase 1 START (Ollama)`);
-        const text = await callOllamaChat(messages, systemInstruction);
-        const { reply, action } = extractAiResponse(text);
+        const formattedHistory = Array.isArray(history)
+            ? history
+                .filter((item) => item && (item.parts || item.content || item.text))
+                .slice(-12)
+                .map((item) => {
+                    if (item.parts) return item;
+                    return {
+                        role: item.role === 'assistant' || item.role === 'model' ? 'model' : 'user',
+                        parts: [{ text: item.content || item.text || '' }],
+                    };
+                })
+            : [];
 
-        // Check if we need to perform a search (Phase 2 & 3)
-        if (action?.action === 'read' && action?.target === 'resources') {
-            console.log(`📡 [ESTT-AI] Phase 2: Server-side search for "${action.query}"`);
-            const searchResults = await searchResourcesAction(action.query, userProfile?.filiere);
-            
-            console.log(`📥 [ESTT-AI] Found ${searchResults.length} resources. Starting Phase 3...`);
-            
-            const systemResultsMessage = {
-                role: 'user',
-                content: `[SYSTEM DATA FETCH RESULTS]\nQuery: "${action.query}"\nFound: ${JSON.stringify(searchResults.map(r => ({id: r.id, title: r.title, description: r.description})))}\n\nTASK: Recommend 2-5 resources using "display_resources" action.`
-            };
+        const chatHistory = formattedHistory.map((item) => ({
+            role: item.role === 'model' ? 'model' : 'user',
+            parts: item.parts,
+        }));
 
-            const finalText = await callOllamaChat([...messages, { role: 'assistant', content: text || "Searching..." }, systemResultsMessage], systemInstruction);
-            const final = extractAiResponse(finalText);
-
-            console.log(`✅ [ESTT-AI] Pipeline COMPLETE`);
-            return NextResponse.json({
-                reply: final.reply,
-                action: final.action,
-                interimReply: reply,
-                model: ESTT_AI_MODEL,
-            });
+        // Gemini requires history to start with 'user' and alternate strictly
+        const sanitizedHistory = [];
+        let expectedRole = 'user';
+        for (const item of chatHistory) {
+            if (item.role === expectedRole) {
+                sanitizedHistory.push(item);
+                expectedRole = expectedRole === 'user' ? 'model' : 'user';
+            }
         }
 
-        console.log(`✅ [ESTT-AI] Single-turn COMPLETE`);
+        console.log(`📋 [ESTT-AI] History: ${sanitizedHistory.length} messages, API key present: ${!!process.env.GEMINI_API_KEY}`);
+
+        const userMessage = message?.trim() || '';
+
+        // Proactive resource search for academic queries
+        const { isAcademic, searchQuery, intent } = detectAcademicIntent(userMessage);
+        let forcedResourceContext = '';
+
+        if (isAcademic && searchQuery) {
+            console.log(`🎓 [ESTT-AI] Academic intent detected (${intent}). Searching for "${searchQuery}"...`);
+            const forcedResults = await searchResourcesAction(searchQuery, userProfile?.filiere);
+
+            if (forcedResults.length > 0) {
+                console.log(`📥 [ESTT-AI] Found ${forcedResults.length} resources proactively`);
+                const enriched = await enrichResourcesWithText(forcedResults);
+                forcedResourceContext = buildResourceContext(enriched);
+            } else {
+                console.log(`🔍 [ESTT-AI] No resources found for "${searchQuery}", trying broader search...`);
+                // Try each word individually for broader matching
+                const words = searchQuery.split(/\s+/).filter(w => w.length > 2);
+                for (const word of words) {
+                    const wordResults = await searchResourcesAction(word, userProfile?.filiere);
+                    if (wordResults.length > 0) {
+                        const enriched = await enrichResourcesWithText(wordResults);
+                        forcedResourceContext = buildResourceContext(enriched);
+                        console.log(`📥 [ESTT-AI] Found ${wordResults.length} resources via word "${word}"`);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Build final system instruction with resource context
+        let finalSystemInstruction = systemInstruction;
+        if (forcedResourceContext) {
+            const intentInstructions = intent === 'summarize'
+                ? `The user wants a summary of course material. Read the [RESOURCE DATA] below carefully and provide a clear, structured summary of the content. Use markdown formatting with headers, bullet points, and key takeaways. Always recommend the relevant resources at the end using: {"action":"display_resources","resource_ids":["id1","id2"]}`
+                : intent === 'find'
+                    ? `The user is looking for specific resources. Review the [RESOURCE DATA] below and recommend the most relevant ones. Use: {"action":"display_resources","resource_ids":["id1","id2"]}`
+                    : `The user is asking about academic content. Use the [RESOURCE DATA] below to provide an informed answer. If relevant, recommend resources using: {"action":"display_resources","resource_ids":["id1","id2"]}`;
+
+            finalSystemInstruction = `${systemInstruction}\n\n## PROACTIVELY RETRIEVED RESOURCES\n${intentInstructions}\n\n[RESOURCE DATA]\n${forcedResourceContext}\n[END RESOURCE DATA]`;
+        }
+
+        const model = genAI.getGenerativeModel({
+            model: ESTT_AI_MODEL,
+            systemInstruction: finalSystemInstruction,
+        });
+
+        const chat = model.startChat({ history: sanitizedHistory });
+
+        console.log('🤖 [ESTT-AI] Sending to Gemini...');
+        const result = await chat.sendMessage(userMessage);
+        const aiText = result.response.text();
+        const { reply, action } = extractAiResponse(aiText);
+
+        if (action?.action === 'read' && action?.target === 'resources') {
+            console.log(`📡 [ESTT-AI] RAG: Searching for "${action.query}"`);
+            const searchResults = await searchResourcesAction(action.query, userProfile?.filiere);
+
+            if (searchResults.length > 0) {
+                console.log(`📥 [ESTT-AI] Found ${searchResults.length} resources. Extracting text & injecting...`);
+                const enriched = await enrichResourcesWithText(searchResults);
+                const resourceContext = buildResourceContext(enriched);
+
+                const ragPrompt = [
+                    `[RESOURCE DATA]\nThe user asked: "${userMessage}"`,
+                    `We found ${searchResults.length} relevant resources:`,
+                    resourceContext,
+                    `\n[END RESOURCE DATA]`,
+                    `\nBased on the resources above, recommend 2-5 of the most relevant ones.`,
+                    `Return your response with a JSON action block:`,
+                    `{"action": "display_resources", "resource_ids": ["id1", "id2", "..."]}`,
+                    `Keep your human response helpful and concise. Do not expose raw data or JSON to the user.`,
+                ].join('\n\n');
+
+                const ragResult = await chat.sendMessage(ragPrompt);
+                const ragText = ragResult.response.text();
+                const final = extractAiResponse(ragText);
+
+                console.log('✅ [ESTT-AI] RAG Pipeline COMPLETE');
+                return NextResponse.json({
+                    reply: final.reply || reply,
+                    action: final.action,
+                    interimReply: reply,
+                    model: ESTT_AI_MODEL,
+                });
+            }
+        }
+
+        console.log('✅ [ESTT-AI] Single-turn COMPLETE');
         return NextResponse.json({
             reply,
             action,
@@ -225,16 +333,16 @@ export async function POST(request) {
         });
 
     } catch (error) {
-        console.error('❌ ESTT-AI Route Error:', error);
-        
-        // Provide more descriptive errors to the frontend
+        console.error('❌ ESTT-AI Route Error:', error?.message || error);
+        if (error?.stack) console.error(error.stack.split('\n').slice(0, 5).join('\n'));
+
         const errorMessage = error.message || 'An unexpected error occurred in the AI assistant.';
         const status = error.status || 500;
-        
-        return NextResponse.json({ 
+
+        return NextResponse.json({
             error: errorMessage,
             details: error.name !== 'Error' ? error.name : undefined,
-            code: error.code
+            code: error.code,
         }, { status });
     }
 }

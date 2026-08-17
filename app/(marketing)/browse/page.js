@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { db as staticDb } from '@/lib/data';
-import { db, ref, get } from '@/lib/firebase';
+import { db, ref, get, set as firebaseSet, remove as firebaseRemove, onValue } from '@/lib/firebase';
+import { useAuth } from '@/context/AuthContext';
+import { useDialog } from '@/context/DialogContext';
 import { Button } from '@/components/ui/button';
 import {
     Select,
@@ -13,7 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Badge, Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User, Star, BookOpen, ClipboardList, FlaskConical, FileCheck, Layers, Globe } from 'lucide-react';
+import { Badge, Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User, Star, BookOpen, ClipboardList, FlaskConical, FileCheck, Layers, Globe, ListPlus } from 'lucide-react';
 
 const RESOURCE_CATEGORIES = [
     { id: 'Cours', label: 'Cours', icon: <BookOpen className="w-5 h-5 text-blue-500" /> },
@@ -23,40 +24,22 @@ const RESOURCE_CATEGORIES = [
     { id: 'Autres', label: 'Autres Ressources', icon: <Layers className="w-5 h-5 text-slate-500" /> },
 ];
 
+let _savedField = '';
+let _savedSemester = '';
+let _savedModule = '';
+
 export default function BrowsePage() {
-    const searchParams = useSearchParams();
-    const [selectedField, setSelectedField] = useState('');
-    const [selectedSemester, setSelectedSemester] = useState('');
-    const [selectedModule, setSelectedModule] = useState('');
+    const { user } = useAuth();
+    const { showWarning, showError } = useDialog();
+
+    const [selectedField, setSelectedField] = useState(_savedField);
+    const [selectedSemester, setSelectedSemester] = useState(_savedSemester);
+    const [selectedModule, setSelectedModule] = useState(_savedModule);
     const [resources, setResources] = useState([]);
     const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        // Initialize from URL params
-        const fieldParam = searchParams.get('field');
-        const semesterParam = searchParams.get('semester');
-        const moduleParam = searchParams.get('module');
-
-        if (fieldParam) setSelectedField(fieldParam);
-        if (semesterParam) setSelectedSemester(semesterParam);
-
-        // If only module is provided, try to find the field and semester
-        if (moduleParam && !fieldParam) {
-            let found = false;
-            Object.entries(staticDb.modules).forEach(([key, mods]) => {
-                if (!found && mods.find(m => m.id === moduleParam)) {
-                    const [f, s] = key.split('-');
-                    setSelectedField(f);
-                    setSelectedSemester(s);
-                    setSelectedModule(moduleParam);
-                    found = true;
-                }
-            });
-        } else if (moduleParam) {
-            setSelectedModule(moduleParam);
-        }
-    }, [searchParams]);
+    const [favorites, setFavorites] = useState({});
+    const [togglingFav, setTogglingFav] = useState(null);
 
     useEffect(() => {
         if (!db) return;
@@ -68,6 +51,53 @@ export default function BrowsePage() {
             setAds([]);
         }
     }, [selectedModule, db]);
+
+    useEffect(() => {
+        if (!user || !db) return;
+        const favRef = ref(db, `userFavorites/${user.uid}`);
+        const unsub = onValue(favRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            const map = {};
+            Object.keys(data).forEach((resId) => {
+                map[resId] = true;
+            });
+            setFavorites(map);
+        });
+        return () => unsub();
+    }, [user, db]);
+
+    const handleToggleFavorite = async (e, resource) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!user) {
+            showWarning('Connectez-vous pour ajouter cette ressource à votre liste.');
+            return;
+        }
+        try {
+            setTogglingFav(resource.id);
+            const favRef = ref(db, `userFavorites/${user.uid}/${resource.id}`);
+            if (favorites[resource.id]) {
+                await firebaseRemove(favRef);
+            } else {
+                await firebaseSet(favRef, {
+                    resourceId: resource.id,
+                    title: resource.title || '',
+                    type: resource.type || '',
+                    docType: resource.docType || '',
+                    field: resource.field || null,
+                    moduleId: resource.moduleId || resource.module || null,
+                    semester: resource.semester || null,
+                    professor: resource.professor || '',
+                    createdAt: Date.now(),
+                });
+            }
+        } catch (err) {
+            console.error('Error toggling favorite:', err);
+            showError('Erreur lors de la mise à jour de votre liste.');
+        } finally {
+            setTogglingFav(null);
+        }
+    };
 
     const fetchAds = async () => {
         const adsRef = ref(db, 'studentAds');
@@ -147,6 +177,20 @@ export default function BrowsePage() {
         }
     };
 
+    const updateParams = (updates) => {
+        const params = new URLSearchParams(window.location.search);
+        Object.entries(updates).forEach(([key, value]) => {
+            if (value) {
+                params.set(key, value);
+            } else {
+                params.delete(key);
+            }
+        });
+        const newSearch = params.toString();
+        const newUrl = `${window.location.pathname}${newSearch ? '?' + newSearch : ''}`;
+        window.history.replaceState(null, '', newUrl);
+    };
+
     const modules = selectedField && selectedSemester
         ? staticDb.modules[`${selectedField}-${selectedSemester}`] || []
         : [];
@@ -213,6 +257,7 @@ export default function BrowsePage() {
     const renderResourceCard = (resource) => {
         const rawUrl = resource.url || resource.link || resource.file;
         const validUrl = rawUrl ? ensureProtocol(rawUrl) : null;
+        const isFav = favorites[resource.id] || false;
 
         return (
             <Link key={resource.id} href={`/resource/${resource.id}`} className="group flex flex-col h-full border border-slate-200 rounded-xl hover:border-primary/50 transition-all hover:shadow-md bg-white p-5 cursor-pointer">
@@ -224,6 +269,12 @@ export default function BrowsePage() {
                         <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">{resource.title}</h3>
                         <div className="flex flex-col mt-1.5 gap-1">
                             <div className="flex flex-wrap items-center gap-1.5">
+                                {resource.professor && (
+                                    <span className="text-[10px] font-medium text-slate-400 flex items-center gap-1">
+                                        <User className="w-3 h-3" />
+                                        {resource.professor}
+                                    </span>
+                                )}
                                 <span className="text-[10px] font-bold uppercase py-0.5 px-1.5 bg-slate-100 text-slate-500 rounded">{resource.type}</span>
                                 {resource.docType && (
                                     <span className="text-[10px] font-bold uppercase py-0.5 px-1.5 bg-primary/10 text-primary rounded">{resource.docType}</span>
@@ -235,18 +286,28 @@ export default function BrowsePage() {
                 </div>
 
                 <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                    {resource.professor && (
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                            <User className="w-3.5 h-3.5 text-slate-300" />
-                            <span className="truncate max-w-[120px]">{resource.professor}</span>
-                        </div>
-                    )}
+                    <button
+                        onClick={(e) => handleToggleFavorite(e, resource)}
+                        disabled={togglingFav === resource.id}
+                        className={`text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-full transition-colors ${
+                            isFav
+                                ? 'bg-primary/10 text-primary'
+                                : 'bg-slate-50 text-slate-400 hover:bg-primary/5 hover:text-primary'
+                        }`}
+                    >
+                        {togglingFav === resource.id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                            <ListPlus className="w-3 h-3" />
+                        )}
+                        {isFav ? 'Dans ma liste' : 'Ajouter à ma liste'}
+                    </button>
                     {validUrl ? (
-                        <span className="text-xs font-bold text-primary group-hover:underline ml-auto flex items-center gap-1 bg-primary/5 px-2.5 py-1 rounded-full">
+                        <span className="text-xs font-bold text-primary group-hover:underline flex items-center gap-1 bg-primary/5 px-2.5 py-1 rounded-full">
                             Ouvrir <ArrowRight className="w-3 h-3" />
                         </span>
                     ) : (
-                        <span className="text-xs text-slate-300 ml-auto">Non disponible</span>
+                        <span className="text-xs text-slate-300">Non disponible</span>
                     )}
                 </div>
             </Link>
@@ -270,10 +331,14 @@ export default function BrowsePage() {
                     <Select
                         value={selectedField}
                         onValueChange={(value) => {
+                            _savedField = value;
+                            _savedSemester = '';
+                            _savedModule = '';
                             setSelectedField(value);
                             setSelectedSemester('');
                             setSelectedModule('');
                             setResources([]);
+                            updateParams({ field: value, semester: '', module: '' });
                         }}
                     >
                         <SelectTrigger>
@@ -281,9 +346,7 @@ export default function BrowsePage() {
                         </SelectTrigger>
                         <SelectContent>
                             {staticDb.fields.map((field) => (
-                                <SelectItem key={field.id} value={field.id}>
-                                    {field.name}
-                                </SelectItem>
+                                <SelectItem key={field.id} value={field.id}>{field.name}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
@@ -294,9 +357,12 @@ export default function BrowsePage() {
                     <Select
                         value={selectedSemester}
                         onValueChange={(value) => {
+                            _savedSemester = value;
+                            _savedModule = '';
                             setSelectedSemester(value);
                             setSelectedModule('');
                             setResources([]);
+                            updateParams({ semester: value, module: '' });
                         }}
                         disabled={!selectedField}
                     >
@@ -317,7 +383,11 @@ export default function BrowsePage() {
                     <label className="text-sm font-medium leading-none">Module</label>
                     <Select
                         value={selectedModule}
-                        onValueChange={setSelectedModule}
+                        onValueChange={(value) => {
+                            _savedModule = value;
+                            setSelectedModule(value);
+                            updateParams({ module: value });
+                        }}
                         disabled={!selectedSemester}
                     >
                         <SelectTrigger>

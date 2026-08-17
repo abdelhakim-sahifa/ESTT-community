@@ -7,7 +7,7 @@ import { db, ref, onValue, push, set, serverTimestamp, update, query, limitToLas
 import ChatBubble from '@/components/features/chat/ChatBubble';
 import ChatInput from '@/components/features/chat/ChatInput';
 import ChatTermsDialog from '@/components/features/chat/ChatTermsDialog';
-import { Loader2, ArrowLeft, Bell, BellOff, Search } from 'lucide-react';
+import { Loader2, ArrowLeft, Bell, BellOff, Search, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { onDisconnect, remove } from 'firebase/database';
 import { X, Lock, ShieldCheck, Gem } from 'lucide-react';
@@ -394,7 +394,9 @@ export default function DirectMessagePage() {
                 // Update usage count
                 const today = new Date().toISOString().split('T')[0];
                 const usageRef = ref(db, `users/${user.uid}/ai_usage/${today}`);
-                set(usageRef, aiMessageCount + 1);
+                if (!isPremium) {
+                    set(usageRef, aiMessageCount + 1);
+                }
 
                 setIsGeneratingAiResponse(true);
 
@@ -476,6 +478,22 @@ export default function DirectMessagePage() {
             });
         } catch (error) {
             console.error("Error deleting message:", error);
+        }
+    };
+
+    const handleClearChat = async () => {
+        if (!user || !roomId) return;
+        try {
+            await set(ref(db, `direct_messages/${roomId}/messages`), null);
+            await update(ref(db, `userConversations/${user.uid}/${recipientId}`), {
+                lastMessage: null,
+                lastMessageSenderId: null,
+                timestamp: null,
+            });
+            setMessages([]);
+            setAiMessageCount(0);
+        } catch (error) {
+            console.error("Error clearing chat:", error);
         }
     };
 
@@ -633,6 +651,17 @@ export default function DirectMessagePage() {
                                 }
                             </button>
                         )}
+
+                        {/* Clear AI Chat */}
+                        {isEsttAiChat && (
+                            <button
+                                onClick={handleClearChat}
+                                title="Effacer la conversation"
+                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -764,7 +793,7 @@ export default function DirectMessagePage() {
                                 </div>
                             </div>
                         </div>
-                    ) : isEsttAiChat && aiMessageCount >= 2 ? (
+                    ) : isEsttAiChat && !isPremium && aiMessageCount >= 2 ? (
                         <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 shadow-sm animate-in fade-in duration-300">
                             <div className="flex flex-col items-center text-center gap-3">
                                 <div className="w-12 h-12 rounded-2xl bg-slate-200 flex items-center justify-center">

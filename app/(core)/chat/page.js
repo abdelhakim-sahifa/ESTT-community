@@ -6,7 +6,8 @@ import { db, ref, onValue, push, set, serverTimestamp, update, query, limitToLas
 import ChatBubble from '@/components/features/chat/ChatBubble';
 import ChatInput from '@/components/features/chat/ChatInput';
 import ChatTermsDialog from '@/components/features/chat/ChatTermsDialog';
-import { Loader2, Hash, Lock, Menu, Bell, BellOff, Search, User as UserIcon, LogOut } from 'lucide-react';
+import { Loader2, Lock, Menu, Bell, BellOff, Search, User as UserIcon, LogOut, ArrowLeft } from 'lucide-react';
+import { PeopleIcon } from '@primer/octicons-react';
 import { useNotifications } from '@/context/NotificationContext';
 import { notifyMention as rawNotifyMention } from '@/lib/browserNotifications';
 import { cn, getUserLevel } from '@/lib/utils';
@@ -389,6 +390,15 @@ export default function DiscussionPage() {
             <div className="bg-white border-b border-slate-100 px-4 py-3 md:px-12 md:py-4 shrink-0">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
+                        {/* Back to Messages */}
+                        <Link
+                            href="/messages"
+                            className="p-2 rounded-xl text-slate-500 hover:text-primary hover:bg-primary/5 transition-all"
+                            title="Retour aux messages"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                        </Link>
+
                         {/* Mobile Menu Trigger */}
                         <div className="md:hidden">
                             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -559,7 +569,7 @@ export default function DiscussionPage() {
                     ) : messages.length === 0 ? (
                         <div className="text-center py-20 px-6">
                             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
-                                <Hash className="w-8 h-8 text-slate-300" />
+                                <PeopleIcon size={32} className="text-slate-300" />
                             </div>
                             <h3 className="text-lg font-bold text-slate-900 mb-1">Pas encore de messages</h3>
                             <p className="text-sm text-slate-500">Commencez la discussion avec vos camarades de promotion !</p>

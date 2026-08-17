@@ -179,8 +179,9 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                 {children}
             </a>
         ),
-        code: ({ inline, children }) => {
-            if (inline) {
+        code: ({ className, children }) => {
+            const isInline = !className || !className.startsWith('language-');
+            if (isInline) {
                 return (
                     <code
                         className={cn(
@@ -194,7 +195,7 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
             }
 
             return (
-                <code className={cn("block font-mono text-[13px] md:text-[14px]", isOwn ? "text-white" : "text-slate-50")}>
+                <code className={cn("block font-mono text-[13px] md:text-[14px]", isOwn ? "text-white" : "text-slate-50", className)}>
                     {children}
                 </code>
             );

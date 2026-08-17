@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { cn, getUserLevel } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Bell, LogOut, User as UserIcon, Search, MessageSquare, Home, Calendar, PlusCircle, ShieldCheck, BookOpen, HelpCircle } from 'lucide-react';
+import { Menu, X, Bell, LogOut, User as UserIcon, Search, MessageSquare, Home, Calendar, PlusCircle, ShieldCheck, BookOpen, HelpCircle, ListPlus } from 'lucide-react';
 import { db, ref, onValue } from '@/lib/firebase';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -90,6 +90,7 @@ export default function Header() {
     ];
 
     if (user) {
+        navItems.push({ href: '/my-list', label: 'Ma Liste', icon: ListPlus });
         navItems.push({ href: '/profile', label: 'Profil', icon: UserIcon });
     }
 
