@@ -18,7 +18,10 @@ function extractAiResponse(text) {
         if (jsonMatch) {
             const rawJson = jsonMatch[0];
             const actionData = JSON.parse(rawJson);
-            const reply = text.replace(rawJson, '').trim();
+            let reply = text.replace(rawJson, '').trim();
+            // Strip leftover markdown code fences and empty blocks
+            reply = reply.replace(/```[\s\S]*?```/g, '').trim();
+            reply = reply.replace(/^```+|```+$/g, '').trim();
 
             return {
                 reply: reply || actionData.message || null,
@@ -29,7 +32,9 @@ function extractAiResponse(text) {
         console.warn('[ESTT-AI] Malformed JSON in response, treating as plain text.');
     }
 
-    return { reply: text, action: null };
+    // Strip markdown code fences from plain text fallback too
+    const cleaned = text.replace(/```[\s\S]*?```/g, '').replace(/^```+|```+$/g, '').trim();
+    return { reply: cleaned || text, action: null };
 }
 
 async function extractTextFromServer(file) {
