@@ -27,6 +27,7 @@ import AdminBugReports from './AdminBugReports';
 import AdminShortUrls from './AdminShortUrls';
 import AdminCommunication from './AdminCommunication';
 import AdminRewardCodes from './AdminRewardCodes';
+import AdminMessages from './AdminMessages';
 import { normalizeProject, normalizeShowcase, normalizeSubmission } from '@/lib/projects';
 
 export default function AdminDashboard() {
@@ -50,6 +51,7 @@ export default function AdminDashboard() {
     });
     const [adminAnnouncements, setAdminAnnouncements] = useState([]);
     const [bugReports, setBugReports] = useState([]);
+    const [contactMessages, setContactMessages] = useState([]);
     const [projectBriefs, setProjectBriefs] = useState([]);
     const [projectSubmissions, setProjectSubmissions] = useState([]);
     const [projectShowcases, setProjectShowcases] = useState([]);
@@ -141,6 +143,15 @@ export default function AdminDashboard() {
             setBugReports(list);
         });
 
+        const contactMessagesRef = ref(db, 'contactMessages');
+        const unsubContactMessages = onValue(contactMessagesRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            const list = Object.entries(data)
+                .map(([id, val]) => ({ id, ...val }))
+                .filter(m => !m.deleted);
+            setContactMessages(list);
+        });
+
         const clubRequestsRef = ref(db, 'clubRequests');
         const unsubClubRequests = onValue(clubRequestsRef, (snapshot) => {
             const data = snapshot.val() || {};
@@ -196,6 +207,7 @@ export default function AdminDashboard() {
             unsubAdminAnnouncements();
             unsubSettings();
             unsubBugReports();
+            unsubContactMessages();
         };
     }, [user, profile, authLoading]);
 
@@ -243,6 +255,7 @@ export default function AdminDashboard() {
                     openBugReportsCount={bugReports.filter(b => b.status === 'open').length}
                     openClubRequestsCount={clubRequests.length}
                     openClubChangeRequestsCount={clubChangeRequests.length}
+                    unreadMessagesCount={contactMessages.filter(m => m.status === 'unread').length}
                     isOpen={isSidebarOpen}
                     setIsOpen={setIsSidebarOpen}
                 />
@@ -325,6 +338,12 @@ export default function AdminDashboard() {
 
                     {activeTab === 'rewardCodes' && (
                         <AdminRewardCodes />
+                    )}
+
+                    {activeTab === 'messages' && (
+                        <AdminMessages
+                            messages={contactMessages}
+                        />
                     )}
                 </main>
             </div>

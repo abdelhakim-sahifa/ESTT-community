@@ -72,41 +72,6 @@ export default function ContactPage() {
                 timestamp: Date.now(),
             });
 
-            const subjectLabels = {
-                question: 'Question générale',
-                bug: 'Signaler un problème',
-                suggestion: 'Suggestion',
-                contribution: 'Contribuer',
-                autre: 'Autre',
-            };
-
-            try {
-                await fetch('/api/send-email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        to: 'contact@estt.ma',
-                        subject: `[Contact ESTT] ${subjectLabels[formData.subject] || formData.subject}`,
-                        html: `
-                            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                                <h2 style="color: #2563eb;">Nouveau message de contact</h2>
-                                <p><strong>Nom :</strong> ${formData.name.trim()}</p>
-                                <p><strong>Email :</strong> ${formData.email.trim()}</p>
-                                <p><strong>Sujet :</strong> ${subjectLabels[formData.subject] || formData.subject}</p>
-                                <hr style="border: 1px solid #e2e8f0;" />
-                                <p><strong>Message :</strong></p>
-                                <p style="white-space: pre-wrap;">${formData.message.trim()}</p>
-                                <hr style="border: 1px solid #e2e8f0;" />
-                                <p style="color: #94a3b8; font-size: 12px;">Envoyé depuis ESTT.Community</p>
-                            </div>
-                        `,
-                        replyTo: formData.email.trim(),
-                    }),
-                });
-            } catch (emailErr) {
-                console.error('Email send failed (message saved to DB):', emailErr);
-            }
-
             setSuccess(true);
             showSuccess('Votre message a été envoyé avec succès !');
             window.scrollTo(0, 0);

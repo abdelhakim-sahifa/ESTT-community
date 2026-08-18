@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { db, ref, onValue } from '@/lib/firebase';
+import { db, ref, onValue, remove } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { markAsRead, markGlobalAsRead, NOTIF_PRIORITY } from '@/lib/notifications';
+import { useDialog } from '@/context/DialogContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +21,7 @@ import { cn } from '@/lib/utils';
 
 export default function NotificationsPage() {
     const { user, profile } = useAuth();
+    const { showConfirm } = useDialog();
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedNotif, setSelectedNotif] = useState(null);
@@ -106,6 +108,28 @@ export default function NotificationsPage() {
             } else if (notif.action.type === 'external_link') {
                 window.open(finalTarget, '_blank');
             }
+        }
+    };
+
+    const handleDelete = async (e, notif) => {
+        e.stopPropagation();
+        const confirmed = await showConfirm('Supprimer cette notification ?', {
+            type: 'danger',
+            title: 'Supprimer',
+            confirmLabel: 'Supprimer'
+        });
+        if (!confirmed) return;
+
+        try {
+            if (notif.isGlobal) {
+                return;
+            }
+            await remove(ref(db, `notifications/private/${user.uid}/${notif.id}`));
+            if (selectedNotif?.id === notif.id) {
+                setIsModalOpen(false);
+            }
+        } catch (err) {
+            console.error('Error deleting notification:', err);
         }
     };
 
@@ -215,7 +239,7 @@ export default function NotificationsPage() {
                         <Card
                             key={notif.id}
                             className={cn(
-                                "border-none shadow-sm transition-all cursor-pointer hover:shadow-md",
+                                "border-none shadow-sm transition-all cursor-pointer hover:shadow-md group",
                                 !notif.read ? "bg-white border-l-4 border-l-primary" : "bg-slate-50/50"
                             )}
                             onClick={() => handleNotificationClick(notif)}
@@ -246,9 +270,19 @@ export default function NotificationsPage() {
                                         </div>
                                     )}
                                 </div>
-                                {!notif.read && (
-                                    <div className="w-2 h-2 bg-primary rounded-full mt-2 shrink-0 animate-pulse" />
-                                )}
+                                <div className="flex items-center gap-2 shrink-0">
+                                    {!notif.read && (
+                                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                                    )}
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="w-8 h-8 rounded-lg hover:bg-red-50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onClick={(e) => handleDelete(e, notif)}
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                    </Button>
+                                </div>
                             </CardContent>
                         </Card>
                     ))}
