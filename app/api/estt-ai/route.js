@@ -74,14 +74,152 @@ async function extractTextFromPdfUrl(url) {
     }
 }
 
+function detectUrlType(url) {
+    if (!url) return 'unknown';
+    if (url.endsWith('.pdf')) return 'pdf';
+    if (url.includes('docs.google.com/document')) return 'gdoc';
+    if (url.includes('drive.google.com/file')) return 'gdrive-file';
+    if (url.includes('drive.google.com/drive') || url.includes('drive.google.com/folder')) return 'gdrive-folder';
+    if (url.endsWith('.docx') || url.includes('.docx?')) return 'docx';
+    return 'unknown';
+}
+
+function htmlToMarkdown(html) {
+    try {
+        const TurndownService = require('turndown');
+        const turndown = new TurndownService({
+            headingStyle: 'atx',
+            bulletListMarker: '-',
+            codeBlockStyle: 'fenced',
+        });
+        return turndown.turndown(html).substring(0, 8000);
+    } catch (error) {
+        console.warn('[ESTT-AI] HTML to Markdown conversion failed:', error.message);
+        return null;
+    }
+}
+
+async function extractTextFromGDrive(url) {
+    try {
+        const match = url.match(/\/file\/d\/([^/]+)/);
+        if (!match) return null;
+
+        const fileId = match[1];
+        const exportUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
+        const response = await fetch(exportUrl, { signal: AbortSignal.timeout(15000), redirect: 'follow' });
+        if (!response.ok) return null;
+
+        const contentType = (response.headers.get('content-type') || '').toLowerCase();
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        // If it's a PDF, extract text with pdf-parse
+        if (contentType.includes('pdf') || buffer[0] === 0x25) { // %PDF magic bytes
+            try {
+                const parse = require('pdf-parse/lib/pdf-parse.js');
+                if (typeof parse === 'function') {
+                    const data = await parse(buffer);
+                    if (data?.text) return data.text.substring(0, 8000);
+                }
+            } catch {}
+        }
+
+        // If it's HTML, convert to Markdown
+        if (contentType.includes('text/html') || contentType.includes('html')) {
+            const html = new TextDecoder().decode(arrayBuffer);
+            const md = htmlToMarkdown(html);
+            if (md) return md;
+        }
+
+        // Fallback: try as plain text
+        const text = new TextDecoder().decode(buffer);
+        if (text.length > 100 && !contentType.includes('application/json')) {
+            return text.substring(0, 8000);
+        }
+
+        return null;
+    } catch (error) {
+        console.warn(`[ESTT-AI] Google Drive extraction failed: ${error.message}`);
+        return null;
+    }
+}
+
+async function extractTextFromGDoc(url) {
+    try {
+        const match = url.match(/\/document\/d\/([^/]+)/);
+        if (!match) return null;
+
+        const docId = match[1];
+        const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=html`;
+
+        const response = await fetch(exportUrl, { signal: AbortSignal.timeout(15000) });
+        if (!response.ok) return null;
+
+        const html = await response.text();
+        if (!html || html.length < 50) return null;
+
+        const md = htmlToMarkdown(html);
+        return md || null;
+    } catch (error) {
+        console.warn(`[ESTT-AI] Google Docs extraction failed: ${error.message}`);
+        return null;
+    }
+}
+
+async function extractTextFromDocx(url) {
+    try {
+        const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
+        if (!response.ok) return null;
+
+        const arrayBuffer = await response.arrayBuffer();
+        const mammoth = require('mammoth');
+
+        // Try HTML output first (preserves structure)
+        const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
+        if (htmlResult?.value && htmlResult.value.length > 50) {
+            const md = htmlToMarkdown(htmlResult.value);
+            if (md) return md;
+        }
+
+        // Fallback to plain text
+        const textResult = await mammoth.extractRawText({ arrayBuffer });
+        if (textResult?.value) return textResult.value.substring(0, 8000);
+
+        return null;
+    } catch (error) {
+        console.warn(`[ESTT-AI] Word document extraction failed: ${error.message}`);
+        return null;
+    }
+}
+
 async function enrichResourcesWithText(searchResults) {
     return Promise.all(
         searchResults.map(async (res) => {
             let rawText = null;
-            const pdfUrl = res.file || res.url;
-            if (pdfUrl && pdfUrl.endsWith('.pdf')) {
-                rawText = await extractTextFromPdfUrl(pdfUrl);
+            const url = res.file || res.url;
+            if (!url) return { ...res, rawText };
+
+            const type = detectUrlType(url);
+
+            switch (type) {
+                case 'pdf':
+                    rawText = await extractTextFromPdfUrl(url);
+                    break;
+                case 'gdrive-file':
+                    rawText = await extractTextFromGDrive(url);
+                    break;
+                case 'gdoc':
+                    rawText = await extractTextFromGDoc(url);
+                    break;
+                case 'docx':
+                    rawText = await extractTextFromDocx(url);
+                    break;
+                default:
+                    console.log(`[ESTT-AI] Unsupported URL type for: ${url}`);
+                    break;
             }
+
             return { ...res, rawText };
         })
     );
