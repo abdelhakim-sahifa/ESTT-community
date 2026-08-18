@@ -239,20 +239,25 @@ export async function POST(request) {
 
         const userMessage = message?.trim() || '';
 
-        // Proactive resource search for academic queries
-        const { isAcademic, searchQuery, intent } = detectAcademicIntent(userMessage);
+        // Always search for resources based on user message
+        const searchQuery = userMessage
+            .replace(/[?!.,;:()]/g, '')
+            .split(/\s+/)
+            .filter(w => w.length > 2)
+            .join(' ')
+            .trim();
+
         let forcedResourceContext = '';
 
-        if (isAcademic && searchQuery) {
-            console.log(`🎓 [ESTT-AI] Academic intent detected (${intent}). Searching for "${searchQuery}"...`);
+        if (searchQuery) {
+            console.log(`🔍 [ESTT-AI] Searching resources for "${searchQuery}"...`);
             const forcedResults = await searchResourcesAction(searchQuery, userProfile?.filiere);
 
             if (forcedResults.length > 0) {
-                console.log(`📥 [ESTT-AI] Found ${forcedResults.length} resources proactively`);
                 const enriched = await enrichResourcesWithText(forcedResults);
                 forcedResourceContext = buildResourceContext(enriched);
+                console.log(`📥 [ESTT-AI] Found ${forcedResults.length} resources`);
             } else {
-                console.log(`🔍 [ESTT-AI] No resources found for "${searchQuery}", trying broader search...`);
                 // Try each word individually for broader matching
                 const words = searchQuery.split(/\s+/).filter(w => w.length > 2);
                 for (const word of words) {
@@ -270,13 +275,12 @@ export async function POST(request) {
         // Build final system instruction with resource context
         let finalSystemInstruction = systemInstruction;
         if (forcedResourceContext) {
-            const intentInstructions = intent === 'summarize'
-                ? `The user wants a summary of course material. Read the [RESOURCE DATA] below carefully and provide a clear, structured summary of the content. Use markdown formatting with headers, bullet points, and key takeaways. Always recommend the relevant resources at the end using: {"action":"display_resources","resource_ids":["id1","id2"]}`
-                : intent === 'find'
-                    ? `The user is looking for specific resources. Review the [RESOURCE DATA] below and recommend the most relevant ones. Use: {"action":"display_resources","resource_ids":["id1","id2"]}`
-                    : `The user is asking about academic content. Use the [RESOURCE DATA] below to provide an informed answer. If relevant, recommend resources using: {"action":"display_resources","resource_ids":["id1","id2"]}`;
-
-            finalSystemInstruction = `${systemInstruction}\n\n## PROACTIVELY RETRIEVED RESOURCES\n${intentInstructions}\n\n[RESOURCE DATA]\n${forcedResourceContext}\n[END RESOURCE DATA]`;
+            const resourceInstruction = `The user is asking about academic content. Use the [RESOURCE DATA] below to provide an informed answer. Answer ONLY from the provided resources — do NOT use your own training knowledge. Recommend 2-5 relevant resources using: {"action":"display_resources","resource_ids":["id1","id2"]}`;
+            finalSystemInstruction = `${systemInstruction}\n\n## RETRIEVED RESOURCES\n${resourceInstruction}\n\n[RESOURCE DATA]\n${forcedResourceContext}\n[END RESOURCE DATA]`;
+        } else {
+            // No resources found — strict resources-only mode
+            const noResourceInstruction = `No resources were found on the platform for the user's request. You MUST respond with: "Je n'ai pas trouvé de ressources correspondantes sur la plateforme pour cette demande. Essayez de consulter la page Ressources pour trouver ce que vous cherchez." Do NOT answer from your own training knowledge.`;
+            finalSystemInstruction = `${systemInstruction}\n\n## NO RESOURCES FOUND\n${noResourceInstruction}`;
         }
 
         const model = genAI.getGenerativeModel({
