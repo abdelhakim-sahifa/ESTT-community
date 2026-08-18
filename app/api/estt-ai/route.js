@@ -122,6 +122,13 @@ const ACADEMIC_INTENT_PATTERNS = [
     /t[ée]l[ée]charge/i, /pdf/i, /document/i,
     /cours du module/i, /cours de/i, /td de/i, /tp de/i, /exam de/i, /examen de/i,
     /resume/i, /summary/i, /summarize/i,
+    /syntaxe/i, /quel/i, /quelle/i, /explique/i, /d[eé]finition/i,
+    /règles?/i, /regles?/i, /comment/i, /pourquoi/i, /diff[eé]rence/i,
+    /compare/i, /comparaison/i, /exemple/i, /application/i,
+    /sql/i, /select/i, /where/i, /insert/i, /update/i, /delete/i,
+    /mcd/i, /mld/i, /relation/i, /table/i, /base de donn[eé]es/i,
+    /algorithme/i, /programmation/i, /fonction/i, /variable/i,
+    /math/i, /physique/i, /chimie/i, /informatique/i,
 ];
 
 function detectAcademicIntent(message) {
@@ -244,18 +251,12 @@ export async function POST(request) {
 
         const userMessage = message?.trim() || '';
 
-        // Always search for resources based on user message
-        const searchQuery = userMessage
-            .replace(/[?!.,;:()]/g, '')
-            .split(/\s+/)
-            .filter(w => w.length > 2)
-            .join(' ')
-            .trim();
-
+        // Detect academic intent — only search for academic queries
+        const { isAcademic, searchQuery, intent } = detectAcademicIntent(userMessage);
         let forcedResourceContext = '';
 
-        if (searchQuery) {
-            console.log(`🔍 [ESTT-AI] Searching resources for "${searchQuery}"...`);
+        if (isAcademic && searchQuery) {
+            console.log(`🎓 [ESTT-AI] Academic intent detected. Searching for "${searchQuery}"...`);
             const forcedResults = await searchResourcesAction(searchQuery, userProfile?.filiere);
 
             if (forcedResults.length > 0) {
@@ -282,8 +283,8 @@ export async function POST(request) {
         if (forcedResourceContext) {
             const resourceInstruction = `The user is asking about academic content. Use the [RESOURCE DATA] below to provide an informed answer. Answer ONLY from the provided resources — do NOT use your own training knowledge. Recommend 2-5 relevant resources using: {"action":"display_resources","resource_ids":["id1","id2"]}`;
             finalSystemInstruction = `${systemInstruction}\n\n## RETRIEVED RESOURCES\n${resourceInstruction}\n\n[RESOURCE DATA]\n${forcedResourceContext}\n[END RESOURCE DATA]`;
-        } else {
-            // No resources found — strict resources-only mode
+        } else if (isAcademic) {
+            // Academic intent but no resources found — strict resources-only
             const noResourceInstruction = `No resources were found on the platform for the user's request. You MUST respond with: "Je n'ai pas trouvé de ressources correspondantes sur la plateforme pour cette demande. Essayez de consulter la page Ressources pour trouver ce que vous cherchez." Do NOT answer from your own training knowledge.`;
             finalSystemInstruction = `${systemInstruction}\n\n## NO RESOURCES FOUND\n${noResourceInstruction}`;
         }
