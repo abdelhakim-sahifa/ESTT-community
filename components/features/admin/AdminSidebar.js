@@ -15,7 +15,8 @@ import {
     Link,
     Gift,
     Trophy,
-    X
+    X,
+    MessageSquare
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -30,6 +31,7 @@ export default function AdminSidebar({
     openBugReportsCount = 0, 
     openClubRequestsCount = 0, 
     openClubChangeRequestsCount = 0,
+    unreadMessagesCount = 0,
     isOpen,
     setIsOpen
 }) {
@@ -155,6 +157,14 @@ export default function AdminSidebar({
                         onClick={() => setActiveTab('notifications')}
                     >
                         <Bell className="w-4 h-4" /> Notifications
+                    </Button>
+                    <Button
+                        variant={activeTab === 'messages' ? 'default' : 'ghost'}
+                        className="justify-start gap-3 h-11"
+                        onClick={() => setActiveTab('messages')}
+                    >
+                        <MessageSquare className="w-4 h-4" /> Messages
+                        {unreadMessagesCount > 0 && <Badge variant="destructive" className="ml-auto px-1.5 h-5 min-w-5 flex items-center justify-center">{unreadMessagesCount}</Badge>}
                     </Button>
 
                     <Button
