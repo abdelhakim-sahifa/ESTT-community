@@ -19,9 +19,9 @@ function extractAiResponse(text) {
             const rawJson = jsonMatch[0];
             const actionData = JSON.parse(rawJson);
             let reply = text.replace(rawJson, '').trim();
-            // Strip leftover markdown code fences and empty blocks
-            reply = reply.replace(/```[\s\S]*?```/g, '').trim();
-            reply = reply.replace(/^```+|```+$/g, '').trim();
+            // Strip orphaned code fences left after JSON removal (```json\n\n```)
+            reply = reply.replace(/```\w*\s*```/g, '').trim();
+            reply = reply.replace(/^```+\s*$/gm, '').trim();
 
             return {
                 reply: reply || actionData.message || null,
@@ -32,9 +32,7 @@ function extractAiResponse(text) {
         console.warn('[ESTT-AI] Malformed JSON in response, treating as plain text.');
     }
 
-    // Strip markdown code fences from plain text fallback too
-    const cleaned = text.replace(/```[\s\S]*?```/g, '').replace(/^```+|```+$/g, '').trim();
-    return { reply: cleaned || text, action: null };
+    return { reply: text, action: null };
 }
 
 async function extractTextFromServer(file) {
