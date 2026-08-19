@@ -59,15 +59,35 @@ async function extractTextFromServer(file) {
     }
 }
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+async function safeFetch(url, timeoutMs = 15000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        const response = await fetch(url, { signal: controller.signal, redirect: 'follow' });
+        const contentLength = parseInt(response.headers.get('content-length') || '0', 10);
+        if (contentLength > MAX_FILE_SIZE) {
+            console.warn(`[ESTT-AI] File too large (${(contentLength / 1024 / 1024).toFixed(1)}MB): ${url}`);
+            return null;
+        }
+        return response;
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
 async function extractTextFromPdfUrl(url) {
     try {
         const parse = require('pdf-parse/lib/pdf-parse.js');
         if (typeof parse !== 'function') return null;
 
-        const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
-        if (!response.ok) return null;
+        const response = await safeFetch(url, 10000);
+        if (!response || !response.ok) return null;
 
         const arrayBuffer = await response.arrayBuffer();
+        if (arrayBuffer.byteLength > MAX_FILE_SIZE) return null;
+
         const buffer = Buffer.from(arrayBuffer);
         const data = await parse(buffer);
 
@@ -87,6 +107,40 @@ function detectUrlType(url) {
     if (url.includes('drive.google.com/drive') || url.includes('drive.google.com/folder')) return 'gdrive-folder';
     if (url.endsWith('.docx') || url.includes('.docx?')) return 'docx';
     return 'unknown';
+}
+
+function extractRelevantSection(text, query, maxLength = 15000) {
+    if (!text || !query) return text?.substring(0, maxLength) || '';
+    if (text.length <= maxLength) return text;
+
+    const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+    if (queryWords.length === 0) return text.substring(0, maxLength);
+
+    // Split text into paragraphs/sections
+    const sections = text.split(/\n\s*\n/);
+
+    // Score each section by keyword matches
+    const scored = sections.map((section, idx) => {
+        const lower = section.toLowerCase();
+        const score = queryWords.reduce((sum, word) => sum + (lower.includes(word) ? 1 : 0), 0);
+        return { section, score, idx };
+    });
+
+    // Sort by score (descending), take top sections that fit within maxLength
+    scored.sort((a, b) => b.score - a.score);
+
+    let result = '';
+    for (const { section } of scored) {
+        if (result.length + section.length + 2 > maxLength) break;
+        result += section.trim() + '\n\n';
+    }
+
+    // If no sections matched, fallback to beginning of text
+    if (!result.trim()) {
+        return text.substring(0, maxLength);
+    }
+
+    return result.trim();
 }
 
 function htmlToMarkdown(html) {
@@ -112,11 +166,13 @@ async function extractTextFromGDrive(url) {
         const fileId = match[1];
         const exportUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
 
-        const response = await fetch(exportUrl, { signal: AbortSignal.timeout(15000), redirect: 'follow' });
-        if (!response.ok) return null;
+        const response = await safeFetch(exportUrl, 15000);
+        if (!response || !response.ok) return null;
 
         const contentType = (response.headers.get('content-type') || '').toLowerCase();
         const arrayBuffer = await response.arrayBuffer();
+        if (arrayBuffer.byteLength > MAX_FILE_SIZE) return null;
+
         const buffer = Buffer.from(arrayBuffer);
 
         // If it's a PDF, extract text with pdf-parse
@@ -158,8 +214,8 @@ async function extractTextFromGDoc(url) {
         const docId = match[1];
         const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=html`;
 
-        const response = await fetch(exportUrl, { signal: AbortSignal.timeout(15000) });
-        if (!response.ok) return null;
+        const response = await safeFetch(exportUrl, 15000);
+        if (!response || !response.ok) return null;
 
         const html = await response.text();
         if (!html || html.length < 50) return null;
@@ -175,10 +231,11 @@ async function extractTextFromGDoc(url) {
 async function extractTextFromDocx(url) {
     try {
         if (!mammoth) return null;
-        const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
-        if (!response.ok) return null;
+        const response = await safeFetch(url, 15000);
+        if (!response || !response.ok) return null;
 
         const arrayBuffer = await response.arrayBuffer();
+        if (arrayBuffer.byteLength > MAX_FILE_SIZE) return null;
 
         // Try HTML output first (preserves structure)
         const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
@@ -235,7 +292,7 @@ async function enrichResourcesWithText(searchResults) {
     );
 }
 
-function buildResourceContext(searchResults) {
+function buildResourceContext(searchResults, searchQuery = '') {
     if (!searchResults || searchResults.length === 0) return '';
 
     const sections = searchResults.map((res, i) => {
@@ -250,7 +307,10 @@ function buildResourceContext(searchResults) {
         if (res.description) parts.push(`Description: ${res.description}`);
         if (res.file) parts.push(`File URL: ${res.file}`);
         if (res.url) parts.push(`Link: ${res.url}`);
-        if (res.rawText) parts.push(`Content:\n${res.rawText}`);
+        if (res.rawText) {
+            const relevantText = extractRelevantSection(res.rawText, searchQuery);
+            parts.push(`Content:\n${relevantText}`);
+        }
 
         return parts.join('\n');
     });
@@ -403,10 +463,11 @@ export async function POST(request) {
 
         if (isAcademic && searchQuery) {
             console.log(`🎓 [ESTT-AI] Academic intent detected. Searching for "${searchQuery}"...`);
-            let forcedResults = await searchResourcesAction(searchQuery, userProfile?.filiere);
 
-            // If no results and there's conversation history, try AI-driven context-aware search
-            if (forcedResults.length === 0 && sanitizedHistory.length > 0) {
+            // Proactive: if short query + conversation history, rewrite query before searching
+            let finalSearchQuery = searchQuery;
+            const queryWords = searchQuery.split(/\s+/).filter(w => w.length > 2);
+            if (queryWords.length <= 2 && sanitizedHistory.length > 0) {
                 try {
                     const historyContext = sanitizedHistory
                         .slice(-4)
@@ -419,26 +480,28 @@ export async function POST(request) {
                     );
                     const contextQuery = contextResult.response.text().trim();
                     if (contextQuery && contextQuery.length > 3) {
-                        console.log(`🧠 [ESTT-AI] Context-aware search: "${contextQuery}"`);
-                        forcedResults = await searchResourcesAction(contextQuery, userProfile?.filiere);
+                        finalSearchQuery = contextQuery;
+                        console.log(`🧠 [ESTT-AI] Proactive rewrite: "${contextQuery}"`);
                     }
                 } catch (e) {
-                    console.warn(`[ESTT-AI] Context-aware search failed: ${e.message}`);
+                    console.warn(`[ESTT-AI] Proactive rewrite failed, using original: ${e.message}`);
                 }
             }
 
+            let forcedResults = await searchResourcesAction(finalSearchQuery, userProfile?.filiere);
+
             if (forcedResults.length > 0) {
                 const enriched = await enrichResourcesWithText(forcedResults);
-                forcedResourceContext = buildResourceContext(enriched);
+                forcedResourceContext = buildResourceContext(enriched, finalSearchQuery);
                 console.log(`📥 [ESTT-AI] Found ${forcedResults.length} resources`);
             } else {
                 // Try each word individually for broader matching
-                const words = searchQuery.split(/\s+/).filter(w => w.length > 2);
+                const words = finalSearchQuery.split(/\s+/).filter(w => w.length > 2);
                 for (const word of words) {
                     const wordResults = await searchResourcesAction(word, userProfile?.filiere);
                     if (wordResults.length > 0) {
                         const enriched = await enrichResourcesWithText(wordResults);
-                        forcedResourceContext = buildResourceContext(enriched);
+                        forcedResourceContext = buildResourceContext(enriched, word);
                         console.log(`📥 [ESTT-AI] Found ${wordResults.length} resources via word "${word}"`);
                         break;
                     }
@@ -476,7 +539,7 @@ export async function POST(request) {
             if (searchResults.length > 0) {
                 console.log(`📥 [ESTT-AI] Found ${searchResults.length} resources. Extracting text & injecting...`);
                 const enriched = await enrichResourcesWithText(searchResults);
-                const resourceContext = buildResourceContext(enriched);
+                const resourceContext = buildResourceContext(enriched, action.query);
 
                 const ragPrompt = [
                     `[RESOURCE DATA]\nThe user asked: "${userMessage}"`,
