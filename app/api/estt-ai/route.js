@@ -318,6 +318,42 @@ function buildResourceContext(searchResults, searchQuery = '') {
     return sections.join('\n\n---\n\n');
 }
 
+function sanitizeQuery(text) {
+    if (!text) return '';
+    return text
+        .replace(/^["'`]+|["'`]+$/g, '')
+        .replace(/^```[\s\S]*?\n?/gm, '')
+        .replace(/\n/g, ' ')
+        .trim();
+}
+
+async function rewriteQueryWithGemini(message, history) {
+    const historyContext = history.slice(-4)
+        .map(msg => `${msg.role === 'model' ? 'AI' : 'User'}: ${msg.parts?.[0]?.text || ''}`)
+        .join('\n');
+
+    const model = genAI.getGenerativeModel({ model: ESTT_AI_MODEL });
+    const result = await model.generateContent(
+        `You are a search query rewriter for an educational platform (ESTT).
+Rewrite the user's message into search-friendly keywords in French.
+
+RULES:
+- Return ONLY keywords separated by spaces, nothing else
+- Use the conversation history for context if the user's message refers to something earlier
+- If the message is just a greeting or not academic, return ONLY the word: NONE
+- Keep it short: 2-6 keywords max
+- Focus on: subject names, topics, document types (cours, td, tp, examen)
+- Use terms that would appear in resource/module titles on an educational platform
+- Do NOT include filler words like "quel", "est", "le", "la", "des", "dans", "je", "veux"
+- Example: "quel est le syntaxe des boucles dans C" → "langage C boucles"
+
+${historyContext ? `Conversation history:\n${historyContext}` : ''}
+
+User message: "${message}"`
+    );
+    return sanitizeQuery(result.response.text());
+}
+
 const ACADEMIC_INTENT_PATTERNS = [
     /r[eé]sume/i, /sommaire/i, /r[eé]capitulatif/i, /synth[iè]se/i,
     /cours/i, /module/i, /mati[eè]re/i, /chapitre/i, /leçon/i,
@@ -338,10 +374,10 @@ const ACADEMIC_INTENT_PATTERNS = [
 ];
 
 function detectAcademicIntent(message) {
-    if (!message) return { isAcademic: false, searchQuery: '', intent: 'chat' };
+    if (!message) return { isAcademic: false, intent: 'chat' };
 
     const matched = ACADEMIC_INTENT_PATTERNS.some(p => p.test(message));
-    if (!matched) return { isAcademic: false, searchQuery: '', intent: 'chat' };
+    if (!matched) return { isAcademic: false, intent: 'chat' };
 
     const isSummary = /r[eé]sume|sommaire|synth[eè]se|récapitulatif|summary|summarize/i.test(message);
     const isFind = /je veux|je cherche|donne|montre|affiche|liste|trouve|t[eé]l[eé]charge|cherche/i.test(message);
@@ -350,17 +386,7 @@ function detectAcademicIntent(message) {
     if (isSummary) intent = 'summarize';
     else if (isFind) intent = 'find';
 
-    // Extract search keywords: remove filler words and common French stopwords
-    const stopwords = /^(je|veux|les|le|la|l[e']|un|une|des|du|de|d[e']|sur|pour|avec|et|que|qui|est|sont|a|au|aux|en|y|ça|mon|ma|mes|son|sa|ses|notre|votre|leur|leurs|tout|tous|toute|toutes|plus|moins|très|bien|bon|mauvais|nouveau|nouvelle|ancien|ancienne|premier|première|dernier|dernière|autre|autres|même|mêmes|quel|quelle|quels|quelles|comment|pourquoi|quand|où|combien|r[eé]sume|sommaire|synth[eè]se|récapitulatif|cours|module|mati[eè]re|chapitre|leçon|td|tp|exam|exercice|professeur|prof|donne|montre|affiche|liste|trouve|t[eé]l[eé]charge|cherche|pdf|document|je|veux|les|du|de|d[e']|le|la|l[e']|un|une|des|au|aux|en|y|sur|pour|avec|et|que|qui|a|mon|ma|son|sa|notre|votre|leur|leurs|ce|cette|ces|celui|ceux|qui|quoi|où|comment|pourquoi|quand|combien|sont|est|fait|faire|avoir|être|pas|ne|pas|oui|non|très|trop|peu|bien|mal|mal|nouveau|nouvelle|ancien|ancienne|autre|autres|premier|première|dernier|dernière|même|mêmes|tel|telle|tels|telles|quel|quelle|quels|quelles|sera|serait|seront|seraient|peut|pourrait|pourraient|doit|devrait|devraient|faut|fais|fait|font|ai|as|avons|avez|ont|suis|es|sommes|êtes|sont)$/i;
-
-    const words = message
-        .replace(/[?!.,;:()]/g, '')
-        .split(/\s+/)
-        .filter(w => w.length > 1 && !stopwords.test(w));
-
-    const searchQuery = words.join(' ').trim();
-
-    return { isAcademic: true, searchQuery, intent };
+    return { isAcademic: true, intent };
 }
 
 export async function POST(request) {
@@ -458,54 +484,42 @@ export async function POST(request) {
         const userMessage = message?.trim() || '';
 
         // Detect academic intent — only search for academic queries
-        const { isAcademic, searchQuery, intent } = detectAcademicIntent(userMessage);
+        const { isAcademic, intent } = detectAcademicIntent(userMessage);
         let forcedResourceContext = '';
 
-        if (isAcademic && searchQuery) {
-            console.log(`🎓 [ESTT-AI] Academic intent detected. Searching for "${searchQuery}"...`);
-
-            // Proactive: if short query + conversation history, rewrite query before searching
-            let finalSearchQuery = searchQuery;
-            const queryWords = searchQuery.split(/\s+/).filter(w => w.length > 2);
-            if (queryWords.length <= 2 && sanitizedHistory.length > 0) {
-                try {
-                    const historyContext = sanitizedHistory
-                        .slice(-4)
-                        .map(msg => `${msg.role === 'model' ? 'AI' : 'User'}: ${msg.parts?.[0]?.text || ''}`)
-                        .join('\n');
-
-                    const contextModel = genAI.getGenerativeModel({ model: ESTT_AI_MODEL });
-                    const contextResult = await contextModel.generateContent(
-                        `Based on this conversation, extract search keywords for finding relevant resources. Return ONLY keywords in French, separated by spaces. No sentences, no explanation.\n\n${historyContext}\n\nUser: "${userMessage}"`
-                    );
-                    const contextQuery = contextResult.response.text().trim();
-                    if (contextQuery && contextQuery.length > 3) {
-                        finalSearchQuery = contextQuery;
-                        console.log(`🧠 [ESTT-AI] Proactive rewrite: "${contextQuery}"`);
-                    }
-                } catch (e) {
-                    console.warn(`[ESTT-AI] Proactive rewrite failed, using original: ${e.message}`);
-                }
+        if (isAcademic) {
+            // Step 1: Gemini rewrites query (decides on its own whether to use history)
+            let rewrittenQuery = '';
+            try {
+                rewrittenQuery = await rewriteQueryWithGemini(userMessage, sanitizedHistory);
+            } catch (e) {
+                console.warn(`[ESTT-AI] Gemini rewrite failed: ${e.message}`);
             }
 
-            let forcedResults = await searchResourcesAction(finalSearchQuery, userProfile?.filiere);
+            let results = [];
 
-            if (forcedResults.length > 0) {
-                const enriched = await enrichResourcesWithText(forcedResults);
-                forcedResourceContext = buildResourceContext(enriched, finalSearchQuery);
-                console.log(`📥 [ESTT-AI] Found ${forcedResults.length} resources`);
-            } else {
-                // Try each word individually for broader matching
-                const words = finalSearchQuery.split(/\s+/).filter(w => w.length > 2);
-                for (const word of words) {
-                    const wordResults = await searchResourcesAction(word, userProfile?.filiere);
-                    if (wordResults.length > 0) {
-                        const enriched = await enrichResourcesWithText(wordResults);
-                        forcedResourceContext = buildResourceContext(enriched, word);
-                        console.log(`📥 [ESTT-AI] Found ${wordResults.length} resources via word "${word}"`);
-                        break;
-                    }
-                }
+            // Step 2: Search with rewritten query + filiere
+            if (rewrittenQuery && rewrittenQuery !== 'NONE') {
+                console.log(`🧠 [ESTT-AI] Gemini rewrite: "${rewrittenQuery}"`);
+                results = await searchResourcesAction(rewrittenQuery, userProfile?.filiere);
+            }
+
+            // Step 3: GUARDRAIL — fallback without filiere
+            if (results.length === 0 && rewrittenQuery && rewrittenQuery !== 'NONE') {
+                results = await searchResourcesAction(rewrittenQuery, null);
+            }
+
+            // Step 4: GUARDRAIL — raw query fallback
+            if (results.length === 0) {
+                const rawQuery = userMessage.substring(0, 100);
+                results = await searchResourcesAction(rawQuery, userProfile?.filiere);
+            }
+
+            // Step 5: Enrich + build context
+            if (results.length > 0) {
+                const enriched = await enrichResourcesWithText(results);
+                forcedResourceContext = buildResourceContext(enriched, rewrittenQuery || userMessage);
+                console.log(`📥 [ESTT-AI] Found ${results.length} resources`);
             }
         }
 
