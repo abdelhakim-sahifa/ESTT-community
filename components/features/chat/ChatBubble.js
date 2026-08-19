@@ -632,13 +632,20 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                         (() => {
                                             if (!text) return null;
                                             if (isMarkdownMessage) {
+                                                const cleanText = (() => {
+                                                    const trimmed = text.trim();
+                                                    const match = trimmed.match(/^```[\s\S]*?\n([\s\S]*)\n```\s*$/);
+                                                    if (match && match[1].includes('```')) return trimmed;
+                                                    if (match) return match[1];
+                                                    return trimmed;
+                                                })();
                                                 return (
                                                     <div className="markdown-message">
                                                         <ReactMarkdown
                                                             remarkPlugins={[remarkGfm]}
                                                             components={markdownComponents}
                                                         >
-                                                            {text}
+                                                            {cleanText}
                                                         </ReactMarkdown>
                                                     </div>
                                                 );
