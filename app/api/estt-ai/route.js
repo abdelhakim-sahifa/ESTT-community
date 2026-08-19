@@ -19,7 +19,8 @@ function extractAiResponse(text) {
     if (!text) return { reply: null, action: null };
 
     try {
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        // Match action JSON specifically (starts with {"action":) to avoid matching code block braces
+        const jsonMatch = text.match(/\{"action"\s*:\s*"[^"]+"[\s\S]*?\}/);
         if (jsonMatch) {
             const rawJson = jsonMatch[0];
             const actionData = JSON.parse(rawJson);
