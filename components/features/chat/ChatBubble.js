@@ -645,13 +645,15 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                                     const blockRaw = trimmed.substring(firstFence + 3, lastFence);
                                                     const after = trimmed.substring(lastFence + 3);
                                                     const fenceCount = (blockRaw.match(/```/g) || []).length;
-                                                    if (fenceCount % 2 === 0 && fenceCount > 0) return trimmed;
+                                                    let outerLang = "";
+                                                    const langMatch = blockRaw.match(/^(\w+)\n/);
+                                                    if (langMatch) outerLang = langMatch[1];
+                                                    const isOuterText = /^(text|txt)$/i.test(outerLang);
+                                                    if (fenceCount % 2 === 0 && fenceCount > 0 && !isOuterText) return trimmed;
                                                     if (fenceCount === 0 && !/^###\s|^\*\*|^\*\s/m.test(blockRaw)) return trimmed;
                                                     if (fenceCount === 0) return before + blockRaw + after;
-                                                    let outerLang = "";
                                                     let blockContent = blockRaw;
-                                                    const langMatch = blockRaw.match(/^(\w+)\n/);
-                                                    if (langMatch) { outerLang = langMatch[1]; blockContent = blockRaw.substring(langMatch[0].length); }
+                                                    if (langMatch) blockContent = blockRaw.substring(langMatch[0].length);
                                                     const innerParts = blockContent.split("```");
                                                     let result = before;
                                                     for (let i = 0; i < innerParts.length; i++) {
