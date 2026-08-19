@@ -634,10 +634,46 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                             if (isMarkdownMessage) {
                                                 const cleanText = (() => {
                                                     const trimmed = text.trim();
-                                                    const match = trimmed.match(/^```[\s\S]*?\n([\s\S]*)\n```\s*$/);
-                                                    if (match && match[1].includes('```')) return trimmed;
-                                                    if (match) return match[1];
-                                                    return trimmed;
+                                                    const firstFence = trimmed.indexOf("```");
+                                                    if (firstFence === -1) return trimmed;
+                                                    const lastFence = trimmed.lastIndexOf("```");
+                                                    if (firstFence === lastFence) return trimmed;
+                                                    const before = trimmed.substring(0, firstFence);
+                                                    const blockRaw = trimmed.substring(firstFence + 3, lastFence);
+                                                    const after = trimmed.substring(lastFence + 3);
+                                                    if (!blockRaw.includes("```")) return trimmed;
+                                                    let outerLang = "";
+                                                    let blockContent = blockRaw;
+                                                    const langMatch = blockRaw.match(/^(\w+)\n/);
+                                                    if (langMatch) { outerLang = langMatch[1]; blockContent = blockRaw.substring(langMatch[0].length); }
+                                                    const innerParts = blockContent.split("```");
+                                                    let result = before;
+                                                    for (let i = 0; i < innerParts.length; i++) {
+                                                        const part = innerParts[i];
+                                                        if (i % 2 === 0) {
+                                                            const hi = part.search(/^###\s/m);
+                                                            if (hi > 0) {
+                                                                const cp = part.substring(0, hi).trimEnd();
+                                                                if (cp.trim()) result += "```" + outerLang + "\n" + cp + "\n```\n";
+                                                                result += part.substring(hi);
+                                                            } else {
+                                                                result += part;
+                                                            }
+                                                        } else {
+                                                            let lang = "", code = part;
+                                                            const nl = part.indexOf("\n");
+                                                            if (nl !== -1) { const f = part.substring(0, nl).trim(); if (/^[a-zA-Z]+$/.test(f)) { lang = f; code = part.substring(nl + 1); } }
+                                                            const hi = code.search(/^###\s/m);
+                                                            if (hi > 0) {
+                                                                const co = code.substring(0, hi).trimEnd();
+                                                                if (co.trim()) result += "```" + (lang || outerLang) + "\n" + co + "\n```\n";
+                                                                result += code.substring(hi);
+                                                            } else {
+                                                                result += "```" + (lang || outerLang) + "\n" + code + "```\n";
+                                                            }
+                                                        }
+                                                    }
+                                                    return result + after;
                                                 })();
                                                 return (
                                                     <div className="markdown-message">
