@@ -3,6 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import { cn } from '@/lib/utils';
 import { BadgeCheck, ShieldCheck, Gem, User, SmilePlus, Trash2, MoreHorizontal, Pencil, AlertTriangle, X, Reply, Flag, FileText, Video, Link as LinkIcon, ArrowRight, BookOpen, Users, CheckCheck, Calendar, MapPin, Clock, CalendarDays, Loader2 } from 'lucide-react';
 import { db, ref, get } from '@/lib/firebase';
@@ -641,7 +644,10 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                                     const before = trimmed.substring(0, firstFence);
                                                     const blockRaw = trimmed.substring(firstFence + 3, lastFence);
                                                     const after = trimmed.substring(lastFence + 3);
-                                                    if (!blockRaw.includes("```")) return trimmed;
+                                                    const fenceCount = (blockRaw.match(/```/g) || []).length;
+                                                    if (fenceCount % 2 === 0 && fenceCount > 0) return trimmed;
+                                                    if (fenceCount === 0 && !/^###\s|^\*\*|^\*\s/m.test(blockRaw)) return trimmed;
+                                                    if (fenceCount === 0) return before + blockRaw + after;
                                                     let outerLang = "";
                                                     let blockContent = blockRaw;
                                                     const langMatch = blockRaw.match(/^(\w+)\n/);
@@ -656,9 +662,7 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                                                 const cp = part.substring(0, hi).trimEnd();
                                                                 if (cp.trim()) result += "```" + outerLang + "\n" + cp + "\n```\n";
                                                                 result += part.substring(hi);
-                                                            } else {
-                                                                result += part;
-                                                            }
+                                                            } else { result += part; }
                                                         } else {
                                                             let lang = "", code = part;
                                                             const nl = part.indexOf("\n");
@@ -678,7 +682,8 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                                 return (
                                                     <div className="markdown-message">
                                                         <ReactMarkdown
-                                                            remarkPlugins={[remarkGfm]}
+                                                            remarkPlugins={[remarkGfm, remarkMath]}
+                                                            rehypePlugins={[rehypeKatex]}
                                                             components={markdownComponents}
                                                         >
                                                             {cleanText}

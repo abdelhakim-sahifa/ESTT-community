@@ -531,6 +531,7 @@ export async function POST(request) {
             const resourceInstruction = `The user is asking about academic content. Mode: ${intentLabel}.
 Use the [RESOURCE DATA] below to provide an informed answer.
 ${intent === 'summarize' ? 'Summarize the key points from the content. You may suggest consulting the full document.' : intent === 'find' ? 'Recommend the most relevant resources and briefly explain what each covers.' : 'Extract the answer DIRECTLY from the provided content. Present it clearly with examples/code if applicable. Do NOT just say "consult the document" — answer first, then suggest the resource for more details.'}
+Use plain Markdown for your response — code blocks only for actual code, equations in LaTeX ($...$ or $$...$$). NEVER wrap your response in a code block.
 Always include a JSON action block at the end (NOT inside code fences, just raw JSON):
 {"action": "display_resources", "resource_ids": ["id1", "id2", "..."]}`;
             finalSystemInstruction = `${systemInstruction}\n\n## RETRIEVED RESOURCES\n${resourceInstruction}\n\n[RESOURCE DATA]\n${forcedResourceContext}\n[END RESOURCE DATA]`;
