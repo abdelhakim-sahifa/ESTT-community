@@ -10,6 +10,11 @@ export const dynamic = 'force-dynamic';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+let TurndownService;
+let mammoth;
+try { TurndownService = require('turndown'); } catch (e) { console.warn('[ESTT-AI] turndown not available:', e.message); }
+try { mammoth = require('mammoth'); } catch (e) { console.warn('[ESTT-AI] mammoth not available:', e.message); }
+
 function extractAiResponse(text) {
     if (!text) return { reply: null, action: null };
 
@@ -67,7 +72,7 @@ async function extractTextFromPdfUrl(url) {
         const data = await parse(buffer);
 
         if (!data || !data.text) return null;
-        return data.text.substring(0, 8000);
+        return data.text.substring(0, 15000);
     } catch (error) {
         console.warn(`[ESTT-AI] Failed to extract text from ${url}:`, error.message);
         return null;
@@ -86,13 +91,13 @@ function detectUrlType(url) {
 
 function htmlToMarkdown(html) {
     try {
-        const TurndownService = require('turndown');
+        if (!TurndownService) return null;
         const turndown = new TurndownService({
             headingStyle: 'atx',
             bulletListMarker: '-',
             codeBlockStyle: 'fenced',
         });
-        return turndown.turndown(html).substring(0, 8000);
+        return turndown.turndown(html).substring(0, 15000);
     } catch (error) {
         console.warn('[ESTT-AI] HTML to Markdown conversion failed:', error.message);
         return null;
@@ -120,7 +125,7 @@ async function extractTextFromGDrive(url) {
                 const parse = require('pdf-parse/lib/pdf-parse.js');
                 if (typeof parse === 'function') {
                     const data = await parse(buffer);
-                    if (data?.text) return data.text.substring(0, 8000);
+                    if (data?.text) return data.text.substring(0, 15000);
                 }
             } catch {}
         }
@@ -135,7 +140,7 @@ async function extractTextFromGDrive(url) {
         // Fallback: try as plain text
         const text = new TextDecoder().decode(buffer);
         if (text.length > 100 && !contentType.includes('application/json')) {
-            return text.substring(0, 8000);
+            return text.substring(0, 15000);
         }
 
         return null;
@@ -169,11 +174,11 @@ async function extractTextFromGDoc(url) {
 
 async function extractTextFromDocx(url) {
     try {
+        if (!mammoth) return null;
         const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
         if (!response.ok) return null;
 
         const arrayBuffer = await response.arrayBuffer();
-        const mammoth = require('mammoth');
 
         // Try HTML output first (preserves structure)
         const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
@@ -184,7 +189,7 @@ async function extractTextFromDocx(url) {
 
         // Fallback to plain text
         const textResult = await mammoth.extractRawText({ arrayBuffer });
-        if (textResult?.value) return textResult.value.substring(0, 8000);
+        if (textResult?.value) return textResult.value.substring(0, 15000);
 
         return null;
     } catch (error) {
@@ -196,31 +201,36 @@ async function extractTextFromDocx(url) {
 async function enrichResourcesWithText(searchResults) {
     return Promise.all(
         searchResults.map(async (res) => {
-            let rawText = null;
-            const url = res.file || res.url;
-            if (!url) return { ...res, rawText };
+            try {
+                let rawText = null;
+                const url = res.file || res.url;
+                if (!url) return { ...res, rawText };
 
-            const type = detectUrlType(url);
+                const type = detectUrlType(url);
 
-            switch (type) {
-                case 'pdf':
-                    rawText = await extractTextFromPdfUrl(url);
-                    break;
-                case 'gdrive-file':
-                    rawText = await extractTextFromGDrive(url);
-                    break;
-                case 'gdoc':
-                    rawText = await extractTextFromGDoc(url);
-                    break;
-                case 'docx':
-                    rawText = await extractTextFromDocx(url);
-                    break;
-                default:
-                    console.log(`[ESTT-AI] Unsupported URL type for: ${url}`);
-                    break;
+                switch (type) {
+                    case 'pdf':
+                        rawText = await extractTextFromPdfUrl(url);
+                        break;
+                    case 'gdrive-file':
+                        rawText = await extractTextFromGDrive(url);
+                        break;
+                    case 'gdoc':
+                        rawText = await extractTextFromGDoc(url);
+                        break;
+                    case 'docx':
+                        rawText = await extractTextFromDocx(url);
+                        break;
+                    default:
+                        console.log(`[ESTT-AI] Unsupported URL type for: ${url}`);
+                        break;
+                }
+
+                return { ...res, rawText };
+            } catch (e) {
+                console.warn(`[ESTT-AI] Extraction failed for resource ${res.id}: ${e.message}`);
+                return { ...res, rawText: null };
             }
-
-            return { ...res, rawText };
         })
     );
 }
@@ -393,7 +403,29 @@ export async function POST(request) {
 
         if (isAcademic && searchQuery) {
             console.log(`🎓 [ESTT-AI] Academic intent detected. Searching for "${searchQuery}"...`);
-            const forcedResults = await searchResourcesAction(searchQuery, userProfile?.filiere);
+            let forcedResults = await searchResourcesAction(searchQuery, userProfile?.filiere);
+
+            // If no results and there's conversation history, try AI-driven context-aware search
+            if (forcedResults.length === 0 && sanitizedHistory.length > 0) {
+                try {
+                    const historyContext = sanitizedHistory
+                        .slice(-4)
+                        .map(msg => `${msg.role === 'model' ? 'AI' : 'User'}: ${msg.parts?.[0]?.text || ''}`)
+                        .join('\n');
+
+                    const contextModel = genAI.getGenerativeModel({ model: ESTT_AI_MODEL });
+                    const contextResult = await contextModel.generateContent(
+                        `Based on this conversation, extract search keywords for finding relevant resources. Return ONLY keywords in French, separated by spaces. No sentences, no explanation.\n\n${historyContext}\n\nUser: "${userMessage}"`
+                    );
+                    const contextQuery = contextResult.response.text().trim();
+                    if (contextQuery && contextQuery.length > 3) {
+                        console.log(`🧠 [ESTT-AI] Context-aware search: "${contextQuery}"`);
+                        forcedResults = await searchResourcesAction(contextQuery, userProfile?.filiere);
+                    }
+                } catch (e) {
+                    console.warn(`[ESTT-AI] Context-aware search failed: ${e.message}`);
+                }
+            }
 
             if (forcedResults.length > 0) {
                 const enriched = await enrichResourcesWithText(forcedResults);
