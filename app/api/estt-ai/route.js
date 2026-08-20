@@ -10,15 +10,24 @@ export const dynamic = 'force-dynamic';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+let TurndownService;
+let mammoth;
+try { TurndownService = require('turndown'); } catch (e) { console.warn('[ESTT-AI] turndown not available:', e.message); }
+try { mammoth = require('mammoth'); } catch (e) { console.warn('[ESTT-AI] mammoth not available:', e.message); }
+
 function extractAiResponse(text) {
     if (!text) return { reply: null, action: null };
 
     try {
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        // Match action JSON specifically (starts with {"action":) to avoid matching code block braces
+        const jsonMatch = text.match(/\{"action"\s*:\s*"[^"]+"[\s\S]*?\}/);
         if (jsonMatch) {
             const rawJson = jsonMatch[0];
             const actionData = JSON.parse(rawJson);
-            const reply = text.replace(rawJson, '').trim();
+            let reply = text.replace(rawJson, '').trim();
+            // Strip orphaned code fences left after JSON removal (```json\n\n```)
+            reply = reply.replace(/```\w*\s*```/g, '').trim();
+            reply = reply.replace(/^```+\s*$/gm, '').trim();
 
             return {
                 reply: reply || actionData.message || null,
@@ -51,22 +60,198 @@ async function extractTextFromServer(file) {
     }
 }
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+async function safeFetch(url, timeoutMs = 15000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        const response = await fetch(url, { signal: controller.signal, redirect: 'follow' });
+        const contentLength = parseInt(response.headers.get('content-length') || '0', 10);
+        if (contentLength > MAX_FILE_SIZE) {
+            console.warn(`[ESTT-AI] File too large (${(contentLength / 1024 / 1024).toFixed(1)}MB): ${url}`);
+            return null;
+        }
+        return response;
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
 async function extractTextFromPdfUrl(url) {
     try {
         const parse = require('pdf-parse/lib/pdf-parse.js');
         if (typeof parse !== 'function') return null;
 
-        const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
-        if (!response.ok) return null;
+        const response = await safeFetch(url, 10000);
+        if (!response || !response.ok) return null;
 
         const arrayBuffer = await response.arrayBuffer();
+        if (arrayBuffer.byteLength > MAX_FILE_SIZE) return null;
+
         const buffer = Buffer.from(arrayBuffer);
         const data = await parse(buffer);
 
         if (!data || !data.text) return null;
-        return data.text.substring(0, 8000);
+        return data.text.substring(0, 15000);
     } catch (error) {
         console.warn(`[ESTT-AI] Failed to extract text from ${url}:`, error.message);
+        return null;
+    }
+}
+
+function detectUrlType(url) {
+    if (!url) return 'unknown';
+    if (url.endsWith('.pdf')) return 'pdf';
+    if (url.includes('docs.google.com/document')) return 'gdoc';
+    if (url.includes('drive.google.com/file')) return 'gdrive-file';
+    if (url.includes('drive.google.com/drive') || url.includes('drive.google.com/folder')) return 'gdrive-folder';
+    if (url.endsWith('.docx') || url.includes('.docx?')) return 'docx';
+    return 'unknown';
+}
+
+function extractRelevantSection(text, query, maxLength = 15000) {
+    if (!text || !query) return text?.substring(0, maxLength) || '';
+    if (text.length <= maxLength) return text;
+
+    const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+    if (queryWords.length === 0) return text.substring(0, maxLength);
+
+    // Split text into paragraphs/sections
+    const sections = text.split(/\n\s*\n/);
+
+    // Score each section by keyword matches
+    const scored = sections.map((section, idx) => {
+        const lower = section.toLowerCase();
+        const score = queryWords.reduce((sum, word) => sum + (lower.includes(word) ? 1 : 0), 0);
+        return { section, score, idx };
+    });
+
+    // Sort by score (descending), take top sections that fit within maxLength
+    scored.sort((a, b) => b.score - a.score);
+
+    let result = '';
+    for (const { section } of scored) {
+        if (result.length + section.length + 2 > maxLength) break;
+        result += section.trim() + '\n\n';
+    }
+
+    // If no sections matched, fallback to beginning of text
+    if (!result.trim()) {
+        return text.substring(0, maxLength);
+    }
+
+    return result.trim();
+}
+
+function htmlToMarkdown(html) {
+    try {
+        if (!TurndownService) return null;
+        const turndown = new TurndownService({
+            headingStyle: 'atx',
+            bulletListMarker: '-',
+            codeBlockStyle: 'fenced',
+        });
+        return turndown.turndown(html).substring(0, 15000);
+    } catch (error) {
+        console.warn('[ESTT-AI] HTML to Markdown conversion failed:', error.message);
+        return null;
+    }
+}
+
+async function extractTextFromGDrive(url) {
+    try {
+        const match = url.match(/\/file\/d\/([^/]+)/);
+        if (!match) return null;
+
+        const fileId = match[1];
+        const exportUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
+        const response = await safeFetch(exportUrl, 15000);
+        if (!response || !response.ok) return null;
+
+        const contentType = (response.headers.get('content-type') || '').toLowerCase();
+        const arrayBuffer = await response.arrayBuffer();
+        if (arrayBuffer.byteLength > MAX_FILE_SIZE) return null;
+
+        const buffer = Buffer.from(arrayBuffer);
+
+        // If it's a PDF, extract text with pdf-parse
+        if (contentType.includes('pdf') || buffer[0] === 0x25) { // %PDF magic bytes
+            try {
+                const parse = require('pdf-parse/lib/pdf-parse.js');
+                if (typeof parse === 'function') {
+                    const data = await parse(buffer);
+                    if (data?.text) return data.text.substring(0, 15000);
+                }
+            } catch {}
+        }
+
+        // If it's HTML, convert to Markdown
+        if (contentType.includes('text/html') || contentType.includes('html')) {
+            const html = new TextDecoder().decode(arrayBuffer);
+            const md = htmlToMarkdown(html);
+            if (md) return md;
+        }
+
+        // Fallback: try as plain text
+        const text = new TextDecoder().decode(buffer);
+        if (text.length > 100 && !contentType.includes('application/json')) {
+            return text.substring(0, 15000);
+        }
+
+        return null;
+    } catch (error) {
+        console.warn(`[ESTT-AI] Google Drive extraction failed: ${error.message}`);
+        return null;
+    }
+}
+
+async function extractTextFromGDoc(url) {
+    try {
+        const match = url.match(/\/document\/d\/([^/]+)/);
+        if (!match) return null;
+
+        const docId = match[1];
+        const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=html`;
+
+        const response = await safeFetch(exportUrl, 15000);
+        if (!response || !response.ok) return null;
+
+        const html = await response.text();
+        if (!html || html.length < 50) return null;
+
+        const md = htmlToMarkdown(html);
+        return md || null;
+    } catch (error) {
+        console.warn(`[ESTT-AI] Google Docs extraction failed: ${error.message}`);
+        return null;
+    }
+}
+
+async function extractTextFromDocx(url) {
+    try {
+        if (!mammoth) return null;
+        const response = await safeFetch(url, 15000);
+        if (!response || !response.ok) return null;
+
+        const arrayBuffer = await response.arrayBuffer();
+        if (arrayBuffer.byteLength > MAX_FILE_SIZE) return null;
+
+        // Try HTML output first (preserves structure)
+        const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
+        if (htmlResult?.value && htmlResult.value.length > 50) {
+            const md = htmlToMarkdown(htmlResult.value);
+            if (md) return md;
+        }
+
+        // Fallback to plain text
+        const textResult = await mammoth.extractRawText({ arrayBuffer });
+        if (textResult?.value) return textResult.value.substring(0, 15000);
+
+        return null;
+    } catch (error) {
+        console.warn(`[ESTT-AI] Word document extraction failed: ${error.message}`);
         return null;
     }
 }
@@ -74,17 +259,41 @@ async function extractTextFromPdfUrl(url) {
 async function enrichResourcesWithText(searchResults) {
     return Promise.all(
         searchResults.map(async (res) => {
-            let rawText = null;
-            const pdfUrl = res.file || res.url;
-            if (pdfUrl && pdfUrl.endsWith('.pdf')) {
-                rawText = await extractTextFromPdfUrl(pdfUrl);
+            try {
+                let rawText = null;
+                const url = res.file || res.url;
+                if (!url) return { ...res, rawText };
+
+                const type = detectUrlType(url);
+
+                switch (type) {
+                    case 'pdf':
+                        rawText = await extractTextFromPdfUrl(url);
+                        break;
+                    case 'gdrive-file':
+                        rawText = await extractTextFromGDrive(url);
+                        break;
+                    case 'gdoc':
+                        rawText = await extractTextFromGDoc(url);
+                        break;
+                    case 'docx':
+                        rawText = await extractTextFromDocx(url);
+                        break;
+                    default:
+                        console.log(`[ESTT-AI] Unsupported URL type for: ${url}`);
+                        break;
+                }
+
+                return { ...res, rawText };
+            } catch (e) {
+                console.warn(`[ESTT-AI] Extraction failed for resource ${res.id}: ${e.message}`);
+                return { ...res, rawText: null };
             }
-            return { ...res, rawText };
         })
     );
 }
 
-function buildResourceContext(searchResults) {
+function buildResourceContext(searchResults, searchQuery = '') {
     if (!searchResults || searchResults.length === 0) return '';
 
     const sections = searchResults.map((res, i) => {
@@ -99,12 +308,51 @@ function buildResourceContext(searchResults) {
         if (res.description) parts.push(`Description: ${res.description}`);
         if (res.file) parts.push(`File URL: ${res.file}`);
         if (res.url) parts.push(`Link: ${res.url}`);
-        if (res.rawText) parts.push(`Content:\n${res.rawText}`);
+        if (res.rawText) {
+            const relevantText = extractRelevantSection(res.rawText, searchQuery);
+            parts.push(`Content:\n${relevantText}`);
+        }
 
         return parts.join('\n');
     });
 
     return sections.join('\n\n---\n\n');
+}
+
+function sanitizeQuery(text) {
+    if (!text) return '';
+    return text
+        .replace(/^["'`]+|["'`]+$/g, '')
+        .replace(/^```[\s\S]*?\n?/gm, '')
+        .replace(/\n/g, ' ')
+        .trim();
+}
+
+async function rewriteQueryWithGemini(message, history) {
+    const historyContext = history.slice(-4)
+        .map(msg => `${msg.role === 'model' ? 'AI' : 'User'}: ${msg.parts?.[0]?.text || ''}`)
+        .join('\n');
+
+    const model = genAI.getGenerativeModel({ model: ESTT_AI_MODEL });
+    const result = await model.generateContent(
+        `You are a search query rewriter for an educational platform (ESTT).
+Rewrite the user's message into search-friendly keywords in French.
+
+RULES:
+- Return ONLY keywords separated by spaces, nothing else
+- Use the conversation history for context if the user's message refers to something earlier
+- If the message is just a greeting or not academic, return ONLY the word: NONE
+- Keep it short: 2-6 keywords max
+- Focus on: subject names, topics, document types (cours, td, tp, examen)
+- Use terms that would appear in resource/module titles on an educational platform
+- Do NOT include filler words like "quel", "est", "le", "la", "des", "dans", "je", "veux"
+- Example: "quel est le syntaxe des boucles dans C" → "langage C boucles"
+
+${historyContext ? `Conversation history:\n${historyContext}` : ''}
+
+User message: "${message}"`
+    );
+    return sanitizeQuery(result.response.text());
 }
 
 const ACADEMIC_INTENT_PATTERNS = [
@@ -117,13 +365,20 @@ const ACADEMIC_INTENT_PATTERNS = [
     /t[ée]l[ée]charge/i, /pdf/i, /document/i,
     /cours du module/i, /cours de/i, /td de/i, /tp de/i, /exam de/i, /examen de/i,
     /resume/i, /summary/i, /summarize/i,
+    /syntaxe/i, /quel/i, /quelle/i, /explique/i, /d[eé]finition/i,
+    /règles?/i, /regles?/i, /comment/i, /pourquoi/i, /diff[eé]rence/i,
+    /compare/i, /comparaison/i, /exemple/i, /application/i,
+    /sql/i, /select/i, /where/i, /insert/i, /update/i, /delete/i,
+    /mcd/i, /mld/i, /relation/i, /table/i, /base de donn[eé]es/i,
+    /algorithme/i, /programmation/i, /fonction/i, /variable/i,
+    /math/i, /physique/i, /chimie/i, /informatique/i,
 ];
 
 function detectAcademicIntent(message) {
-    if (!message) return { isAcademic: false, searchQuery: '', intent: 'chat' };
+    if (!message) return { isAcademic: false, intent: 'chat' };
 
     const matched = ACADEMIC_INTENT_PATTERNS.some(p => p.test(message));
-    if (!matched) return { isAcademic: false, searchQuery: '', intent: 'chat' };
+    if (!matched) return { isAcademic: false, intent: 'chat' };
 
     const isSummary = /r[eé]sume|sommaire|synth[eè]se|récapitulatif|summary|summarize/i.test(message);
     const isFind = /je veux|je cherche|donne|montre|affiche|liste|trouve|t[eé]l[eé]charge|cherche/i.test(message);
@@ -132,17 +387,7 @@ function detectAcademicIntent(message) {
     if (isSummary) intent = 'summarize';
     else if (isFind) intent = 'find';
 
-    // Extract search keywords: remove filler words and common French stopwords
-    const stopwords = /^(je|veux|les|le|la|l[e']|un|une|des|du|de|d[e']|sur|pour|avec|et|que|qui|est|sont|a|au|aux|en|y|ça|mon|ma|mes|son|sa|ses|notre|votre|leur|leurs|tout|tous|toute|toutes|plus|moins|très|bien|bon|mauvais|nouveau|nouvelle|ancien|ancienne|premier|première|dernier|dernière|autre|autres|même|mêmes|quel|quelle|quels|quelles|comment|pourquoi|quand|où|combien|r[eé]sume|sommaire|synth[eè]se|récapitulatif|cours|module|mati[eè]re|chapitre|leçon|td|tp|exam|exercice|professeur|prof|donne|montre|affiche|liste|trouve|t[eé]l[eé]charge|cherche|pdf|document|je|veux|les|du|de|d[e']|le|la|l[e']|un|une|des|au|aux|en|y|sur|pour|avec|et|que|qui|a|mon|ma|son|sa|notre|votre|leur|leurs|ce|cette|ces|celui|ceux|qui|quoi|où|comment|pourquoi|quand|combien|sont|est|fait|faire|avoir|être|pas|ne|pas|oui|non|très|trop|peu|bien|mal|mal|nouveau|nouvelle|ancien|ancienne|autre|autres|premier|première|dernier|dernière|même|mêmes|tel|telle|tels|telles|quel|quelle|quels|quelles|sera|serait|seront|seraient|peut|pourrait|pourraient|doit|devrait|devraient|faut|fais|fait|font|ai|as|avons|avez|ont|suis|es|sommes|êtes|sont)$/i;
-
-    const words = message
-        .replace(/[?!.,;:()]/g, '')
-        .split(/\s+/)
-        .filter(w => w.length > 1 && !stopwords.test(w));
-
-    const searchQuery = words.join(' ').trim();
-
-    return { isAcademic: true, searchQuery, intent };
+    return { isAcademic: true, intent };
 }
 
 export async function POST(request) {
@@ -239,44 +484,61 @@ export async function POST(request) {
 
         const userMessage = message?.trim() || '';
 
-        // Proactive resource search for academic queries
-        const { isAcademic, searchQuery, intent } = detectAcademicIntent(userMessage);
+        // Detect academic intent — only search for academic queries
+        const { isAcademic, intent } = detectAcademicIntent(userMessage);
         let forcedResourceContext = '';
 
-        if (isAcademic && searchQuery) {
-            console.log(`🎓 [ESTT-AI] Academic intent detected (${intent}). Searching for "${searchQuery}"...`);
-            const forcedResults = await searchResourcesAction(searchQuery, userProfile?.filiere);
+        if (isAcademic) {
+            // Step 1: Gemini rewrites query (decides on its own whether to use history)
+            let rewrittenQuery = '';
+            try {
+                rewrittenQuery = await rewriteQueryWithGemini(userMessage, sanitizedHistory);
+            } catch (e) {
+                console.warn(`[ESTT-AI] Gemini rewrite failed: ${e.message}`);
+            }
 
-            if (forcedResults.length > 0) {
-                console.log(`📥 [ESTT-AI] Found ${forcedResults.length} resources proactively`);
-                const enriched = await enrichResourcesWithText(forcedResults);
-                forcedResourceContext = buildResourceContext(enriched);
-            } else {
-                console.log(`🔍 [ESTT-AI] No resources found for "${searchQuery}", trying broader search...`);
-                // Try each word individually for broader matching
-                const words = searchQuery.split(/\s+/).filter(w => w.length > 2);
-                for (const word of words) {
-                    const wordResults = await searchResourcesAction(word, userProfile?.filiere);
-                    if (wordResults.length > 0) {
-                        const enriched = await enrichResourcesWithText(wordResults);
-                        forcedResourceContext = buildResourceContext(enriched);
-                        console.log(`📥 [ESTT-AI] Found ${wordResults.length} resources via word "${word}"`);
-                        break;
-                    }
-                }
+            let results = [];
+
+            // Step 2: Search with rewritten query + filiere
+            if (rewrittenQuery && rewrittenQuery !== 'NONE') {
+                console.log(`🧠 [ESTT-AI] Gemini rewrite: "${rewrittenQuery}"`);
+                results = await searchResourcesAction(rewrittenQuery, userProfile?.filiere);
+            }
+
+            // Step 3: GUARDRAIL — fallback without filiere
+            if (results.length === 0 && rewrittenQuery && rewrittenQuery !== 'NONE') {
+                results = await searchResourcesAction(rewrittenQuery, null);
+            }
+
+            // Step 4: GUARDRAIL — raw query fallback
+            if (results.length === 0) {
+                const rawQuery = userMessage.substring(0, 100);
+                results = await searchResourcesAction(rawQuery, userProfile?.filiere);
+            }
+
+            // Step 5: Enrich + build context
+            if (results.length > 0) {
+                const enriched = await enrichResourcesWithText(results);
+                forcedResourceContext = buildResourceContext(enriched, rewrittenQuery || userMessage);
+                console.log(`📥 [ESTT-AI] Found ${results.length} resources`);
             }
         }
 
         // Build final system instruction with resource context
         let finalSystemInstruction = systemInstruction;
         if (forcedResourceContext) {
-            const intentInstructions = intent === 'summarize'
-                ? `The user wants a summary of course material. Read the [RESOURCE DATA] below carefully and provide a clear, structured summary of the content. Use markdown formatting with headers, bullet points, and key takeaways. Always recommend the relevant resources at the end using: {"action":"display_resources","resource_ids":["id1","id2"]}`
-                : intent === 'find'
-                    ? `The user is looking for specific resources. Review the [RESOURCE DATA] below and recommend the most relevant ones. Use: {"action":"display_resources","resource_ids":["id1","id2"]}`
-                    : `The user is asking about academic content. Use the [RESOURCE DATA] below to provide an informed answer. If relevant, recommend resources using: {"action":"display_resources","resource_ids":["id1","id2"]}`;
-
-            finalSystemInstruction = `${systemInstruction}\n\n## PROACTIVELY RETRIEVED RESOURCES\n${intentInstructions}\n\n[RESOURCE DATA]\n${forcedResourceContext}\n[END RESOURCE DATA]`;
+            const intentLabel = intent === 'summarize' ? 'SUMMARY' : intent === 'find' ? 'FIND' : 'RAG';
+            const resourceInstruction = `The user is asking about academic content. Mode: ${intentLabel}.
+Use the [RESOURCE DATA] below to provide an informed answer.
+${intent === 'summarize' ? 'Summarize the key points from the content. You may suggest consulting the full document.' : intent === 'find' ? 'Recommend the most relevant resources and briefly explain what each covers.' : 'Extract the answer DIRECTLY from the provided content. Present it clearly with examples/code if applicable. Do NOT just say "consult the document" — answer first, then suggest the resource for more details.'}
+Use plain Markdown for your response — code blocks only for actual code, equations in LaTeX ($...$ or $$...$$). NEVER wrap your response in a code block.
+Always include a JSON action block at the end (NOT inside code fences, just raw JSON):
+{"action": "display_resources", "resource_ids": ["id1", "id2", "..."]}`;
+            finalSystemInstruction = `${systemInstruction}\n\n## RETRIEVED RESOURCES\n${resourceInstruction}\n\n[RESOURCE DATA]\n${forcedResourceContext}\n[END RESOURCE DATA]`;
+        } else if (isAcademic) {
+            // Academic intent but no resources found — strict resources-only
+            const noResourceInstruction = `No resources were found on the platform for the user's request. You MUST respond with: "Je n'ai pas trouvé de ressources correspondantes sur la plateforme pour cette demande. Essayez de consulter la page Ressources pour trouver ce que vous cherchez." Do NOT answer from your own training knowledge.`;
+            finalSystemInstruction = `${systemInstruction}\n\n## NO RESOURCES FOUND\n${noResourceInstruction}`;
         }
 
         const model = genAI.getGenerativeModel({
@@ -298,7 +560,7 @@ export async function POST(request) {
             if (searchResults.length > 0) {
                 console.log(`📥 [ESTT-AI] Found ${searchResults.length} resources. Extracting text & injecting...`);
                 const enriched = await enrichResourcesWithText(searchResults);
-                const resourceContext = buildResourceContext(enriched);
+                const resourceContext = buildResourceContext(enriched, action.query);
 
                 const ragPrompt = [
                     `[RESOURCE DATA]\nThe user asked: "${userMessage}"`,

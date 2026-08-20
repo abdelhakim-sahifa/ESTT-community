@@ -3,6 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import { cn } from '@/lib/utils';
 import { BadgeCheck, ShieldCheck, Gem, User, SmilePlus, Trash2, MoreHorizontal, Pencil, AlertTriangle, X, Reply, Flag, FileText, Video, Link as LinkIcon, ArrowRight, BookOpen, Users, CheckCheck, Calendar, MapPin, Clock, CalendarDays, Loader2 } from 'lucide-react';
 import { db, ref, get } from '@/lib/firebase';
@@ -632,13 +635,60 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                         (() => {
                                             if (!text) return null;
                                             if (isMarkdownMessage) {
+                                                const cleanText = (() => {
+                                                    const trimmed = text.trim();
+                                                    const firstFence = trimmed.indexOf("```");
+                                                    if (firstFence === -1) return trimmed;
+                                                    const lastFence = trimmed.lastIndexOf("```");
+                                                    if (firstFence === lastFence) return trimmed;
+                                                    const before = trimmed.substring(0, firstFence);
+                                                    const blockRaw = trimmed.substring(firstFence + 3, lastFence);
+                                                    const after = trimmed.substring(lastFence + 3);
+                                                    const fenceCount = (blockRaw.match(/```/g) || []).length;
+                                                    let outerLang = "";
+                                                    const langMatch = blockRaw.match(/^(\w+)\n/);
+                                                    if (langMatch) outerLang = langMatch[1];
+                                                    const isOuterText = /^(text|txt)$/i.test(outerLang);
+                                                    if (fenceCount % 2 === 0 && fenceCount > 0 && !isOuterText) return trimmed;
+                                                    if (fenceCount === 0 && !/^###\s|^\*\*|^\*\s/m.test(blockRaw)) return trimmed;
+                                                    if (fenceCount === 0) return before + blockRaw + after;
+                                                    let blockContent = blockRaw;
+                                                    if (langMatch) blockContent = blockRaw.substring(langMatch[0].length);
+                                                    const innerParts = blockContent.split("```");
+                                                    let result = before;
+                                                    for (let i = 0; i < innerParts.length; i++) {
+                                                        const part = innerParts[i];
+                                                        if (i % 2 === 0) {
+                                                            const hi = part.search(/^###\s/m);
+                                                            if (hi > 0) {
+                                                                const cp = part.substring(0, hi).trimEnd();
+                                                                if (cp.trim()) result += "```" + outerLang + "\n" + cp + "\n```\n";
+                                                                result += part.substring(hi);
+                                                            } else { result += part; }
+                                                        } else {
+                                                            let lang = "", code = part;
+                                                            const nl = part.indexOf("\n");
+                                                            if (nl !== -1) { const f = part.substring(0, nl).trim(); if (/^[a-zA-Z]+$/.test(f)) { lang = f; code = part.substring(nl + 1); } }
+                                                            const hi = code.search(/^###\s/m);
+                                                            if (hi > 0) {
+                                                                const co = code.substring(0, hi).trimEnd();
+                                                                if (co.trim()) result += "```" + (lang || outerLang) + "\n" + co + "\n```\n";
+                                                                result += code.substring(hi);
+                                                            } else {
+                                                                result += "```" + (lang || outerLang) + "\n" + code + "```\n";
+                                                            }
+                                                        }
+                                                    }
+                                                    return result + after;
+                                                })();
                                                 return (
                                                     <div className="markdown-message">
                                                         <ReactMarkdown
-                                                            remarkPlugins={[remarkGfm]}
+                                                            remarkPlugins={[remarkGfm, remarkMath]}
+                                                            rehypePlugins={[rehypeKatex]}
                                                             components={markdownComponents}
                                                         >
-                                                            {text}
+                                                            {cleanText}
                                                         </ReactMarkdown>
                                                     </div>
                                                 );
