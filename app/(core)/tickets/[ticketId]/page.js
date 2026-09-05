@@ -20,7 +20,7 @@ export default function TicketPage() {
     const [error, setError] = useState('');
     const [club, setClub] = useState(null);
     const searchParams = useSearchParams();
-    const sessionId = searchParams.get('session_id');
+    const orderId = searchParams.get('order_id');
     const [verifying, setVerifying] = useState(false);
     const [justScanned, setJustScanned] = useState(false);
     const [prevScanned, setPrevScanned] = useState(false);
@@ -54,17 +54,17 @@ export default function TicketPage() {
                     }
                 }
 
-                // Fallback Verification: If session_id is in URL and ticket still awaiting_payment
-                if (sessionId && data.status === 'awaiting_payment' && !verifying) {
+                // Fallback Verification: If order_id is in URL and ticket still awaiting_payment
+                if (orderId && data.status === 'awaiting_payment' && !verifying) {
                     setVerifying(true);
                     try {
                         await fetch('/api/verify-payment', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ ticketId, sessionId })
+                            body: JSON.stringify({ ticketId, orderId })
                         });
                     } catch (err) {
-                        console.error("Verification callback failed:", err);
+                        console.error('Verification callback failed:', err);
                     } finally {
                         setVerifying(false);
                     }
@@ -82,7 +82,7 @@ export default function TicketPage() {
         });
 
         return () => unsubscribe();
-    }, [ticketId, db, sessionId, verifying, prevScanned, ticket?.id]);
+    }, [ticketId, db, orderId, verifying, prevScanned, ticket?.id]);
 
     if (loading) {
         return (

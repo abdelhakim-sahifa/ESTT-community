@@ -153,7 +153,7 @@ export default function EventRegistrationPage() {
 
             // 4. Handle Payment or Standard Registration
             if (event.price > 0) {
-                // Redirect to Stripe Checkout
+                // Redirect to LemonSqueezy Checkout
                 try {
                     const response = await fetch('/api/checkout', {
                         method: 'POST',

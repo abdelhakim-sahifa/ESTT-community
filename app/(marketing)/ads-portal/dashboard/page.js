@@ -108,7 +108,7 @@ export default function UserAdsDashboard() {
         }
     };
 
-    const handleStripePayment = async (ad) => {
+    const handlePayment = async (ad) => {
         setPayLoading(ad.id);
         try {
             const response = await fetch('/api/checkout', {
@@ -138,6 +138,7 @@ export default function UserAdsDashboard() {
     };
 
     if (!user) return null;
+
 
     return (
         <div className="min-h-screen bg-white">
