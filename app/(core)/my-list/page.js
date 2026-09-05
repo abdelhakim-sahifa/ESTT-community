@@ -281,6 +281,10 @@ export default function MyListPage() {
         );
     };
 
+    const availableSemesters = selectedField !== 'all'
+        ? (staticDb.fields.find(f => f.id === selectedField)?.semesters || staticDb.semesters)
+        : staticDb.semesters;
+
     return (
         <main className="container py-6 md:py-10">
             <section className="mb-8 md:mb-10 text-center">
@@ -353,7 +357,7 @@ export default function MyListPage() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">Tous les semestres</SelectItem>
-                            {staticDb.semesters.map((sem) => (
+                            {availableSemesters.map((sem) => (
                                 <SelectItem key={sem} value={sem}>
                                     {sem}
                                 </SelectItem>

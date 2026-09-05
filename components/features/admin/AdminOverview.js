@@ -143,6 +143,10 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
         }
     };
 
+    const availableSemesters = selectedField 
+        ? (staticDb.fields.find(f => f.id === selectedField)?.semesters || staticDb.semesters)
+        : staticDb.semesters;
+
     return (
         <div className="space-y-8 pb-10">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -347,7 +351,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                                                         <SelectValue placeholder="Sem." />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        {staticDb.semesters.map(s => (
+                                                        {availableSemesters.map(s => (
                                                             <SelectItem key={s} value={s} className="text-[10px] font-bold uppercase">{s}</SelectItem>
                                                         ))}
                                                     </SelectContent>

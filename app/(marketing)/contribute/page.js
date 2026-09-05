@@ -377,6 +377,10 @@ export default function ContributePage() {
         ? staticDb.modules[`${formData.field}-${formData.semester}`] || []
         : [];
 
+    const availableSemesters = formData.field
+        ? (staticDb.fields.find(f => f.id === formData.field)?.semesters || staticDb.semesters)
+        : staticDb.semesters;
+
     const getAiPrompt = (isGoogle = false) => {
         let prompt = '';
         if (isGoogle) {
@@ -603,7 +607,7 @@ export default function ContributePage() {
                                             <SelectValue placeholder="Sélectionnez un semestre" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {staticDb.semesters.map((sem) => (
+                                            {availableSemesters.map((sem) => (
                                                 <SelectItem key={sem} value={sem}>{sem}</SelectItem>
                                             ))}
                                         </SelectContent>

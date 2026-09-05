@@ -236,6 +236,10 @@ export default function ContributeDrivePage() {
         );
     }
 
+    const availableSemesters = formData.field
+        ? (staticDb.fields.find(f => f.id === formData.field)?.semesters || staticDb.semesters)
+        : staticDb.semesters;
+
     return (
         <main className="container py-12 max-w-4xl">
             <section className="mb-12 text-center">
@@ -312,7 +316,7 @@ export default function ContributeDrivePage() {
                                             <SelectValue placeholder="Sélectionnez un semestre" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {staticDb.semesters.map((sem) => (
+                                            {availableSemesters.map((sem) => (
                                                 <SelectItem key={sem} value={sem}>{sem}</SelectItem>
                                             ))}
                                         </SelectContent>

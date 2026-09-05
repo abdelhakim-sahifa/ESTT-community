@@ -226,6 +226,10 @@ export default function AdminFastContribute() {
         ? staticDb.modules[`${commonData.field}-${commonData.semester}`] || []
         : [];
 
+    const commonAvailableSemesters = commonData.field
+        ? (staticDb.fields.find(f => f.id === commonData.field)?.semesters || staticDb.semesters)
+        : staticDb.semesters;
+
     const FieldHeader = ({ label, field, children }) => (
         <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -284,7 +288,7 @@ export default function AdminFastContribute() {
                         <Select value={commonData.semester} onValueChange={(v) => handleCommonChange('semester', v)}>
                             <SelectTrigger className="bg-white rounded-none shadow-none"><SelectValue placeholder="Semestre" /></SelectTrigger>
                             <SelectContent>
-                                {staticDb.semesters.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                {commonAvailableSemesters.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </FieldHeader>
@@ -345,6 +349,9 @@ export default function AdminFastContribute() {
                     const resField = variableFields.has('field') ? resource.field : commonData.field;
                     const resSemeostre = variableFields.has('semester') ? resource.semester : commonData.semester;
                     const rowModules = resField && resSemeostre ? staticDb.modules[`${resField}-${resSemeostre}`] || [] : [];
+                    const resourceAvailableSemesters = resField
+                        ? (staticDb.fields.find(f => f.id === resField)?.semesters || staticDb.semesters)
+                        : staticDb.semesters;
 
                     return (
                         <Card key={resource.id} className={resource.success ? "border-green-500 bg-green-50/50 rounded-none shadow-none" : "border-slate-200 rounded-none shadow-none"}>
@@ -416,7 +423,7 @@ export default function AdminFastContribute() {
                                                 <Select value={resource.semester} onValueChange={(v) => updateResource(resource.id, { semester: v })}>
                                                     <SelectTrigger className="h-8 text-xs bg-white rounded-none shadow-none"><SelectValue placeholder="Semestre" /></SelectTrigger>
                                                     <SelectContent>
-                                                        {staticDb.semesters.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                                        {resourceAvailableSemesters.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                                                     </SelectContent>
                                                 </Select>
                                             </div>
