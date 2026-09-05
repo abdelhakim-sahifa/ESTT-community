@@ -1,3 +1,11 @@
+# [1.30.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.29.0...v1.30.0) (2026-09-05)
+
+
+### Features
+
+* add two new filière ([a2ec26d](https://github.com/abdelhakim-sahifa/ESTT-community/commit/a2ec26dd12177af57d69898fc22c527576b3fef9))
+* replace stripe with lemonsqeezy ([a8e006d](https://github.com/abdelhakim-sahifa/ESTT-community/commit/a8e006d112eade9f68229d7c4a807d744588c18d))
+
 # [1.29.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.28.0...v1.29.0) (2026-08-20)
 
 
