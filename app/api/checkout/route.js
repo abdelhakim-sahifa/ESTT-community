@@ -25,7 +25,7 @@ export async function POST(req) {
                 return NextResponse.json({ error: 'Missing ticket details' }, { status: 400 });
             }
             productName = `Billet: ${eventName}`;
-            successUrl = `${req.nextUrl.origin}/tickets/${ticketId}?order_id={order_id}&success=true`;
+            successUrl = `${req.nextUrl.origin}/tickets/${ticketId}?order_id=[order_id]&success=true`;
             cancelUrl = `${req.nextUrl.origin}/clubs/${clubId}/events/${eventId}/registration?canceled=true`;
             customData = { ticketId, clubId, eventId };
         }
