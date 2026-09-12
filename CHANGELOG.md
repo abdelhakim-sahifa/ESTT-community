@@ -1,3 +1,10 @@
+## [1.30.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.30.0...v1.30.1) (2026-09-06)
+
+
+### Bug Fixes
+
+* properly inject the real order ID into the URL upon redirect ([b14098f](https://github.com/abdelhakim-sahifa/ESTT-community/commit/b14098fedee6a81aaa108e6f3607aa588308ecb0))
+
 # [1.30.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.29.0...v1.30.0) (2026-09-05)
 
 
