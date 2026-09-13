@@ -206,7 +206,7 @@ export default function AdminMessages({ messages = [] }) {
                         return (
                             <Card
                                 key={msg.id}
-                                className={`border-none shadow-sm hover:shadow-md transition-all group cursor-pointer ${isUnread ? 'bg-blue-50/50 border-l-4 border-l-blue-500' : ''}`}
+                                className={`border-none shadow-sm hover:shadow-md transition-all group cursor-pointer ${isUnread ? 'bg-blue-50/50 border-l-4 border-l-blue-500 dark:bg-blue-500/10' : ''}`}
                                 onClick={() => handleOpenMessage(msg)}
                             >
                                 <CardContent className="p-5">
@@ -255,7 +255,7 @@ export default function AdminMessages({ messages = [] }) {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="w-8 h-8 rounded-lg hover:bg-red-50 hover:text-red-500 shrink-0"
+                                                className="w-8 h-8 rounded-lg hover:bg-red-50 hover:text-red-500 shrink-0 dark:hover:bg-red-500/10"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleDelete(msg.id);
@@ -323,7 +323,7 @@ export default function AdminMessages({ messages = [] }) {
                                             Réponses
                                         </h3>
                                         {getReplies(selectedMessage).map((reply) => (
-                                            <div key={reply.id} className="bg-green-50 p-4 rounded-2xl border border-green-100">
+                                            <div key={reply.id} className="bg-green-50 p-4 rounded-2xl border border-green-100 dark:bg-green-500/10 dark:border-green-500/30">
                                                 <p className="text-sm text-foreground whitespace-pre-wrap mb-2">{reply.text}</p>
                                                 <p className="text-[11px] text-muted-foreground">
                                                     {reply.repliedBy} — {new Date(reply.repliedAt).toLocaleString('fr-FR')}

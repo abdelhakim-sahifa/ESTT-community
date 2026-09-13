@@ -206,16 +206,16 @@ export default function AdminAds() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             {ad.status === AD_STATUSES.UNDER_REVIEW && (
-                                                <Badge className="bg-blue-50 text-blue-600 border-blue-100">À Réviser</Badge>
+                                                <Badge className="bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/40">À Réviser</Badge>
                                             )}
                                             {ad.status === AD_STATUSES.PAYMENT_REQUIRED && (
-                                                <Badge className="bg-orange-50 text-orange-600 border-orange-100">Attente Paiement</Badge>
+                                                <Badge className="bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-500/15 dark:text-orange-300 dark:border-orange-500/40">Attente Paiement</Badge>
                                             )}
                                             {ad.status === AD_STATUSES.LIVE && (
-                                                <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100">Actif</Badge>
+                                                <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40">Actif</Badge>
                                             )}
                                             {ad.paymentStatus === 'paid' ? (
-                                                <Badge variant="outline" className="border-emerald-200 text-emerald-600 bg-emerald-50/30">
+                                                <Badge variant="outline" className="border-emerald-200 text-emerald-600 bg-emerald-50/30 dark:border-emerald-500/40 dark:text-emerald-300 dark:bg-emerald-500/10">
                                                     {ad.stripeSessionId ? <CreditCard className="w-3 h-3 mr-1" /> : null}
                                                     Payé
                                                 </Badge>
@@ -245,7 +245,7 @@ export default function AdminAds() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-9 px-4 rounded-lg text-red-600 hover:bg-red-50 font-bold"
+                                                        className="h-9 px-4 rounded-lg text-red-600 hover:bg-red-50 font-bold dark:text-red-400 dark:hover:bg-red-500/10"
                                                         onClick={() => { setSelectedAd(ad); setShowRejectModal(true); }}
                                                     >
                                                         <XCircle className="w-4 h-4 mr-2" /> Refuser
@@ -264,7 +264,7 @@ export default function AdminAds() {
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
-                                                        className="h-9 px-4 rounded-lg border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold"
+                                                        className="h-9 px-4 rounded-lg border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold dark:border-emerald-500/40 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
                                                         asChild
                                                     >
                                                         <a href={`https://wa.me/${ad.whatsapp?.replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer">
@@ -338,7 +338,7 @@ export default function AdminAds() {
                             Marquer cette annonce comme payée. Elle deviendra immédiatement **Live** sur le site et une facture sera générée.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="bg-orange-50 p-4 rounded-xl text-[13px] text-orange-800 border border-orange-100 mt-2">
+                    <div className="bg-orange-50 p-4 rounded-xl text-[13px] text-orange-800 border border-orange-100 mt-2 dark:bg-orange-500/10 dark:text-orange-300 dark:border-orange-500/30">
                         <AlertCircle className="w-4 h-4 inline mr-2" />
                         Assurez-vous d'avoir reçu les {selectedAd?.price} MAD via WhatsApp avant de confirmer.
                     </div>

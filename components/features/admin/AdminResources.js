@@ -676,7 +676,7 @@ export default function AdminResources({ resources }) {
                     {/* Filière filter */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${filiereFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${filiereFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50 dark:text-blue-300 dark:border-blue-500/40 dark:bg-blue-500/10' : ''}`}>
                                 <BookOpen className="w-4 h-4" />
                                 <span className="hidden sm:inline truncate max-w-[100px]">
                                     {filiereFilter === 'all' ? 'Filière' : filiereFilter}
@@ -706,7 +706,7 @@ export default function AdminResources({ resources }) {
                     {/* Module filter */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${moduleFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${moduleFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50 dark:text-blue-300 dark:border-blue-500/40 dark:bg-blue-500/10' : ''}`}>
                                 <Layers className="w-4 h-4" />
                                 <span className="hidden sm:inline truncate max-w-[100px]">
                                     {moduleFilter === 'all' ? 'Module' : moduleFilter}
@@ -736,7 +736,7 @@ export default function AdminResources({ resources }) {
                     {/* Sort */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${sortBy !== 'newest' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${sortBy !== 'newest' ? 'text-blue-600 border-blue-200 bg-blue-50/50 dark:text-blue-300 dark:border-blue-500/40 dark:bg-blue-500/10' : ''}`}>
                                 <ArrowUpDown className="w-4 h-4" />
                                 <span className="hidden sm:inline">
                                     {SORT_OPTIONS.find((s) => s.value === sortBy)?.label ?? 'Tri'}
@@ -763,7 +763,7 @@ export default function AdminResources({ resources }) {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-9 text-red-500 hover:text-red-600 hover:bg-red-50 shrink-0"
+                            className="h-9 text-red-500 hover:text-red-600 hover:bg-red-50 shrink-0 dark:hover:bg-red-500/10"
                             onClick={() => { setSearchTerm(''); setFiliereFilter('all'); setModuleFilter('all'); setSortBy('newest'); }}
                         >
                             Réinitialiser
@@ -831,7 +831,7 @@ export default function AdminResources({ resources }) {
                                 <TableCell className="text-right">
                                     <div className="flex justify-end gap-2">
                                         {res.unverified && (
-                                            <Button size="sm" variant="outline" className="h-8 px-2 text-green-600 border-green-100 hover:bg-green-50" onClick={() => handleApproveResource(res)}>
+                                            <Button size="sm" variant="outline" className="h-8 px-2 text-green-600 border-green-100 hover:bg-green-50 dark:text-green-300 dark:border-green-500/40 dark:hover:bg-green-500/10" onClick={() => handleApproveResource(res)}>
                                                 <CheckCircle2 className="w-4 h-4" />
                                             </Button>
                                         )}
@@ -844,7 +844,7 @@ export default function AdminResources({ resources }) {
                                         <Button
                                             size="sm"
                                             variant="outline"
-                                            className="h-8 px-2 text-sky-600 border-sky-100 hover:bg-sky-50"
+                                            className="h-8 px-2 text-sky-600 border-sky-100 hover:bg-sky-50 dark:text-sky-300 dark:border-sky-500/40 dark:hover:bg-sky-500/10"
                                             onClick={() => openContactModal(res)}
                                             title="Contacter le contributeur"
                                         >
@@ -860,7 +860,7 @@ export default function AdminResources({ resources }) {
                                         <Button
                                             size="sm"
                                             variant="outline"
-                                            className="h-8 px-2 text-amber-600 border-amber-100 hover:bg-amber-50"
+                                            className="h-8 px-2 text-amber-600 border-amber-100 hover:bg-amber-50 dark:text-amber-300 dark:border-amber-500/40 dark:hover:bg-amber-500/10"
                                             onClick={() => openRatingModal(res)}
                                             title="Voir les avis des étudiants"
                                         >

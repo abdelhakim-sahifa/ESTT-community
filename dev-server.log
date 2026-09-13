@@ -1,0 +1,93 @@
+
+> estt-community-nextjs@1.30.2 dev
+> next dev -H 0.0.0.0
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+  - Network:      http://0.0.0.0:3001
+
+ ✓ Starting...
+> [PWA] PWA support is disabled
+> [PWA] PWA support is disabled
+ ✓ Ready in 14.9s
+ ○ Compiling /clubs ...
+
+[1m[33mwarn[39m[22m - The class `duration-[1000ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;1000ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[1200ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;1200ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[1500ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;1500ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[2000ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;2000ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[3000ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;3000ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[800ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;800ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `ease-[cubic-bezier(0.23,1,0.32,1)]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.23,1,0.32,1)&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `ease-[cubic-bezier(0.34,1.56,0.64,1)]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.34,1.56,0.64,1)&rsqb;` to silence this warning.
+ ✓ Compiled /clubs in 18.1s (1017 modules)
+ GET /clubs 200 in 18827ms
+ ✓ Compiled in 798ms (422 modules)
+ ○ Compiling /clubs/[clubId] ...
+ ✓ Compiled /clubs/[clubId] in 6.8s (1325 modules)
+(node:31072) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ GET /clubs/-OhPxD3gb3t5ApR1Xwwt 200 in 9409ms
+ ○ Compiling /clubs/request ...
+ ✓ Compiled /clubs/request in 839ms (1383 modules)
+ GET /clubs/request 200 in 1108ms
+ ✓ Compiled /contributors in 386ms (1394 modules)
+ GET /contributors 200 in 508ms
+ ○ Compiling /guide ...
+ ✓ Compiled /guide in 976ms (1418 modules)
+ GET /guide 200 in 1085ms
+ ○ Compiling /projects ...
+ ✓ Compiled /projects in 966ms (1452 modules)
+ GET /projects 200 in 1125ms
+ ✓ Compiled /download in 503ms (1468 modules)
+ GET /download 200 in 609ms
+ ✓ Compiled /ads-portal in 493ms (1486 modules)
+ GET /ads-portal 200 in 598ms
+ ○ Compiling /clubs/[clubId]/admin ...
+ ✓ Compiled /clubs/[clubId]/admin in 5.2s (2073 modules)
+ GET /clubs/-OhPxD3gb3t5ApR1Xwwt/admin 200 in 10919ms
+ ○ Compiling /clubs/[clubId]/forms/[formId] ...
+ ✓ Compiled /clubs/[clubId]/forms/[formId] in 774ms (2087 modules)
+ GET /clubs/-OhPxD3gb3t5ApR1Xwwt/forms/-OhQLJfPt8rJMh3onE9I 200 in 6529ms
+ ○ Compiling /clubs/[clubId]/join ...
+ ✓ Compiled /clubs/[clubId]/join in 919ms (2095 modules)
+ GET /clubs/-OhPxD3gb3t5ApR1Xwwt/join 200 in 2783ms
+ ○ Compiling /projects/showcase ...
+ ✓ Compiled /projects/showcase in 664ms (2103 modules)
+ GET /projects/showcase 200 in 759ms
+ ○ Compiling /messages ...
+ ✓ Compiled /messages in 2.2s (2899 modules)
+ GET /messages 200 in 2297ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 1022ms (2952 modules)
+ GET /notifications 200 in 1189ms
+ ○ Compiling /my-list ...
+ ✓ Compiled /my-list in 869ms (2970 modules)
+ GET /my-list 200 in 985ms
+ ○ Compiling /events ...
+ ✓ Compiled /events in 804ms (2986 modules)
+ GET /events 200 in 917ms
+ GET /clubs 200 in 88ms
+ GET /clubs/-OhPxD3gb3t5ApR1Xwwt 200 in 2424ms
+ GET /clubs/-OhPxD3gb3t5ApR1Xwwt/admin 200 in 657ms
+ GET /contributors 200 in 46ms
+ GET /contributors 200 in 66ms
+ GET /contributors 200 in 39ms
+ GET /clubs/request 200 in 54ms
+ GET /clubs/-OhPxD3gb3t5ApR1Xwwt/forms/-OhQLJfPt8rJMh3onE9I 200 in 2843ms

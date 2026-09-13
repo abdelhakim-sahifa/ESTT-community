@@ -235,7 +235,7 @@ export default function SubmitProjectImplementationPage() {
     }
 
     return (
-        <main className="bg-[linear-gradient(180deg,_#eff6ff_0%,_#ffffff_35%,_#f8fafc_100%)]">
+        <main className="bg-[linear-gradient(180deg,_#eff6ff_0%,_#ffffff_35%,_#f8fafc_100%)] dark:bg-[linear-gradient(180deg,_#0c1226_0%,_#020617_35%,_#020617_100%)]">
             <div className="container max-w-4xl px-4 py-14 md:px-6">
                 <div className="mb-10 space-y-4">
                     <Button asChild variant="ghost" className="rounded-full">
@@ -259,7 +259,7 @@ export default function SubmitProjectImplementationPage() {
                     </CardContent>
                 </Card>
 
-                <Card className="rounded-2xl border-white/70 shadow-xl">
+                <Card className="rounded-2xl border-white/70 shadow-xl dark:border-border">
                     <CardHeader>
                         <CardTitle>Ton build</CardTitle>
                         <CardDescription>
@@ -269,7 +269,7 @@ export default function SubmitProjectImplementationPage() {
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-8">
                             {message && (
-                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}>
+                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:text-emerald-300'}>
                                     {isError ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
                                     <AlertTitle>{isError ? 'Erreur' : 'Succes'}</AlertTitle>
                                     <AlertDescription>{message}</AlertDescription>

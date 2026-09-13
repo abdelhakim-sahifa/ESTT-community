@@ -255,8 +255,8 @@ function SearchContent() {
 
                             {/* Student Ads Section */}
                             {results.ads.length > 0 && (
-                                <section className="bg-blue-50/50 p-8 rounded-[2.5rem] border border-blue-100/50">
-                                    <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-blue-900">
+                                <section className="bg-blue-50/50 p-8 rounded-[2.5rem] border border-blue-100/50 dark:bg-blue-500/10 dark:border-blue-500/20">
+                                    <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-blue-900 dark:text-blue-200">
                                         <Sparkles className="w-5 h-5 text-blue-600" />
                                         Opportunités Étudiantes
                                     </h2>
@@ -273,7 +273,7 @@ function SearchContent() {
                                                 <div className="p-4 flex flex-col justify-between flex-grow">
                                                     <div>
                                                         <div className="flex items-center gap-2 mb-1">
-                                                            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">Annonce</span>
+                                                            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md dark:text-blue-300 dark:bg-blue-500/15">Annonce</span>
                                                         </div>
                                                         <h3 className="text-sm font-bold text-foreground line-clamp-1">{ad.title}</h3>
                                                         <p className="text-xs text-muted-foreground line-clamp-1 mt-1">{ad.description}</p>

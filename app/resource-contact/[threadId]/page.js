@@ -170,8 +170,8 @@ export default function ResourceContactPage() {
                                     key={message.id}
                                     className={`rounded-2xl border p-4 ${
                                         message.senderType === 'admin'
-                                            ? 'border-blue-100 bg-blue-50'
-                                            : 'border-emerald-100 bg-emerald-50'
+                                            ? 'border-blue-100 bg-blue-50 dark:border-blue-500/40 dark:bg-blue-500/15'
+                                            : 'border-emerald-100 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/15'
                                     }`}
                                 >
                                     <div className="mb-2 flex items-center justify-between gap-3">

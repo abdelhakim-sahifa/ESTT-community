@@ -182,7 +182,7 @@ export default function SubmitAdPage() {
                                 <div className="space-y-2">
                                     <Label className="text-foreground font-bold">Visuel (Image ou Vidéo)</Label>
                                     <div className="flex items-center justify-center w-full">
-                                        <label className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-2xl cursor-pointer hover:bg-muted transition-colors ${filePreview ? 'border-blue-200 bg-blue-50/10' : 'border-border'}`}>
+                                        <label className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-2xl cursor-pointer hover:bg-muted transition-colors ${filePreview ? 'border-blue-200 bg-blue-50/10 dark:border-blue-500/40 dark:bg-blue-500/10' : 'border-border'}`}>
                                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                                 {formData.type === 'video' ? <Video className="w-8 h-8 text-blue-500 mb-2" /> : <ImageIcon className="w-8 h-8 text-blue-500 mb-2" />}
                                                 <p className="mb-2 text-sm text-muted-foreground">
@@ -303,7 +303,7 @@ export default function SubmitAdPage() {
                                 </CardContent>
                             </Card>
 
-                            <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-50">
+                            <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-50 dark:bg-blue-500/10 dark:border-blue-500/20">
                                 <h4 className="flex items-center text-sm font-bold text-blue-900 mb-3">
                                     <CheckCircle2 className="w-4 h-4 mr-2" />
                                     Conseils pour une annonce réussie

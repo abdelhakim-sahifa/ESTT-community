@@ -262,7 +262,7 @@ export default function MyListPage() {
                     <button
                         onClick={(e) => handleRemoveFavorite(e, resourceId)}
                         disabled={togglingFav === resourceId}
-                        className="text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500 transition-colors"
+                        className="text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500 transition-colors dark:bg-red-500/15 dark:text-red-300 dark:hover:bg-red-500/25"
                     >
                         {togglingFav === resourceId ? (
                             <Loader2 className="w-3 h-3 animate-spin" />

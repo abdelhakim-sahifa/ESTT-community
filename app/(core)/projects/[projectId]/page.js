@@ -224,8 +224,8 @@ export default function ProjectDetailPage() {
         if (error.type === 'loadError') {
             return (
                 <main className="container max-w-3xl px-4 py-16 text-center md:px-6">
-                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-10">
-                        <div className="inline-flex items-center justify-center rounded-full bg-amber-100 p-3">
+                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-10 dark:border-amber-500/40 dark:bg-amber-500/10">
+                        <div className="inline-flex items-center justify-center rounded-full bg-amber-100 p-3 dark:bg-amber-500/20">
                             <AlertCircle className="h-6 w-6 text-amber-600" />
                         </div>
                         <h1 className="mt-4 text-3xl font-black text-foreground">Erreur de chargement</h1>
@@ -398,7 +398,7 @@ export default function ProjectDetailPage() {
                             </div>
 
                             {leaderSubmission && (
-                                <div className="relative overflow-hidden rounded-2xl border border-amber-200 bg-amber-50 p-6">
+                                <div className="relative overflow-hidden rounded-2xl border border-amber-200 bg-amber-50 p-6 dark:border-amber-500/40 dark:bg-amber-500/10">
                                     <div className="relative z-10">
                                         <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-600">
                                             <Trophy className="h-3.5 w-3.5" />

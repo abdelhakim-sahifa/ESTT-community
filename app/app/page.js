@@ -227,6 +227,10 @@ export default function AppHome() {
                     background-color: #ffffff;
                 }
 
+                .dark .app-optimized {
+                    background-color: hsl(222.2 84% 4.9%);
+                }
+
                 @media (max-width: 640px) {
                     .app-optimized section {
                         padding-top: 3rem !important;

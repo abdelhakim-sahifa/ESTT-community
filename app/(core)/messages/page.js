@@ -282,7 +282,7 @@ export default function MessagesHub() {
                                         <div className="flex items-center justify-between mb-0.5">
                                             <h3 className="text-base font-bold text-foreground truncate flex items-center gap-1.5">
                                                 EST {chatFiliereAbbrev}
-                                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 whitespace-nowrap">
+                                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 whitespace-nowrap dark:bg-blue-500/15 dark:text-blue-300">
                                                     {chatSemesterLabel}
                                                 </span>
                                             </h3>
@@ -361,7 +361,7 @@ export default function MessagesHub() {
                                                                 </div>
                                                             )}
                                                             {p?.isAiAssistant && (
-<span className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+<span className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
                                     Agent officiel
                                 </span>
                                                             )}
@@ -417,7 +417,7 @@ export default function MessagesHub() {
                                                     ) : (
                                                         <button
                                                             onClick={(e) => handleDeleteConversation(conv, e)}
-                                                            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                                            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors dark:text-red-400 dark:hover:bg-red-500/10"
                                                         >
                                                             <Trash2 className="w-4 h-4 shrink-0" />
                                                             Supprimer la conversation

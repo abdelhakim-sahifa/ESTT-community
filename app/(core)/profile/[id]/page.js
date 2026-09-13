@@ -456,7 +456,7 @@ export default function PublicProfilePage() {
                             </div>
 
                             <div className="p-8 -mt-12 relative">
-                                <div className="w-24 h-24 bg-card rounded-full border-4 border-white flex items-center justify-center mx-auto mb-4 shadow-sm z-10 overflow-hidden relative group">
+                                <div className="w-24 h-24 bg-card rounded-full border-4 border-white flex items-center justify-center mx-auto mb-4 shadow-sm z-10 overflow-hidden relative group dark:border-border">
                                     <div className="w-full h-full bg-muted rounded-full flex items-center justify-center relative">
                                         {profile.photoUrl ? (
                                             <Image
@@ -629,7 +629,7 @@ export default function PublicProfilePage() {
                                                                     variant="outline"
                                                                     size="icon"
                                                                     onClick={() => setFormData({ ...formData, photoUrl: '' })}
-                                                                    className="shrink-0 text-destructive hover:bg-red-50 border-red-100"
+                                                                    className="shrink-0 text-destructive hover:bg-red-50 dark:hover:bg-red-500/10 border-red-100"
                                                                 >
                                                                     <X className="w-4 h-4" />
                                                                 </Button>
@@ -668,7 +668,7 @@ export default function PublicProfilePage() {
                                                                     variant="outline"
                                                                     size="icon"
                                                                     onClick={() => setFormData({ ...formData, bannerUrl: '' })}
-                                                                    className="shrink-0 text-destructive hover:bg-red-50 border-red-100"
+                                                                    className="shrink-0 text-destructive hover:bg-red-50 dark:hover:bg-red-500/10 border-red-100"
                                                                 >
                                                                     <X className="w-4 h-4" />
                                                                 </Button>
@@ -677,7 +677,7 @@ export default function PublicProfilePage() {
                                                         <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Taille reco: 800x200 max 10 Mo</p>
                                                     </div>
 
-                                                    <div className="mt-4 p-3 bg-blue-50/50 border border-blue-100 rounded-lg text-xs leading-5 text-muted-foreground">
+                                                    <div className="mt-4 p-3 bg-blue-50/50 border border-blue-100 rounded-lg text-xs leading-5 text-muted-foreground dark:bg-blue-500/10 dark:border-blue-500/30">
                                                         <strong>Mise en garde :</strong> L'outil d'upload d'images utilise <a href="https://imgbb.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">ImgBB</a>, un service tiers. Veuillez ne pas télécharger d'images contenant des informations personnelles sensibles.
                                                     </div>
                                                 </div>
@@ -741,19 +741,19 @@ export default function PublicProfilePage() {
                             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Succès</h3>
                             <div className="flex flex-wrap gap-2">
                                 {contributionsCount >= 1 && (
-                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-green-50 text-green-700">
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300">
                                         <Award className="w-3.5 h-3.5" />
                                         Contributeur
                                     </span>
                                 )}
                                 {contributionsCount >= 10 && (
-                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-orange-50 text-orange-700">
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300">
                                         <Trophy className="w-3.5 h-3.5" />
                                         Major Contrib
                                     </span>
                                 )}
                                 {starCount >= 5 && (
-                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-yellow-50 text-yellow-700">
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-yellow-50 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-300">
                                         <Star className="w-3.5 h-3.5 fill-current" />
                                         Populaire
                                     </span>
@@ -765,13 +765,13 @@ export default function PublicProfilePage() {
                                     </span>
                                 )}
                                 {verifiedReports >= 1 && (
-                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700">
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300">
                                         <ShieldCheck className="w-3.5 h-3.5" />
                                         Modérateur
                                     </span>
                                 )}
                                 {reportedBugsFixed >= 1 && (
-                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-rose-50 text-rose-700">
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300">
                                         <Bug className="w-3.5 h-3.5" />
                                         Bug Hunter
                                     </span>
@@ -795,7 +795,7 @@ export default function PublicProfilePage() {
                                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Compte</h3>
 
                                 {!profile.verifiedEmail && (
-                                    <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                                    <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl dark:bg-amber-500/10 dark:border-amber-500/30">
                                         <div className="flex items-start gap-3">
                                             <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                                             <div className="space-y-1">
@@ -815,7 +815,7 @@ export default function PublicProfilePage() {
                                 )}
 
                                 {profile.verifiedEmail && (
-                                    <div className={`p-4 border rounded-xl ${(profile.role || '').toLowerCase() === 'admin' ? 'bg-yellow-50 border-yellow-100' : 'bg-emerald-50 border-emerald-100'}`}>
+                                    <div className={`p-4 border rounded-xl ${(profile.role || '').toLowerCase() === 'admin' ? 'bg-yellow-50 border-yellow-100 dark:bg-yellow-500/10 dark:border-yellow-500/30' : 'bg-emerald-50 border-emerald-100 dark:bg-emerald-500/10 dark:border-emerald-500/30'}`}>
                                         <div className="flex items-center gap-3">
                                             <span className={`material-symbols-outlined select-none ${(profile.role || '').toLowerCase() === 'admin' ? 'text-yellow-500' : 'text-emerald-500'}`} style={{ fontVariationSettings: "'FILL' 1" }}>
                                                 verified
@@ -835,7 +835,7 @@ export default function PublicProfilePage() {
                                 <Button
                                     variant="outline"
                                     onClick={handleLogout}
-                                    className="w-full justify-start rounded-lg border-red-100 text-red-500 hover:bg-red-50 hover:text-red-600 gap-2 text-sm"
+                                    className="w-full justify-start rounded-lg border-red-100 text-red-500 hover:bg-red-50 hover:text-red-600 gap-2 text-sm dark:border-red-500/30 dark:hover:bg-red-500/10"
                                 >
                                     <LogOut className="w-4 h-4" />
                                     Déconnexion
@@ -1004,7 +1004,7 @@ export default function PublicProfilePage() {
                                                 <div>
                                                     <h3 className="font-semibold text-sm text-foreground">{ticket.eventName}</h3>
                                                     <div className="flex items-center gap-2 mt-1">
-                                                        <span className={cn("text-xs font-bold px-2 py-0.5 rounded-md", ticket.status === 'valid' ? "bg-green-50 text-green-700" : "bg-orange-50 text-orange-700")}>
+                                                        <span className={cn("text-xs font-bold px-2 py-0.5 rounded-md", ticket.status === 'valid' ? "bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300" : "bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300")}>
                                                             {ticket.status === 'valid' ? 'Validé' : 'En attente'}
                                                         </span>
                                                         <span className="text-xs text-muted-foreground">{ticket.clubName}</span>

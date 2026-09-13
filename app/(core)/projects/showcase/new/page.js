@@ -165,10 +165,10 @@ export default function NewProjectShowcasePage() {
     }
 
     return (
-        <main className="bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_30%,_#f8fafc_100%)]">
+        <main className="bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_30%,_#f8fafc_100%)] dark:bg-[linear-gradient(180deg,_#0c0a09_0%,_#020617_30%,_#020617_100%)]">
             <div className="container max-w-4xl px-4 py-14 md:px-6">
                 <div className="mb-10 space-y-4">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-orange-600 shadow-sm">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-orange-600 shadow-sm dark:border-orange-500/30 dark:text-orange-300">
                         <Sparkles className="h-4 w-4" />
                         Publier dans le showcase
                     </div>
@@ -180,7 +180,7 @@ export default function NewProjectShowcasePage() {
                     </p>
                 </div>
 
-                <Card className="rounded-2xl border-white/70 shadow-xl">
+                <Card className="rounded-2xl border-white/70 shadow-xl dark:border-border">
                     <CardHeader>
                         <CardTitle>Fiche projet</CardTitle>
                         <CardDescription>
@@ -190,7 +190,7 @@ export default function NewProjectShowcasePage() {
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-8">
                             {message && (
-                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}>
+                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:text-emerald-300'}>
                                     {isError ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
                                     <AlertTitle>{isError ? 'Erreur' : 'Succes'}</AlertTitle>
                                     <AlertDescription>{message}</AlertDescription>

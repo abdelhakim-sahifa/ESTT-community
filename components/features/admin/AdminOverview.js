@@ -177,7 +177,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                     <div className="h-1 bg-blue-600 w-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     <CardContent className="p-4 md:p-6">
                         <div className="flex items-center justify-between mb-2 md:mb-4">
-                            <div className="p-1.5 md:p-2 bg-blue-50 text-blue-600 rounded-lg">
+                            <div className="p-1.5 md:p-2 bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-500/15 dark:text-blue-300">
                                 <Users className="w-4 h-4 md:w-5 md:h-5" />
                             </div>
                             <Badge variant="outline" className="text-[9px] md:text-[10px] border-blue-100 text-blue-600">+12%</Badge>
@@ -190,7 +190,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                     <div className="h-1 bg-purple-600 w-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     <CardContent className="p-4 md:p-6">
                         <div className="flex items-center justify-between mb-2 md:mb-4">
-                            <div className="p-1.5 md:p-2 bg-purple-50 text-purple-600 rounded-lg">
+                            <div className="p-1.5 md:p-2 bg-purple-50 text-purple-600 rounded-lg dark:bg-purple-500/15 dark:text-purple-300">
                                 <FileText className="w-4 h-4 md:w-5 md:h-5" />
                             </div>
                             <Badge variant="outline" className="text-[9px] md:text-[10px] border-purple-100 text-purple-600">+5%</Badge>
@@ -447,7 +447,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                             {resources.slice(0, 5).map((res) => (
                                 <div key={res.id} className="flex items-center justify-between p-4 hover:bg-muted transition-colors">
                                     <div className="flex items-center gap-3 overflow-hidden">
-                                        <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                                        <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 dark:bg-blue-500/15 dark:text-blue-300">
                                             <FileText className="w-5 h-5" />
                                         </div>
                                         <div className="overflow-hidden">
@@ -459,7 +459,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                                         {res.unverified ? (
                                             <Badge variant="destructive" className="text-[8px] font-black uppercase tracking-tighter rounded-md">En attente</Badge>
                                         ) : (
-                                            <Badge variant="outline" className="text-[8px] font-black uppercase tracking-tighter text-green-600 border-green-100 bg-green-50 rounded-md">Vérifié</Badge>
+                                            <Badge variant="outline" className="text-[8px] font-black uppercase tracking-tighter text-green-600 border-green-100 bg-green-50 rounded-md dark:text-green-300 dark:border-green-500/40 dark:bg-green-500/10">Vérifié</Badge>
                                         )}
                                     </div>
                                 </div>

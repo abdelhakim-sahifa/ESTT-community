@@ -551,7 +551,7 @@ export default function DirectMessagePage() {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full dark:border-background" />
                                 </div>
                                 <div className="flex flex-col">
                                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -564,7 +564,7 @@ export default function DirectMessagePage() {
                                         >
                                             verified
                                         </span>
-                                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+                                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
                                             Officiel
                                         </span>
                                     </div>
@@ -586,7 +586,7 @@ export default function DirectMessagePage() {
                                         )}
                                     </div>
                                     {isOnline && (
-                                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
+<div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full dark:border-background" />
                                     )}
                                 </div>
                                 <div className="flex flex-col">
@@ -620,7 +620,7 @@ export default function DirectMessagePage() {
                     </div>
                     <div className="flex items-center gap-2">
                         {sharedKey && !isEsttAiChat && (
-                            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
+                            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100 dark:bg-emerald-500/15 dark:border-emerald-500/40">
                                 <Lock className="w-3 h-3 text-emerald-600" />
                                 <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Chiffré</span>
                             </div>
@@ -638,7 +638,7 @@ export default function DirectMessagePage() {
                                             : 'Activer les notifications'
                                 }
                                 className={`p-2 rounded-full transition-all ${permission === 'granted'
-                                    ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
+                                    ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25'
                                     : permission === 'denied'
                                         ? 'text-muted-foreground cursor-not-allowed'
                                         : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
@@ -657,7 +657,7 @@ export default function DirectMessagePage() {
                             <button
                                 onClick={handleClearChat}
                                 title="Effacer la conversation"
-                                className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                                className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-full transition-all dark:hover:bg-red-500/10"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
@@ -677,7 +677,7 @@ export default function DirectMessagePage() {
                                         <div className="w-20 h-20 rounded-[2rem] overflow-hidden border border-border shadow-sm mb-5">
                                             <img src={ESTT_AI_PROFILE.photoUrl} alt="ESTT-AI" className="w-full h-full object-cover" />
                                         </div>
-                                        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
+                                        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
                                             ESTT-AI
                                         </div>
                                         <h2 className="mt-4 text-2xl font-black text-foreground">Agent officiel de la communaute ESTT</h2>
@@ -734,7 +734,7 @@ export default function DirectMessagePage() {
                 <div className="max-w-4xl mx-auto">
                     {isAiSearching && (
                         <div className="flex items-center gap-2 mb-2 animate-in fade-in slide-in-from-bottom-1 duration-200">
-                            <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full border border-blue-100">
+                            <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full border border-blue-100 dark:bg-blue-500/15 dark:border-blue-500/40">
                                 <Search className="w-3 h-3 text-blue-500 animate-pulse" />
                                 <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
                                     ESTT-AI recherche des ressources...

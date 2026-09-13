@@ -26,15 +26,12 @@ export default function ContributorsSection() {
 
     return (
         <section
-            className="min-h-screen px-4 py-24 flex flex-col items-center"
-            style={{
-                background: 'linear-gradient(160deg, #eef4fb 0%, #f7fafd 50%, #edf3fa 100%)',
-            }}
+            className="min-h-screen px-4 py-24 flex flex-col items-center bg-gradient-to-br from-[#eef4fb] via-[#f7fafd] to-[#edf3fa] dark:from-[#0a1224] dark:via-background dark:to-[#0a1224]"
         >
             {/* Header */}
             <div className="text-center mb-14 max-w-xl mx-auto">
                 {/* Badge */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-blue-100 bg-blue-50 text-blue-500 text-xs font-medium tracking-widest uppercase mb-6 shadow-sm">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-blue-100 bg-blue-50 text-blue-500 text-xs font-medium tracking-widest uppercase mb-6 shadow-sm dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300">
                     <Github className="w-3 h-3" />
                     Open Source
                 </div>

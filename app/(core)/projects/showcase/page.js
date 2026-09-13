@@ -40,12 +40,12 @@ export default function ProjectShowcasePage() {
     }, []);
 
     return (
-        <main className="min-h-screen bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_28%,_#f8fafc_100%)]">
+        <main className="min-h-screen bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_28%,_#f8fafc_100%)] dark:bg-[linear-gradient(180deg,_#0c0a09_0%,_#020617_28%,_#020617_100%)]">
             <section className="border-b border-orange-100/70">
                 <div className="container px-4 py-16 md:px-6">
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                         <div className="space-y-4">
-                            <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-orange-600 shadow-sm">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-orange-600 shadow-sm dark:border-orange-500/30 dark:text-orange-300">
                                 <Sparkles className="h-4 w-4" />
                                 Student showcase
                             </div>

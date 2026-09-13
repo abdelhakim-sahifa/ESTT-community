@@ -199,8 +199,8 @@ export default function TicketPage() {
                         <div className={cn(
                             "mt-8 p-4 rounded-2xl flex items-center gap-4 border-2 transition-all duration-500",
                             ticket.status === 'valid'
-                                ? (ticket.scanned || ticket.checkedIn ? "bg-blue-50 border-blue-100 text-blue-700" : "bg-green-50 border-green-100 text-green-700")
-                                : "bg-amber-50 border-amber-100 text-amber-700 animate-pulse"
+                                ? (ticket.scanned || ticket.checkedIn ? "bg-blue-50 border-blue-100 text-blue-700 dark:bg-blue-500/15 dark:border-blue-500/40 dark:text-blue-300" : "bg-green-50 border-green-100 text-green-700 dark:bg-green-500/15 dark:border-green-500/40 dark:text-green-300")
+                                : "bg-amber-50 border-amber-100 text-amber-700 animate-pulse dark:bg-amber-500/15 dark:border-amber-500/40 dark:text-amber-300"
                         )}>
                             <div className={cn(
                                 "w-10 h-10 rounded-full flex items-center justify-center shrink-0",

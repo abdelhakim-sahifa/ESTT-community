@@ -163,8 +163,8 @@ export default function PostDetailPage() {
                         className={cn(
                             "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold transition-all",
                             likeCount > 0
-                                ? "border-pink-200 bg-pink-50 text-pink-600"
-                                : "border-border text-muted-foreground hover:border-pink-200 hover:bg-pink-50 hover:text-pink-500"
+                                ? "border-pink-200 bg-pink-50 text-pink-600 dark:border-pink-500/50 dark:bg-pink-500/15 dark:text-pink-300"
+                                : "border-border text-muted-foreground hover:border-pink-200 hover:bg-pink-50 hover:text-pink-500 dark:hover:border-pink-500/50 dark:hover:bg-pink-500/15 dark:hover:text-pink-300"
                         )}
                     >
                         <Heart className={cn("w-4 h-4", likeCount > 0 ? "fill-current" : "")} />

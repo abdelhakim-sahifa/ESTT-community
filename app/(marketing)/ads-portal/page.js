@@ -24,10 +24,10 @@ import { AD_PRICING } from '@/lib/ad-constants';
 
 export default function AdPlatformLanding() {
   return (
-    <div className="min-h-screen bg-card selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-card selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-500/30 dark:selection:text-blue-200">
       {/* Hero Section */}
       <section className="relative pt-20 pb-40 overflow-hidden bg-card">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#f1f5f9,transparent)] opacity-100" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#f1f5f9,transparent)] opacity-100 dark:bg-[radial-gradient(circle_at_top_right,rgba(51,65,85,0.6),transparent)]" />
         <div className="container relative mx-auto px-4 text-center">
           <div className="mb-0 flex justify-center">
             <Image
@@ -38,7 +38,7 @@ export default function AdPlatformLanding() {
               className="h-12 w-auto mb-6 opacity-90"
             />
           </div>
-          <Badge className="mb-6 bg-blue-50 text-blue-600 border-blue-100 px-4 py-1.5 text-xs font-black uppercase tracking-widest">
+          <Badge className="mb-6 bg-blue-50 text-blue-600 border-blue-100 px-4 py-1.5 text-xs font-black uppercase tracking-widest dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/40">
             ESTT Ad Platform • Phase Bêta
           </Badge>
           <h1 className="text-4xl md:text-7xl font-black text-foreground mb-8 tracking-tighter leading-[1.1]">
@@ -120,11 +120,11 @@ export default function AdPlatformLanding() {
               }
             ].map((step, i) => (
               <div key={i} className="relative group p-8 bg-card rounded-[32px] border border-border shadow-sm hover:shadow-xl transition-all duration-500">
-                <span className="absolute -top-6 left-8 text-6xl font-black text-slate-100 group-hover:text-blue-50 transition-colors pointer-events-none">
+                <span className="absolute -top-6 left-8 text-6xl font-black text-slate-100 group-hover:text-blue-50 transition-colors pointer-events-none dark:text-slate-800 dark:group-hover:text-slate-700">
                   {step.step}
                 </span>
                 <div className="relative z-10">
-                  <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 dark:bg-blue-500/15">
                     {step.icon()}
                   </div>
                   <h3 className="text-xl font-bold text-foreground mb-4">{step.title}</h3>
@@ -230,7 +230,7 @@ export default function AdPlatformLanding() {
               <Button
                 asChild
                 size="lg"
-                className="h-16 px-12 rounded-2xl bg-white text-blue-600 hover:bg-muted text-xl font-black shadow-2xl transition-all hover:scale-105"
+                className="h-16 px-12 rounded-2xl bg-white text-blue-600 hover:bg-muted text-xl font-black shadow-2xl transition-all hover:scale-105 dark:bg-slate-900 dark:text-blue-300 dark:hover:bg-slate-800"
               >
                 <Link href="/ads-portal/submit">Publier mon annonce maintenant</Link>
               </Button>
