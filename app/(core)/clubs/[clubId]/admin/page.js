@@ -1007,7 +1007,9 @@ export default function ClubAdminPage() {
             // Reconstruct organizationalChart object
             const newOrgChart = {};
             newItems.forEach(item => {
-                const key = item.role.toLowerCase().replace(/\s+/g, '');
+                if (!item.role?.trim()) return;
+
+                const key = item.role.toLowerCase().trim().replace(/\s+/g, '');
                 newOrgChart[key] = {
                     name: item.name,
                     email: item.email,
@@ -1018,6 +1020,36 @@ export default function ClubAdminPage() {
             });
             setChangeRequest(r => ({ ...r, newOrgChart }));
 
+            return newItems;
+        });
+    };
+
+    const handleAddOrgChartItem = () => {
+        setOrgChartItems(prev => [
+            ...prev,
+            { id: Date.now(), key: '', name: '', email: '', role: '', filiere: '', photo: '' }
+        ]);
+    };
+
+    const handleRemoveOrgChartItem = (id) => {
+        setOrgChartItems(prev => {
+            const newItems = prev.filter(item => item.id !== id);
+            const newOrgChart = {};
+
+            newItems.forEach(item => {
+                if (!item.role?.trim()) return;
+
+                const key = item.role.toLowerCase().trim().replace(/\s+/g, '');
+                newOrgChart[key] = {
+                    name: item.name,
+                    email: item.email,
+                    role: item.role,
+                    filiere: item.filiere,
+                    photo: item.photo || ''
+                };
+            });
+
+            setChangeRequest(r => ({ ...r, newOrgChart }));
             return newItems;
         });
     };
@@ -2906,17 +2938,34 @@ export default function ClubAdminPage() {
                                                             </AlertDescription>
                                                         </Alert>
                                                     ) : (
-                                                        <div className="space-y-4 border p-4 rounded-lg bg-slate-50">
-                                                            <h3 className="font-medium text-sm mb-2">Modifier l'organigramme</h3>
+                                                        <div className="space-y-4 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 via-background to-secondary/10 p-4 shadow-sm">
+                                                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                                                <div>
+                                                                    <h3 className="font-semibold text-sm text-primary">Modifier l'organigramme</h3>
+                                                                    <p className="text-xs text-muted-foreground">Ajoutez les postes nécessaires à la structure du club.</p>
+                                                                </div>
+                                                                <Button type="button" variant="outline" size="sm" className="w-full gap-2 border-primary/30 text-primary hover:bg-primary/10 sm:w-auto" onClick={handleAddOrgChartItem}>
+                                                                    <Plus className="h-4 w-4" />
+                                                                    Ajouter un poste
+                                                                </Button>
+                                                            </div>
                                                             {orgChartItems.map((item) => (
-                                                                <div key={item.id} className="bg-white p-3 border rounded space-y-3">
-                                                                    <div className="grid grid-cols-2 gap-2">
+                                                                <div key={item.id} className="space-y-3 rounded-lg border border-primary/15 bg-background/90 p-3 shadow-sm">
+                                                                    <div className="flex items-center justify-between">
+                                                                        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Poste {orgChartItems.indexOf(item) + 1}</span>
+                                                                        <Button type="button" variant="ghost" size="sm" className="h-8 gap-1 px-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive" onClick={() => handleRemoveOrgChartItem(item.id)} aria-label={`Supprimer le poste ${orgChartItems.indexOf(item) + 1}`}>
+                                                                            <Trash2 className="h-4 w-4" />
+                                                                            <span className="sr-only">Supprimer</span>
+                                                                        </Button>
+                                                                    </div>
+                                                                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                                                         <div className="space-y-1">
                                                                             <Label className="text-xs">Rôle</Label>
                                                                             <Input
                                                                                 value={item.role}
                                                                                 onChange={(e) => handleOrgChartItemChange(item.id, 'role', e.target.value)}
                                                                                 className="h-8 text-sm"
+                                                                                required
                                                                             />
                                                                         </div>
                                                                         <div className="space-y-1">
@@ -2925,6 +2974,7 @@ export default function ClubAdminPage() {
                                                                                 value={item.name}
                                                                                 onChange={(e) => handleOrgChartItemChange(item.id, 'name', e.target.value)}
                                                                                 className="h-8 text-sm"
+                                                                                required
                                                                             />
                                                                         </div>
                                                                         <div className="space-y-1">
@@ -2933,13 +2983,15 @@ export default function ClubAdminPage() {
                                                                                 value={item.email}
                                                                                 onChange={(e) => handleOrgChartItemChange(item.id, 'email', e.target.value)}
                                                                                 className="h-8 text-sm"
+                                                                                type="email"
+                                                                                required
                                                                             />
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             ))}
                                                             <p className="text-xs text-muted-foreground">
-                                                                Note: Cette action soumettra une demande de validation aux administrateurs.
+                                                                Note : cette action soumettra une demande de validation aux administrateurs.
                                                             </p>
                                                         </div>
                                                     )}
