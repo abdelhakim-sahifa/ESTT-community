@@ -4,6 +4,7 @@ import './globals.css';
 
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import FloatingAssistant from '@/components/layout/FloatingAssistant';
 import { AuthProvider } from '@/context/AuthContext';
 import { DialogProvider } from '@/context/DialogContext';
 import { NotificationProvider } from '@/context/NotificationContext';
@@ -89,6 +90,7 @@ export default function RootLayout({ children }) {
                                 <Header />
                                 {children}
                                 <Footer />
+                                <FloatingAssistant />
                                 <div id="spinner-overlay" className="spinner-overlay hidden" aria-hidden="true">
                                     <div className="spinner" role="status" aria-label="Chargement"></div>
                                 </div>
@@ -106,7 +108,7 @@ export default function RootLayout({ children }) {
                     data-description="Support me on Buy me a coffee!"
                     data-message="Soutenir notre communauté !"
                     data-color="#5F7FFF"
-                    data-position="Right"
+                    data-position="Left"
                     data-x_margin="18"
                     data-y_margin="18"
                     strategy="lazyOnload"
