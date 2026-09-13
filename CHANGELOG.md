@@ -1,3 +1,10 @@
+# [1.32.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.31.0...v1.32.0) (2026-09-13)
+
+
+### Features
+
+* add floating ESTT-AI assistant widget ([4e27afb](https://github.com/abdelhakim-sahifa/ESTT-community/commit/4e27afb1506d9f6825300217c41f9dcd727ea99f))
+
 # [1.31.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.30.2...v1.31.0) (2026-09-13)
 
 
