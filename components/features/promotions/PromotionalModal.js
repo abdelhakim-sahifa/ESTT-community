@@ -273,7 +273,7 @@ export default function PromotionalModal({ isOpen, onClose, fromId, initialCode 
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <div className="space-y-2 text-center">
                                 <DialogTitle className="text-2xl font-bold">Code Promo QR</DialogTitle>
-                                <DialogDescription className="text-slate-500">
+                                <DialogDescription className="text-muted-foreground">
                                     Entrez le code à 4 chiffres présent sur l'affiche pour réclamer votre récompense.
                                 </DialogDescription>
                             </div>
@@ -309,7 +309,7 @@ export default function PromotionalModal({ isOpen, onClose, fromId, initialCode 
                                 <DialogTitle className="text-2xl font-bold flex items-center justify-center gap-2">
                                     C'est gagné ! <Sparkles className="w-6 h-6 text-amber-500" />
                                 </DialogTitle>
-                                <DialogDescription className="text-slate-600 font-medium">
+                                <DialogDescription className="text-muted-foreground font-medium">
                                     Vous avez débloqué <span className="text-indigo-600 font-bold">{
                                         matchedReward.includes('month') ? matchedReward.split('_')[1].replace('month', ' mois gratuit') :
                                         matchedReward.includes('day') ? matchedReward.split('_')[1].replace('day', ' jours gratuits') :
@@ -317,7 +317,7 @@ export default function PromotionalModal({ isOpen, onClose, fromId, initialCode 
                                     }</span> de <span className="text-indigo-600 font-bold">ESTTPlus+</span>
                                 </DialogDescription>
 
-                                <p className="text-sm text-slate-400 mt-2">
+                                <p className="text-sm text-muted-foreground mt-2">
                                     Entrez votre email pour réserver votre récompense.
                                 </p>
                             </div>
@@ -326,14 +326,14 @@ export default function PromotionalModal({ isOpen, onClose, fromId, initialCode 
                                 <div className="space-y-2">
                                     <Label htmlFor="claim-email">Email Académique</Label>
                                     <div className="relative">
-                                        <Mail className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+                                        <Mail className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
                                         <Input 
                                             id="claim-email"
                                             type="email"
                                             placeholder="prenom.nom@etu.uae.ac.ma"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
-                                            className="pl-10 h-12 border-slate-200"
+                                            className="pl-10 h-12 border-border"
                                             required
                                         />
                                     </div>
@@ -364,7 +364,7 @@ export default function PromotionalModal({ isOpen, onClose, fromId, initialCode 
                                 <>
                                     <div className="space-y-2">
                                         <DialogTitle className="text-2xl font-bold text-emerald-600">Récompense activée !</DialogTitle>
-                                        <DialogDescription className="text-slate-600">
+                                        <DialogDescription className="text-muted-foreground">
                                             Votre abonnement <strong>ESTTPlus+</strong> est maintenant actif.
                                         </DialogDescription>
                                         <div className="p-4 bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-100 text-violet-800 text-sm mt-4">
@@ -388,7 +388,7 @@ export default function PromotionalModal({ isOpen, onClose, fromId, initialCode 
                                 <>
                                     <div className="space-y-2">
                                         <DialogTitle className="text-2xl font-bold text-emerald-600">Félicitations !</DialogTitle>
-                                        <DialogDescription className="text-slate-600">
+                                        <DialogDescription className="text-muted-foreground">
                                             Votre récompense est réservée pour <strong>{email}</strong>.
                                         </DialogDescription>
                                         <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-800 text-sm mt-4">
@@ -409,7 +409,7 @@ export default function PromotionalModal({ isOpen, onClose, fromId, initialCode 
                                         <Button
                                             variant="ghost"
                                             onClick={onClose}
-                                            className="w-full h-12 text-slate-500 hover:text-slate-800"
+                                            className="w-full h-12 text-muted-foreground hover:text-foreground"
                                         >
                                             S&apos;inscrire plus tard
                                         </Button>

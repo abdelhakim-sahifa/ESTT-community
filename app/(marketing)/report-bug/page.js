@@ -247,34 +247,34 @@ export default function ReportBugPage() {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-slate-50 py-20 px-4">
+            <div className="min-h-screen bg-muted py-20 px-4">
                 <div className="max-w-2xl mx-auto text-center space-y-8">
                     <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto animate-in zoom-in duration-500">
                         <CheckCircle2 className="w-10 h-10" />
                     </div>
                     <div className="space-y-3">
-                        <h1 className="text-4xl font-black tracking-tight text-slate-900">Merci pour votre retour !</h1>
-                        <p className="text-lg text-slate-500">Votre rapport a été reçu et sera examiné par notre équipe dès que possible.</p>
+                        <h1 className="text-4xl font-black tracking-tight text-foreground">Merci pour votre retour !</h1>
+                        <p className="text-lg text-muted-foreground">Votre rapport a été reçu et sera examiné par notre équipe dès que possible.</p>
                     </div>
 
-                    <Card className="shadow-lg border-muted-foreground/10 bg-white rounded-3xl overflow-hidden">
+                    <Card className="shadow-lg border-muted-foreground/10 bg-card rounded-3xl overflow-hidden">
                         <CardContent className="p-8 space-y-6 text-left">
-                            <div className="bg-slate-50 rounded-2xl p-6 text-center">
-                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">ID de référence</p>
+                            <div className="bg-muted rounded-2xl p-6 text-center">
+                                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">ID de référence</p>
                                 <p className="text-2xl font-mono font-bold text-primary">{referenceId}</p>
                             </div>
                             <div className="space-y-4">
-                                <h3 className="font-bold text-slate-900">Prochaines étapes :</h3>
+                                <h3 className="font-bold text-foreground">Prochaines étapes :</h3>
                                 <ul className="space-y-3">
-                                    <li className="flex items-start gap-3 text-slate-600 text-sm">
+                                    <li className="flex items-start gap-3 text-muted-foreground text-sm">
                                         <div className="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center shrink-0 mt-0.5">1</div>
                                         <span>Notre équipe examinera les détails fournis pour reproduire le bug.</span>
                                     </li>
-                                    <li className="flex items-start gap-3 text-slate-600 text-sm">
+                                    <li className="flex items-start gap-3 text-muted-foreground text-sm">
                                         <div className="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center shrink-0 mt-0.5">2</div>
                                         <span>Nous prioriserons le correctif en fonction de la sévérité indiquée.</span>
                                     </li>
-                                    <li className="flex items-start gap-3 text-slate-600 text-sm">
+                                    <li className="flex items-start gap-3 text-muted-foreground text-sm">
                                         <div className="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center shrink-0 mt-0.5">3</div>
                                         <span>Vous pourriez recevoir un email si nous avons besoin de plus d'informations.</span>
                                     </li>
@@ -287,7 +287,7 @@ export default function ReportBugPage() {
                         <Button asChild className="rounded-2xl h-12 px-8 font-bold">
                             <Link href="/">Retour à l'accueil</Link>
                         </Button>
-                        <Button variant="outline" onClick={() => setSuccess(false)} className="rounded-2xl h-12 px-8 font-bold bg-white">
+                        <Button variant="outline" onClick={() => setSuccess(false)} className="rounded-2xl h-12 px-8 font-bold bg-card">
                             Signaler un autre bug
                         </Button>
                     </div>
@@ -300,7 +300,7 @@ export default function ReportBugPage() {
         return (
             <div className="min-h-[60vh] flex flex-col items-center justify-center">
                 <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
-                <p className="text-slate-500 font-medium">Chargement...</p>
+                <p className="text-muted-foreground font-medium">Chargement...</p>
             </div>
         );
     }
@@ -309,18 +309,18 @@ export default function ReportBugPage() {
         return (
             <main className="container py-20 max-w-2xl">
                 <div className="text-center space-y-8">
-                    <div className="w-20 h-20 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto opacity-50">
+                    <div className="w-20 h-20 bg-muted text-muted-foreground rounded-full flex items-center justify-center mx-auto opacity-50">
                         <Bug className="w-10 h-10" />
                     </div>
                     <div className="space-y-3">
-                        <h1 className="text-3xl font-black tracking-tight text-slate-900">Connexion requise</h1>
-                        <p className="text-lg text-slate-500">Vous devez être connecté pour signaler un bug et nous aider à améliorer la plateforme.</p>
+                        <h1 className="text-3xl font-black tracking-tight text-foreground">Connexion requise</h1>
+                        <p className="text-lg text-muted-foreground">Vous devez être connecté pour signaler un bug et nous aider à améliorer la plateforme.</p>
                     </div>
                     <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Button asChild size="lg" className="rounded-2xl h-14 px-8 font-bold w-full sm:w-auto">
                             <Link href="/login?redirect=/report-bug">Se connecter</Link>
                         </Button>
-                        <Button variant="ghost" asChild className="rounded-2xl h-14 px-8 font-bold w-full sm:w-auto border-slate-200 border">
+                        <Button variant="ghost" asChild className="rounded-2xl h-14 px-8 font-bold w-full sm:w-auto border-border border">
                             <Link href="/">Retour à l'accueil</Link>
                         </Button>
                     </div>
@@ -332,7 +332,7 @@ export default function ReportBugPage() {
     return (
         <main className="container py-12 max-w-4xl">
             <section className="mb-12 text-center relative">
-                <Link href="/" className="absolute left-0 top-0 hidden md:flex items-center gap-2 text-slate-500 hover:text-primary transition-colors group">
+                <Link href="/" className="absolute left-0 top-0 hidden md:flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors group">
                     <ArrowLeft className="w-4 h-4" />
                     <span className="text-sm font-bold">Retour</span>
                 </Link>
@@ -418,21 +418,21 @@ export default function ReportBugPage() {
 
                                     <div className="space-y-2">
                                         <Label className="text-xs opacity-70">OS</Label>
-                                        <div className="h-10 rounded-xl bg-white border border-slate-200 flex items-center px-4 text-sm font-medium">
+                                        <div className="h-10 rounded-xl bg-card border border-border flex items-center px-4 text-sm font-medium">
                                             {formData.os}
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label className="text-xs opacity-70">Navigateur</Label>
-                                        <div className="h-10 rounded-xl bg-white border border-slate-200 flex items-center px-4 text-sm font-medium">
+                                        <div className="h-10 rounded-xl bg-card border border-border flex items-center px-4 text-sm font-medium">
                                             {formData.browser}
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label className="text-xs opacity-70">Appareil</Label>
-                                        <div className="h-10 rounded-xl bg-white border border-slate-200 flex items-center px-4 text-sm font-medium">
+                                        <div className="h-10 rounded-xl bg-card border border-border flex items-center px-4 text-sm font-medium">
                                             {formData.deviceType}
                                         </div>
                                     </div>
@@ -447,7 +447,7 @@ export default function ReportBugPage() {
                                     <div className="space-y-2">
                                         <Label htmlFor="severity" className="text-xs opacity-70">Sévérité *</Label>
                                         <Select required onValueChange={(val) => handleSelectChange('severity', val)}>
-                                            <SelectTrigger id="severity" className="h-10 rounded-xl bg-white">
+                                            <SelectTrigger id="severity" className="h-10 rounded-xl bg-card">
                                                 <SelectValue placeholder="Sélectionner" />
                                             </SelectTrigger>
                                             <SelectContent className="rounded-xl">
@@ -467,13 +467,13 @@ export default function ReportBugPage() {
                                             placeholder="Ex: 1.3.1"
                                             value={formData.appVersion}
                                             onChange={handleInputChange}
-                                            className="h-10 rounded-xl bg-white"
+                                            className="h-10 rounded-xl bg-card"
                                         />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label htmlFor="email" className="text-xs opacity-70">Email (Auto-détecté)</Label>
-                                        <div className="h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center px-4 text-sm font-medium text-slate-500">
+                                        <div className="h-10 rounded-xl bg-muted border border-border flex items-center px-4 text-sm font-medium text-muted-foreground">
                                             {user?.email || 'Connexion requise'}
                                         </div>
                                     </div>
@@ -498,9 +498,9 @@ export default function ReportBugPage() {
                                 {attachments.length > 0 && (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                                         {attachments.map((file) => (
-                                            <div key={file.id} className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group">
+                                            <div key={file.id} className="flex items-center justify-between p-3 bg-card rounded-xl border border-border shadow-sm relative overflow-hidden group">
                                                 {file.status === 'uploading' && (
-                                                    <div className="absolute inset-0 bg-white/60 flex items-center justify-center backdrop-blur-[1px] z-10">
+                                                    <div className="absolute inset-0 bg-background/60 flex items-center justify-center backdrop-blur-[1px] z-10">
                                                         <Loader2 className="w-4 h-4 animate-spin text-primary" />
                                                     </div>
                                                 )}
@@ -511,13 +511,13 @@ export default function ReportBugPage() {
                                                             <img src={file.url} alt="Preview" className="w-full h-full object-cover" />
                                                         </div>
                                                     ) : (
-                                                        <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 border">
-                                                            <Info className="w-5 h-5 text-slate-400" />
+                                                        <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 border">
+                                                            <Info className="w-5 h-5 text-muted-foreground" />
                                                         </div>
                                                     )}
                                                     <div className="flex flex-col min-w-0">
-                                                        <span className="text-xs font-bold text-slate-700 truncate">{file.name}</span>
-                                                        <span className="text-[10px] text-slate-400">
+                                                        <span className="text-xs font-bold text-foreground truncate">{file.name}</span>
+                                                        <span className="text-[10px] text-muted-foreground">
                                                             {(file.size / 1024).toFixed(1)} KB • {file.status === 'error' ? 'Échec' : 'Prêt'}
                                                         </span>
                                                     </div>
@@ -540,11 +540,11 @@ export default function ReportBugPage() {
 
                             {loading && uploadProgress > 0 && (
                                 <div className="space-y-2">
-                                    <div className="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                    <div className="flex justify-between text-xs font-bold text-muted-foreground uppercase tracking-wider">
                                         <span>Upload en cours...</span>
                                         <span>{uploadProgress}%</span>
                                     </div>
-                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-muted rounded-full overflow-hidden">
                                         <div 
                                             className="h-full bg-primary transition-all duration-300 ease-out"
                                             style={{ width: `${uploadProgress}%` }}

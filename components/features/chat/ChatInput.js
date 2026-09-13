@@ -312,7 +312,7 @@ export default function ChatInput({
                             disabled={disabled || isUploading}
                             onClick={() => fileInputRef.current?.click()}
                             className={cn(
-                                "flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-all bg-slate-50 border border-slate-200 text-slate-500 hover:text-primary hover:border-primary/30",
+                                "flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-all bg-muted border border-border text-muted-foreground hover:text-primary hover:border-primary/30",
                                 isUploading && "animate-pulse cursor-not-allowed"
                             )}
                             title="Envoyer une image"
@@ -329,13 +329,13 @@ export default function ChatInput({
                                 <button
                                     type="button"
                                     disabled={disabled || isUploading}
-                                    className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-all bg-slate-50 border border-slate-200 text-slate-500 hover:text-primary hover:border-primary/30"
+                                    className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-all bg-muted border border-border text-muted-foreground hover:text-primary hover:border-primary/30"
                                     title="Envoyer un sticker"
                                 >
                                     <Sticker className="w-5 h-5" />
                                 </button>
                             </SheetTrigger>
-                            <SheetContent side="bottom" className="h-[60vh] p-0 flex flex-col rounded-t-[2rem] bg-white z-[100]">
+                            <SheetContent side="bottom" className="h-[60vh] p-0 flex flex-col rounded-t-[2rem] bg-card z-[100]">
                                 <SheetHeader className="p-6 pb-2">
                                     <SheetTitle className="text-xl font-black">Stickers</SheetTitle>
                                     <SheetDescription>
@@ -345,13 +345,13 @@ export default function ChatInput({
 
                                 <Tabs defaultValue={stickerPacks[0]?.id || "empty"} className="flex-1 flex flex-col overflow-hidden">
                                     <div className="px-6 pb-2 overflow-x-auto no-scrollbar">
-                                        <TabsList className="bg-slate-100/50 p-1 rounded-xl w-max min-w-full justify-start">
+                                        <TabsList className="bg-muted/50 p-1 rounded-xl w-max min-w-full justify-start">
                                             {stickerPacks.length > 0 ? (
                                                 stickerPacks.map(pack => (
                                                     <TabsTrigger
                                                         key={pack.id}
                                                         value={pack.id}
-                                                        className="rounded-lg font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm px-4 py-2"
+                                                        className="rounded-lg font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm px-4 py-2"
                                                     >
                                                         {pack.name}
                                                     </TabsTrigger>
@@ -364,7 +364,7 @@ export default function ChatInput({
 
                                     <div className="flex-1 overflow-y-auto px-6 py-4">
                                         {isLoadingStickers ? (
-                                            <div className="h-full flex flex-col items-center justify-center text-slate-400 gap-3 text-center">
+                                            <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3 text-center">
                                                 <Loader2 className="w-8 h-8 animate-spin mx-auto" />
                                                 <p className="font-bold">Chargement des stickers...</p>
                                             </div>
@@ -390,7 +390,7 @@ export default function ChatInput({
                                                 </TabsContent>
                                             ))
                                         ) : (
-                                            <div className="h-full flex flex-col items-center justify-center text-slate-400 gap-3 grayscale opacity-30">
+                                            <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3 grayscale opacity-30">
                                                 <Sticker className="w-16 h-16" />
                                                 <p className="font-bold text-center">Pas encore de stickers disponibles</p>
                                             </div>
@@ -405,25 +405,25 @@ export default function ChatInput({
                                 <button
                                     type="button"
                                     disabled={disabled || isUploading}
-                                    className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-all bg-slate-50 border border-slate-200 text-slate-500 hover:text-primary hover:border-primary/30"
+                                    className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-all bg-muted border border-border text-muted-foreground hover:text-primary hover:border-primary/30"
                                     title="Partager une ressource"
                                 >
                                     <Library className="w-5 h-5" />
                                 </button>
                             </SheetTrigger>
-                            <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col bg-white z-[100]">
+                            <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col bg-card z-[100]">
                                 <SheetHeader className="p-6 border-b">
                                     <SheetTitle>Partager du contenu</SheetTitle>
                                     <SheetDescription>
                                         Partagez des ressources ou des événements avec la communauté.
                                     </SheetDescription>
                                     <div className="relative mt-4">
-                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                         <Input
                                             placeholder="Rechercher..."
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="pl-10 rounded-full bg-slate-50"
+                                            className="pl-10 rounded-full bg-muted"
                                         />
                                     </div>
                                 </SheetHeader>
@@ -441,30 +441,30 @@ export default function ChatInput({
                                             {isLoadingResources ? (
                                                 <div className="flex flex-col items-center justify-center py-10 opacity-60">
                                                     <Loader2 className="w-8 h-8 animate-spin text-primary mb-2" />
-                                                    <p className="text-xs text-slate-400">Chargement des ressources...</p>
+                                                    <p className="text-xs text-muted-foreground">Chargement des ressources...</p>
                                                 </div>
                                             ) : filteredResources.length === 0 ? (
                                                 <div className="text-center py-10">
-                                                    <p className="text-slate-500 text-sm">Aucune ressource trouvée.</p>
+                                                    <p className="text-muted-foreground text-sm">Aucune ressource trouvée.</p>
                                                 </div>
                                             ) : (
                                                 <div className="space-y-3">
                                                     {filteredResources.map((res) => (
                                                         <div
                                                             key={res.id}
-                                                            className="group flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-primary/30 hover:bg-slate-50 transition-all cursor-pointer"
+                                                            className="group flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-muted transition-all cursor-pointer"
                                                             onClick={() => handleShareResource(res)}
                                                         >
-                                                            <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                                            <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                                                                 {getResourceIcon(res.type)}
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <p className="text-sm font-bold text-slate-900 truncate">{res.title}</p>
-                                                                <p className="text-[11px] text-slate-500 truncate">
+                                                                <p className="text-sm font-bold text-foreground truncate">{res.title}</p>
+                                                                <p className="text-[11px] text-muted-foreground truncate">
                                                                     {res.module || res.moduleId} • {res.professor || 'Professeur inconnu'}
                                                                 </p>
                                                             </div>
-                                                            <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                                                            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                                                         </div>
                                                     ))}
                                                 </div>
@@ -475,41 +475,41 @@ export default function ChatInput({
                                             {isLoadingEvents ? (
                                                 <div className="flex flex-col items-center justify-center py-10 opacity-60">
                                                     <Loader2 className="w-8 h-8 animate-spin text-primary mb-2" />
-                                                    <p className="text-xs text-slate-400">Chargement des événements...</p>
+                                                    <p className="text-xs text-muted-foreground">Chargement des événements...</p>
                                                 </div>
                                             ) : filteredEvents.length === 0 ? (
                                                 <div className="text-center py-10">
-                                                    <p className="text-slate-500 text-sm">Aucun événement trouvé.</p>
+                                                    <p className="text-muted-foreground text-sm">Aucun événement trouvé.</p>
                                                 </div>
                                             ) : (
                                                 <div className="space-y-3">
                                                     {filteredEvents.map((event) => (
                                                         <div
                                                             key={event.id}
-                                                            className="group flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-primary/30 hover:bg-slate-50 transition-all cursor-pointer"
+                                                            className="group flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-muted transition-all cursor-pointer"
                                                             onClick={() => handleShareEvent(event)}
                                                         >
-                                                            <div className="w-10 h-10 rounded-lg overflow-hidden border border-slate-100 shrink-0">
+                                                            <div className="w-10 h-10 rounded-lg overflow-hidden border border-border shrink-0">
                                                                 {event.clubLogo ? (
                                                                     <img src={event.clubLogo} alt="" className="w-full h-full object-cover" />
                                                                 ) : (
-                                                                    <div className="w-full h-full bg-slate-100 flex items-center justify-center">
-                                                                        <CalendarDays className="w-5 h-5 text-slate-400" />
+                                                                    <div className="w-full h-full bg-muted flex items-center justify-center">
+                                                                        <CalendarDays className="w-5 h-5 text-muted-foreground" />
                                                                     </div>
                                                                 )}
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <p className="text-sm font-bold text-slate-900 truncate">{event.title}</p>
+                                                                <p className="text-sm font-bold text-foreground truncate">{event.title}</p>
                                                                 <div className="flex items-center gap-1.5 flex-wrap">
-                                                                    <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded font-bold text-slate-500 uppercase">
+                                                                    <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded font-bold text-muted-foreground uppercase">
                                                                         {event.clubName}
                                                                     </span>
-                                                                    <span className="text-[10px] text-slate-400">
+                                                                    <span className="text-[10px] text-muted-foreground">
                                                                         {new Date(event.date || event.eventDate || event.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
                                                                     </span>
                                                                 </div>
                                                             </div>
-                                                            <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                                                            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                                                         </div>
                                                     ))}
                                                 </div>
@@ -525,7 +525,7 @@ export default function ChatInput({
                     <div className="relative flex-1">
                         {/* Mention Suggestions */}
                         {showMentions && filteredMentions.length > 0 && (
-                            <div className="absolute bottom-full left-0 w-full mb-2 bg-white border border-slate-200 rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200 z-50">
+                            <div className="absolute bottom-full left-0 w-full mb-2 bg-card border border-border rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200 z-50">
                                 <div className="p-1">
                                     {filteredMentions.map((user, index) => (
                                         <button
@@ -536,7 +536,7 @@ export default function ChatInput({
                                                 "w-full flex items-center px-4 py-2 rounded-xl transition-all text-left text-[13px] font-medium",
                                                 index === selectedMentionIndex
                                                     ? "bg-primary/10 text-primary font-bold"
-                                                    : "hover:bg-slate-50 text-slate-600"
+                                                    : "hover:bg-muted text-muted-foreground"
                                             )}
                                         >
                                             @{user.name}
@@ -555,7 +555,7 @@ export default function ChatInput({
                             placeholder={placeholder}
                             disabled={disabled || isUploading}
                             className={cn(
-                                "w-full bg-slate-50 border border-slate-200 rounded-full py-3.5 px-6 pr-14 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30",
+                                "w-full bg-muted border border-border rounded-full py-3.5 px-6 pr-14 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30",
                                 (disabled || isUploading) && "opacity-50 cursor-not-allowed"
                             )}
                         />
@@ -566,7 +566,7 @@ export default function ChatInput({
                                 "absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center transition-all",
                                 message.trim() && !disabled && !isUploading
                                     ? "bg-primary text-white"
-                                    : "bg-slate-100 text-slate-300"
+                                    : "bg-muted text-muted-foreground"
                             )}
                         >
                             <ArrowUp className="w-5 h-5" />

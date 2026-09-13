@@ -553,7 +553,7 @@ export default function ContributePage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setIsAiModalOpen(true)}
-                            className="bg-primary/5 text-primary border-primary/20 hover:bg-primary/10 hover:border-primary/30 font-semibold shadow-sm shrink-0"
+                            className="bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-100 hover:border-blue-200 font-semibold shadow-sm shrink-0"
                         >
                             <Sparkles className="w-4 h-4 mr-2" />
                             Remplir avec l'IA
@@ -693,7 +693,7 @@ export default function ContributePage() {
                                                 : [];
 
                                             return (
-                                                <div key={lIndex} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-white/50 rounded-xl border border-muted-foreground/5 relative group">
+                                                <div key={lIndex} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-card/50 rounded-xl border border-muted-foreground/5 relative group">
                                                     <div className="space-y-1.5">
                                                         <Label className="text-[10px] font-bold uppercase opacity-70">Filière</Label>
                                                         <Select
@@ -974,7 +974,7 @@ export default function ContributePage() {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="gap-2 font-semibold bg-white text-black hover:bg-gray-50 border-gray-200"
+                                    className="gap-2 font-semibold bg-card text-foreground hover:bg-muted border-border"
                                     onClick={() => {
                                         const encodedPrompt = encodeURIComponent(getAiPrompt(false));
                                         window.open(`https://chatgpt.com/?prompt=${encodedPrompt}`, '_blank');
@@ -986,7 +986,7 @@ export default function ContributePage() {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="gap-2 font-semibold bg-white text-black hover:bg-gray-50 border-gray-200"
+                                    className="gap-2 font-semibold bg-card text-foreground hover:bg-muted border-border"
                                     onClick={() => {
                                         const encodedPrompt = encodeURIComponent(getAiPrompt(true).replace(/\n/g, ' '));
                                         window.open(`https://www.google.com/search?udm=50&aep=11&q=${encodedPrompt}`, '_blank');

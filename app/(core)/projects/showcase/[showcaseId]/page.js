@@ -51,9 +51,9 @@ export default function ShowcaseDetailPage() {
     if (!showcase) {
         return (
             <main className="container max-w-3xl px-4 py-16 text-center md:px-6">
-                <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10">
-                    <h1 className="text-3xl font-black text-slate-950">Projet introuvable</h1>
-                    <p className="mt-3 text-sm text-slate-500">
+                <div className="rounded-xl border border-dashed border-border bg-card p-10">
+                    <h1 className="text-3xl font-black text-foreground">Projet introuvable</h1>
+                    <p className="mt-3 text-sm text-muted-foreground">
                         Cette fiche showcase n'est plus disponible.
                     </p>
                     <Button asChild className="mt-6 rounded-full">
@@ -76,7 +76,7 @@ export default function ShowcaseDetailPage() {
                     </Link>
                 </Button>
 
-                <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+                <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-xl">
                     <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
                         <div className="space-y-6 bg-slate-950 px-6 py-8 text-white md:px-8 md:py-10">
                             <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white/70">
@@ -117,22 +117,22 @@ export default function ShowcaseDetailPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-5 bg-white px-6 py-8 md:px-8 md:py-10">
-                            <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Tech stack</p>
+                        <div className="space-y-5 bg-card px-6 py-8 md:px-8 md:py-10">
+                            <div className="rounded-xl border border-border bg-muted p-5">
+                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Tech stack</p>
                                 <div className="mt-4 flex flex-wrap gap-2">
                                     {showcase.techStack.length > 0 ? showcase.techStack.map((item) => (
-                                        <Badge key={item} variant="outline" className="border-slate-200 bg-white text-slate-700">
+                                        <Badge key={item} variant="outline" className="border-border bg-card text-foreground">
                                             {item}
                                         </Badge>
                                     )) : (
-                                        <p className="text-sm text-slate-500">Aucune stack detaillee.</p>
+                                        <p className="text-sm text-muted-foreground">Aucune stack detaillee.</p>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Liens</p>
+                            <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Liens</p>
                                 <div className="mt-4 flex flex-wrap gap-3">
                                     {showcase.githubUrl && (
                                         <Button variant="outline" asChild className="rounded-full">
@@ -153,9 +153,9 @@ export default function ShowcaseDetailPage() {
                                 </div>
                             </div>
 
-                            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Description detaillee</p>
-                                <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-slate-600">
+                            <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Description detaillee</p>
+                                <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
                                     {showcase.description || showcase.summary || 'Aucune description detaillee disponible.'}
                                 </p>
                             </div>
@@ -166,15 +166,15 @@ export default function ShowcaseDetailPage() {
 
             <section className="container px-4 pb-16 md:px-6">
                 <div className="space-y-6">
-                    <h2 className="text-3xl font-black text-slate-950">Galerie</h2>
+                    <h2 className="text-3xl font-black text-foreground">Galerie</h2>
                     {gallery.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10 text-center">
-                            <p className="text-sm text-slate-500">Aucun visuel fourni pour ce projet.</p>
+                        <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
+                            <p className="text-sm text-muted-foreground">Aucun visuel fourni pour ce projet.</p>
                         </div>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2">
                             {gallery.map((image, index) => (
-                                <div key={`${image}-${index}`} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                                <div key={`${image}-${index}`} className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
                                     <img src={image} alt={`${showcase.title} visual ${index + 1}`} className="h-full w-full object-cover" />
                                 </div>
                             ))}

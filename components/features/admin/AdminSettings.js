@@ -48,7 +48,7 @@ export default function AdminSettings({ settings, setSettings }) {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSaveSettings} className="space-y-6">
-                        <div className="flex items-center space-x-2 border p-4 rounded-md bg-slate-50">
+                        <div className="flex items-center space-x-2 border p-4 rounded-md bg-muted">
                             <input
                                 type="checkbox"
                                 id="notifEnabled"

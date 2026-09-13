@@ -61,14 +61,14 @@ export default function UploadImgTestPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-muted py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-10">
-                    <h1 className="text-4xl font-bold text-slate-900 mb-2">ImgBB Test Upload</h1>
-                    <p className="text-slate-600">Testez l'envoi d'images vers ImgBB et récupérez l'URL publique.</p>
+                    <h1 className="text-4xl font-bold text-foreground mb-2">ImgBB Test Upload</h1>
+                    <p className="text-muted-foreground">Testez l'envoi d'images vers ImgBB et récupérez l'URL publique.</p>
                 </div>
 
-                <Card className="border-none shadow-xl bg-white/80 backdrop-blur-sm">
+                <Card className="border-none shadow-xl bg-background/80 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <ImageIcon className="w-5 h-5 text-primary" />
@@ -82,14 +82,14 @@ export default function UploadImgTestPage() {
                     <CardContent className="space-y-6">
                         {!preview ? (
                             <div 
-                                className="border-2 border-dashed border-slate-300 rounded-xl p-12 flex flex-col items-center justify-center hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group"
+                                className="border-2 border-dashed border-border rounded-xl p-12 flex flex-col items-center justify-center hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group"
                                 onClick={() => document.getElementById('file-upload').click()}
                             >
-                                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <Upload className="w-8 h-8 text-slate-400 group-hover:text-primary" />
+                                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <Upload className="w-8 h-8 text-muted-foreground group-hover:text-primary" />
                                 </div>
-                                <p className="text-slate-600 font-medium">Cliquez pour choisir un fichier</p>
-                                <p className="text-slate-400 text-sm mt-1">PNG, JPG, GIF jusqu'à 32MB</p>
+                                <p className="text-muted-foreground font-medium">Cliquez pour choisir un fichier</p>
+                                <p className="text-muted-foreground text-sm mt-1">PNG, JPG, GIF jusqu'à 32MB</p>
                                 <input 
                                     id="file-upload"
                                     type="file"
@@ -99,7 +99,7 @@ export default function UploadImgTestPage() {
                                 />
                             </div>
                         ) : (
-                            <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center min-h-[300px]">
+                            <div className="relative rounded-xl overflow-hidden border border-border bg-muted flex items-center justify-center min-h-[300px]">
                                 <img 
                                     src={preview} 
                                     alt="Prévisualisation" 
@@ -115,9 +115,9 @@ export default function UploadImgTestPage() {
                                     <X className="w-4 h-4" />
                                 </Button>
                                 {uploading && (
-                                    <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center">
+                                    <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] flex flex-col items-center justify-center">
                                         <Loader2 className="w-10 h-10 text-primary animate-spin mb-2" />
-                                        <p className="text-slate-900 font-bold">Envoi en cours...</p>
+                                        <p className="text-foreground font-bold">Envoi en cours...</p>
                                     </div>
                                 )}
                             </div>
@@ -143,7 +143,7 @@ export default function UploadImgTestPage() {
                                         <Input 
                                             readOnly 
                                             value={uploadedUrl} 
-                                            className="bg-white border-emerald-200 focus-visible:ring-emerald-500"
+                                            className="bg-card border-emerald-200 focus-visible:ring-emerald-500"
                                         />
                                         <Button 
                                             onClick={copyToClipboard}
@@ -158,8 +158,8 @@ export default function UploadImgTestPage() {
                         )}
                     </CardContent>
 
-                    <CardFooter className="flex justify-between items-center border-t pt-6 bg-slate-50/50">
-                        <p className="text-xs text-slate-400 italic">
+                    <CardFooter className="flex justify-between items-center border-t pt-6 bg-muted/50">
+                        <p className="text-xs text-muted-foreground italic">
                             Les images envoyées sont stockées sur ImgBB.
                         </p>
                         <div className="flex gap-2">

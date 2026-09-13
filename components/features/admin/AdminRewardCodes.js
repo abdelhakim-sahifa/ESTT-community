@@ -356,14 +356,14 @@ export default function AdminRewardCodes() {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tightest text-slate-900 dark:text-white">
+                    <h1 className="text-3xl font-black tracking-tightest text-foreground dark:text-white">
                         Gestion des <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">Récompenses QR</span>
                     </h1>
-                    <p className="text-slate-500 font-medium">Gérez les codes promotionnels pour les affiches QR</p>
+                    <p className="text-muted-foreground font-medium">Gérez les codes promotionnels pour les affiches QR</p>
                 </div>
             </div>
 
-            <Card className="border-slate-200 overflow-hidden">
+            <Card className="border-border overflow-hidden">
                 <div className="h-2 bg-gradient-to-r from-primary to-indigo-600 w-full" />
                 <CardHeader>
                     <CardTitle className="text-xl font-bold flex items-center gap-2">
@@ -376,7 +376,7 @@ export default function AdminRewardCodes() {
                 <CardContent>
                     <form onSubmit={handleBulkGenerate} className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Quantité</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Quantité</label>
                             <Input
                                 type="number"
                                 min="1"
@@ -388,7 +388,7 @@ export default function AdminRewardCodes() {
                             />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Récompense</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Récompense</label>
                             <Select
                                 value={bulkData.reward}
                                 onValueChange={(v) => setBulkData({ ...bulkData, reward: v })}
@@ -415,7 +415,7 @@ export default function AdminRewardCodes() {
                 </CardContent>
             </Card>
 
-            <Card className="border-slate-200">
+            <Card className="border-border">
                 <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
                     <div>
                         <CardTitle className="text-xl font-bold">Codes Actifs</CardTitle>
@@ -423,10 +423,10 @@ export default function AdminRewardCodes() {
                     </div>
                     <div className="flex w-full max-w-md gap-2">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 placeholder="Rechercher par code ou récompense..."
-                                className="pl-9 h-11 bg-slate-50 border-none"
+                                className="pl-9 h-11 bg-muted border-none"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -447,9 +447,9 @@ export default function AdminRewardCodes() {
                 </CardHeader>
 
                 <CardContent>
-                    <div className="rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+                    <div className="rounded-2xl border border-border overflow-hidden shadow-sm">
                         <Table>
-                            <TableHeader className="bg-slate-50/80">
+                            <TableHeader className="bg-muted/80">
                                 <TableRow className="hover:bg-transparent border-none">
                                     <TableHead className="w-12 text-center">
                                         <Checkbox 
@@ -470,13 +470,13 @@ export default function AdminRewardCodes() {
                             <TableBody>
                                 {filteredCodes.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="text-center py-20 text-slate-400 italic">
+                                        <TableCell colSpan={6} className="text-center py-20 text-muted-foreground italic">
                                             Aucun code de récompense trouvé.
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     filteredCodes.map((c) => (
-                                        <TableRow key={c.id} className="group border-slate-50">
+                                        <TableRow key={c.id} className="group border-border">
                                             <TableCell className="text-center py-4">
                                                 {c.isValid && (
                                                     <Checkbox 
@@ -488,10 +488,10 @@ export default function AdminRewardCodes() {
                                             <TableCell className="font-mono font-black text-lg text-primary py-4">
                                                 {c.code}
                                             </TableCell>
-                                            <TableCell className="font-mono text-xs text-slate-500 py-4">
+                                            <TableCell className="font-mono text-xs text-muted-foreground py-4">
                                                 {c.reward}
                                             </TableCell>
-                                            <TableCell className="font-bold text-slate-700 py-4">
+                                            <TableCell className="font-bold text-foreground py-4">
                                                 {c.reward.includes('month') ? c.reward.split('_')[1].replace('month', ' Mois') :
                                                     c.reward.includes('day') ? c.reward.split('_')[1].replace('day', ' Jours') :
                                                         'Récompense Standard'}
@@ -506,15 +506,15 @@ export default function AdminRewardCodes() {
                                                         <Badge className="bg-amber-500 hover:bg-amber-600">
                                                             <span className="flex items-center gap-1"><UserCheck className="w-3 h-3" /> UTILISÉ</span>
                                                         </Badge>
-                                                        <span className="text-[10px] text-slate-400 max-w-[140px] truncate">
+                                                        <span className="text-[10px] text-muted-foreground max-w-[140px] truncate">
                                                             {c.usedByEmail || c.usedByUid || 'Utilisateur inconnu'}
                                                         </span>
-                                                        <span className="text-[10px] text-slate-300">
+                                                        <span className="text-[10px] text-muted-foreground">
                                                             {new Date(c.usedAt).toLocaleDateString('fr-FR')}
                                                         </span>
                                                     </div>
                                                 ) : (
-                                                    <Badge variant="secondary" className="bg-slate-200 text-slate-500">
+                                                    <Badge variant="secondary" className="bg-muted text-muted-foreground">
                                                         <span className="flex items-center gap-1"><XCircle className="w-3 h-3" /> INACTIF</span>
                                                     </Badge>
                                                 )}
@@ -538,7 +538,7 @@ export default function AdminRewardCodes() {
                                                     <Button
                                                         size="icon"
                                                         variant="ghost"
-                                                        className="h-10 w-10 rounded-full text-slate-400 hover:text-destructive hover:bg-destructive/5 transition-all"
+                                                        className="h-10 w-10 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-all"
                                                         onClick={() => handleDelete(c.id)}
                                                         title="Supprimer"
                                                     >

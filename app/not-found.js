@@ -6,7 +6,7 @@ import { FileQuestion, Home, ArrowLeft, Search } from 'lucide-react';
 export default function NotFound() {
     return (
         <main className="container flex items-center justify-center min-h-[calc(100vh-200px)] py-12 px-4">
-            <Card className="max-w-2xl w-full shadow-2xl border-muted-foreground/10 overflow-hidden bg-white/50 backdrop-blur-sm">
+            <Card className="max-w-2xl w-full shadow-2xl border-muted-foreground/10 overflow-hidden bg-background/50 backdrop-blur-sm">
                 <div className="h-2 bg-primary w-full" />
                 <CardHeader className="text-center pt-12">
                     <div className="flex justify-center mb-8">

@@ -96,15 +96,15 @@ export default function PostDetailPage() {
     const likeCount = getLikeCount(post.likes);
 
     return (
-        <main className="min-h-screen bg-white">
+        <main className="min-h-screen bg-card">
             {/* Sticky nav */}
-            <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
+            <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
                 <div className="max-w-2xl mx-auto px-4 h-13 flex items-center justify-between py-3">
-                    <Link href={`/clubs/${clubId}`} className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-900 transition-colors">
+                    <Link href={`/clubs/${clubId}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
                         <ArrowLeft className="w-4 h-4" />
                         <span>{club.name}</span>
                     </Link>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                         {post.type === 'announcement' ? 'Annonce' : post.type === 'article' ? 'Article' : 'Activité'}
                     </span>
                 </div>
@@ -118,18 +118,18 @@ export default function PostDetailPage() {
                 </p>
 
                 {/* Title */}
-                <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight mb-6">
+                <h1 className="text-3xl md:text-4xl font-extrabold text-foreground leading-tight tracking-tight mb-6">
                     {post.title}
                 </h1>
 
                 {/* Author + date */}
-                <div className="flex items-center gap-3 mb-10 pb-8 border-b border-slate-100">
-                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center shrink-0 text-sm font-bold text-slate-500">
+                <div className="flex items-center gap-3 mb-10 pb-8 border-b border-border">
+                    <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center shrink-0 text-sm font-bold text-muted-foreground">
                         {author.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                        <p className="text-sm font-semibold text-slate-800 leading-none mb-0.5">{author.name}</p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-sm font-semibold text-foreground leading-none mb-0.5">{author.name}</p>
+                        <p className="text-xs text-muted-foreground">
                             {author.role && <span>{author.role} · </span>}
                             {new Date(post.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </p>
@@ -138,7 +138,7 @@ export default function PostDetailPage() {
 
                 {/* Cover image */}
                 {post.imageUrl && (
-                    <div className="relative aspect-video rounded-xl overflow-hidden mb-10 border border-slate-100">
+                    <div className="relative aspect-video rounded-xl overflow-hidden mb-10 border border-border">
                         <Image
                             src={post.imageUrl}
                             alt={post.title}
@@ -151,12 +151,12 @@ export default function PostDetailPage() {
                 )}
 
                 {/* Content */}
-                <div className="whitespace-pre-wrap text-slate-700 leading-relaxed text-base md:text-lg mb-14">
+                <div className="whitespace-pre-wrap text-foreground leading-relaxed text-base md:text-lg mb-14">
                     {post.content}
                 </div>
 
                 {/* Like */}
-                <div className="flex items-center gap-3 pb-12 border-b border-slate-100">
+                <div className="flex items-center gap-3 pb-12 border-b border-border">
                     <button
                         onClick={handleLike}
                         disabled={liking || !user}
@@ -164,26 +164,26 @@ export default function PostDetailPage() {
                             "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold transition-all",
                             likeCount > 0
                                 ? "border-pink-200 bg-pink-50 text-pink-600"
-                                : "border-slate-200 text-slate-400 hover:border-pink-200 hover:bg-pink-50 hover:text-pink-500"
+                                : "border-border text-muted-foreground hover:border-pink-200 hover:bg-pink-50 hover:text-pink-500"
                         )}
                     >
                         <Heart className={cn("w-4 h-4", likeCount > 0 ? "fill-current" : "")} />
                         {likeCount}
                     </button>
-                    {!user && <span className="text-xs text-slate-400">Connectez-vous pour liker</span>}
+                    {!user && <span className="text-xs text-muted-foreground">Connectez-vous pour liker</span>}
                 </div>
 
                 {/* Participation form */}
                 {linkedForm && (
-                    <div className="mt-10 border border-dashed border-slate-200 rounded-xl p-8 text-center space-y-4">
-                        <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center mx-auto">
-                            <ClipboardList className="w-5 h-5 text-slate-500" />
+                    <div className="mt-10 border border-dashed border-border rounded-xl p-8 text-center space-y-4">
+                        <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center mx-auto">
+                            <ClipboardList className="w-5 h-5 text-muted-foreground" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900">
+                            <h3 className="text-lg font-bold text-foreground">
                                 Participer {linkedForm.generateTicket && <span>🎫</span>}
                             </h3>
-                            <p className="text-slate-500 text-sm mt-1">
+                            <p className="text-muted-foreground text-sm mt-1">
                                 {linkedForm.description || "Inscrivez-vous pour participer à cet événement."}
                             </p>
                         </div>
@@ -194,9 +194,9 @@ export default function PostDetailPage() {
                 )}
 
                 {/* Club footer */}
-                <div className="mt-10 flex items-center justify-between gap-4 p-5 border border-slate-200 rounded-xl">
+                <div className="mt-10 flex items-center justify-between gap-4 p-5 border border-border rounded-xl">
                     <div className="flex items-center gap-3">
-                        <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                        <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted border border-border shrink-0">
                             {club.logo ? (
                                 <Image src={club.logo} alt={club.name} fill className="object-cover" />
                             ) : (
@@ -206,8 +206,8 @@ export default function PostDetailPage() {
                             )}
                         </div>
                         <div>
-                            <p className="font-semibold text-sm text-slate-900">{club.name}</p>
-                            <p className="text-xs text-slate-400">Espace Club Officiel</p>
+                            <p className="font-semibold text-sm text-foreground">{club.name}</p>
+                            <p className="text-xs text-muted-foreground">Espace Club Officiel</p>
                         </div>
                     </div>
                     <Link href={`/clubs/${clubId}`} className="text-xs font-bold text-primary hover:underline shrink-0">

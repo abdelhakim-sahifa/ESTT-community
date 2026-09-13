@@ -129,12 +129,12 @@ export default function SubmitAdPage() {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-10 pb-20">
+        <div className="min-h-screen bg-muted pt-10 pb-20">
             <div className="container max-w-5xl mx-auto px-4">
                 <Button
                     variant="ghost"
                     onClick={() => router.push('/ads-portal')}
-                    className="mb-8 hover:bg-slate-100 rounded-full"
+                    className="mb-8 hover:bg-muted rounded-full"
                 >
                     <ChevronLeft className="w-4 h-4 mr-2" />
                     Retour
@@ -143,16 +143,16 @@ export default function SubmitAdPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     {/* Form Side */}
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100">
-                            <h1 className="text-3xl font-bold text-slate-900 mb-2">Publier une Annonce</h1>
-                            <p className="text-slate-500 mb-10">Donnez de la visibilité à vos projets sur la plateforme ESTT. Tétouan.</p>
+                        <div className="bg-card rounded-3xl p-8 md:p-10 shadow-sm border border-border">
+                            <h1 className="text-3xl font-bold text-foreground mb-2">Publier une Annonce</h1>
+                            <p className="text-muted-foreground mb-10">Donnez de la visibilité à vos projets sur la plateforme ESTT. Tétouan.</p>
 
                             <div className="space-y-6">
                                 {/* Title */}
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
-                                        <Label className="text-slate-700 font-bold">Titre de l'annonce</Label>
-                                        <span className="text-[10px] text-slate-400">{formData.title.length}/{AD_LIMITS.TITLE_MAX_LENGTH}</span>
+                                        <Label className="text-foreground font-bold">Titre de l'annonce</Label>
+                                        <span className="text-[10px] text-muted-foreground">{formData.title.length}/{AD_LIMITS.TITLE_MAX_LENGTH}</span>
                                     </div>
                                     <Input
                                         maxLength={AD_LIMITS.TITLE_MAX_LENGTH}
@@ -166,8 +166,8 @@ export default function SubmitAdPage() {
                                 {/* Description */}
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
-                                        <Label className="text-slate-700 font-bold">Description</Label>
-                                        <span className="text-[10px] text-slate-400">{formData.description.length}/{AD_LIMITS.DESC_MAX_LENGTH}</span>
+                                        <Label className="text-foreground font-bold">Description</Label>
+                                        <span className="text-[10px] text-muted-foreground">{formData.description.length}/{AD_LIMITS.DESC_MAX_LENGTH}</span>
                                     </div>
                                     <Textarea
                                         maxLength={AD_LIMITS.DESC_MAX_LENGTH}
@@ -180,15 +180,15 @@ export default function SubmitAdPage() {
 
                                 {/* Media Upload */}
                                 <div className="space-y-2">
-                                    <Label className="text-slate-700 font-bold">Visuel (Image ou Vidéo)</Label>
+                                    <Label className="text-foreground font-bold">Visuel (Image ou Vidéo)</Label>
                                     <div className="flex items-center justify-center w-full">
-                                        <label className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-2xl cursor-pointer hover:bg-slate-50 transition-colors ${filePreview ? 'border-blue-200 bg-blue-50/10' : 'border-slate-200'}`}>
+                                        <label className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-2xl cursor-pointer hover:bg-muted transition-colors ${filePreview ? 'border-blue-200 bg-blue-50/10' : 'border-border'}`}>
                                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                                 {formData.type === 'video' ? <Video className="w-8 h-8 text-blue-500 mb-2" /> : <ImageIcon className="w-8 h-8 text-blue-500 mb-2" />}
-                                                <p className="mb-2 text-sm text-slate-500">
+                                                <p className="mb-2 text-sm text-muted-foreground">
                                                     <span className="font-bold">Cliquez pour uploader</span> ou glissez-déposez
                                                 </p>
-                                                <p className="text-xs text-slate-400">PNG, JPG, MP4 (MAX. 10MB)</p>
+                                                <p className="text-xs text-muted-foreground">PNG, JPG, MP4 (MAX. 10MB)</p>
                                             </div>
                                             <input type="file" className="hidden" onChange={handleFileChange} accept="image/*,video/*" />
                                         </label>
@@ -198,7 +198,7 @@ export default function SubmitAdPage() {
                                 {/* Contact & Duration */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <Label className="text-slate-700 font-bold">Numéro WhatsApp (Mandatoire)</Label>
+                                        <Label className="text-foreground font-bold">Numéro WhatsApp (Mandatoire)</Label>
                                         <Input
                                             placeholder="Ex: 0612345678"
                                             value={formData.whatsapp}
@@ -207,11 +207,11 @@ export default function SubmitAdPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-slate-700 font-bold">Durée de diffusion</Label>
+                                        <Label className="text-foreground font-bold">Durée de diffusion</Label>
                                         <select
                                             value={formData.duration}
                                             onChange={(e) => setFormData(p => ({ ...p, duration: e.target.value }))}
-                                            className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full h-12 rounded-xl border border-border px-4 text-sm outline-none focus:ring-2 focus:ring-blue-500"
                                         >
                                             {AD_PRICING.map(p => (
                                                 <option key={p.id} value={p.duration}>{p.label} - {p.price} MAD</option>
@@ -222,7 +222,7 @@ export default function SubmitAdPage() {
 
                                 {/* Link */}
                                 <div className="space-y-2">
-                                    <Label className="text-slate-700 font-bold">Lien de redirection (Optionnel)</Label>
+                                    <Label className="text-foreground font-bold">Lien de redirection (Optionnel)</Label>
                                     <Input
                                         placeholder="https://..."
                                         value={formData.link}
@@ -232,14 +232,14 @@ export default function SubmitAdPage() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row gap-4 mt-12 pt-10 border-t border-slate-100">
+                            <div className="flex flex-col sm:flex-row gap-4 mt-12 pt-10 border-t border-border">
                                 <Button
                                     onClick={() => handleSubmit(AD_STATUSES.DRAFT)}
                                     variant="outline"
                                     className="h-14 rounded-2xl flex-1 font-bold group"
                                     disabled={loading}
                                 >
-                                    <Save className="w-5 h-5 mr-3 text-slate-400 group-hover:text-slate-600" />
+                                    <Save className="w-5 h-5 mr-3 text-muted-foreground group-hover:text-foreground" />
                                     Sauvegarder en Brouillon
                                 </Button>
                                 <Button
@@ -259,11 +259,11 @@ export default function SubmitAdPage() {
                         <div className="sticky top-10 space-y-6">
                             <div className="flex items-center gap-2 mb-4">
                                 <Eye className="w-5 h-5 text-blue-500" />
-                                <h2 className="text-lg font-bold text-slate-800">Aperçu en temps réel</h2>
+                                <h2 className="text-lg font-bold text-foreground">Aperçu en temps réel</h2>
                             </div>
 
-                            <Card className="group overflow-hidden border-none shadow-xl rounded-3xl bg-white scale-95 origin-top transition-transform">
-                                <div className="relative aspect-video overflow-hidden bg-slate-100">
+                            <Card className="group overflow-hidden border-none shadow-xl rounded-3xl bg-card scale-95 origin-top transition-transform">
+                                <div className="relative aspect-video overflow-hidden bg-muted">
                                     {filePreview ? (
                                         formData.type === 'video' ? (
                                             <video src={filePreview} className="w-full h-full object-cover" autoPlay muted loop />
@@ -271,7 +271,7 @@ export default function SubmitAdPage() {
                                             <img src={filePreview} alt="Preview" className="w-full h-full object-cover" />
                                         )
                                     ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                                        <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
                                             <ImageIcon className="w-12 h-12 mb-2" />
                                             <p className="text-xs">Aucun visuel</p>
                                         </div>
@@ -283,18 +283,18 @@ export default function SubmitAdPage() {
                                     </div>
                                 </div>
                                 <CardContent className="p-6">
-                                    <h3 className="text-lg font-bold text-slate-900 mb-2 truncate">
+                                    <h3 className="text-lg font-bold text-foreground mb-2 truncate">
                                         {formData.title || "Titre de votre annonce"}
                                     </h3>
-                                    <p className="text-slate-500 text-xs line-clamp-3 mb-4 leading-relaxed h-[48px]">
+                                    <p className="text-muted-foreground text-xs line-clamp-3 mb-4 leading-relaxed h-[48px]">
                                         {formData.description || "Votre description apparaîtra ici..."}
                                     </p>
-                                    <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                                    <div className="flex items-center justify-between pt-4 border-t border-border">
                                         <div className="flex items-center gap-2">
                                             <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-[10px] font-bold">
                                                 {user.email?.charAt(0).toUpperCase()}
                                             </div>
-                                            <span className="text-[10px] font-medium text-slate-400">Ma Boutique</span>
+                                            <span className="text-[10px] font-medium text-muted-foreground">Ma Boutique</span>
                                         </div>
                                         <Button variant="outline" size="sm" className="rounded-full h-8 px-4 text-[10px] font-bold border-blue-100 text-blue-600 pointer-events-none">
                                             Découvrir

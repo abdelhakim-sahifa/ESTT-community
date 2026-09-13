@@ -190,8 +190,8 @@ export default function AdminMessages({ messages = [] }) {
             </div>
 
             {filtered.length === 0 ? (
-                <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200 shadow-sm">
-                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                <div className="py-20 text-center bg-card rounded-3xl border border-dashed border-border shadow-sm">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 text-muted-foreground">
                         <Inbox className="w-8 h-8" />
                     </div>
                     <h3 className="text-lg font-bold">Aucun message</h3>
@@ -212,12 +212,12 @@ export default function AdminMessages({ messages = [] }) {
                                 <CardContent className="p-5">
                                     <div className="flex items-center justify-between gap-4">
                                         <div className="flex items-start gap-4 flex-1 min-w-0">
-                                            <div className={`p-2.5 rounded-2xl shrink-0 ${isUnread ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'}`}>
+                                            <div className={`p-2.5 rounded-2xl shrink-0 ${isUnread ? 'bg-blue-100 text-blue-600' : 'bg-muted text-muted-foreground'}`}>
                                                 <User className="w-5 h-5" />
                                             </div>
                                             <div className="space-y-1 flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 flex-wrap">
-                                                    <h4 className={`font-bold leading-none ${isUnread ? 'text-slate-900' : 'text-slate-700'}`}>
+                                                    <h4 className={`font-bold leading-none ${isUnread ? 'text-foreground' : 'text-foreground'}`}>
                                                         {msg.name}
                                                     </h4>
                                                     {getStatusBadge(msg.status)}
@@ -225,15 +225,15 @@ export default function AdminMessages({ messages = [] }) {
                                                         {SUBJECT_LABELS[msg.subject] || msg.subject}
                                                     </Badge>
                                                 </div>
-                                                <p className={`text-sm line-clamp-1 ${isUnread ? 'text-slate-700 font-medium' : 'text-slate-500'}`}>
+                                                <p className={`text-sm line-clamp-1 ${isUnread ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
                                                     {msg.message}
                                                 </p>
                                                 <div className="flex items-center gap-4 pt-0.5">
-                                                    <span className="text-xs text-slate-400 flex items-center gap-1">
+                                                    <span className="text-xs text-muted-foreground flex items-center gap-1">
                                                         <Mail className="w-3 h-3" />
                                                         {msg.email}
                                                     </span>
-                                                    <span className="text-xs text-slate-400 flex items-center gap-1">
+                                                    <span className="text-xs text-muted-foreground flex items-center gap-1">
                                                         <Clock className="w-3 h-3" />
                                                         {new Date(msg.timestamp || msg.createdAt).toLocaleDateString('fr-FR', {
                                                             day: '2-digit',
@@ -288,7 +288,7 @@ export default function AdminMessages({ messages = [] }) {
                                             <h2 className="text-xl font-black tracking-tight">{selectedMessage.name}</h2>
                                             {getStatusBadge(selectedMessage.status)}
                                         </div>
-                                        <div className="flex flex-wrap gap-3 text-sm text-slate-500">
+                                        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
                                             <span className="flex items-center gap-1">
                                                 <Mail className="w-3.5 h-3.5" />
                                                 {selectedMessage.email}
@@ -307,25 +307,25 @@ export default function AdminMessages({ messages = [] }) {
 
                             <div className="p-6 space-y-6">
                                 <div className="space-y-2">
-                                    <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                    <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                                         <MessageSquare className="w-3.5 h-3.5" />
                                         Message
                                     </h3>
-                                    <p className="text-slate-700 bg-slate-50 p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap">
+                                    <p className="text-foreground bg-muted p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap">
                                         {selectedMessage.message}
                                     </p>
                                 </div>
 
                                 {getReplies(selectedMessage).length > 0 && (
                                     <div className="space-y-3">
-                                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                        <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                                             <Send className="w-3.5 h-3.5" />
                                             Réponses
                                         </h3>
                                         {getReplies(selectedMessage).map((reply) => (
                                             <div key={reply.id} className="bg-green-50 p-4 rounded-2xl border border-green-100">
-                                                <p className="text-sm text-slate-700 whitespace-pre-wrap mb-2">{reply.text}</p>
-                                                <p className="text-[11px] text-slate-400">
+                                                <p className="text-sm text-foreground whitespace-pre-wrap mb-2">{reply.text}</p>
+                                                <p className="text-[11px] text-muted-foreground">
                                                     {reply.repliedBy} — {new Date(reply.repliedAt).toLocaleString('fr-FR')}
                                                 </p>
                                             </div>
@@ -334,7 +334,7 @@ export default function AdminMessages({ messages = [] }) {
                                 )}
 
                                 <div className="space-y-3">
-                                    <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                    <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                                         <Send className="w-3.5 h-3.5" />
                                         Répondre
                                     </h3>
@@ -352,7 +352,7 @@ export default function AdminMessages({ messages = [] }) {
                                         />
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <p className="text-[11px] text-slate-400">Ctrl+Entrée pour envoyer</p>
+                                        <p className="text-[11px] text-muted-foreground">Ctrl+Entrée pour envoyer</p>
                                         <Button
                                             onClick={handleReply}
                                             disabled={!replyText.trim() || sending}
@@ -369,7 +369,7 @@ export default function AdminMessages({ messages = [] }) {
                                     </div>
                                 </div>
 
-                                <div className="pt-4 border-t border-slate-100 flex justify-end">
+                                <div className="pt-4 border-t border-border flex justify-end">
                                     <Button
                                         variant="destructive"
                                         size="sm"

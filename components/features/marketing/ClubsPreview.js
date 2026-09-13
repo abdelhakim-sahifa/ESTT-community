@@ -6,12 +6,12 @@ import ClubCard from '@/components/features/clubs/ClubCard';
 
 export default function ClubsPreview({ clubs, loading }) {
     return (
-        <section id="clubs-section" className="py-12 md:py-20 bg-slate-50/50">
+        <section id="clubs-section" className="py-12 md:py-20 bg-muted/50">
             <div className="container">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-12 gap-4">
                     <div className="max-w-2xl">
-                        <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-2 md:mb-4">Nos Clubs</h2>
-                        <p className="text-slate-500 text-lg">
+                        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2 md:mb-4">Nos Clubs</h2>
+                        <p className="text-muted-foreground text-lg">
                             Rejoignez l'un de nos nombreux clubs et développez vos compétences.
                         </p>
                     </div>

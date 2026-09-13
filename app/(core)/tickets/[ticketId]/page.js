@@ -137,7 +137,7 @@ export default function TicketPage() {
 
                 {/* THE TICKET */}
                 <div className={cn(
-                    "flex flex-col shadow-2xl rounded-[2.5rem] overflow-hidden bg-white group animate-in slide-in-from-bottom-8 duration-700 transition-all",
+                    "flex flex-col shadow-2xl rounded-[2.5rem] overflow-hidden bg-card group animate-in slide-in-from-bottom-8 duration-700 transition-all",
                     (ticket.scanned || ticket.checkedIn) && "ring-[16px] ring-green-500/10"
                 )}>
                     {/* Top Part: Branding & Event */}
@@ -156,41 +156,41 @@ export default function TicketPage() {
                     </div>
 
                     {/* Middle: Details */}
-                    <div className="bg-white p-8 relative">
+                    <div className="bg-card p-8 relative">
                         {/* Punch holes */}
                         <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950" />
                         <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950" />
 
                         {/* Perforated line */}
-                        <div className="absolute top-0 left-8 right-8 h-[2px] border-t-2 border-dashed border-slate-200 -translate-y-1/2" />
+                        <div className="absolute top-0 left-8 right-8 h-[2px] border-t-2 border-dashed border-border -translate-y-1/2" />
 
                         <div className="grid grid-cols-2 gap-y-6">
                             <div className="space-y-1">
-                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-1">
+                                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center gap-1">
                                     <User className="w-3 h-3" /> Participant
                                 </p>
-                                <p className="font-bold text-slate-900 line-clamp-1">{ticket.firstName} {ticket.lastName}</p>
+                                <p className="font-bold text-foreground line-clamp-1">{ticket.firstName} {ticket.lastName}</p>
                             </div>
                             <div className="space-y-1">
-                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-1">
+                                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center gap-1">
                                     <Calendar className="w-3 h-3" /> Date
                                 </p>
-                                <p className="font-bold text-slate-900">{ticket.eventDate || new Date(ticket.createdAt).toLocaleDateString('fr-FR')}</p>
+                                <p className="font-bold text-foreground">{ticket.eventDate || new Date(ticket.createdAt).toLocaleDateString('fr-FR')}</p>
                             </div>
                             {ticket.eventTime && (
                                 <div className="space-y-1">
-                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-1">
+                                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center gap-1">
                                         <Clock className="w-3 h-3" /> Heure
                                     </p>
-                                    <p className="font-bold text-slate-900">{ticket.eventTime}</p>
+                                    <p className="font-bold text-foreground">{ticket.eventTime}</p>
                                 </div>
                             )}
                             {ticket.eventLocation && (
                                 <div className="space-y-1">
-                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-1">
+                                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center gap-1">
                                         <MapPin className="w-3 h-3" /> Lieu
                                     </p>
-                                    <p className="font-bold text-slate-900 line-clamp-1">{ticket.eventLocation}</p>
+                                    <p className="font-bold text-foreground line-clamp-1">{ticket.eventLocation}</p>
                                 </div>
                             )}
                         </div>
@@ -224,15 +224,15 @@ export default function TicketPage() {
                     </div>
 
                     {/* Bottom: QR Code */}
-                    <div className="bg-slate-50 p-10 flex flex-col items-center justify-center relative">
+                    <div className="bg-muted p-10 flex flex-col items-center justify-center relative">
                         {/* Perforated line */}
-                        <div className="absolute top-0 left-8 right-8 h-[2px] border-t-2 border-dashed border-slate-200" />
+                        <div className="absolute top-0 left-8 right-8 h-[2px] border-t-2 border-dashed border-border" />
 
                         <div className={cn(
-                            "p-4 bg-white rounded-[2rem] shadow-sm border-2 transition-all duration-1000 relative",
+                            "p-4 bg-card rounded-[2rem] shadow-sm border-2 transition-all duration-1000 relative",
                             ticket.status === 'valid'
-                                ? (ticket.scanned || ticket.checkedIn ? "border-blue-200 opacity-40 filter grayscale scale-95" : "border-slate-200")
-                                : "border-slate-100 opacity-20 filter grayscale"
+                                ? (ticket.scanned || ticket.checkedIn ? "border-blue-200 opacity-40 filter grayscale scale-95" : "border-border")
+                                : "border-border opacity-20 filter grayscale"
                         )}>
                             <Image
                                 src={qrUrl}
@@ -253,7 +253,7 @@ export default function TicketPage() {
 
                         {ticket.status !== 'valid' && (
                             <div className="absolute inset-0 flex items-center justify-center px-12 text-center">
-                                <p className="bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-slate-200 shadow-xl text-xs font-bold text-slate-600">
+                                <p className="bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-border shadow-xl text-xs font-bold text-muted-foreground">
                                     Le QR Code sera activé une fois votre billet validé par l'organisateur.
                                 </p>
                             </div>
@@ -261,7 +261,7 @@ export default function TicketPage() {
 
                         <div className="mt-6 text-center space-y-1">
                             <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Ticket ID</p>
-                            <p className="text-xs font-mono text-slate-400">{ticket.id.toUpperCase()}</p>
+                            <p className="text-xs font-mono text-muted-foreground">{ticket.id.toUpperCase()}</p>
                         </div>
                     </div>
                 </div>

@@ -99,8 +99,8 @@ export default function AdminClubRequests({ requests }) {
             </div>
 
             {requests.length === 0 ? (
-                <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
-                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                <div className="py-20 text-center bg-card rounded-3xl border border-dashed border-border">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 text-muted-foreground">
                         <CheckCircle2 className="w-8 h-8" />
                     </div>
                     <h3 className="text-lg font-bold">Aucune demande en attente</h3>
@@ -138,7 +138,7 @@ export default function AdminClubRequests({ requests }) {
                                     <p className="text-sm font-bold mb-2">Organigramme ({Object.keys(request.organizationalChart || {}).length} positions)</p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         {Object.entries(request.organizationalChart || {}).map(([key, member]) => (
-                                            <div key={key} className="p-3 bg-slate-50 rounded-lg border">
+                                            <div key={key} className="p-3 bg-muted rounded-lg border">
                                                 <p className="text-xs font-bold">{member.role}</p>
                                                 <p className="text-xs text-muted-foreground">{member.name}</p>
                                                 <p className="text-[10px] text-muted-foreground">{member.email}</p>

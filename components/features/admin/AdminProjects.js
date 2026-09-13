@@ -15,9 +15,9 @@ const sortByDateDesc = (first, second) => (second?.createdAt || 0) - (first?.cre
 const badgeClassNames = {
     open: 'border-emerald-200 bg-emerald-50 text-emerald-700',
     closed: 'border-amber-200 bg-amber-50 text-amber-700',
-    completed: 'border-slate-200 bg-slate-100 text-slate-700',
+    completed: 'border-border bg-muted text-foreground',
     approved: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-    hidden: 'border-slate-200 bg-slate-100 text-slate-700',
+    hidden: 'border-border bg-muted text-foreground',
 };
 
 export default function AdminProjects({ projects = [], submissions = [], showcases = [] }) {
@@ -108,8 +108,8 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
         <div className="space-y-8">
             <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight text-slate-950">Projets et competitions</h1>
-                    <p className="mt-2 max-w-3xl text-sm text-slate-500">
+                    <h1 className="text-3xl font-black tracking-tight text-foreground">Projets et competitions</h1>
+                    <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
                         Surveille les briefs, les implementations et les projets publies. Cette vue sert de premier tableau de bord pour la nouvelle fonctionnalite Projects.
                     </p>
                 </div>
@@ -124,33 +124,33 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
             )}
 
             <div className="grid gap-4 md:grid-cols-3">
-                <Card className="rounded-xl border-slate-200 p-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Challenges</p>
-                    <p className="mt-3 text-3xl font-black text-slate-950">{projects.length}</p>
-                    <p className="mt-1 text-sm text-slate-500">Briefs actuellement en base.</p>
+                <Card className="rounded-xl border-border p-5">
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Challenges</p>
+                    <p className="mt-3 text-3xl font-black text-foreground">{projects.length}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Briefs actuellement en base.</p>
                 </Card>
-                <Card className="rounded-xl border-slate-200 p-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Implementations</p>
-                    <p className="mt-3 text-3xl font-black text-slate-950">{submissions.length}</p>
-                    <p className="mt-1 text-sm text-slate-500">Soumissions associees aux challenges.</p>
+                <Card className="rounded-xl border-border p-5">
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Implementations</p>
+                    <p className="mt-3 text-3xl font-black text-foreground">{submissions.length}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Soumissions associees aux challenges.</p>
                 </Card>
-                <Card className="rounded-xl border-slate-200 p-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Showcase</p>
-                    <p className="mt-3 text-3xl font-black text-slate-950">{showcases.length}</p>
-                    <p className="mt-1 text-sm text-slate-500">Projets personnels publies.</p>
+                <Card className="rounded-xl border-border p-5">
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Showcase</p>
+                    <p className="mt-3 text-3xl font-black text-foreground">{showcases.length}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Projets personnels publies.</p>
                 </Card>
             </div>
 
-            <Card className="rounded-2xl border-slate-200 p-6">
+            <Card className="rounded-2xl border-border p-6">
                 <div className="mb-6 flex items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-xl font-black text-slate-950">Briefs</h2>
-                        <p className="mt-1 text-sm text-slate-500">Fermer, rouvrir ou mettre en avant les challenges les plus pertinents.</p>
+                        <h2 className="text-xl font-black text-foreground">Briefs</h2>
+                        <p className="mt-1 text-sm text-muted-foreground">Fermer, rouvrir ou mettre en avant les challenges les plus pertinents.</p>
                     </div>
                 </div>
 
                 {sortedProjects.length === 0 ? (
-                    <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
+                    <p className="rounded-2xl border border-dashed border-border bg-muted p-6 text-sm text-muted-foreground">
                         Aucun brief pour le moment.
                     </p>
                 ) : (
@@ -158,11 +158,11 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
                         {sortedProjects.map((project) => {
                             const statusKey = project.status || 'open';
                             return (
-                                <div key={project.id} className="rounded-xl border border-slate-200 bg-white p-4">
+                                <div key={project.id} className="rounded-xl border border-border bg-card p-4">
                                     <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                                         <div className="space-y-2">
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <h3 className="text-lg font-bold text-slate-950">{project.title}</h3>
+                                                <h3 className="text-lg font-bold text-foreground">{project.title}</h3>
                                                 <Badge className={badgeClassNames[statusKey] || badgeClassNames.open}>
                                                     {project.status || 'open'}
                                                 </Badge>
@@ -170,10 +170,10 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
                                                     <Badge className="border-amber-200 bg-amber-50 text-amber-700">featured</Badge>
                                                 )}
                                             </div>
-                                            <p className="max-w-3xl text-sm text-slate-500">
+                                            <p className="max-w-3xl text-sm text-muted-foreground">
                                                 {project.summary || project.description}
                                             </p>
-                                            <div className="flex flex-wrap gap-4 text-xs text-slate-400">
+                                            <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
                                                 <span>Auteur: {project.authorName}</span>
                                                 <span>Cree le: {formatProjectDate(project.createdAt)}</span>
                                                 <span>Soumissions: {project.submissionCount || 0}</span>
@@ -216,14 +216,14 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
                 )}
             </Card>
 
-            <Card className="rounded-2xl border-slate-200 p-6">
+            <Card className="rounded-2xl border-border p-6">
                 <div className="mb-6">
-                    <h2 className="text-xl font-black text-slate-950">Soumissions</h2>
-                    <p className="mt-1 text-sm text-slate-500">Surveille les meilleures implementations et masque rapidement une entree si besoin.</p>
+                    <h2 className="text-xl font-black text-foreground">Soumissions</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Surveille les meilleures implementations et masque rapidement une entree si besoin.</p>
                 </div>
 
                 {sortedSubmissions.length === 0 ? (
-                    <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
+                    <p className="rounded-2xl border border-dashed border-border bg-muted p-6 text-sm text-muted-foreground">
                         Aucune soumission enregistree.
                     </p>
                 ) : (
@@ -231,23 +231,23 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
                         {sortedSubmissions.slice(0, 12).map((submission) => {
                             const statusKey = submission.status || 'approved';
                             return (
-                                <div key={submission.id} className="rounded-xl border border-slate-200 bg-white p-4">
+                                <div key={submission.id} className="rounded-xl border border-border bg-card p-4">
                                     <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                                         <div className="space-y-2">
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <h3 className="text-lg font-bold text-slate-950">{submission.title}</h3>
+                                                <h3 className="text-lg font-bold text-foreground">{submission.title}</h3>
                                                 <Badge className={badgeClassNames[statusKey] || badgeClassNames.approved}>
                                                     {submission.status || 'approved'}
                                                 </Badge>
-                                                <Badge className="border-slate-200 bg-slate-100 text-slate-700">
+                                                <Badge className="border-border bg-muted text-foreground">
                                                     <Trophy className="mr-1 h-3.5 w-3.5" />
                                                     {submission.votesCount} vote{submission.votesCount > 1 ? 's' : ''}
                                                 </Badge>
                                             </div>
-                                            <p className="max-w-3xl text-sm text-slate-500">
+                                            <p className="max-w-3xl text-sm text-muted-foreground">
                                                 {submission.description}
                                             </p>
-                                            <div className="flex flex-wrap gap-4 text-xs text-slate-400">
+                                            <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
                                                 <span>Auteur: {submission.authorName}</span>
                                                 <span>Projet: {submission.projectTitle || submission.projectId}</span>
                                                 <span>Publiee le: {formatProjectDate(submission.createdAt)}</span>
@@ -280,32 +280,32 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
                 )}
             </Card>
 
-            <Card className="rounded-2xl border-slate-200 p-6">
+            <Card className="rounded-2xl border-border p-6">
                 <div className="mb-6">
-                    <h2 className="text-xl font-black text-slate-950">Showcase</h2>
-                    <p className="mt-1 text-sm text-slate-500">Mets en avant les meilleurs projets libres de la communaute.</p>
+                    <h2 className="text-xl font-black text-foreground">Showcase</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Mets en avant les meilleurs projets libres de la communaute.</p>
                 </div>
 
                 {sortedShowcases.length === 0 ? (
-                    <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
+                    <p className="rounded-2xl border border-dashed border-border bg-muted p-6 text-sm text-muted-foreground">
                         Aucun projet showcase publie.
                     </p>
                 ) : (
                     <div className="space-y-3">
                         {sortedShowcases.map((showcase) => (
-                            <div key={showcase.id} className="rounded-xl border border-slate-200 bg-white p-4">
+                            <div key={showcase.id} className="rounded-xl border border-border bg-card p-4">
                                 <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                                     <div className="space-y-2">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <h3 className="text-lg font-bold text-slate-950">{showcase.title}</h3>
+                                            <h3 className="text-lg font-bold text-foreground">{showcase.title}</h3>
                                             {showcase.featured && (
                                                 <Badge className="border-amber-200 bg-amber-50 text-amber-700">featured</Badge>
                                             )}
                                         </div>
-                                        <p className="max-w-3xl text-sm text-slate-500">
+                                        <p className="max-w-3xl text-sm text-muted-foreground">
                                             {showcase.summary || showcase.description}
                                         </p>
-                                        <div className="flex flex-wrap gap-4 text-xs text-slate-400">
+                                        <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
                                             <span>Auteur: {showcase.authorName}</span>
                                             <span>Publie le: {formatProjectDate(showcase.createdAt)}</span>
                                         </div>

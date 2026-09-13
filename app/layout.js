@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import { AuthProvider } from '@/context/AuthContext';
 import { DialogProvider } from '@/context/DialogContext';
 import { NotificationProvider } from '@/context/NotificationContext';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import LocalDevServiceWorkerCleanup from '@/components/providers/LocalDevServiceWorkerCleanup';
 import { defaultMetadata } from '@/lib/metadata';
 
@@ -54,6 +55,11 @@ export default function RootLayout({ children }) {
         <html lang="fr" suppressHydrationWarning>
             <head>
                 <script
+                    dangerouslySetInnerHTML={{
+                        __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})()`,
+                    }}
+                />
+                <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
                 />
@@ -75,19 +81,21 @@ export default function RootLayout({ children }) {
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=verified" />
             </head>
             <body className={`font-sans ${canela.variable} antialiased`} suppressHydrationWarning={true}>
-                <DialogProvider>
-                    <AuthProvider>
-                        <NotificationProvider>
-                            <LocalDevServiceWorkerCleanup />
-                            <Header />
-                            {children}
-                            <Footer />
-                            <div id="spinner-overlay" className="spinner-overlay hidden" aria-hidden="true">
-                                <div className="spinner" role="status" aria-label="Chargement"></div>
-                            </div>
-                        </NotificationProvider>
-                    </AuthProvider>
-                </DialogProvider>
+                <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+                    <DialogProvider>
+                        <AuthProvider>
+                            <NotificationProvider>
+                                <LocalDevServiceWorkerCleanup />
+                                <Header />
+                                {children}
+                                <Footer />
+                                <div id="spinner-overlay" className="spinner-overlay hidden" aria-hidden="true">
+                                    <div className="spinner" role="status" aria-label="Chargement"></div>
+                                </div>
+                            </NotificationProvider>
+                        </AuthProvider>
+                    </DialogProvider>
+                </ThemeProvider>
 
                 <Script 
                     id="bmc-widget"

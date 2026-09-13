@@ -189,7 +189,7 @@ export default function ClubProfilePage() {
                 .theme-hover-bg:hover { background-color: ${club.themeColor || '#64748b'}; }
             `}</style>
             {/* Header / Hero Section */}
-            <section className="relative bg-white border-b overflow-hidden">
+            <section className="relative bg-card border-b overflow-hidden">
                 <div className="container py-8 px-4 md:px-6 relative z-10">
 
                     <div className="flex flex-col gap-6">
@@ -203,7 +203,7 @@ export default function ClubProfilePage() {
                         <div className="flex flex-col lg:flex-row gap-8 items-start">
                             {/* Left: Club Brand */}
                             <div className="flex flex-col items-center md:items-start gap-4 flex-shrink-0 lg:w-1/3">
-                                <div className="relative w-28 h-28 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-white border-4 border-white shadow-lg mx-auto md:mx-0 shrink-0">
+                                <div className="relative w-28 h-28 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-card border-4 border-white shadow-lg mx-auto md:mx-0 shrink-0">
                                     {club.logo ? (
                                         <Image
                                             src={club.logo}
@@ -262,7 +262,7 @@ export default function ClubProfilePage() {
                                                         href={fullUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-600 hover:text-white transition-all theme-hover-bg shadow-sm hover:shadow-md"
+                                                        className="w-10 h-10 rounded-full flex items-center justify-center bg-muted text-muted-foreground hover:text-white transition-all theme-hover-bg shadow-sm hover:shadow-md"
                                                         title={platform.charAt(0).toUpperCase() + platform.slice(1)}
                                                     >
                                                         {iconClass ? (
@@ -364,7 +364,7 @@ export default function ClubProfilePage() {
                                                             key={idx}
                                                             className={cn(
                                                                 "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-all shadow-sm",
-                                                                idx === currentSlide ? "bg-white w-4 md:w-4" : "bg-white/40"
+                                                                idx === currentSlide ? "bg-card w-4 md:w-4" : "bg-white/40"
                                                             )}
                                                         />
                                                     ))}
@@ -373,7 +373,7 @@ export default function ClubProfilePage() {
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="h-full min-h-[200px] flex items-center justify-center rounded-2xl border-2 border-dashed bg-slate-50">
+                                    <div className="h-full min-h-[200px] flex items-center justify-center rounded-2xl border-2 border-dashed bg-muted">
                                         <p className="text-muted-foreground">Aucune annonce récente</p>
                                     </div>
                                 )}
@@ -386,7 +386,7 @@ export default function ClubProfilePage() {
             {/* Main Content */}
             <section className="container py-12 px-4 md:px-6">
                 <Tabs defaultValue="activities" className="w-full">
-                    <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:max-w-md md:grid-cols-3 mb-8 no-scrollbar bg-slate-100 p-1 rounded-xl">
+                    <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:max-w-md md:grid-cols-3 mb-8 no-scrollbar bg-muted p-1 rounded-xl">
                         <TabsTrigger value="activities" className="whitespace-nowrap px-6 py-2">Actualités</TabsTrigger>
                         <TabsTrigger value="structure" className="whitespace-nowrap px-6 py-2">Structure</TabsTrigger>
                         <TabsTrigger value="members" className="whitespace-nowrap px-6 py-2">Membres</TabsTrigger>
@@ -396,7 +396,7 @@ export default function ClubProfilePage() {
                     {/* Activities Tab */}
                     <TabsContent value="activities" className="space-y-6">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold text-slate-900">Actualités</h2>
+                            <h2 className="text-xl font-bold text-foreground">Actualités</h2>
                         </div>
 
                         {clubPosts.length > 0 ? (
@@ -404,9 +404,9 @@ export default function ClubProfilePage() {
                                 {clubPosts.map((post) => {
                                     const author = getAuthorInfo(post.author);
                                     return (
-                                        <Link href={`/clubs/${clubId}/posts/${post.id}`} key={post.id} className="group block border border-slate-200 rounded-xl overflow-hidden hover:border-primary/50 transition-colors bg-white">
+                                        <Link href={`/clubs/${clubId}/posts/${post.id}`} key={post.id} className="group block border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-colors bg-card">
                                             {post.imageUrl && (
-                                                <div className="relative w-full h-44 bg-slate-100">
+                                                <div className="relative w-full h-44 bg-muted">
                                                     <Image
                                                         src={post.imageUrl}
                                                         alt={post.title}
@@ -417,24 +417,24 @@ export default function ClubProfilePage() {
                                             )}
                                             <div className="p-5">
                                                 <div className="flex items-center justify-between gap-2 mb-2">
-                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                                                         {post.type === 'announcement' ? 'Annonce' : post.type === 'article' ? 'Article' : 'Activité'}
                                                     </span>
-                                                    <span className="text-xs text-slate-400">
+                                                    <span className="text-xs text-muted-foreground">
                                                         {new Date(post.createdAt).toLocaleDateString('fr-FR')}
                                                     </span>
                                                 </div>
-                                                <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                                                <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">
                                                     {post.title}
                                                 </h3>
-                                                <p className="text-slate-500 text-sm line-clamp-2 mb-4">{post.content}</p>
-                                                <div className="flex items-center gap-2 pt-3 border-t border-slate-100">
-                                                    <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                                                        <User className="w-3 h-3 text-slate-400" />
+                                                <p className="text-muted-foreground text-sm line-clamp-2 mb-4">{post.content}</p>
+                                                <div className="flex items-center gap-2 pt-3 border-t border-border">
+                                                    <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                                        <User className="w-3 h-3 text-muted-foreground" />
                                                     </div>
                                                     <div>
-                                                        <span className="text-xs font-semibold text-slate-700">{author.name}</span>
-                                                        {author.role && <span className="text-[10px] text-slate-400 ml-1">· {author.role}</span>}
+                                                        <span className="text-xs font-semibold text-foreground">{author.name}</span>
+                                                        {author.role && <span className="text-[10px] text-muted-foreground ml-1">· {author.role}</span>}
                                                     </div>
                                                 </div>
                                             </div>
@@ -443,8 +443,8 @@ export default function ClubProfilePage() {
                                 })}
                             </div>
                         ) : (
-                            <div className="text-center py-12 border border-dashed border-slate-200 rounded-xl">
-                                <p className="text-slate-400 text-sm">Aucune activité ou annonce publiée pour le moment.</p>
+                            <div className="text-center py-12 border border-dashed border-border rounded-xl">
+                                <p className="text-muted-foreground text-sm">Aucune activité ou annonce publiée pour le moment.</p>
                             </div>
                         )}
                     </TabsContent>
@@ -452,7 +452,7 @@ export default function ClubProfilePage() {
                     {/* Organizational Structure Tab */}
                     <TabsContent value="structure" className="space-y-6">
                         <div className="flex items-center gap-2 mb-6">
-                            <h2 className="text-xl font-bold text-slate-900">Structure Organisationnelle</h2>
+                            <h2 className="text-xl font-bold text-foreground">Structure Organisationnelle</h2>
                         </div>
                         <OrganizationalChart organizationalChart={club.organizationalChart} />
                     </TabsContent>
@@ -460,7 +460,7 @@ export default function ClubProfilePage() {
                     {/* Members Tab */}
                     <TabsContent value="members" className="space-y-6">
                         <div className="flex items-center gap-2 mb-6">
-                            <h2 className="text-xl font-bold text-slate-900">Membres du Club</h2>
+                            <h2 className="text-xl font-bold text-foreground">Membres du Club</h2>
                         </div>
 
                         {club.members && club.members.length > 0 ? (
@@ -470,8 +470,8 @@ export default function ClubProfilePage() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-12 border border-dashed border-slate-200 rounded-xl">
-                                <p className="text-slate-400 text-sm">Aucun membre régulier enregistré pour le moment.</p>
+                            <div className="text-center py-12 border border-dashed border-border rounded-xl">
+                                <p className="text-muted-foreground text-sm">Aucun membre régulier enregistré pour le moment.</p>
                             </div>
                         )}
                     </TabsContent>
@@ -480,19 +480,19 @@ export default function ClubProfilePage() {
                     {userTickets.length > 0 && (
                         <TabsContent value="tickets" className="space-y-6">
                             <div className="flex items-center gap-2 mb-6">
-                                <h2 className="text-xl font-bold text-slate-900">Mes Tickets</h2>
+                                <h2 className="text-xl font-bold text-foreground">Mes Tickets</h2>
                             </div>
                             <div className="grid gap-3 md:grid-cols-2">
                                 {userTickets.map(ticket => (
-                                    <Link key={ticket.id} href={`/tickets/${ticket.id}`} className="group flex items-center justify-between p-4 border border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white">
+                                    <Link key={ticket.id} href={`/tickets/${ticket.id}`} className="group flex items-center justify-between p-4 border border-border rounded-xl hover:border-primary/50 transition-colors bg-card">
                                         <div>
-                                            <h3 className="font-bold text-sm text-slate-900 group-hover:text-primary transition-colors">{ticket.eventName}</h3>
-                                            <p className="text-xs text-slate-400 mt-0.5">{new Date(ticket.createdAt).toLocaleDateString('fr-FR')}</p>
+                                            <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">{ticket.eventName}</h3>
+                                            <p className="text-xs text-muted-foreground mt-0.5">{new Date(ticket.createdAt).toLocaleDateString('fr-FR')}</p>
                                             <span className={cn("inline-block mt-2 text-[10px] font-bold uppercase px-2 py-0.5 rounded-md", ticket.status === 'valid' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700')}>
                                                 {ticket.status === 'valid' ? 'Validé' : 'En attente'}
                                             </span>
                                         </div>
-                                        <Ticket className="w-5 h-5 text-slate-300 group-hover:text-primary transition-colors shrink-0" />
+                                        <Ticket className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                                     </Link>
                                 ))}
                             </div>

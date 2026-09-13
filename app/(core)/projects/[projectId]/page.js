@@ -209,9 +209,9 @@ export default function ProjectDetailPage() {
         if (error.type === 'notFound') {
             return (
                 <main className="container max-w-3xl px-4 py-16 text-center md:px-6">
-                    <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10">
-                        <h1 className="text-3xl font-black text-slate-950">Projet introuvable</h1>
-                        <p className="mt-3 text-sm text-slate-500">{error.message}</p>
+                    <div className="rounded-xl border border-dashed border-border bg-card p-10">
+                        <h1 className="text-3xl font-black text-foreground">Projet introuvable</h1>
+                        <p className="mt-3 text-sm text-muted-foreground">{error.message}</p>
                         <Button asChild className="mt-6 rounded-full">
                             <Link href="/projects">Retour au hub</Link>
                         </Button>
@@ -228,8 +228,8 @@ export default function ProjectDetailPage() {
                         <div className="inline-flex items-center justify-center rounded-full bg-amber-100 p-3">
                             <AlertCircle className="h-6 w-6 text-amber-600" />
                         </div>
-                        <h1 className="mt-4 text-3xl font-black text-slate-950">Erreur de chargement</h1>
-                        <p className="mt-3 text-sm text-slate-600">{error.message}</p>
+                        <h1 className="mt-4 text-3xl font-black text-foreground">Erreur de chargement</h1>
+                        <p className="mt-3 text-sm text-muted-foreground">{error.message}</p>
                         <div className="mt-6 flex flex-wrap justify-center gap-3">
                             <Button className="rounded-full" onClick={() => window.location.reload()}>
                                 Reessayer
@@ -247,9 +247,9 @@ export default function ProjectDetailPage() {
     if (!project) {
         return (
             <main className="container max-w-3xl px-4 py-16 text-center md:px-6">
-                <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10">
-                    <h1 className="text-3xl font-black text-slate-950">Projet introuvable</h1>
-                    <p className="mt-3 text-sm text-slate-500">
+                <div className="rounded-xl border border-dashed border-border bg-card p-10">
+                    <h1 className="text-3xl font-black text-foreground">Projet introuvable</h1>
+                    <p className="mt-3 text-sm text-muted-foreground">
                         Ce challenge n'existe plus ou son identifiant est invalide.
                     </p>
                     <Button asChild className="mt-6 rounded-full">
@@ -261,18 +261,18 @@ export default function ProjectDetailPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50/50">
+        <main className="min-h-screen bg-muted/50">
             <section className="container px-4 py-8 md:px-6 md:py-12">
-                <Button asChild variant="ghost" className="mb-6 rounded-full text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+                <Button asChild variant="ghost" className="mb-6 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground">
                     <Link href="/projects">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Retour aux projets
                     </Link>
                 </Button>
 
-                <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
+                <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-xl shadow-slate-200/50">
                     <div className="grid gap-0 lg:grid-cols-[1.2fr_0.8fr]">
-                        <div className="space-y-8 bg-white px-6 py-8 text-slate-900 md:px-10 md:py-12">
+                        <div className="space-y-8 bg-card px-6 py-8 text-foreground md:px-10 md:py-12">
                             <div className="flex flex-wrap gap-2">
                                 <Badge className={cn("px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider", getProjectStatusClasses(runtimeStatus))}>
                                     {getProjectStatusLabel(runtimeStatus)}
@@ -280,16 +280,16 @@ export default function ProjectDetailPage() {
                                 <Badge variant="secondary" className={cn("px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider", getDifficultyClasses(project.difficulty))}>
                                     {getProjectDifficultyLabel(project.difficulty)}
                                 </Badge>
-                                <Badge variant="outline" className="rounded-full border-slate-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                <Badge variant="outline" className="rounded-full border-border px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                                     {getProjectCategoryLabel(project.category)}
                                 </Badge>
                             </div>
 
                             <div className="space-y-4">
-                                <h1 className="text-4xl font-black tracking-tight text-slate-900 md:text-6xl">{project.title}</h1>
+                                <h1 className="text-4xl font-black tracking-tight text-foreground md:text-6xl">{project.title}</h1>
                                 <div className="max-w-3xl">
                                     <div className={cn(
-                                        "prose prose-slate max-w-none text-lg leading-relaxed text-slate-600",
+                                        "prose prose-slate max-w-none text-lg leading-relaxed text-muted-foreground",
                                         !isDescriptionExpanded && "line-clamp-4 md:line-clamp-none"
                                     )}>
                                         {project.description || project.summary || 'Aucune description detaillee pour le moment.'}
@@ -308,17 +308,17 @@ export default function ProjectDetailPage() {
                             </div>
 
                             <div className="grid gap-4 sm:grid-cols-3">
-                                <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 transition-colors hover:bg-slate-50">
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Auteur</p>
-                                    <p className="mt-2 text-base font-black text-slate-900">{project.authorName}</p>
+                                <div className="rounded-2xl border border-border bg-muted/50 p-5 transition-colors hover:bg-muted">
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Auteur</p>
+                                    <p className="mt-2 text-base font-black text-foreground">{project.authorName}</p>
                                 </div>
-                                <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 transition-colors hover:bg-slate-50">
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Soumissions</p>
-                                    <p className="mt-2 text-base font-black text-slate-900">{submissions.length}</p>
+                                <div className="rounded-2xl border border-border bg-muted/50 p-5 transition-colors hover:bg-muted">
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Soumissions</p>
+                                    <p className="mt-2 text-base font-black text-foreground">{submissions.length}</p>
                                 </div>
-                                <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 transition-colors hover:bg-slate-50">
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Vote</p>
-                                    <p className="mt-2 text-base font-black text-slate-900">{getProjectVoteModeLabel(project.voteMode)}</p>
+                                <div className="rounded-2xl border border-border bg-muted/50 p-5 transition-colors hover:bg-muted">
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Vote</p>
+                                    <p className="mt-2 text-base font-black text-foreground">{getProjectVoteModeLabel(project.voteMode)}</p>
                                 </div>
                             </div>
 
@@ -326,7 +326,7 @@ export default function ProjectDetailPage() {
                                 {project.tags.map((tag) => (
                                     <span
                                         key={tag}
-                                        className="rounded-full border border-slate-100 bg-slate-50 px-4 py-1.5 text-xs font-bold text-slate-500 transition-colors hover:bg-slate-100"
+                                        className="rounded-full border border-border bg-muted px-4 py-1.5 text-xs font-bold text-muted-foreground transition-colors hover:bg-muted"
                                     >
                                         #{tag}
                                     </span>
@@ -334,9 +334,9 @@ export default function ProjectDetailPage() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-6 bg-slate-50/30 px-6 py-8 md:px-10 md:py-12">
+                        <div className="flex flex-col gap-6 bg-muted/30 px-6 py-8 md:px-10 md:py-12">
                             {project.coverImage && (
-                                <div className="group relative aspect-video w-full overflow-hidden rounded-2xl border border-slate-200 shadow-inner">
+                                <div className="group relative aspect-video w-full overflow-hidden rounded-2xl border border-border shadow-inner">
                                     <img
                                         src={project.coverImage}
                                         alt={project.title}
@@ -346,19 +346,19 @@ export default function ProjectDetailPage() {
                                 </div>
                             )}
 
-                            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                                <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                                <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
                                     <CalendarDays className="h-3.5 w-3.5" />
                                     Calendrier
                                 </p>
                                 <div className="mt-4 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-1">
                                     <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Cree le</span>
-                                        <span className="font-bold text-slate-900">{formatProjectDate(project.createdAt)}</span>
+                                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Cree le</span>
+                                        <span className="font-bold text-foreground">{formatProjectDate(project.createdAt)}</span>
                                     </div>
                                     <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Deadline</span>
-                                        <span className="font-bold text-slate-900">
+                                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Deadline</span>
+                                        <span className="font-bold text-foreground">
                                             {project.deadline ? formatProjectDate(project.deadline) : 'Aucune date limite'}
                                         </span>
                                     </div>
@@ -367,7 +367,7 @@ export default function ProjectDetailPage() {
 
                             <div className="rounded-2xl border border-primary/10 bg-primary/5 p-6 shadow-sm">
                                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">Action</p>
-                                <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                                     Soumets ton build avec une demo, un repo GitHub et une explication claire. Les autres membres pourront ensuite voter.
                                 </p>
                                 <div className="mt-6 flex flex-col gap-3">
@@ -404,8 +404,8 @@ export default function ProjectDetailPage() {
                                             <Trophy className="h-3.5 w-3.5" />
                                             Leader actuel
                                         </p>
-                                        <h2 className="mt-3 text-xl font-black text-slate-950">{leaderSubmission.title}</h2>
-                                        <p className="mt-1 text-sm text-slate-600">
+                                        <h2 className="mt-3 text-xl font-black text-foreground">{leaderSubmission.title}</h2>
+                                        <p className="mt-1 text-sm text-muted-foreground">
                                             {leaderSubmission.votesCount} vote{leaderSubmission.votesCount > 1 ? 's' : ''} • {leaderSubmission.authorName}
                                         </p>
                                     </div>
@@ -418,44 +418,44 @@ export default function ProjectDetailPage() {
             </section>
 
             <section className="container px-4 pb-20 md:px-6">
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md md:p-10">
+                <div className="rounded-3xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md md:p-10">
                     <Accordion type="multiple" className="w-full space-y-4">
                         <AccordionItem value="requirements" className="border-none">
-                            <AccordionTrigger className="hover:no-underline py-4 flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/50 px-6 transition-colors hover:bg-slate-50 [&[data-state=open]]:bg-slate-50 [&[data-state=open]]:rounded-b-none">
-                                <h2 className="text-2xl font-black tracking-tight text-slate-900">Attendus</h2>
+                            <AccordionTrigger className="hover:no-underline py-4 flex items-center gap-3 rounded-2xl border border-border bg-muted/50 px-6 transition-colors hover:bg-muted [&[data-state=open]]:bg-muted [&[data-state=open]]:rounded-b-none">
+                                <h2 className="text-2xl font-black tracking-tight text-foreground">Attendus</h2>
                             </AccordionTrigger>
-                            <AccordionContent className="mt-0 border-x border-b border-slate-100 rounded-b-2xl bg-white px-8 pb-8 pt-6">
+                            <AccordionContent className="mt-0 border-x border-b border-border rounded-b-2xl bg-card px-8 pb-8 pt-6">
                                 {project.requirements.length > 0 ? (
                                     <ul className="space-y-3">
                                         {project.requirements.map((item) => (
                                             <li key={item} className="group flex items-start gap-4 transition-colors">
                                                 <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                                                <span className="text-base font-medium text-slate-600 group-hover:text-slate-900 transition-colors leading-relaxed">{item}</span>
+                                                <span className="text-base font-medium text-muted-foreground group-hover:text-foreground transition-colors leading-relaxed">{item}</span>
                                             </li>
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-sm text-slate-500 italic">Aucun attendu detaille pour le moment.</p>
+                                    <p className="text-sm text-muted-foreground italic">Aucun attendu detaille pour le moment.</p>
                                 )}
                             </AccordionContent>
                         </AccordionItem>
 
                         <AccordionItem value="criteria" className="border-none">
-                            <AccordionTrigger className="hover:no-underline py-4 flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/50 px-6 transition-colors hover:bg-slate-50 [&[data-state=open]]:bg-slate-50 [&[data-state=open]]:rounded-b-none">
-                                <h2 className="text-2xl font-black tracking-tight text-slate-900">Criteres d'evaluation</h2>
+                            <AccordionTrigger className="hover:no-underline py-4 flex items-center gap-3 rounded-2xl border border-border bg-muted/50 px-6 transition-colors hover:bg-muted [&[data-state=open]]:bg-muted [&[data-state=open]]:rounded-b-none">
+                                <h2 className="text-2xl font-black tracking-tight text-foreground">Criteres d'evaluation</h2>
                             </AccordionTrigger>
-                            <AccordionContent className="mt-0 border-x border-b border-slate-100 rounded-b-2xl bg-white px-8 pb-8 pt-6">
+                            <AccordionContent className="mt-0 border-x border-b border-border rounded-b-2xl bg-card px-8 pb-8 pt-6">
                                 {project.evaluationCriteria.length > 0 ? (
                                     <ul className="space-y-4">
                                         {project.evaluationCriteria.map((item) => (
                                             <li key={item} className="group flex items-start gap-4 transition-colors">
                                                 <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-emerald-500 opacity-60 group-hover:opacity-100 transition-opacity" />
-                                                <span className="text-base font-medium text-slate-600 group-hover:text-slate-900 transition-colors leading-relaxed">{item}</span>
+                                                <span className="text-base font-medium text-muted-foreground group-hover:text-foreground transition-colors leading-relaxed">{item}</span>
                                             </li>
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-sm text-slate-500 italic">Les criteres seront ajoutes par l'auteur du projet plus tard.</p>
+                                    <p className="text-sm text-muted-foreground italic">Les criteres seront ajoutes par l'auteur du projet plus tard.</p>
                                 )}
                             </AccordionContent>
                         </AccordionItem>
@@ -465,8 +465,8 @@ export default function ProjectDetailPage() {
                 <div className="mt-16 space-y-8">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                         <div>
-                            <h2 className="text-3xl font-black text-slate-950">Implementations</h2>
-                            <p className="mt-2 text-sm text-slate-500">
+                            <h2 className="text-3xl font-black text-foreground">Implementations</h2>
+                            <p className="mt-2 text-sm text-muted-foreground">
                                 La communaute vote sur la meilleure execution du meme brief.
                             </p>
                         </div>
@@ -489,9 +489,9 @@ export default function ProjectDetailPage() {
 
 
                     {submissions.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10 text-center">
-                            <p className="text-lg font-bold text-slate-900">Aucune implementation pour le moment</p>
-                            <p className="mt-2 text-sm text-slate-500">
+                        <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
+                            <p className="text-lg font-bold text-foreground">Aucune implementation pour le moment</p>
+                            <p className="mt-2 text-sm text-muted-foreground">
                                 Sois le premier a repondre a ce challenge et pose les bases du futur classement.
                             </p>
                         </div>

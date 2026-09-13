@@ -246,7 +246,7 @@ export default function AdminNotifications({ users }) {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-50">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-border">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                                         <MousePointer2 className="w-3 h-3" /> Action
@@ -279,7 +279,7 @@ export default function AdminNotifications({ users }) {
                                             />
 
                                             <p className="text-[10px] text-muted-foreground mt-1">
-                                                Utilisez <code className="bg-slate-100 px-1 rounded">{"{uid}"}</code>, <code className="bg-slate-100 px-1 rounded">{"{email}"}</code> pour des liens dynamiques.
+                                                Utilisez <code className="bg-muted px-1 rounded">{"{uid}"}</code>, <code className="bg-muted px-1 rounded">{"{email}"}</code> pour des liens dynamiques.
                                             </p>
                                         </div>
 
@@ -304,14 +304,14 @@ export default function AdminNotifications({ users }) {
                                                     <p className="text-[10px] text-muted-foreground mt-1">Nom d'une icône <a href="https://lucide.dev" target="_blank" rel="noopener noreferrer" className="text-primary underline">Lucide</a></p>
                                                 </div>
                                                 <div className="flex flex-col items-center gap-1">
-                                                    <div className="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-lg bg-slate-50">
+                                                    <div className="w-10 h-10 flex items-center justify-center border border-border rounded-lg bg-muted">
                                                         {globalForm.actionButtonIcon && getDynamicIcon(globalForm.actionButtonIcon, 'w-5 h-5') ? (
                                                             <div className="text-green-600">{getDynamicIcon(globalForm.actionButtonIcon, 'w-5 h-5')}</div>
                                                         ) : (
-                                                            <span className="text-xs text-slate-400">?</span>
+                                                            <span className="text-xs text-muted-foreground">?</span>
                                                         )}
                                                     </div>
-                                                    <span className="text-[10px] font-semibold text-slate-500">
+                                                    <span className="text-[10px] font-semibold text-muted-foreground">
                                                         {globalForm.actionButtonIcon && getDynamicIcon(globalForm.actionButtonIcon) ? '✓ OK' : globalForm.actionButtonIcon ? '✗ Non' : '-'}
                                                     </span>
                                                 </div>
@@ -332,9 +332,9 @@ export default function AdminNotifications({ users }) {
 
                 {/* Private Notification Form */}
                 <Card className="border-none shadow-sm">
-                    <CardHeader className="bg-slate-50 rounded-t-3xl">
+                    <CardHeader className="bg-muted rounded-t-3xl">
                         <div className="flex items-center gap-2">
-                            <User className="w-5 h-5 text-slate-600" />
+                            <User className="w-5 h-5 text-muted-foreground" />
                             <CardTitle className="text-lg font-black uppercase tracking-tight">Notification Spécifique</CardTitle>
                         </div>
                         <CardDescription>Envoyer un message à un étudiant particulier.</CardDescription>
@@ -344,7 +344,7 @@ export default function AdminNotifications({ users }) {
                             <div className="space-y-2">
                                 <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Destinataire</label>
                                 <div className="relative">
-                                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                                     <Input
                                         placeholder="Chercher un utilisateur (nom, email...)"
                                         className="pl-10 rounded-xl"
@@ -353,12 +353,12 @@ export default function AdminNotifications({ users }) {
                                     />
                                 </div>
                                 {userSearch && filteredUsers.length > 0 && (
-                                    <div className="mt-2 border rounded-xl overflow-hidden bg-white shadow-lg absolute z-10 w-[calc(100%-3rem)]">
+                                    <div className="mt-2 border rounded-xl overflow-hidden bg-card shadow-lg absolute z-10 w-[calc(100%-3rem)]">
                                         {filteredUsers.map(u => (
                                             <button
                                                 key={u.id}
                                                 type="button"
-                                                className={`w-full text-left p-3 text-sm hover:bg-slate-50 flex items-center justify-between ${privateForm.userId === u.id ? 'bg-primary/5' : ''}`}
+                                                className={`w-full text-left p-3 text-sm hover:bg-muted flex items-center justify-between ${privateForm.userId === u.id ? 'bg-primary/5' : ''}`}
                                                 onClick={() => {
                                                     setPrivateForm({ ...privateForm, userId: u.id });
                                                     setUserSearch(`${u.firstName} ${u.lastName}`);
@@ -391,7 +391,7 @@ export default function AdminNotifications({ users }) {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-50">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-border">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                                         <MousePointer2 className="w-3 h-3" /> Action
@@ -424,7 +424,7 @@ export default function AdminNotifications({ users }) {
                                             />
 
                                             <p className="text-[10px] text-muted-foreground mt-1">
-                                                Placeholders: <code className="bg-slate-100 px-1 rounded">{"{uid}"}</code>, <code className="bg-slate-100 px-1 rounded">{"{email}"}</code>, <code className="bg-slate-100 px-1 rounded">{"{firstName}"}</code>
+                                                Placeholders: <code className="bg-muted px-1 rounded">{"{uid}"}</code>, <code className="bg-muted px-1 rounded">{"{email}"}</code>, <code className="bg-muted px-1 rounded">{"{firstName}"}</code>
                                             </p>
                                         </div>
 
@@ -449,14 +449,14 @@ export default function AdminNotifications({ users }) {
                                                     <p className="text-[10px] text-muted-foreground mt-1">Nom d'une icône <a href="https://lucide.dev" target="_blank" rel="noopener noreferrer" className="text-primary underline">Lucide</a></p>
                                                 </div>
                                                 <div className="flex flex-col items-center gap-1">
-                                                    <div className="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-lg bg-slate-50">
+                                                    <div className="w-10 h-10 flex items-center justify-center border border-border rounded-lg bg-muted">
                                                         {privateForm.actionButtonIcon && getDynamicIcon(privateForm.actionButtonIcon, 'w-5 h-5') ? (
                                                             <div className="text-green-600">{getDynamicIcon(privateForm.actionButtonIcon, 'w-5 h-5')}</div>
                                                         ) : (
-                                                            <span className="text-xs text-slate-400">?</span>
+                                                            <span className="text-xs text-muted-foreground">?</span>
                                                         )}
                                                     </div>
-                                                    <span className="text-[10px] font-semibold text-slate-500">
+                                                    <span className="text-[10px] font-semibold text-muted-foreground">
                                                         {privateForm.actionButtonIcon && getDynamicIcon(privateForm.actionButtonIcon) ? '✓ OK' : privateForm.actionButtonIcon ? '✗ Non' : '-'}
                                                     </span>
                                                 </div>
@@ -476,13 +476,13 @@ export default function AdminNotifications({ users }) {
                 </Card>
             </div>
 
-            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex items-start gap-4">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-200 shrink-0">
-                    <Info className="w-5 h-5 text-slate-400" />
+            <div className="bg-muted p-6 rounded-3xl border border-border flex items-start gap-4">
+                <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center border border-border shrink-0">
+                    <Info className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div>
-                    <h4 className="font-bold text-slate-900">Conseil de modération</h4>
-                    <p className="text-sm text-slate-600 leading-relaxed">
+                    <h4 className="font-bold text-foreground">Conseil de modération</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                         Les notifications globales doivent être utilisées avec parcimonie pour ne pas saturer l'espace de l'étudiant.
                         Privilégiez les notifications privées pour les retours sur les ressources ou les annonces publicitaires.
                     </p>
