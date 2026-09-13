@@ -21,6 +21,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { uploadToImgBB } from '@/lib/uploadUtils';
 import { useDialog } from '@/context/DialogContext';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from 'next-themes';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -405,6 +406,14 @@ function AccountTab({ profile, resolvedUid, onClose }) {
 }
 
 function AppearanceTab() {
+    const { theme, setTheme } = useTheme();
+
+    const themeOptions = [
+        { id: 'light',  label: 'Mode clair',    description: 'Interface en thème clair',  icon: Sun     },
+        { id: 'dark',   label: 'Mode sombre',   description: 'Interface en thème foncé',  icon: Moon    },
+        { id: 'system', label: 'Thème système', description: 'Suit les préférences de votre OS', icon: Monitor },
+    ];
+
     return (
         <div className="space-y-6">
 
@@ -416,9 +425,32 @@ function AppearanceTab() {
                     description="Personnalisez l'apparence visuelle de l'application."
                 />
                 <div className="space-y-1 divide-y divide-border rounded-xl border border-border overflow-hidden bg-card">
-                    <DisabledToggle icon={Moon}    label="Mode sombre"          description="Interface en thème foncé"         />
-                    <DisabledToggle icon={Sun}      label="Mode clair"           description="Interface en thème clair"         checked />
-                    <DisabledToggle icon={Monitor}  label="Thème système"        description="Suit les préférences de votre OS" />
+                    {themeOptions.map(opt => {
+                        const Icon = opt.icon;
+                        const isActive = theme === opt.id;
+                        return (
+                            <button
+                                key={opt.id}
+                                onClick={() => setTheme(opt.id)}
+                                className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors ${isActive ? 'bg-primary/5' : 'hover:bg-muted'}`}
+                            >
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className={`p-1.5 rounded-md transition-colors ${isActive ? 'bg-primary/10' : 'bg-muted'}`}>
+                                        <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-medium text-foreground">{opt.label}</p>
+                                        <p className="text-xs text-muted-foreground truncate">{opt.description}</p>
+                                    </div>
+                                </div>
+                                {isActive && (
+                                    <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                                        <Check className="w-3 h-3" />
+                                    </span>
+                                )}
+                            </button>
+                        );
+                    })}
                     <DisabledToggle icon={Sliders}  label="Couleur d'accentuation" description="Personnalisez la couleur principale" />
                 </div>
             </section>
@@ -457,7 +489,7 @@ function AppearanceTab() {
 
             <div className="flex items-center gap-2 mt-4 p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                Ces options sont en cours de développement et ne sont pas encore disponibles.
+                L'accentuation de couleur, l'accessibilité et la régionalisation sont en cours de développement.
             </div>
         </div>
     );

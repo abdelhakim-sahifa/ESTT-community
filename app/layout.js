@@ -56,7 +56,7 @@ export default function RootLayout({ children }) {
             <head>
                 <script
                     dangerouslySetInnerHTML={{
-                        __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})()`,
+                        __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})()`,
                     }}
                 />
                 <script
@@ -81,7 +81,7 @@ export default function RootLayout({ children }) {
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=verified" />
             </head>
             <body className={`font-sans ${canela.variable} antialiased`} suppressHydrationWarning={true}>
-                <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
                     <DialogProvider>
                         <AuthProvider>
                             <NotificationProvider>
