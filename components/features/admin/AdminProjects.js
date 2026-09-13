@@ -13,10 +13,10 @@ import { AlertCircle, ExternalLink, Loader2, Sparkles, Trophy } from 'lucide-rea
 const sortByDateDesc = (first, second) => (second?.createdAt || 0) - (first?.createdAt || 0);
 
 const badgeClassNames = {
-    open: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-    closed: 'border-amber-200 bg-amber-50 text-amber-700',
+    open: 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-300',
+    closed: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-300',
     completed: 'border-border bg-muted text-foreground',
-    approved: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    approved: 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-300',
     hidden: 'border-border bg-muted text-foreground',
 };
 
@@ -116,7 +116,7 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
             </div>
 
             {feedback && (
-                <Alert className={feedback.type === 'error' ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}>
+                <Alert className={feedback.type === 'error' ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:text-emerald-300'}>
                     {feedback.type === 'error' ? <AlertCircle className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
                     <AlertTitle>{feedback.type === 'error' ? 'Erreur' : 'Mise a jour effectuee'}</AlertTitle>
                     <AlertDescription>{feedback.text}</AlertDescription>
@@ -167,7 +167,7 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
                                                     {project.status || 'open'}
                                                 </Badge>
                                                 {project.featured && (
-                                                    <Badge className="border-amber-200 bg-amber-50 text-amber-700">featured</Badge>
+                                                    <Badge className="border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-300">featured</Badge>
                                                 )}
                                             </div>
                                             <p className="max-w-3xl text-sm text-muted-foreground">
@@ -299,7 +299,7 @@ export default function AdminProjects({ projects = [], submissions = [], showcas
                                         <div className="flex flex-wrap items-center gap-2">
                                             <h3 className="text-lg font-bold text-foreground">{showcase.title}</h3>
                                             {showcase.featured && (
-                                                <Badge className="border-amber-200 bg-amber-50 text-amber-700">featured</Badge>
+                                                <Badge className="border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-300">featured</Badge>
                                             )}
                                         </div>
                                         <p className="max-w-3xl text-sm text-muted-foreground">

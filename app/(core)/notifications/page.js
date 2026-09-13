@@ -277,7 +277,7 @@ export default function NotificationsPage() {
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="w-8 h-8 rounded-lg hover:bg-red-50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="w-8 h-8 rounded-lg hover:bg-red-50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity dark:hover:bg-red-500/10"
                                         onClick={(e) => handleDelete(e, notif)}
                                     >
                                         <Trash2 className="w-3.5 h-3.5" />

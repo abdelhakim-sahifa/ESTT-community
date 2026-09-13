@@ -330,8 +330,8 @@ export default function SubmissionDetailPage() {
                                 </div>
 
                                 {submission.notes && (
-                                    <div className="rounded-2xl bg-amber-50 p-6 border border-amber-100">
-                                        <h3 className="text-sm font-bold uppercase tracking-wider text-amber-700 mb-2">Note de l'auteur</h3>
+                                    <div className="rounded-2xl bg-amber-50 p-6 border border-amber-100 dark:bg-amber-500/10 dark:border-amber-500/30">
+                                        <h3 className="text-sm font-bold uppercase tracking-wider text-amber-700 mb-2 dark:text-amber-300">Note de l'auteur</h3>
                                         <p className="text-foreground italic">{submission.notes}</p>
                                     </div>
                                 )}
@@ -532,7 +532,7 @@ export default function SubmissionDetailPage() {
                                 </div>
                             </div>
 
-                            <div className="rounded-3xl border border-emerald-100 bg-emerald-50/50 p-6 shadow-sm">
+                            <div className="rounded-3xl border border-emerald-100 bg-emerald-50/50 p-6 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10">
                                 <Trophy className="h-8 w-8 text-emerald-600 mb-4" />
                                 <h3 className="font-black text-foreground mb-2">Classement</h3>
                                 <p className="text-xs text-muted-foreground leading-relaxed">

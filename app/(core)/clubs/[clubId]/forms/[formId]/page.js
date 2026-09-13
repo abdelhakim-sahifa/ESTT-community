@@ -225,7 +225,7 @@ export default function CustomFormPage() {
     }
 
     return (
-        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-12 px-4">
+        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-background py-12 px-4">
             <style jsx global>{`
                 .theme-text { color: ${club.themeColor || '#64748b'}; }
                 .theme-bg { background-color: ${club.themeColor || '#64748b'}; }
@@ -367,7 +367,7 @@ export default function CustomFormPage() {
                             ))}
 
                             {error && (
-                                <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm flex items-center gap-2">
+                                <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm flex items-center gap-2 dark:bg-red-500/15 dark:text-red-300">
                                     <AlertCircle className="w-4 h-4" />
                                     {error}
                                 </div>

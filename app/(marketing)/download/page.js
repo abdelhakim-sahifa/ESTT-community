@@ -25,7 +25,7 @@ export default function DownloadPage() {
     return (
         <main className="min-h-screen">
             {/* Hero Section - Aligned with the rest of the app */}
-            <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24 overflow-hidden">
+            <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24 overflow-hidden dark:from-blue-950/60 dark:via-indigo-950/30 dark:to-background">
                 <div className="container relative mx-auto px-4 md:px-6 flex flex-col items-center text-center">
                     {/* App Icon */}
                     <div className="mb-8 relative w-24 h-24 md:w-32 md:h-32 animate-in fade-in slide-in-from-bottom-4 duration-500">

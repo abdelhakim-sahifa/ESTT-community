@@ -67,7 +67,7 @@ export default function ShowcaseDetailPage() {
     const gallery = [showcase.coverImage, ...showcase.screenshots].filter(Boolean);
 
     return (
-        <main className="min-h-screen bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_28%,_#f8fafc_100%)]">
+        <main className="min-h-screen bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_28%,_#f8fafc_100%)] dark:bg-[linear-gradient(180deg,_#0c0a09_0%,_#020617_28%,_#020617_100%)]">
             <section className="container px-4 py-12 md:px-6 md:py-16">
                 <Button asChild variant="ghost" className="mb-6 rounded-full">
                     <Link href="/projects/showcase">

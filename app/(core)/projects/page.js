@@ -96,14 +96,14 @@ export default function ProjectsPage() {
     const latestShowcases = useMemo(() => showcases.slice(0, 6), [showcases]);
 
     return (
-        <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.16),_transparent_32%),linear-gradient(180deg,_#fff7ed_0%,_#ffffff_32%,_#f8fafc_100%)]">
+        <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.16),_transparent_32%),linear-gradient(180deg,_#fff7ed_0%,_#ffffff_32%,_#f8fafc_100%)] dark:bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.08),_transparent_32%),linear-gradient(180deg,_#0c0a09_0%,_#020617_32%,_#020617_100%)]">
             <section className="border-b border-orange-100/80">
                 <div className="container px-4 py-12 md:px-6 md:py-16">
                     <div className="flex flex-col gap-12">
                         {/* Header Section */}
                         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
                             <div className="space-y-6 max-w-3xl">
-                                <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-background/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-orange-600 shadow-sm backdrop-blur">
+                                <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-background/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-orange-600 shadow-sm backdrop-blur dark:border-orange-500/30 dark:bg-background/60 dark:text-orange-300">
                                     <Rocket className="h-4 w-4" />
                                     Projects hub
                                 </div>
@@ -131,15 +131,15 @@ export default function ProjectsPage() {
                             </div>
 
                             <div className="grid grid-cols-3 gap-4 min-w-[300px] lg:min-w-[400px]">
-                                <div className="rounded-2xl border-2 border-white/70 bg-background/90 p-4 shadow-none backdrop-blur text-center">
+                                <div className="rounded-2xl border-2 border-white/70 bg-background/90 dark:border-border dark:bg-background/80 p-4 shadow-none backdrop-blur text-center">
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Challenges</p>
                                     <p className="mt-2 text-2xl font-black text-foreground">{projects.length}</p>
                                 </div>
-                                <div className="rounded-2xl border-2 border-white/70 bg-background/90 p-4 shadow-none backdrop-blur text-center">
+                                <div className="rounded-2xl border-2 border-white/70 bg-background/90 dark:border-border dark:bg-background/80 p-4 shadow-none backdrop-blur text-center">
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Builders</p>
                                     <p className="mt-2 text-2xl font-black text-foreground">{countUniqueAuthors(submissions)}</p>
                                 </div>
-                                <div className="rounded-2xl border-2 border-white/70 bg-background/90 p-4 shadow-none backdrop-blur text-center">
+                                <div className="rounded-2xl border-2 border-white/70 bg-background/90 dark:border-border dark:bg-background/80 p-4 shadow-none backdrop-blur text-center">
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Showcase</p>
                                     <p className="mt-2 text-2xl font-black text-foreground">{showcases.length}</p>
                                 </div>

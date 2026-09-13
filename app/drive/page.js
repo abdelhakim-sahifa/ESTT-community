@@ -50,9 +50,9 @@ export default function DriveTestPage() {
 
             <div className="space-y-8">
                 {/* Admin Setup Section */}
-                <Card className="border-blue-200 bg-blue-50/30">
+                <Card className="border-blue-200 bg-blue-50/30 dark:border-blue-500/40 dark:bg-blue-500/10">
                     <CardHeader>
-                        <CardTitle className="text-blue-800 text-lg flex items-center gap-2">
+                        <CardTitle className="text-blue-800 text-lg flex items-center gap-2 dark:text-blue-300">
                             <Key className="h-4 w-4" />
                             Configuration Admin
                         </CardTitle>
@@ -63,7 +63,7 @@ export default function DriveTestPage() {
                     <CardContent>
                         <Button
                             variant="outline"
-                            className="w-full border-blue-300 text-blue-700 hover:bg-blue-100"
+                            className="w-full border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-500/40 dark:text-blue-300 dark:hover:bg-blue-500/10"
                             onClick={() => window.open('/api/drive/auth', '_blank')}
                         >
                             Lier mon compte Drive
@@ -122,7 +122,7 @@ export default function DriveTestPage() {
                 )}
 
                 {result && (
-                    <Alert className="border-green-500 bg-green-50 text-green-800">
+                    <Alert className="border-green-500 bg-green-50 text-green-800 dark:border-green-500/50 dark:bg-green-500/15 dark:text-green-300">
                         <CheckCircle2 className="h-4 w-4 text-green-600" />
                         <AlertTitle>Succès !</AlertTitle>
                         <AlertDescription className="space-y-2">

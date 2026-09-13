@@ -189,7 +189,7 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                     <code
                         className={cn(
                             "rounded-md px-1.5 py-0.5 font-mono text-[0.92em]",
-                            isOwn ? "bg-white/15 text-white" : "bg-slate-900/5 text-foreground"
+                            isOwn ? "bg-white/15 text-white" : "bg-slate-900/5 text-foreground dark:bg-white/10 dark:text-foreground"
                         )}
                     >
                         {children}
@@ -511,7 +511,7 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                             </div>
                                         </button>
                                     ) : loadError ? (
-                                        <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600">
+                                        <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 dark:bg-red-500/15 dark:border-red-500/30 dark:text-red-300">
                                             <AlertTriangle className="w-5 h-5 shrink-0" />
                                             <p className="text-xs font-bold">Cet événement n'est plus disponible.</p>
                                         </div>
@@ -543,12 +543,12 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-2 mb-1">
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full dark:text-blue-300 dark:bg-blue-500/15">
                                                                 {clubInfo?.name || eventDetails.clubName || "Club"}
                                                             </span>
                                                             <span className={cn(
                                                                 "text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border",
-                                                                (eventDetails.isPaid || (eventDetails.price && Number(eventDetails.price) > 0)) ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-emerald-50 text-emerald-600 border-emerald-100"
+                                                                (eventDetails.isPaid || (eventDetails.price && Number(eventDetails.price) > 0)) ? "bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/40" : "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40"
                                                             )}>
                                                                 {(eventDetails.isPaid || (eventDetails.price && Number(eventDetails.price) > 0)) ? `${eventDetails.price} DH` : 'Gratuit'}
                                                             </span>
@@ -611,7 +611,7 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                                 )}
                                             </div>
 
-                                            <div className="bg-muted border-t border-border px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between group-hover/event:bg-blue-50/50 transition-colors">
+                                            <div className="bg-muted border-t border-border px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between group-hover/event:bg-blue-50/50 transition-colors dark:group-hover/event:bg-blue-500/10">
                                                 <span className="text-[10px] md:text-xs font-bold text-muted-foreground flex items-center gap-1.5">
                                                     <Clock className="w-3.5 h-3.5 text-blue-500" /> {eventDetails.time || 'Non spécifié'}
                                                 </span>
@@ -795,7 +795,7 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                                         setShowDeleteConfirm(true);
                                                         setShowMenu(false);
                                                     }}
-                                                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors dark:text-red-400 dark:hover:bg-red-500/10"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                     Supprimer
@@ -870,7 +870,7 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                             {/* Dialog Content */}
                             <div className="relative w-full max-w-sm bg-card rounded-3xl shadow-2xl border border-border overflow-hidden animate-in zoom-in-95 duration-200">
                                 <div className="p-8 text-center">
-                                    <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                    <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6 dark:bg-red-500/15">
                                         <AlertTriangle className="w-8 h-8 text-red-500" />
                                     </div>
                                     <h3 className="text-xl font-black text-foreground mb-2">Supprimer le message ?</h3>
@@ -912,7 +912,7 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                     className={cn(
                                         "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[13px] font-medium transition-all border",
                                         hasReacted
-                                            ? "bg-blue-50 border-blue-200 text-blue-600"
+                                            ? "bg-blue-50 border-blue-200 text-blue-600 dark:bg-blue-500/15 dark:border-blue-500/40 dark:text-blue-300"
                                             : "bg-card border-border text-muted-foreground hover:border-border"
                                     )}
                                 >

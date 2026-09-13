@@ -307,7 +307,7 @@ export default function DownloadExportPage() {
 
     // ── Render ────────────────────────────────────────────────────────────────
     return (
-        <div className="min-h-screen bg-gradient-to-br from-muted via-blue-50/30 to-background flex items-center justify-center p-6">
+        <div className="min-h-screen bg-gradient-to-br from-muted via-blue-50/30 to-background flex items-center justify-center p-6 dark:via-blue-950/40">
             <div className="w-full max-w-md">
 
                 {/* Card */}
@@ -371,7 +371,7 @@ export default function DownloadExportPage() {
                                         téléchargé automatiquement. Vérifiez votre dossier de téléchargements.
                                     </p>
                                 </div>
-                                <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700 text-left leading-relaxed">
+                                <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700 text-left leading-relaxed dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-300">
                                     <AlertTriangle className="w-4 h-4 inline mr-1.5 shrink-0" />
                                     <strong>Rappel sécurité :</strong> Ce lien ne peut être utilisé qu'une seule fois. 
                                     Si vous avez besoin d'un nouvel export, générez un nouveau lien depuis vos paramètres.
@@ -392,7 +392,7 @@ export default function DownloadExportPage() {
                         {!done && !error && (
                             <div className="text-center space-y-7">
                                 <div className="relative">
-                                    <div className="w-20 h-20 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto">
+                                    <div className="w-20 h-20 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto dark:bg-blue-500/15">
                                         <FileText className="w-9 h-9 text-blue-600" />
                                     </div>
                                     <div className="absolute -bottom-1 -right-1 mx-auto" style={{ left: '50%', transform: 'translate(16px, 0)' }}>

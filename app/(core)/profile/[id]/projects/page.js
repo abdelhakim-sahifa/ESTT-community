@@ -155,7 +155,7 @@ export default function ProfileProjectsPage() {
     }
 
     return (
-        <main className="min-h-screen bg-[linear-gradient(180deg,_#eff6ff_0%,_#ffffff_28%,_#f8fafc_100%)]">
+        <main className="min-h-screen bg-[linear-gradient(180deg,_#eff6ff_0%,_#ffffff_28%,_#f8fafc_100%)] dark:bg-[linear-gradient(180deg,_#0c1226_0%,_#020617_28%,_#020617_100%)]">
             <section className="border-b border-border bg-background/80 backdrop-blur">
                 <div className="container px-4 py-12 md:px-6 md:py-16">
                     <Button asChild variant="ghost" className="mb-6 rounded-full">

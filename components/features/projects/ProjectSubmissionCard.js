@@ -53,7 +53,7 @@ export default function ProjectSubmissionCard({
                         <p className="mt-0.5 sm:mt-1 text-base sm:text-2xl font-black text-foreground">{submission.votesCount}</p>
                     </div>
                     {isOwnSubmission && (
-                        <div className="rounded-full bg-emerald-50 px-2 py-1 text-[8px] font-bold uppercase text-emerald-600 border border-emerald-100">
+                        <div className="rounded-full bg-emerald-50 px-2 py-1 text-[8px] font-bold uppercase text-emerald-600 border border-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40">
                             Mien
                         </div>
                     )}

@@ -170,7 +170,7 @@ export default function StickerManagement() {
                                 </div>
 
                                 {error && (
-                                    <div className="flex items-center gap-3 p-4 bg-red-50 text-red-600 rounded-2xl text-sm font-medium border border-red-100">
+                                    <div className="flex items-center gap-3 p-4 bg-red-50 text-red-600 rounded-2xl text-sm font-medium border border-red-100 dark:bg-red-500/15 dark:text-red-300 dark:border-red-500/40">
                                         <AlertCircle className="w-5 h-5 shrink-0" />
                                         {error}
                                     </div>

@@ -209,17 +209,17 @@ const faq = [
 ];
 
 const toneClasses = {
-    blue: 'border-blue-200 bg-blue-50 text-blue-700',
-    emerald: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-    violet: 'border-violet-200 bg-violet-50 text-violet-700',
-    amber: 'border-amber-200 bg-amber-50 text-amber-700',
-    rose: 'border-rose-200 bg-rose-50 text-rose-700',
-    indigo: 'border-indigo-200 bg-indigo-50 text-indigo-700',
+    blue: 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-500/40 dark:bg-blue-500/15 dark:text-blue-300',
+    emerald: 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-300',
+    violet: 'border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-500/40 dark:bg-violet-500/15 dark:text-violet-300',
+    amber: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-300',
+    rose: 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/40 dark:bg-rose-500/15 dark:text-rose-300',
+    indigo: 'border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-500/40 dark:bg-indigo-500/15 dark:text-indigo-300',
     slate: 'border-border bg-muted text-foreground',
-    cyan: 'border-cyan-200 bg-cyan-50 text-cyan-700',
-    fuchsia: 'border-fuchsia-200 bg-fuchsia-50 text-fuchsia-700',
-    teal: 'border-teal-200 bg-teal-50 text-teal-700',
-    orange: 'border-orange-200 bg-orange-50 text-orange-700',
+    cyan: 'border-cyan-200 bg-cyan-50 text-cyan-700 dark:border-cyan-500/40 dark:bg-cyan-500/15 dark:text-cyan-300',
+    fuchsia: 'border-fuchsia-200 bg-fuchsia-50 text-fuchsia-700 dark:border-fuchsia-500/40 dark:bg-fuchsia-500/15 dark:text-fuchsia-300',
+    teal: 'border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-500/40 dark:bg-teal-500/15 dark:text-teal-300',
+    orange: 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-500/40 dark:bg-orange-500/15 dark:text-orange-300',
 };
 
 export default function GuidePage() {
@@ -227,7 +227,7 @@ export default function GuidePage() {
         <main className="min-h-screen bg-muted/60 pb-20 pt-8">
             <section className="container px-4 py-6 md:px-6">
                 {/* Test Account Statement Card */}
-                <Card className="mb-10 border-blue-300 bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 shadow-md overflow-hidden">
+                <Card className="mb-10 border-blue-300 bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 shadow-md overflow-hidden dark:border-blue-500/40 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-blue-950/40">
                     <CardContent className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                         <div className="flex items-start gap-4">
                             <div className="rounded-2xl bg-blue-600 p-3 text-white shrink-0 shadow-sm">
@@ -408,7 +408,7 @@ export default function GuidePage() {
                             Accédez dès maintenant aux cours, aux événements des clubs et rejoignez la communauté en ligne de l EST Tétouan.
                         </p>
                         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                            <Button asChild size="lg" variant="secondary" className="font-bold text-blue-900 bg-card hover:bg-muted">
+                            <Button asChild size="lg" variant="secondary" className="font-bold text-blue-900 bg-card hover:bg-muted dark:text-blue-100">
                                 <Link href="/browse">Explorer les Ressources</Link>
                             </Button>
                             <Button asChild size="lg" variant="outline" className="border-white/40 bg-card/10 text-white hover:bg-card/20">

@@ -107,14 +107,14 @@ function ClubAvatar({ club, size = 'sm' }) {
 function PriceBadge({ event }) {
     if (isPaid(event)) {
         return (
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border bg-amber-50 text-amber-700 border-amber-200">
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/40">
                 <Ticket className="w-2.5 h-2.5" />
                 {event.price ? `${event.price} MAD` : 'Payant'}
             </span>
         );
     }
     return (
-        <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border bg-green-50 text-green-700 border-green-200">
+        <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border bg-green-50 text-green-700 border-green-200 dark:bg-green-500/15 dark:text-green-300 dark:border-green-500/40">
             Gratuit
         </span>
     );

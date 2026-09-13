@@ -391,7 +391,7 @@ export default function PromotionalModal({ isOpen, onClose, fromId, initialCode 
                                         <DialogDescription className="text-muted-foreground">
                                             Votre récompense est réservée pour <strong>{email}</strong>.
                                         </DialogDescription>
-                                        <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-800 text-sm mt-4">
+                                        <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-800 text-sm mt-4 dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-emerald-300">
                                             Créez votre compte maintenant pour activer votre avantage <span className="font-bold">{
                                                 matchedReward.includes('month') ? matchedReward.split('_')[1].replace('month', ' mois') :
                                                 matchedReward.includes('day') ? matchedReward.split('_')[1].replace('day', ' jours') :

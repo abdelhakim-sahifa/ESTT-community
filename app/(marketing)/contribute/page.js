@@ -553,7 +553,7 @@ export default function ContributePage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setIsAiModalOpen(true)}
-                            className="bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-100 hover:border-blue-200 font-semibold shadow-sm shrink-0"
+                            className="bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-100 hover:border-blue-200 font-semibold shadow-sm shrink-0 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/40 dark:hover:border-blue-500/60"
                         >
                             <Sparkles className="w-4 h-4 mr-2" />
                             Remplir avec l'IA

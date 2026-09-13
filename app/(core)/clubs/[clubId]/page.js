@@ -180,7 +180,7 @@ export default function ClubProfilePage() {
     };
 
     return (
-        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-background">
             <StructuredData data={clubStructuredData} />            <style jsx global>{`
                 .theme-text { color: ${club.themeColor || '#64748b'}; }
                 .theme-bg { background-color: ${club.themeColor || '#64748b'}; }
@@ -203,7 +203,7 @@ export default function ClubProfilePage() {
                         <div className="flex flex-col lg:flex-row gap-8 items-start">
                             {/* Left: Club Brand */}
                             <div className="flex flex-col items-center md:items-start gap-4 flex-shrink-0 lg:w-1/3">
-                                <div className="relative w-28 h-28 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-card border-4 border-white shadow-lg mx-auto md:mx-0 shrink-0">
+                                <div className="relative w-28 h-28 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-card border-4 border-white shadow-lg dark:border-border mx-auto md:mx-0 shrink-0">
                                     {club.logo ? (
                                         <Image
                                             src={club.logo}
@@ -488,7 +488,7 @@ export default function ClubProfilePage() {
                                         <div>
                                             <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">{ticket.eventName}</h3>
                                             <p className="text-xs text-muted-foreground mt-0.5">{new Date(ticket.createdAt).toLocaleDateString('fr-FR')}</p>
-                                            <span className={cn("inline-block mt-2 text-[10px] font-bold uppercase px-2 py-0.5 rounded-md", ticket.status === 'valid' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700')}>
+                                            <span className={cn("inline-block mt-2 text-[10px] font-bold uppercase px-2 py-0.5 rounded-md", ticket.status === 'valid' ? 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300' : 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300')}>
                                                 {ticket.status === 'valid' ? 'Validé' : 'En attente'}
                                             </span>
                                         </div>

@@ -1021,7 +1021,7 @@ export default function ClubAdminPage() {
             <div className="min-h-screen flex items-center justify-center bg-muted px-4">
                 <Card className="max-w-md w-full border-red-100 shadow-xl">
                     <CardHeader className="text-center">
-                        <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <div className="bg-red-50 dark:bg-red-500/15 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                             <ShieldAlert className="w-8 h-8 text-red-500" />
                         </div>
                         <CardTitle className="text-2xl text-red-700">Accès Refusé</CardTitle>
@@ -1045,7 +1045,7 @@ export default function ClubAdminPage() {
     // If we've reached this point, isAuthorized is true.
 
     return (
-        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-8">
+        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-background py-8">
             <div className="container px-4 md:px-6 max-w-6xl">
                 {/* Mode Démonstration Banner */}
                 <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 px-4 rounded-xl shadow-lg mb-8 flex items-center justify-between border-b-4 border-orange-700/30">
@@ -1080,7 +1080,7 @@ export default function ClubAdminPage() {
                 </div>
 
                 {message && (
-                    <Alert className={message.includes('succès') || message.includes('envoyée') ? 'border-green-500 bg-green-50 mb-6' : 'mb-6'}>
+                    <Alert className={message.includes('succès') || message.includes('envoyée') ? 'border-green-500 bg-green-50 mb-6 dark:bg-green-500/15 dark:border-green-500/50' : 'mb-6'}>
                         {message.includes('succès') || message.includes('envoyée') ? (
                             <CheckCircle2 className="h-4 w-4 text-green-600" />
                         ) : (
@@ -1669,7 +1669,7 @@ export default function ClubAdminPage() {
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="sm"
-                                                                    className="text-blue-600 hover:bg-blue-50 h-8 w-8 p-0"
+                                                                    className="text-blue-600 hover:bg-blue-50 h-8 w-8 p-0 dark:text-blue-400 dark:hover:bg-blue-500/10"
                                                                     onClick={() => handleGeneratePDF(member, 'certificate', club)}
                                                                     title="Générer le certificat"
                                                                 >
@@ -2196,7 +2196,7 @@ export default function ClubAdminPage() {
                                     </CardHeader>
                                     <CardContent className="space-y-6">
                                         {/* Invitation Link */}
-                                        <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                                        <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 dark:bg-blue-500/10 dark:border-blue-500/30">
                                             <div className="space-y-1">
                                                 <h3 className="font-semibold text-blue-900">Lien d'invitation</h3>
                                                 <p className="text-sm text-blue-700">Partagez ce lien pour inviter des étudiants à rejoindre le club.</p>
@@ -2293,7 +2293,7 @@ export default function ClubAdminPage() {
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            className="text-destructive hover:bg-red-50"
+                                                            className="text-destructive hover:bg-red-50 dark:hover:bg-red-500/10"
                                                             onClick={() => handleRemoveJoinQuestion(q.id)}
                                                         >
                                                             <Trash2 className="w-4 h-4" />
@@ -2650,7 +2650,7 @@ export default function ClubAdminPage() {
                                             <div className="space-y-4">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     {tickets.map(ticket => (
-                                                        <Card key={ticket.id} className={`p-4 ${ticket.status === 'pending' ? 'border-orange-200 bg-orange-50' : 'bg-card'}`}>
+                                                        <Card key={ticket.id} className={`p-4 ${ticket.status === 'pending' ? 'border-orange-200 bg-orange-50 dark:border-orange-500/50 dark:bg-orange-500/10' : 'bg-card'}`}>
                                                             <div className="flex justify-between items-start">
                                                                 <div>
                                                                     <div className="flex items-center gap-2 mb-1">

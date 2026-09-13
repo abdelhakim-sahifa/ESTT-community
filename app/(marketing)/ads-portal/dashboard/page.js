@@ -29,15 +29,15 @@ import { useSearchParams } from 'next/navigation';
 const StatusBadge = ({ status }) => {
     switch (status) {
         case AD_STATUSES.LIVE:
-            return <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-50"><CheckCircle2 className="w-3 h-3 mr-1" /> En Ligne</Badge>;
+            return <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-50 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40 dark:hover:bg-emerald-500/20"><CheckCircle2 className="w-3 h-3 mr-1" /> En Ligne</Badge>;
         case AD_STATUSES.UNDER_REVIEW:
-            return <Badge className="bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-50"><Clock className="w-3 h-3 mr-1" /> En Révision</Badge>;
+            return <Badge className="bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-50 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/40 dark:hover:bg-blue-500/20"><Clock className="w-3 h-3 mr-1" /> En Révision</Badge>;
         case AD_STATUSES.PAYMENT_REQUIRED:
-            return <Badge className="bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-50 animate-pulse"><CreditCard className="w-3 h-3 mr-1" /> Paiement Requis</Badge>;
+            return <Badge className="bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-50 animate-pulse dark:bg-orange-500/15 dark:text-orange-300 dark:border-orange-500/40 dark:hover:bg-orange-500/20"><CreditCard className="w-3 h-3 mr-1" /> Paiement Requis</Badge>;
         case AD_STATUSES.EXPIRED:
             return <Badge className="bg-muted text-muted-foreground border-border hover:bg-muted">Expiré</Badge>;
         case AD_STATUSES.REFUSED:
-            return <Badge className="bg-red-50 text-red-600 border-red-100 hover:bg-red-50"><XCircle className="w-3 h-3 mr-1" /> Refusé</Badge>;
+            return <Badge className="bg-red-50 text-red-600 border-red-100 hover:bg-red-50 dark:bg-red-500/15 dark:text-red-300 dark:border-red-500/40 dark:hover:bg-red-500/20"><XCircle className="w-3 h-3 mr-1" /> Refusé</Badge>;
         case AD_STATUSES.DRAFT:
             return <Badge className="bg-muted text-muted-foreground border-border hover:bg-muted">Brouillon</Badge>;
         default:
@@ -266,7 +266,7 @@ export default function UserAdsDashboard() {
                                                         variant="ghost"
                                                         size="icon"
                                                         onClick={() => handleDelete(ad)}
-                                                        className="h-10 w-10 rounded-xl hover:bg-red-50 group"
+                                                        className="h-10 w-10 rounded-xl hover:bg-red-50 group dark:hover:bg-red-500/10"
                                                     >
                                                         <Trash2 className="w-4 h-4 text-muted-foreground group-hover:text-red-500" />
                                                     </Button>
@@ -277,7 +277,7 @@ export default function UserAdsDashboard() {
 
                                     {/* Admin Note if Refused */}
                                     {ad.status === AD_STATUSES.REFUSED && ad.adminNote && (
-                                        <div className="bg-red-50 p-6 flex gap-4 items-start border-t border-red-100">
+                                        <div className="bg-red-50 p-6 flex gap-4 items-start border-t border-red-100 dark:bg-red-500/10 dark:border-red-500/30">
                                             <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
                                             <div>
                                                 <p className="text-sm font-bold text-red-900">Note de l'administrateur :</p>
@@ -299,7 +299,7 @@ export default function UserAdsDashboard() {
                             Notre équipe est là pour vous accompagner dans la réussite de votre publicité.
                             Contactez-nous si vous avez des questions sur le paiement ou le ciblage.
                         </p>
-                        <Button className="bg-white text-slate-900 hover:bg-muted rounded-full px-8 font-bold">
+                        <Button className="bg-white text-slate-900 hover:bg-muted rounded-full px-8 font-bold dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800">
                             <MessageSquare className="w-4 h-4 mr-2" />
                             Contacter le Support
                         </Button>

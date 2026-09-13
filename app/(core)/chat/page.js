@@ -503,7 +503,7 @@ export default function DiscussionPage() {
                                             : 'Activer les notifications'
                                 }
                                 className={`p-2 rounded-full transition-all ${permission === 'granted'
-                                    ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
+                                    ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25'
                                     : permission === 'denied'
                                         ? 'text-muted-foreground cursor-not-allowed'
                                         : 'text-muted-foreground hover:text-primary hover:bg-primary/5'

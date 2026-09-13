@@ -354,7 +354,7 @@ export default function AdminFastContribute() {
                         : staticDb.semesters;
 
                     return (
-                        <Card key={resource.id} className={resource.success ? "border-green-500 bg-green-50/50 rounded-none shadow-none" : "border-border rounded-none shadow-none"}>
+                        <Card key={resource.id} className={resource.success ? "border-green-500 bg-green-50/50 rounded-none shadow-none dark:bg-green-500/10 dark:border-green-500/50" : "border-border rounded-none shadow-none"}>
                             <CardContent className="pt-6 space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                                     <div className="md:col-span-4 space-y-2">

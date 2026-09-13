@@ -390,7 +390,7 @@ export default function EventRegistrationPage() {
                         </div>
 
                         {error && (
-                            <Alert variant="destructive" className="rounded-xl border-none bg-red-50 text-red-600 py-3">
+                            <Alert variant="destructive" className="rounded-xl border-none bg-red-50 text-red-600 py-3 dark:bg-red-500/15 dark:text-red-300">
                                 <AlertCircle className="h-4 w-4" />
                                 <AlertDescription className="text-sm font-semibold">{error}</AlertDescription>
                             </Alert>

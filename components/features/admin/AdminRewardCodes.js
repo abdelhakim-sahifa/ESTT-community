@@ -435,7 +435,7 @@ export default function AdminRewardCodes() {
                             variant="outline"
                             className={cn(
                                 "h-11 px-4 gap-2 border-indigo-200 font-semibold transition-all",
-                                selectedCodes.length > 0 ? "bg-indigo-600 text-white hover:bg-indigo-700" : "text-indigo-600 hover:bg-indigo-50"
+                                selectedCodes.length > 0 ? "bg-indigo-600 text-white hover:bg-indigo-700" : "text-indigo-600 hover:bg-indigo-50 dark:text-indigo-300 dark:hover:bg-indigo-500/10"
                             )}
                             onClick={handleGeneratePDF}
                             disabled={selectedCodes.length === 0}
@@ -527,7 +527,7 @@ export default function AdminRewardCodes() {
                                                             variant="ghost"
                                                             className={cn(
                                                                 "h-10 w-10 rounded-full transition-all",
-                                                                c.isValid ? "text-amber-500 hover:bg-amber-50 hover:text-amber-600" : "text-emerald-500 hover:bg-emerald-50 hover:text-emerald-600"
+                                                                c.isValid ? "text-amber-500 hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-500/10" : "text-emerald-500 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-500/10"
                                                             )}
                                                             onClick={() => handleToggleStatus(c.id, c.isValid)}
                                                             title={c.isValid ? "Désactiver" : "Activer"}

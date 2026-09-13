@@ -104,7 +104,7 @@ export default function CertificatePage() {
         <main className="min-h-screen bg-muted flex items-center justify-center p-4">
             <Card className="w-full max-w-lg shadow-xl border-t-4" style={{ borderTopColor: club.themeColor || '#3b82f6' }}>
                 <CardHeader className="text-center">
-                    <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600">
+                    <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
                         <Award className="w-10 h-10" />
                     </div>
                     <CardTitle className="text-2xl font-bold">Certificat d'Adhésion Officiel</CardTitle>
@@ -119,7 +119,7 @@ export default function CertificatePage() {
                     </div>
 
                     <div className="flex flex-col items-center gap-2">
-                        <div className="flex items-center justify-center gap-2 text-green-600 bg-green-50 py-2 px-4 rounded-full text-sm font-medium mx-auto w-fit">
+                        <div className="flex items-center justify-center gap-2 text-green-600 bg-green-50 py-2 px-4 rounded-full text-sm font-medium mx-auto w-fit dark:text-green-300 dark:bg-green-500/15">
                             <CheckCircle2 className="w-4 h-4" />
                             Signature numérique vérifiée
                         </div>

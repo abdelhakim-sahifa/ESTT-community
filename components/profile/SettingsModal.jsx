@@ -94,7 +94,7 @@ function DisabledToggle({ label, description, icon: Icon, checked = false }) {
 
 function DisabledButton({ label, icon: Icon, variant = 'default' }) {
     const base = variant === 'danger'
-        ? 'border-red-100 text-red-300 bg-red-50/50'
+        ? 'border-red-100 text-red-300 bg-red-50/50 dark:border-red-500/30 dark:text-red-400 dark:bg-red-500/10'
         : 'border-border text-muted-foreground bg-muted';
     return (
         <button
@@ -332,7 +332,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                 {/* Password reset */}
                 <div className="p-4 rounded-xl border border-border bg-card">
                     <div className="flex items-start gap-3">
-                        <div className="p-2 bg-blue-50 rounded-lg shrink-0">
+                        <div className="p-2 bg-blue-50 rounded-lg shrink-0 dark:bg-blue-500/15">
                             <Lock className="w-4 h-4 text-blue-500" />
                         </div>
                         <div className="flex-1">
@@ -351,7 +351,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                     <button
                         onClick={handlePasswordReset}
                         disabled={passwordLoading || passwordSent}
-                        className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg border border-blue-200 text-blue-600 text-sm font-semibold hover:bg-blue-50 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg border border-blue-200 text-blue-600 text-sm font-semibold hover:bg-blue-50 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed dark:border-blue-500/40 dark:text-blue-300 dark:hover:bg-blue-500/10"
                     >
                         {passwordLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
                         {passwordLoading ? 'Envoi en cours...' : passwordSent ? 'Lien envoyé ✓' : 'Envoyer le lien de réinitialisation'}
@@ -395,7 +395,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
 
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-start gap-2 px-4 py-3 sm:py-2.5 rounded-xl border border-red-100 text-red-500 text-sm font-semibold hover:bg-red-50 active:scale-[0.98] transition-all"
+                    className="w-full flex items-center justify-start gap-2 px-4 py-3 sm:py-2.5 rounded-xl border border-red-100 text-red-500 text-sm font-semibold hover:bg-red-50 active:scale-[0.98] transition-all dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
                 >
                     <LogOut className="w-4 h-4" />
                     Se déconnecter
@@ -487,7 +487,7 @@ function AppearanceTab() {
                 </div>
             </section>
 
-            <div className="flex items-center gap-2 mt-4 p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700">
+            <div className="flex items-center gap-2 mt-4 p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700 dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-300">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 L'accentuation de couleur, l'accessibilité et la régionalisation sont en cours de développement.
             </div>
@@ -584,7 +584,7 @@ function NotificationsTab({ profile, resolvedUid }) {
                     <button
                         onClick={handleExportData}
                         disabled={exporting || exportDone}
-                        className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold hover:bg-blue-100 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold hover:bg-blue-100 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed dark:border-blue-500/40 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20"
                     >
                         <span className="flex items-center gap-2">
                             {exporting
@@ -601,7 +601,7 @@ function NotificationsTab({ profile, resolvedUid }) {
                             }
                         </span>
                         {!exporting && !exportDone && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 border border-blue-200 uppercase tracking-wide">
+<span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 border border-blue-200 uppercase tracking-wide dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/40">
                                 PDF + Email
                             </span>
                         )}
@@ -672,7 +672,7 @@ function AdvancedTab({ profile, resolvedUid }) {
                     <button
                         onClick={handleTakeScreenshot}
                         disabled={capturing}
-                        className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold hover:bg-blue-100 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold hover:bg-blue-100 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed dark:border-blue-500/40 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20"
                     >
                         <span className="flex items-center gap-2">
                             {capturing ? (

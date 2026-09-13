@@ -353,7 +353,7 @@ export default function AdminBugReports({ reports = [] }) {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="rounded-xl h-10 px-4 font-bold border-green-200 text-green-600 hover:bg-green-50"
+                                            className="rounded-xl h-10 px-4 font-bold border-green-200 text-green-600 hover:bg-green-50 dark:border-green-500/40 dark:text-green-300 dark:hover:bg-green-500/10"
                                             onClick={() => handleUpdateStatus(selectedBug.id, 'fixed')}
                                             disabled={actionLoading === selectedBug.id || selectedBug.status === 'fixed'}
                                         >
