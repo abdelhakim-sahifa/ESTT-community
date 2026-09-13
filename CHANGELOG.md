@@ -1,3 +1,10 @@
+## [1.32.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.32.0...v1.32.1) (2026-09-13)
+
+
+### Bug Fixes
+
+* dark mode styling across the site ([81a1c40](https://github.com/abdelhakim-sahifa/ESTT-community/commit/81a1c404c59fd1b2361bbb38cf2172642bbce285))
+
 # [1.32.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.31.0...v1.32.0) (2026-09-13)
 
 
