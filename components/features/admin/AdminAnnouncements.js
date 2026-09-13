@@ -115,9 +115,9 @@ export default function AdminAnnouncements({ announcements, userEmail }) {
 
                 {/* List */}
                 <div className="lg:col-span-2 space-y-4">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 px-1">Annonces Actives ({announcements.length})</h3>
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground px-1">Annonces Actives ({announcements.length})</h3>
                     {announcements.length === 0 ? (
-                        <div className="py-12 text-center bg-white rounded-3xl border border-dashed border-slate-200">
+                        <div className="py-12 text-center bg-card rounded-3xl border border-dashed border-border">
                             <p className="text-muted-foreground text-sm">Aucune annonce globale pour le moment.</p>
                         </div>
                     ) : (
@@ -136,7 +136,7 @@ export default function AdminAnnouncements({ announcements, userEmail }) {
                                                     <Badge className="mb-2 bg-primary/10 text-primary border-0 hover:bg-primary/20">Admin</Badge>
                                                     <h4 className="font-bold text-lg">{ann.title}</h4>
                                                     <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{ann.content}</p>
-                                                    <div className="flex items-center gap-2 mt-4 text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+                                                    <div className="flex items-center gap-2 mt-4 text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
                                                         <Clock className="w-3 h-3" />
                                                         {new Date(ann.createdAt).toLocaleDateString('fr-FR')}
                                                     </div>

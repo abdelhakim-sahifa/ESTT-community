@@ -308,7 +308,7 @@ export default function ClubRequestPage() {
                 <Card className="max-w-md w-full">
                     <CardContent className="pt-12 pb-8 text-center">
                         <div className="mb-6 flex justify-center">
-                            <div className="p-4 bg-green-100 rounded-full">
+                            <div className="p-4 bg-green-100 rounded-full dark:bg-green-500/15">
                                 <CheckCircle2 className="w-12 h-12 text-green-600" />
                             </div>
                         </div>
@@ -327,7 +327,7 @@ export default function ClubRequestPage() {
     }
 
     return (
-        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-12">
+        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-background py-12">
             <div className="container px-4 md:px-6 max-w-4xl">
                 <Button variant="ghost" size="sm" asChild className="mb-6 gap-2">
                     <Link href="/clubs">

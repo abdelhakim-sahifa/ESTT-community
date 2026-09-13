@@ -47,7 +47,7 @@ export default function AdminSidebar({
 
             <aside className={`
                 fixed md:sticky top-0 left-0 z-50 h-screen
-                w-64 bg-white border-r border-slate-200 p-6 
+                w-64 bg-card border-r border-border p-6 
                 flex flex-col gap-8 transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
                 overflow-y-auto shrink-0 custom-scrollbar
@@ -192,10 +192,10 @@ export default function AdminSidebar({
                     </Button>
                 </nav>
 
-                <div className="mt-auto p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Connecté en tant que</p>
+                <div className="mt-auto p-4 bg-muted rounded-2xl border border-border">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Connecté en tant que</p>
                     <p className="text-sm font-bold truncate">{profile?.firstName} {profile?.lastName}</p>
-                    <Badge variant="outline" className="mt-2 bg-white text-[9px] font-black uppercase tracking-tighter border-primary/20 text-primary">Administrateur</Badge>
+                    <Badge variant="outline" className="mt-2 bg-card text-[9px] font-black uppercase tracking-tighter border-primary/20 text-primary">Administrateur</Badge>
                 </div>
             </aside>
         </>

@@ -20,7 +20,7 @@ function StatusBadge({ permission }) {
         </span>
     );
     if (permission === 'unsupported') return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-muted text-muted-foreground border border-border">
             <AlertTriangle className="w-3.5 h-3.5" /> Non supporté
         </span>
     );
@@ -48,21 +48,21 @@ function TestCard({ icon: Icon, iconBg, title, description, action, disabled, bu
     };
 
     return (
-        <div className="group bg-white border border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-300">
+        <div className="group bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-border transition-all duration-300">
             <div className="flex items-start gap-4">
                 <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center shrink-0', iconBg)}>
                     <Icon className="w-6 h-6" />
                 </div>
                 <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-slate-900 mb-1">{title}</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed mb-4">{description}</p>
+                    <h3 className="font-bold text-foreground mb-1">{title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">{description}</p>
                     <button
                         onClick={handleClick}
                         disabled={disabled}
                         className={cn(
                             'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-all duration-200',
                             disabled
-                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
+                                ? 'bg-muted text-muted-foreground cursor-not-allowed shadow-none'
                                 : colors[buttonColor],
                             fired && !disabled && 'scale-95'
                         )}
@@ -97,7 +97,7 @@ export default function TestNotificationPage() {
     const isGranted = permission === 'granted';
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-violet-50/20">
+        <main className="min-h-screen bg-gradient-to-br from-muted via-blue-50/30 to-violet-50/20">
             <div className="max-w-3xl mx-auto px-4 py-12 md:py-20">
 
                 {/* Header */}
@@ -106,13 +106,13 @@ export default function TestNotificationPage() {
                         <Sparkles className="w-3.5 h-3.5" />
                         Test Lab
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-black text-foreground mb-4 leading-tight">
                         Notifications
                         <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">
                             Browser Test
                         </span>
                     </h1>
-                    <p className="text-slate-500 text-lg max-w-xl mx-auto">
+                    <p className="text-muted-foreground text-lg max-w-xl mx-auto">
                         Testez toutes les notifications du système en temps réel.
                         Réduisez la fenêtre pour recevoir les notifications.
                     </p>
@@ -125,7 +125,7 @@ export default function TestNotificationPage() {
                         ? 'bg-emerald-50 border-emerald-200'
                         : permission === 'denied'
                         ? 'bg-red-50 border-red-200'
-                        : 'bg-white border-slate-200 shadow-sm'
+                        : 'bg-card border-border shadow-sm'
                 )}>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
@@ -142,10 +142,10 @@ export default function TestNotificationPage() {
                             </div>
                             <div>
                                 <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-bold text-slate-900">Permission navigateur</span>
+                                    <span className="font-bold text-foreground">Permission navigateur</span>
                                     <StatusBadge permission={isSupported ? permission : 'unsupported'} />
                                 </div>
-                                <p className="text-sm text-slate-500">
+                                <p className="text-sm text-muted-foreground">
                                     {!isSupported
                                         ? 'Votre navigateur ne supporte pas les notifications.'
                                         : permission === 'granted'
@@ -172,7 +172,7 @@ export default function TestNotificationPage() {
 
                 {/* Test Cards */}
                 <div className="space-y-4 mb-10">
-                    <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">
+                    <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4">
                         Tests prédéfinis
                     </h2>
 
@@ -226,46 +226,46 @@ export default function TestNotificationPage() {
                 </div>
 
                 {/* Custom Notification Builder */}
-                <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
-                    <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6">
+                <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+                    <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-6">
                         Constructeur personnalisé
                     </h2>
 
                     <div className="space-y-4 mb-6">
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-1.5">Titre</label>
+                            <label className="block text-sm font-bold text-foreground mb-1.5">Titre</label>
                             <input
                                 type="text"
                                 value={customTitle}
                                 onChange={e => setCustomTitle(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all"
+                                className="w-full px-4 py-3 rounded-xl border border-border bg-muted text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all"
                                 placeholder="Titre de la notification"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-1.5">Corps</label>
+                            <label className="block text-sm font-bold text-foreground mb-1.5">Corps</label>
                             <textarea
                                 value={customBody}
                                 onChange={e => setCustomBody(e.target.value)}
                                 rows={3}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all resize-none"
+                                className="w-full px-4 py-3 rounded-xl border border-border bg-muted text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all resize-none"
                                 placeholder="Message de la notification"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-1.5">URL au clic <span className="font-normal text-slate-400">(optionnel)</span></label>
+                            <label className="block text-sm font-bold text-foreground mb-1.5">URL au clic <span className="font-normal text-muted-foreground">(optionnel)</span></label>
                             <input
                                 type="text"
                                 value={customUrl}
                                 onChange={e => setCustomUrl(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all"
+                                className="w-full px-4 py-3 rounded-xl border border-border bg-muted text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all"
                                 placeholder="/page-de-destination"
                             />
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                        <p className="text-xs text-slate-400">
+                    <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <p className="text-xs text-muted-foreground">
                             {!isGranted
                                 ? '⚠️ Vous devez d\'abord activer les notifications.'
                                 : '✅ Réduisez l\'onglet avant d\'envoyer.'}
@@ -276,7 +276,7 @@ export default function TestNotificationPage() {
                             className={cn(
                                 'inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg transition-all',
                                 !isGranted || !customTitle.trim()
-                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
+? 'bg-muted text-muted-foreground cursor-not-allowed shadow-none'
                                     : 'bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-blue-200 hover:scale-105'
                             )}
                         >
@@ -287,8 +287,8 @@ export default function TestNotificationPage() {
                 </div>
 
                 {/* Footer note */}
-                <p className="text-center text-xs text-slate-400 mt-8">
-                    <code className="bg-slate-100 px-2 py-0.5 rounded font-mono text-slate-500">/test-notification</code>
+                <p className="text-center text-xs text-muted-foreground mt-8">
+                    <code className="bg-muted px-2 py-0.5 rounded font-mono text-muted-foreground">/test-notification</code>
                     {' '}· Page réservée aux développeurs
                 </p>
             </div>

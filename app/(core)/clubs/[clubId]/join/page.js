@@ -207,7 +207,7 @@ export default function ClubJoinPage() {
 
     if (submitted) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-muted flex items-center justify-center p-4">
                 <Card className="w-full max-w-md text-center">
                     <CardHeader>
                         <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -258,7 +258,7 @@ export default function ClubJoinPage() {
     }
 
     return (
-        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-12 px-4">
+        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-background py-12 px-4">
             <style jsx global>{`
                 .theme-text { color: ${club.themeColor || '#64748b'}; }
                 .theme-bg { background-color: ${club.themeColor || '#64748b'}; }
@@ -276,7 +276,7 @@ export default function ClubJoinPage() {
                 </Button>
 
                 <div className="text-center space-y-4">
-                    <div className="w-24 h-24 mx-auto relative rounded-2xl overflow-hidden bg-white shadow-lg border-2 border-white">
+                    <div className="w-24 h-24 mx-auto relative rounded-2xl overflow-hidden bg-card shadow-lg border-2 border-white dark:border-border">
                         {club.logo ? (
                             <Image
                                 src={club.logo}
@@ -365,8 +365,8 @@ export default function ClubJoinPage() {
                             </div>
 
                             {joinFormQuestions.length > 0 && (
-                                <div className="space-y-6 pt-4 border-t border-slate-100">
-                                    <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Informations complémentaires</h3>
+                                <div className="space-y-6 pt-4 border-t border-border">
+                                    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Informations complémentaires</h3>
                                     {joinFormQuestions.map((q) => (
                                         <div key={q.id} className="space-y-2">
                                             <Label htmlFor={`q-${q.id}`}>
@@ -407,7 +407,7 @@ export default function ClubJoinPage() {
                                                                 required={q.required}
                                                                 checked={formData.answers[q.id] === opt}
                                                                 onChange={() => handleAnswerChange(q.id, opt)}
-                                                                className="w-4 h-4 text-primary focus:ring-primary border-slate-300"
+                                                                className="w-4 h-4 text-primary focus:ring-primary border-border"
                                                             />
                                                             <Label htmlFor={`q-${q.id}-${opt}`} className="font-normal cursor-pointer">
                                                                 {opt}
@@ -468,7 +468,7 @@ export default function ClubJoinPage() {
                             )}
 
                             {error && (
-                                <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm flex items-center gap-2">
+                                <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm flex items-center gap-2 dark:bg-red-500/15 dark:text-red-300">
                                     <AlertCircle className="w-4 h-4" />
                                     {error}
                                 </div>

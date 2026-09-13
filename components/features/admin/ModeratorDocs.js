@@ -113,9 +113,9 @@ export default function ModeratorDocs() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {sections.map((section, idx) => (
-                    <Card key={idx} className="border-none shadow-sm bg-white hover:shadow-md transition-shadow">
+                    <Card key={idx} className="border-none shadow-sm bg-card hover:shadow-md transition-shadow">
                         <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                            <div className="p-2.5 bg-slate-50 rounded-xl">
+                            <div className="p-2.5 bg-muted rounded-xl">
                                 {section.icon}
                             </div>
                             <div>
@@ -126,8 +126,8 @@ export default function ModeratorDocs() {
                         <CardContent className="pt-4">
                             <ul className="space-y-3">
                                 {section.details.map((detail, dIdx) => (
-                                    <li key={dIdx} className="flex gap-3 text-sm text-slate-600 leading-relaxed font-medium">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-2 shrink-0" />
+                                    <li key={dIdx} className="flex gap-3 text-sm text-muted-foreground leading-relaxed font-medium">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-muted mt-2 shrink-0" />
                                         {detail}
                                     </li>
                                 ))}
@@ -137,7 +137,7 @@ export default function ModeratorDocs() {
                 ))}
             </div>
 
-            <Card className="border-none shadow-sm bg-white">
+            <Card className="border-none shadow-sm bg-card">
                 <CardHeader>
                     <CardTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
                         <Info className="w-5 h-5 text-blue-600" />
@@ -151,14 +151,14 @@ export default function ModeratorDocs() {
                             { icon: <CheckCircle2 className="w-4 h-4 text-green-600" />, label: "Valider", desc: "Approuve la ressource et la rend visible à tous." },
                             { icon: <Edit2 className="w-4 h-4 text-primary" />, label: "Modifier", desc: "Change les informations (Titre, Prof, Type)." },
                             { icon: <Trash2 className="w-4 h-4 text-destructive" />, label: "Supprimer", desc: "Retire la ressource avec un motif de rejet." },
-                            { icon: <Eye className="w-4 h-4 text-slate-600" />, label: "Visualiser", desc: "Ouvre le document dans un nouvel onglet." },
+                            { icon: <Eye className="w-4 h-4 text-muted-foreground" />, label: "Visualiser", desc: "Ouvre le document dans un nouvel onglet." },
                             { icon: <Link2 className="w-4 h-4 text-primary" />, label: "Relier", desc: "Partage la ressource avec d'autres filières." },
                             { icon: <Mail className="w-4 h-4 text-sky-600" />, label: "Contacter", desc: "Envoie un message direct à l'auteur." },
                             { icon: <Star className="w-4 h-4 text-amber-500" />, label: "Avis", desc: "Consulte les notes et commentaires des étudiants." },
-                            { icon: <ExternalLink className="w-4 h-4 text-slate-600" />, label: "Fil de discussion", desc: "Reprend une conversation avec un auteur." }
+                            { icon: <ExternalLink className="w-4 h-4 text-muted-foreground" />, label: "Fil de discussion", desc: "Reprend une conversation avec un auteur." }
                         ].map((action, i) => (
-                            <div key={i} className="flex items-start gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
-                                <div className="p-2 bg-white rounded-lg shadow-sm">
+                            <div key={i} className="flex items-start gap-3 p-3 rounded-xl border border-border hover:bg-muted transition-colors">
+                                <div className="p-2 bg-card rounded-lg shadow-sm">
                                     {action.icon}
                                 </div>
                                 <div>
@@ -171,14 +171,14 @@ export default function ModeratorDocs() {
                 </CardContent>
             </Card>
 
-            <Card className="border-none shadow-sm bg-slate-50 border border-slate-100">
+            <Card className="border-none shadow-sm bg-muted border border-border">
                 <CardContent className="p-6 flex items-start gap-4">
-                    <div className="p-2 bg-white text-slate-400 rounded-lg shrink-0">
+                    <div className="p-2 bg-card text-muted-foreground rounded-lg shrink-0">
                         <Info className="w-5 h-5" />
                     </div>
                     <div className="space-y-1">
-                        <p className="text-sm font-bold text-slate-700">Besoin d'aide supplémentaire ?</p>
-                        <p className="text-sm text-slate-500 font-medium">
+                        <p className="text-sm font-bold text-foreground">Besoin d'aide supplémentaire ?</p>
+                        <p className="text-sm text-muted-foreground font-medium">
                             Si vous rencontrez un problème technique ou si vous avez des doutes sur une ressource, 
                             contactez l'administrateur via le groupe de communication ou directement sur le campus.
                         </p>

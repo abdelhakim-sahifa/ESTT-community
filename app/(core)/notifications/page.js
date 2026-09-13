@@ -141,7 +141,7 @@ export default function NotificationsPage() {
             case 'megaphone': return <Megaphone className="w-5 h-5 text-primary" />;
             case 'credit-card': return <Bell className="w-5 h-5 text-orange-500" />;
             case 'book-open': return <Bell className="w-5 h-5 text-emerald-500" />;
-            default: return <Bell className="w-5 h-5 text-slate-400" />;
+            default: return <Bell className="w-5 h-5 text-muted-foreground" />;
         }
     };
 
@@ -222,13 +222,13 @@ export default function NotificationsPage() {
             </div>
 
             {notifications.length === 0 ? (
-                <Card className="border-none shadow-sm bg-slate-50">
+                <Card className="border-none shadow-sm bg-muted">
                     <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 border border-slate-100">
+                        <div className="w-16 h-16 bg-card rounded-full flex items-center justify-center mb-4 border border-border">
                             <Bell className="w-8 h-8 text-slate-200" />
                         </div>
-                        <h3 className="font-bold text-slate-900">Aucune notification</h3>
-                        <p className="text-sm text-slate-500 max-w-[250px] mt-2">
+                        <h3 className="font-bold text-foreground">Aucune notification</h3>
+                        <p className="text-sm text-muted-foreground max-w-[250px] mt-2">
                             Vous recevrez ici les alertes concernant vos contributions et annonces.
                         </p>
                     </CardContent>
@@ -240,27 +240,27 @@ export default function NotificationsPage() {
                             key={notif.id}
                             className={cn(
                                 "border-none shadow-sm transition-all cursor-pointer hover:shadow-md group",
-                                !notif.read ? "bg-white border-l-4 border-l-primary" : "bg-slate-50/50"
+                                !notif.read ? "bg-card border-l-4 border-l-primary" : "bg-muted/50"
                             )}
                             onClick={() => handleNotificationClick(notif)}
                         >
                             <CardContent className="p-5 flex gap-4">
                                 <div className={cn(
-                                    "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-slate-100",
-                                    !notif.read ? "bg-primary/5" : "bg-white"
+                                    "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-border",
+                                    !notif.read ? "bg-primary/5" : "bg-card"
                                 )}>
                                     {getIcon(notif.icon)}
                                 </div>
                                 <div className="flex-grow min-w-0">
                                     <div className="flex items-start justify-between gap-4">
-                                        <h4 className={cn("text-sm font-bold truncate", !notif.read ? "text-slate-900" : "text-slate-600")}>
+                                        <h4 className={cn("text-sm font-bold truncate", !notif.read ? "text-foreground" : "text-muted-foreground")}>
                                             {notif.title}
                                         </h4>
-                                        <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap uppercase tracking-wider">
+                                        <span className="text-[10px] text-muted-foreground font-medium whitespace-nowrap uppercase tracking-wider">
                                             {new Date(notif.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                                         </span>
                                     </div>
-                                    <p className="text-sm text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
                                         {notif.message}
                                     </p>
 
@@ -277,7 +277,7 @@ export default function NotificationsPage() {
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="w-8 h-8 rounded-lg hover:bg-red-50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="w-8 h-8 rounded-lg hover:bg-red-50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity dark:hover:bg-red-500/10"
                                         onClick={(e) => handleDelete(e, notif)}
                                     >
                                         <Trash2 className="w-3.5 h-3.5" />
@@ -295,7 +295,7 @@ export default function NotificationsPage() {
                     <DialogHeader>
                         <div className="flex items-start gap-3">
                             <div className={cn(
-                                "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-slate-100",
+                                "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-border",
                                 "bg-primary/5"
                             )}>
                                 {selectedNotif && getIcon(selectedNotif.icon)}
@@ -319,7 +319,7 @@ export default function NotificationsPage() {
                                              'Basse priorité'}
                                         </Badge>
                                     )}
-                                    <span className="text-xs text-slate-400">
+                                    <span className="text-xs text-muted-foreground">
                                         {selectedNotif?.createdAt && new Date(selectedNotif.createdAt).toLocaleDateString('fr-FR', {
                                             day: 'numeric',
                                             month: 'long',
@@ -335,20 +335,20 @@ export default function NotificationsPage() {
 
                     <div className="space-y-4 py-4">
                         <div>
-                            <h4 className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                                 Message
                             </h4>
-                            <p className="text-sm text-slate-700 leading-relaxed">
+                            <p className="text-sm text-foreground leading-relaxed">
                                 {selectedNotif?.message}
                             </p>
                         </div>
 
                         {selectedNotif?.action && (
                             <div>
-                                <h4 className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                                     Action
                                 </h4>
-                                <div className="text-xs text-slate-500 bg-slate-50 p-3 rounded-md font-mono break-all">
+                                <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md font-mono break-all">
                                     <span className="text-primary font-semibold">[{selectedNotif.action.type}]</span> {selectedNotif.action.target}
                                 </div>
                             </div>

@@ -218,7 +218,7 @@ export default function EventRegistrationPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-white">
+            <div className="min-h-screen flex items-center justify-center bg-card">
                 <Loader2 className="w-8 h-8 animate-spin text-slate-200" />
             </div>
         );
@@ -230,27 +230,27 @@ export default function EventRegistrationPage() {
     // If user is already registered, show their existing ticket
     if (existingTicket && !success) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center p-6 text-center">
+            <div className="min-h-screen bg-card flex items-center justify-center p-6 text-center">
                 <div className="max-w-sm w-full space-y-10 animate-in fade-in zoom-in duration-500">
                     <div className="space-y-6">
-                        <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mx-auto border border-slate-100 shadow-sm">
+                        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto border border-border shadow-sm">
                             <CheckCircle2 className="w-8 h-8 text-green-500" />
                         </div>
                         <div className="space-y-2">
-                            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Déjà inscrit !</h1>
-                            <p className="text-slate-400 font-medium text-sm">
-                                Vous êtes déjà enregistré pour <span className="text-slate-900 font-semibold">{event.title}</span>.
+                            <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Déjà inscrit !</h1>
+                            <p className="text-muted-foreground font-medium text-sm">
+                                Vous êtes déjà enregistré pour <span className="text-foreground font-semibold">{event.title}</span>.
                             </p>
                         </div>
                     </div>
 
-                    <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100 flex items-center gap-4 text-left">
-                        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-slate-200 shrink-0">
-                            <Ticket className="w-5 h-5 text-slate-400" />
+                    <div className="bg-muted/50 rounded-2xl p-6 border border-border flex items-center gap-4 text-left">
+                        <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center border border-border shrink-0">
+                            <Ticket className="w-5 h-5 text-muted-foreground" />
                         </div>
                         <div className="space-y-0.5">
-                            <p className="text-xs font-bold text-slate-900 leading-tight">Votre Ticket</p>
-                            <p className="text-[10px] text-slate-500 leading-relaxed font-medium">ID: {existingTicket.id}</p>
+                            <p className="text-xs font-bold text-foreground leading-tight">Votre Ticket</p>
+                            <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">ID: {existingTicket.id}</p>
                         </div>
                     </div>
 
@@ -260,7 +260,7 @@ export default function EventRegistrationPage() {
                                 Voir mon Ticket 🎉
                             </Link>
                         </Button>
-                        <Button variant="ghost" asChild className="text-slate-400 hover:text-slate-900 text-xs font-semibold rounded-xl">
+                        <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground text-xs font-semibold rounded-xl">
                             <Link href={`/clubs/${clubId}`}>Retour</Link>
                         </Button>
                     </div>
@@ -271,27 +271,27 @@ export default function EventRegistrationPage() {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center p-6 text-center">
+            <div className="min-h-screen bg-card flex items-center justify-center p-6 text-center">
                 <div className="max-w-sm w-full space-y-10 animate-in fade-in zoom-in duration-500">
                     <div className="space-y-6">
-                        <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mx-auto border border-slate-100 shadow-sm">
+                        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto border border-border shadow-sm">
                             <CheckCircle2 className="w-8 h-8 text-green-500" />
                         </div>
                         <div className="space-y-2">
-                            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Inscription validée !</h1>
-                            <p className="text-slate-400 font-medium text-sm">
-                                Votre place pour <span className="text-slate-900 font-semibold">{event.title}</span> est confirmée.
+                            <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Inscription validée !</h1>
+                            <p className="text-muted-foreground font-medium text-sm">
+                                Votre place pour <span className="text-foreground font-semibold">{event.title}</span> est confirmée.
                             </p>
                         </div>
                     </div>
 
-                    <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100 flex items-center gap-4 text-left">
-                        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-slate-200 shrink-0">
-                            <Ticket className="w-5 h-5 text-slate-400" />
+                    <div className="bg-muted/50 rounded-2xl p-6 border border-border flex items-center gap-4 text-left">
+                        <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center border border-border shrink-0">
+                            <Ticket className="w-5 h-5 text-muted-foreground" />
                         </div>
                         <div className="space-y-0.5">
-                            <p className="text-xs font-bold text-slate-900 leading-tight">Ticket QR disponible</p>
-                            <p className="text-[10px] text-slate-500 leading-relaxed font-medium">Un email de confirmation a été envoyé à {formData.email || user?.email}.</p>
+                            <p className="text-xs font-bold text-foreground leading-tight">Ticket QR disponible</p>
+                            <p className="text-[10px] text-muted-foreground leading-relaxed font-medium">Un email de confirmation a été envoyé à {formData.email || user?.email}.</p>
                         </div>
                     </div>
 
@@ -301,7 +301,7 @@ export default function EventRegistrationPage() {
                                 Voir mon Ticket 🎉
                             </Link>
                         </Button>
-                        <Button variant="ghost" asChild className="text-slate-400 hover:text-slate-900 text-xs font-semibold rounded-xl">
+                        <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground text-xs font-semibold rounded-xl">
                             <Link href={`/clubs/${clubId}`}>Fermer</Link>
                         </Button>
                     </div>
@@ -311,13 +311,13 @@ export default function EventRegistrationPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white font-sans selection:bg-slate-100">
+        <div className="min-h-screen bg-card font-sans selection:bg-muted">
             {/* Subtle Top Branding */}
             <div className="w-full h-1.5 sticky top-0 z-50 transition-all duration-300 opacity-80" style={{ backgroundColor: themeColor }} />
 
             <div className="container max-w-2xl mx-auto px-6 py-12">
                 {/* Back Button */}
-                <Button variant="ghost" asChild className="mb-12 text-slate-400 hover:text-slate-900 transition-colors rounded-lg group -ml-2">
+                <Button variant="ghost" asChild className="mb-12 text-muted-foreground hover:text-foreground transition-colors rounded-lg group -ml-2">
                     <Link href={`/clubs/${clubId}`} className="flex items-center gap-2">
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         <span>Retour</span>
@@ -333,7 +333,7 @@ export default function EventRegistrationPage() {
                 <div className="space-y-12">
                     {/* Simplified Header */}
                     <div className="flex flex-col items-center text-center space-y-6">
-                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm">
+                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-muted border border-border shadow-sm">
                             {club?.logo ? (
                                 <Image src={club.logo} alt={club.name} fill className="object-cover" />
                             ) : (
@@ -344,17 +344,17 @@ export default function EventRegistrationPage() {
                         </div>
 
                         <div className="space-y-3">
-                            <p className="text-sm font-semibold tracking-wide text-slate-400 uppercase">
+                            <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
                                 {club?.name} présente
                             </p>
-                            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
+                            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
                                 {event.title}
                             </h1>
                         </div>
                     </div>
 
                     {/* Compact Event Details */}
-                    <div className="bg-slate-50/50 rounded-2xl border border-slate-100 p-6">
+                    <div className="bg-muted/50 rounded-2xl border border-border p-6">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             {[
                                 { icon: Calendar, label: 'Date', value: new Date(event.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) },
@@ -363,11 +363,11 @@ export default function EventRegistrationPage() {
                                 { icon: Users, label: 'Statut', value: isFull ? 'Complet' : 'Ouvert' }
                             ].map((item, i) => (
                                 <div key={i} className="space-y-1">
-                                    <div className="flex items-center gap-2 text-slate-400">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
                                         <item.icon className="w-3.5 h-3.5" />
                                         <span className="text-[10px] font-bold uppercase tracking-wider">{item.label}</span>
                                     </div>
-                                    <p className="text-sm font-semibold text-slate-900 truncate">{item.value}</p>
+                                    <p className="text-sm font-semibold text-foreground truncate">{item.value}</p>
                                 </div>
                             ))}
                         </div>
@@ -375,8 +375,8 @@ export default function EventRegistrationPage() {
 
                     {/* Description (if exists) */}
                     {event.description && (
-                        <div className="max-w-none border-l-2 border-slate-100 pl-6 py-1">
-                            <p className="text-slate-500 leading-relaxed text-sm">
+                        <div className="max-w-none border-l-2 border-border pl-6 py-1">
+                            <p className="text-muted-foreground leading-relaxed text-sm">
                                 {event.description}
                             </p>
                         </div>
@@ -385,12 +385,12 @@ export default function EventRegistrationPage() {
                     {/* Registration Form */}
                     <div className="space-y-8 pt-4">
                         <div className="space-y-1">
-                            <h2 className="text-2xl font-bold text-slate-900">Inscription</h2>
-                            <p className="text-sm text-slate-400 font-medium">Réservez votre billet digital en quelques secondes.</p>
+                            <h2 className="text-2xl font-bold text-foreground">Inscription</h2>
+                            <p className="text-sm text-muted-foreground font-medium">Réservez votre billet digital en quelques secondes.</p>
                         </div>
 
                         {error && (
-                            <Alert variant="destructive" className="rounded-xl border-none bg-red-50 text-red-600 py-3">
+                            <Alert variant="destructive" className="rounded-xl border-none bg-red-50 text-red-600 py-3 dark:bg-red-500/15 dark:text-red-300">
                                 <AlertCircle className="h-4 w-4" />
                                 <AlertDescription className="text-sm font-semibold">{error}</AlertDescription>
                             </Alert>
@@ -399,7 +399,7 @@ export default function EventRegistrationPage() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {event.fields.map((field) => (
                                 <div key={field.id} className="space-y-2.5">
-                                    <Label className="text-xs font-bold text-slate-600 ml-1">
+                                    <Label className="text-xs font-bold text-muted-foreground ml-1">
                                         {field.label} {field.required && <span className="text-red-500">*</span>}
                                     </Label>
 
@@ -408,7 +408,7 @@ export default function EventRegistrationPage() {
                                             required={field.required}
                                             value={formData[field.id] || ''}
                                             onChange={e => setFormData(p => ({ ...p, [field.id]: e.target.value }))}
-                                            className="min-h-[100px] rounded-xl border-slate-200 bg-white focus:ring-0 focus:border-slate-900 transition-all text-sm p-4 placeholder:text-slate-300"
+                                            className="min-h-[100px] rounded-xl border-border bg-card focus:ring-0 focus:border-foreground transition-all text-sm p-4 placeholder:text-muted-foreground"
                                             placeholder="..."
                                         />
                                     ) : field.type === 'select' ? (
@@ -417,10 +417,10 @@ export default function EventRegistrationPage() {
                                             value={formData[field.id] || ''}
                                             required={field.required}
                                         >
-                                            <SelectTrigger className="h-12 rounded-xl border-slate-200 bg-white focus:ring-0 focus:border-slate-900 px-4 text-sm">
+                                            <SelectTrigger className="h-12 rounded-xl border-border bg-card focus:ring-0 focus:border-foreground px-4 text-sm">
                                                 <SelectValue placeholder="Sélectionner..." />
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-xl border-slate-200 shadow-lg">
+                                            <SelectContent className="rounded-xl border-border shadow-lg">
                                                 {field.options?.split(',').map(opt => (
                                                     <SelectItem key={opt.trim()} value={opt.trim()} className="text-sm">{opt.trim()}</SelectItem>
                                                 ))}
@@ -432,7 +432,7 @@ export default function EventRegistrationPage() {
                                             required={field.required}
                                             value={formData[field.id] || ''}
                                             onChange={e => setFormData(p => ({ ...p, [field.id]: e.target.value }))}
-                                            className="h-12 rounded-xl border-slate-200 bg-white focus:ring-0 focus:border-slate-900 transition-all px-4 text-sm placeholder:text-slate-300"
+                                            className="h-12 rounded-xl border-border bg-card focus:ring-0 focus:border-foreground transition-all px-4 text-sm placeholder:text-muted-foreground"
                                             placeholder={field.label}
                                         />
                                     )}
@@ -466,7 +466,7 @@ export default function EventRegistrationPage() {
                                         )
                                     )}
                                 </Button>
-                                <p className="text-[10px] text-slate-400 font-medium text-center mt-4 tracking-tight uppercase">
+                                <p className="text-[10px] text-muted-foreground font-medium text-center mt-4 tracking-tight uppercase">
                                     Ticket digital envoyé par email instantanément
                                 </p>
                             </div>

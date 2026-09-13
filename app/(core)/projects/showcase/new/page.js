@@ -144,10 +144,10 @@ export default function NewProjectShowcasePage() {
     if (!loading && !user) {
         return (
             <main className="container max-w-3xl px-4 py-16 md:px-6">
-                <Card className="rounded-2xl border-slate-200 shadow-lg">
+                <Card className="rounded-2xl border-border shadow-lg">
                     <CardHeader>
-                        <CardTitle className="text-3xl font-black text-slate-950">Connexion requise</CardTitle>
-                        <CardDescription className="text-base text-slate-500">
+                        <CardTitle className="text-3xl font-black text-foreground">Connexion requise</CardTitle>
+                        <CardDescription className="text-base text-muted-foreground">
                             Le showcase met en avant de vrais auteurs. Connecte-toi pour publier ton projet et l afficher sur ton profil.
                         </CardDescription>
                     </CardHeader>
@@ -165,22 +165,22 @@ export default function NewProjectShowcasePage() {
     }
 
     return (
-        <main className="bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_30%,_#f8fafc_100%)]">
+        <main className="bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_30%,_#f8fafc_100%)] dark:bg-[linear-gradient(180deg,_#0c0a09_0%,_#020617_30%,_#020617_100%)]">
             <div className="container max-w-4xl px-4 py-14 md:px-6">
                 <div className="mb-10 space-y-4">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-orange-600 shadow-sm">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-orange-600 shadow-sm dark:border-orange-500/30 dark:text-orange-300">
                         <Sparkles className="h-4 w-4" />
                         Publier dans le showcase
                     </div>
-                    <h1 className="text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+                    <h1 className="text-4xl font-black tracking-tight text-foreground md:text-5xl">
                         Montre un projet que tu as vraiment construit.
                     </h1>
-                    <p className="max-w-2xl text-base leading-relaxed text-slate-600">
+                    <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
                         Utilise cette page pour partager un produit fini, un prototype ou un portfolio personnel independant des challenges.
                     </p>
                 </div>
 
-                <Card className="rounded-2xl border-white/70 shadow-xl">
+                <Card className="rounded-2xl border-white/70 shadow-xl dark:border-border">
                     <CardHeader>
                         <CardTitle>Fiche projet</CardTitle>
                         <CardDescription>
@@ -190,7 +190,7 @@ export default function NewProjectShowcasePage() {
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-8">
                             {message && (
-                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}>
+                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:text-emerald-300'}>
                                     {isError ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
                                     <AlertTitle>{isError ? 'Erreur' : 'Succes'}</AlertTitle>
                                     <AlertDescription>{message}</AlertDescription>
@@ -285,7 +285,7 @@ export default function NewProjectShowcasePage() {
                                         onChange={(event) => handleChange('coverImage', event.target.value)}
                                         placeholder="https://..."
                                     />
-                                    <p className="text-xs text-slate-500">
+                                    <p className="text-xs text-muted-foreground">
                                         {uploadingCover ? 'Envoi vers ImgBB...' : "Tu peux uploader une image directement ou coller une URL existante."}
                                     </p>
                                 </div>

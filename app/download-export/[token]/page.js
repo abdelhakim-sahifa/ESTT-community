@@ -34,7 +34,7 @@ function StepIndicator({ steps, currentStep, done, error }) {
                             w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-300
                             ${isPast    ? 'bg-emerald-500 text-white'                   : ''}
                             ${isCurrent ? 'bg-blue-600 text-white ring-4 ring-blue-100' : ''}
-                            ${isFuture  ? 'bg-slate-100 text-slate-400'                 : ''}
+                            ${isFuture  ? 'bg-muted text-muted-foreground'            : ''}
                             ${error     ? 'bg-red-100   text-red-400'                   : ''}
                         `}>
                             {isPast
@@ -47,7 +47,7 @@ function StepIndicator({ steps, currentStep, done, error }) {
                         <span className={`text-sm transition-colors duration-300
                             ${isPast    ? 'text-emerald-600 font-medium line-through decoration-emerald-300' : ''}
                             ${isCurrent ? 'text-blue-700 font-semibold'                                      : ''}
-                            ${isFuture  ? 'text-slate-400'                                                   : ''}
+                            ${isFuture  ? 'text-muted-foreground'                      : ''}
                         `}>
                             {step.label}
                         </span>
@@ -307,11 +307,11 @@ export default function DownloadExportPage() {
 
     // ── Render ────────────────────────────────────────────────────────────────
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white flex items-center justify-center p-6">
+        <div className="min-h-screen bg-gradient-to-br from-muted via-blue-50/30 to-background flex items-center justify-center p-6 dark:via-blue-950/40">
             <div className="w-full max-w-md">
 
                 {/* Card */}
-                <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div className="bg-card rounded-2xl shadow-xl border border-border overflow-hidden">
 
                     {/* Top accent bar */}
                     <div className={`h-1.5 w-full transition-all duration-700 ${
@@ -333,12 +333,12 @@ export default function DownloadExportPage() {
                                     )}
                                 </div>
                                 <div>
-                                    <h1 className="text-xl font-bold text-slate-900 mb-2">
+                                    <h1 className="text-xl font-bold text-foreground mb-2">
                                         {error.includes('expiré') ? 'Lien expiré'
                                             : error.includes('utilisé') ? 'Lien déjà utilisé'
                                             : 'Lien invalide'}
                                     </h1>
-                                    <p className="text-sm text-slate-500 leading-relaxed">{error}</p>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{error}</p>
                                 </div>
                                 <div className="pt-2 space-y-2">
                                     <Link
@@ -349,7 +349,7 @@ export default function DownloadExportPage() {
                                     </Link>
                                     <Link
                                         href="/"
-                                        className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
+                                        className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-border text-muted-foreground text-sm font-medium hover:bg-muted transition-colors"
                                     >
                                         <Home className="w-4 h-4" />
                                         Retour à l'accueil
@@ -365,13 +365,13 @@ export default function DownloadExportPage() {
                                     <CheckCircle2 className="w-8 h-8 text-emerald-500" />
                                 </div>
                                 <div>
-                                    <h1 className="text-xl font-bold text-slate-900 mb-2">Téléchargement réussi !</h1>
-                                    <p className="text-sm text-slate-500 leading-relaxed">
-                                        Votre fichier <strong className="text-slate-700">{filename}</strong> a été 
+                                    <h1 className="text-xl font-bold text-foreground mb-2">Téléchargement réussi !</h1>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">
+                                        Votre fichier <strong className="text-foreground">{filename}</strong> a été 
                                         téléchargé automatiquement. Vérifiez votre dossier de téléchargements.
                                     </p>
                                 </div>
-                                <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700 text-left leading-relaxed">
+                                <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700 text-left leading-relaxed dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-300">
                                     <AlertTriangle className="w-4 h-4 inline mr-1.5 shrink-0" />
                                     <strong>Rappel sécurité :</strong> Ce lien ne peut être utilisé qu'une seule fois. 
                                     Si vous avez besoin d'un nouvel export, générez un nouveau lien depuis vos paramètres.
@@ -392,7 +392,7 @@ export default function DownloadExportPage() {
                         {!done && !error && (
                             <div className="text-center space-y-7">
                                 <div className="relative">
-                                    <div className="w-20 h-20 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto">
+                                    <div className="w-20 h-20 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto dark:bg-blue-500/15">
                                         <FileText className="w-9 h-9 text-blue-600" />
                                     </div>
                                     <div className="absolute -bottom-1 -right-1 mx-auto" style={{ left: '50%', transform: 'translate(16px, 0)' }}>
@@ -403,10 +403,10 @@ export default function DownloadExportPage() {
                                 </div>
 
                                 <div>
-                                    <h1 className="text-xl font-bold text-slate-900 mb-1">
+                                    <h1 className="text-xl font-bold text-foreground mb-1">
                                         Préparation de votre export
                                     </h1>
-                                    <p className="text-xs text-slate-400">
+                                    <p className="text-xs text-muted-foreground">
                                         Ne fermez pas cette page
                                     </p>
                                 </div>
@@ -418,7 +418,7 @@ export default function DownloadExportPage() {
                                     error={!!error}
                                 />
 
-                                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                                     <div
                                         className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-700"
                                         style={{
@@ -437,7 +437,7 @@ export default function DownloadExportPage() {
                 </div>
 
                 {/* Footer */}
-                <p className="text-center text-xs text-slate-400 mt-5">
+                <p className="text-center text-xs text-muted-foreground mt-5">
                     <Link href="https://estt.ma" className="hover:text-blue-600 transition-colors font-semibold">
                         ESTT<span className="text-blue-600">.Community</span>
                     </Link>

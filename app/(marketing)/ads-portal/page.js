@@ -24,10 +24,10 @@ import { AD_PRICING } from '@/lib/ad-constants';
 
 export default function AdPlatformLanding() {
   return (
-    <div className="min-h-screen bg-white selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-card selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-500/30 dark:selection:text-blue-200">
       {/* Hero Section */}
-      <section className="relative pt-20 pb-40 overflow-hidden bg-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#f1f5f9,transparent)] opacity-100" />
+      <section className="relative pt-20 pb-40 overflow-hidden bg-card">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#f1f5f9,transparent)] opacity-100 dark:bg-[radial-gradient(circle_at_top_right,rgba(51,65,85,0.6),transparent)]" />
         <div className="container relative mx-auto px-4 text-center">
           <div className="mb-0 flex justify-center">
             <Image
@@ -38,16 +38,16 @@ export default function AdPlatformLanding() {
               className="h-12 w-auto mb-6 opacity-90"
             />
           </div>
-          <Badge className="mb-6 bg-blue-50 text-blue-600 border-blue-100 px-4 py-1.5 text-xs font-black uppercase tracking-widest">
+          <Badge className="mb-6 bg-blue-50 text-blue-600 border-blue-100 px-4 py-1.5 text-xs font-black uppercase tracking-widest dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/40">
             ESTT Ad Platform • Phase Bêta
           </Badge>
-          <h1 className="text-4xl md:text-7xl font-black text-slate-900 mb-8 tracking-tighter leading-[1.1]">
+          <h1 className="text-4xl md:text-7xl font-black text-foreground mb-8 tracking-tighter leading-[1.1]">
             Propulsez votre projet <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
               au cœur de l'EST Tétouan
             </span>
           </h1>
-          <p className="max-w-2xl mx-auto text-slate-500 text-lg md:text-xl mb-12 leading-relaxed">
+          <p className="max-w-2xl mx-auto text-muted-foreground text-lg md:text-xl mb-12 leading-relaxed">
             Le moyen le plus simple et le plus efficace pour atteindre des milliers d'étudiants chaque jour. Services, projets ou événements : soyez visible là où ça compte.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -65,7 +65,7 @@ export default function AdPlatformLanding() {
               asChild
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto h-16 px-10 rounded-2xl border-slate-200 text-slate-900 hover:bg-slate-50 text-lg font-bold"
+              className="w-full sm:w-auto h-16 px-10 rounded-2xl border-border text-foreground hover:bg-muted text-lg font-bold"
             >
               <Link href="/ads-portal/dashboard">
                 <LayoutDashboard className="mr-2 w-5 h-5" />
@@ -81,7 +81,7 @@ export default function AdPlatformLanding() {
               { icon: Clock, label: "Support 24/7" },
               { icon: CreditCard, label: "Paiement Sécurisé" }
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+              <div key={i} className="flex items-center gap-2 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
                 <item.icon className="w-4 h-4 text-blue-500" />
                 {item.label}
               </div>
@@ -91,11 +91,11 @@ export default function AdPlatformLanding() {
       </section>
 
       {/* How it works */}
-      <section className="py-32 bg-slate-50">
+      <section className="py-32 bg-muted">
         <div className="container mx-auto px-4">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-black text-slate-950 mb-4 tracking-tight">Comment ça marche ?</h2>
-            <p className="text-slate-500 max-w-xl mx-auto">Un processus simple et transparent pour mettre votre annonce en ligne.</p>
+            <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4 tracking-tight">Comment ça marche ?</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">Un processus simple et transparent pour mettre votre annonce en ligne.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -119,16 +119,16 @@ export default function AdPlatformLanding() {
                 icon: Rocket => <Sparkles className="w-8 h-8 text-blue-600" />
               }
             ].map((step, i) => (
-              <div key={i} className="relative group p-8 bg-white rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500">
-                <span className="absolute -top-6 left-8 text-6xl font-black text-slate-100 group-hover:text-blue-50 transition-colors pointer-events-none">
+              <div key={i} className="relative group p-8 bg-card rounded-[32px] border border-border shadow-sm hover:shadow-xl transition-all duration-500">
+                <span className="absolute -top-6 left-8 text-6xl font-black text-slate-100 group-hover:text-blue-50 transition-colors pointer-events-none dark:text-slate-800 dark:group-hover:text-slate-700">
                   {step.step}
                 </span>
                 <div className="relative z-10">
-                  <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6">
+                  <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 dark:bg-blue-500/15">
                     {step.icon()}
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-4">{step.title}</h3>
-                  <p className="text-slate-500 leading-relaxed text-sm">{step.desc}</p>
+                  <h3 className="text-xl font-bold text-foreground mb-4">{step.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed text-sm">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -137,12 +137,12 @@ export default function AdPlatformLanding() {
       </section>
 
       {/* Pricing */}
-      <section className="py-32 bg-white">
+      <section className="py-32 bg-card">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row justify-between items-end mb-20 gap-8">
             <div className="max-w-2xl">
-              <h2 className="text-3xl md:text-5xl font-black text-slate-950 mb-4 tracking-tight">Tarifs adaptés à votre budget</h2>
-              <p className="text-slate-500 mb-0">Choisissez la durée qui correspond le mieux à vos objectifs de communication.</p>
+              <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4 tracking-tight">Tarifs adaptés à votre budget</h2>
+              <p className="text-muted-foreground mb-0">Choisissez la durée qui correspond le mieux à vos objectifs de communication.</p>
             </div>
             <Link href="/ads-portal/dashboard" className="text-blue-600 font-bold flex items-center group">
               Gérer mes abonnements <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -151,16 +151,16 @@ export default function AdPlatformLanding() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {AD_PRICING.map((plan, i) => (
-              <Card key={i} className={`relative overflow-hidden rounded-[40px] border-2 p-10 transition-all hover:-translate-y-2 ${i === 1 ? 'border-blue-600 bg-slate-950 text-white shadow-2xl shadow-blue-200' : 'border-slate-100 bg-white'}`}>
+              <Card key={i} className={`relative overflow-hidden rounded-[40px] border-2 p-10 transition-all hover:-translate-y-2 ${i === 1 ? 'border-blue-600 bg-slate-950 text-white shadow-2xl shadow-blue-200' : 'border-border bg-card'}`}>
                 {i === 1 && (
                   <div className="absolute top-6 right-6">
                     <Badge className="bg-blue-600 text-white border-none py-1 px-3">Plus Populaire</Badge>
                   </div>
                 )}
-                <p className={`text-sm font-bold uppercase tracking-widest mb-6 ${i === 1 ? 'text-blue-400' : 'text-slate-400'}`}>{plan.label}</p>
+                <p className={`text-sm font-bold uppercase tracking-widest mb-6 ${i === 1 ? 'text-blue-400' : 'text-muted-foreground'}`}>{plan.label}</p>
                 <div className="flex items-baseline gap-1 mb-8">
                   <span className="text-5xl font-black">{plan.price}</span>
-                  <span className={`text-sm font-bold ${i === 1 ? 'text-slate-400' : 'text-slate-500'}`}>MAD</span>
+                  <span className={`text-sm font-bold ${i === 1 ? 'text-slate-400' : 'text-muted-foreground'}`}>MAD</span>
                 </div>
                 <ul className="space-y-4 mb-10">
                   {[
@@ -189,11 +189,11 @@ export default function AdPlatformLanding() {
       </section>
 
       {/* FAQ / Info */}
-      <section className="py-32 bg-slate-50">
+      <section className="py-32 bg-muted">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-black text-slate-950 mb-4">Questions Fréquentes</h2>
-            <p className="text-slate-500">Tout ce qu'il faut savoir avant de vous lancer.</p>
+            <h2 className="text-3xl font-black text-foreground mb-4">Questions Fréquentes</h2>
+            <p className="text-muted-foreground">Tout ce qu'il faut savoir avant de vous lancer.</p>
           </div>
 
           <div className="space-y-4">
@@ -203,12 +203,12 @@ export default function AdPlatformLanding() {
               { q: "Comment se fait le paiement ?", a: "Une fois l'annonce approuvée, vous pourrez nous contacter via WhatsApp pour finaliser le paiement. L'activation est manuelle et immédiate après réception." },
               { q: "Puis-je modifier mon annonce après publication ?", a: "Vous pouvez modifier votre annonce tant qu'elle est en mode brouillon ou si elle est refusée. Une annonce 'Live' ne peut être modifiée qu'après contact avec l'administrateur." }
             ].map((faq, i) => (
-              <details key={i} className="group bg-white rounded-3xl border border-slate-100 p-6 md:p-8 cursor-pointer open:ring-2 open:ring-blue-100 transition-all">
-                <summary className="flex items-center justify-between font-bold text-lg text-slate-900 list-none">
+              <details key={i} className="group bg-card rounded-3xl border border-border p-6 md:p-8 cursor-pointer open:ring-2 open:ring-blue-100 transition-all">
+                <summary className="flex items-center justify-between font-bold text-lg text-foreground list-none">
                   {faq.q}
-                  <PlusCircle className="w-5 h-5 text-slate-300 group-open:rotate-45 transition-transform" />
+                  <PlusCircle className="w-5 h-5 text-muted-foreground group-open:rotate-45 transition-transform" />
                 </summary>
-                <p className="mt-6 text-slate-500 leading-relaxed">
+                <p className="mt-6 text-muted-foreground leading-relaxed">
                   {faq.a}
                 </p>
               </details>
@@ -218,7 +218,7 @@ export default function AdPlatformLanding() {
       </section>
 
       {/* CTA */}
-      <section className="py-32 bg-white">
+      <section className="py-32 bg-card">
         <div className="container mx-auto px-4">
           <div className="bg-blue-600 rounded-[50px] p-12 md:p-24 text-center text-white relative overflow-hidden shadow-3xl shadow-blue-200">
             <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-32 -translate-y-32 blur-3xl" />
@@ -230,7 +230,7 @@ export default function AdPlatformLanding() {
               <Button
                 asChild
                 size="lg"
-                className="h-16 px-12 rounded-2xl bg-white text-blue-600 hover:bg-slate-50 text-xl font-black shadow-2xl transition-all hover:scale-105"
+                className="h-16 px-12 rounded-2xl bg-white text-blue-600 hover:bg-muted text-xl font-black shadow-2xl transition-all hover:scale-105 dark:bg-slate-900 dark:text-blue-300 dark:hover:bg-slate-800"
               >
                 <Link href="/ads-portal/submit">Publier mon annonce maintenant</Link>
               </Button>

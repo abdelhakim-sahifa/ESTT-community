@@ -73,8 +73,8 @@ export default function AdminClubChanges({ requests }) {
             </div>
 
             {requests.length === 0 ? (
-                <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
-                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                <div className="py-20 text-center bg-card rounded-3xl border border-dashed border-border">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 text-muted-foreground">
                         <CheckCircle2 className="w-8 h-8" />
                     </div>
                     <h3 className="text-lg font-bold">Aucune demande en attente</h3>

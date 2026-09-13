@@ -175,7 +175,7 @@ export default function AdminCommunication({ users }) {
                             </div>
                         )}
 
-                        <hr className="my-4 border-slate-100" />
+                        <hr className="my-4 border-border" />
 
                         <div className="space-y-2">
                             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Sujet</label>
@@ -231,12 +231,12 @@ export default function AdminCommunication({ users }) {
 
                 {/* Preview */}
                 <div className="lg:col-span-2 space-y-4">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 px-1 flex items-center gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground px-1 flex items-center gap-2">
                         <Eye className="w-4 h-4" /> Aperçu de l'email
                     </h3>
-                    <Card className="border-none shadow-sm overflow-hidden bg-white">
+                    <Card className="border-none shadow-sm overflow-hidden bg-card">
                         {/* Mock Email Header */}
-                        <div className="p-4 border-b border-slate-50 bg-slate-50/30 flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                        <div className="p-4 border-b border-border bg-muted/30 flex justify-between items-center text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
                             <span>ESTT.Community Announcement</span>
                             <Badge variant="outline" className="text-[8px] tracking-tighter opacity-50">Email Preview</Badge>
                         </div>
@@ -246,11 +246,11 @@ export default function AdminCommunication({ users }) {
                                 <img src={emailData.coverImageUrl} alt="" className="w-full h-auto rounded-lg shadow-sm max-h-[300px] object-cover" />
                             )}
                             
-                            <h2 className="text-3xl font-black text-slate-900 leading-tight">
+                            <h2 className="text-3xl font-black text-foreground leading-tight">
                                 {emailData.title || "Titre de l'email"}
                             </h2>
 
-                            <div className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">
+                            <div className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
                                 {emailData.content || "Le contenu apparaîtra ici..."}
                             </div>
 
@@ -262,15 +262,15 @@ export default function AdminCommunication({ users }) {
                                 </div>
                             )}
 
-                            <div className="pt-8 border-t border-slate-100 text-sm">
-                                <p className="text-slate-500 italic mb-1">Cordialement,</p>
-                                <p className="font-bold text-slate-900">L'équipe ESTT-Community</p>
+                            <div className="pt-8 border-t border-border text-sm">
+                                <p className="text-muted-foreground italic mb-1">Cordialement,</p>
+                                <p className="font-bold text-foreground">L'équipe ESTT-Community</p>
                             </div>
                         </div>
                         
                         {/* Mock Email Footer */}
-                        <div className="p-6 bg-slate-50/50 border-t border-slate-50 text-center">
-                            <p className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">ESTT.Community - Plateforme Étudiante</p>
+                        <div className="p-6 bg-muted/50 border-t border-border text-center">
+                            <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">ESTT.Community - Plateforme Étudiante</p>
                         </div>
                     </Card>
                 </div>

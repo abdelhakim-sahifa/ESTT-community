@@ -42,7 +42,7 @@ const SORT_OPTIONS = [
 const ROLE_BADGE_CLASSES = {
     admin: 'bg-yellow-400 text-white hover:bg-yellow-500 border-none',
     moderator: 'bg-blue-600 text-white hover:bg-blue-700 border-none',
-    contributor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    contributor: 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40',
 };
 
 export default function AdminUsers({ users }) {
@@ -125,7 +125,7 @@ export default function AdminUsers({ users }) {
                     {/* Role filter */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${roleFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${roleFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50 dark:text-blue-300 dark:border-blue-500/40 dark:bg-blue-500/10' : ''}`}>
                                 <Users className="w-4 h-4" />
                                 <span className="hidden sm:inline">
                                     {roleFilter === 'all'
@@ -157,7 +157,7 @@ export default function AdminUsers({ users }) {
                     {/* Filière filter */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${filiereFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${filiereFilter !== 'all' ? 'text-blue-600 border-blue-200 bg-blue-50/50 dark:text-blue-300 dark:border-blue-500/40 dark:bg-blue-500/10' : ''}`}>
                                 <BookOpen className="w-4 h-4" />
                                 <span className="hidden sm:inline truncate max-w-[100px]">
                                     {filiereFilter === 'all' ? 'Filière' : filiereFilter}
@@ -187,7 +187,7 @@ export default function AdminUsers({ users }) {
                     {/* Sort */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${sortBy !== 'newest' ? 'text-blue-600 border-blue-200 bg-blue-50/50' : ''}`}>
+                            <Button variant="outline" size="sm" className={`h-9 gap-1.5 shrink-0 ${sortBy !== 'newest' ? 'text-blue-600 border-blue-200 bg-blue-50/50 dark:text-blue-300 dark:border-blue-500/40 dark:bg-blue-500/10' : ''}`}>
                                 <ArrowUpDown className="w-4 h-4" />
                                 <span className="hidden sm:inline">
                                     {SORT_OPTIONS.find((s) => s.value === sortBy)?.label ?? 'Tri'}
@@ -214,7 +214,7 @@ export default function AdminUsers({ users }) {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-9 text-red-500 hover:text-red-600 hover:bg-red-50 shrink-0"
+                            className="h-9 text-red-500 hover:text-red-600 hover:bg-red-50 shrink-0 dark:hover:bg-red-500/10"
                             onClick={() => { setSearch(''); setRoleFilter('all'); setFiliereFilter('all'); setSortBy('newest'); }}
                         >
                             Réinitialiser
@@ -226,7 +226,7 @@ export default function AdminUsers({ users }) {
             {/* Table */}
             <Card className="border-none shadow-sm overflow-hidden">
                 <Table>
-                    <TableHeader className="bg-slate-50">
+                    <TableHeader className="bg-muted">
                         <TableRow>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Nom</TableHead>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Email</TableHead>
@@ -244,14 +244,14 @@ export default function AdminUsers({ users }) {
                             </TableRow>
                         ) : (
                             filtered.map((u) => (
-                                <TableRow key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                                <TableRow key={u.id} className="hover:bg-muted/50 transition-colors">
                                     <TableCell className="font-bold text-sm">{u.firstName} {u.lastName}</TableCell>
                                     <TableCell className="text-xs text-muted-foreground">{u.email}</TableCell>
                                     <TableCell className="text-xs font-bold uppercase">{u.filiere}</TableCell>
                                     <TableCell>
                                         <Badge
                                             variant="outline"
-                                            className={`text-[8px] font-black uppercase tracking-tighter ${ROLE_BADGE_CLASSES[(u.role || '').toLowerCase()] || 'bg-slate-100 text-slate-800 border-slate-200'}`}
+                                            className={`text-[8px] font-black uppercase tracking-tighter ${ROLE_BADGE_CLASSES[(u.role || '').toLowerCase()] || 'bg-muted text-foreground border-border'}`}
                                         >
                                             {u.role || 'Étudiant'}
                                         </Badge>

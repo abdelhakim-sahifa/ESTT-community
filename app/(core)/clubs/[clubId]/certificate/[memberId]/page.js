@@ -75,7 +75,7 @@ export default function CertificatePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-slate-50">
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-muted">
                 <Loader2 className="w-10 h-10 animate-spin text-primary" />
                 <p className="text-muted-foreground animate-pulse">Préparation de votre certificat...</p>
             </div>
@@ -84,7 +84,7 @@ export default function CertificatePage() {
 
     if (error || !member || !club) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-slate-50 p-4">
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-muted p-4">
                 <Card className="w-full max-w-md text-center">
                     <CardHeader>
                         <CardTitle className="text-red-600">Erreur</CardTitle>
@@ -101,10 +101,10 @@ export default function CertificatePage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <main className="min-h-screen bg-muted flex items-center justify-center p-4">
             <Card className="w-full max-w-lg shadow-xl border-t-4" style={{ borderTopColor: club.themeColor || '#3b82f6' }}>
                 <CardHeader className="text-center">
-                    <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600">
+                    <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
                         <Award className="w-10 h-10" />
                     </div>
                     <CardTitle className="text-2xl font-bold">Certificat d'Adhésion Officiel</CardTitle>
@@ -113,17 +113,17 @@ export default function CertificatePage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 text-center">
-                    <div className="p-6 bg-white border-2 border-dashed rounded-xl space-y-2">
+                    <div className="p-6 bg-card border-2 border-dashed rounded-xl space-y-2">
                         <p className="text-sm text-muted-foreground uppercase tracking-widest">Décerné à</p>
-                        <p className="text-2xl font-bold text-slate-800">{member.name}</p>
+                        <p className="text-2xl font-bold text-foreground">{member.name}</p>
                     </div>
 
                     <div className="flex flex-col items-center gap-2">
-                        <div className="flex items-center justify-center gap-2 text-green-600 bg-green-50 py-2 px-4 rounded-full text-sm font-medium mx-auto w-fit">
+                        <div className="flex items-center justify-center gap-2 text-green-600 bg-green-50 py-2 px-4 rounded-full text-sm font-medium mx-auto w-fit dark:text-green-300 dark:bg-green-500/15">
                             <CheckCircle2 className="w-4 h-4" />
                             Signature numérique vérifiée
                         </div>
-                        <p className="text-[10px] text-muted-foreground font-mono bg-slate-100 px-2 py-1 rounded">
+                        <p className="text-[10px] text-muted-foreground font-mono bg-muted px-2 py-1 rounded">
                             Vérification ID: {getCertificateSignature(member, club)}
                         </p>
                     </div>

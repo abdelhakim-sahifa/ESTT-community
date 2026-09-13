@@ -49,7 +49,7 @@ export default function Footer() {
     ];
 
     return (
-        <footer className="w-full bg-slate-50 border-t border-slate-200">
+        <footer className="w-full bg-muted/50 border-t border-border">
             <div className="container mx-auto px-4 pt-16 pb-8">
                 {/* Main Footer Content */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
@@ -62,40 +62,40 @@ export default function Footer() {
                                     alt="EST Tétouan"
                                     width={120}
                                     height={40}
-                                    className="h-9 w-auto opacity-90 group-hover:opacity-100 transition-opacity"
+                                    className="h-9 w-auto opacity-90 group-hover:opacity-100 transition-opacity dark:brightness-0 dark:invert"
                                 />
                             )}
-                            <span className="text-xl font-black tracking-tighter text-slate-900 leading-none">
+                            <span className="text-xl font-black tracking-tighter text-foreground leading-none">
                                 ESTT<span className="text-primary">.community</span>
                             </span>
                         </Link>
 
-                        <p className="text-base text-slate-500 leading-relaxed max-w-sm mx-auto lg:mx-0">
+                        <p className="text-base text-muted-foreground leading-relaxed max-w-sm mx-auto lg:mx-0">
                             La plateforme collaborative pour les étudiants de l'École Supérieure de Technologie de Tétouan.
                         </p>
 
                         <div className="flex items-center justify-center lg:justify-start gap-4 pt-2">
                             <a href="https://github.com/abdelhakim-sahifa/ESTT-community/" target="_blank" rel="noopener noreferrer"
-                                className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
+                                className="p-2.5 bg-background border border-border rounded-xl text-muted-foreground hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                 <Github className="w-5 h-5" />
                             </a>
                             <a href="https://estt.uae.ac.ma" target="_blank" rel="noopener noreferrer"
-                                className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
+                                className="p-2.5 bg-background border border-border rounded-xl text-muted-foreground hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                 <Globe className="w-5 h-5" />
                             </a>
                             <a href="mailto:contact@estt.ma"
-                                className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
+                                className="p-2.5 bg-background border border-border rounded-xl text-muted-foreground hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                 <Mail className="w-5 h-5" />
                             </a>
                         </div>
 
                         {/* Contact Info */}
                         <div className="flex flex-col items-center lg:items-start gap-2 pt-1">
-                            <a href="tel:+212715307349" className="flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors">
+                            <a href="tel:+212715307349" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
                                 <Phone className="w-4 h-4 shrink-0" />
                                 +212 715 307 349
                             </a>
-                            <a href="mailto:contact@estt.ma" className="flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors">
+                            <a href="mailto:contact@estt.ma" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
                                 <Mail className="w-4 h-4 shrink-0" />
                                 contact@estt.ma
                             </a>
@@ -106,7 +106,7 @@ export default function Footer() {
                     <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-12 lg:col-span-3">
                         {sections.map((section, idx) => (
                             <div key={idx} className="space-y-4 sm:space-y-6 flex flex-col items-start text-left">
-                                <h4 className="text-[10px]  sm:text-sm font-bold uppercase tracking-widest text-slate-900">
+                                <h4 className="text-[10px]  sm:text-sm font-bold uppercase tracking-widest text-foreground">
                                     {section.title}
                                 </h4>
                                 <ul className="space-y-3 sm:space-y-4">
@@ -116,7 +116,7 @@ export default function Footer() {
                                                 href={link.href}
                                                 target={link.external ? "_blank" : undefined}
                                                 rel={link.external ? "noopener noreferrer" : undefined}
-                                                className="text-[11px] sm:text-sm text-slate-500 hover:text-primary inline-flex items-center gap-1.5 transition-all duration-200 group"
+                                                className="text-[11px] sm:text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1.5 transition-all duration-200 group"
                                             >
                                                 <span className="truncate max-w-[80px] sm:max-w-none">{link.label}</span>
                                                 {link.external && <ExternalLink className="w-3 h-3 opacity-0 lg:group-hover:opacity-100 transition-opacity hidden sm:block" />}
@@ -130,9 +130,9 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-8 border-t border-slate-200 flex flex-col lg:flex-row justify-between items-center gap-8 text-sm">
+                <div className="pt-8 border-t border-border flex flex-col lg:flex-row justify-between items-center gap-8 text-sm">
                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-center md:text-left">
-                        <p className="text-[11px] sm:text-sm text-slate-500 font-medium flex items-center gap-1.5">
+                        <p className="text-[11px] sm:text-sm text-muted-foreground font-medium flex items-center gap-1.5">
                           Codé avec <Heart className="w-3.5 h-3.5 text-rose-500"/> Par des étudiants de l'EST Tétouan.
                         
                         {
@@ -141,15 +141,15 @@ export default function Footer() {
                         </p>
 
                         <div className="flex items-center justify-center gap-6">
-                            <Link href="/privacy" className="text-[11px] sm:text-sm text-slate-400 hover:text-slate-600 transition-colors">Vie privée</Link>
-                            <Link href="/terms" className="text-[11px] sm:text-sm text-slate-400 hover:text-slate-600 transition-colors">Conditions</Link>
+                            <Link href="/privacy" className="text-[11px] sm:text-sm text-muted-foreground hover:text-foreground transition-colors">Vie privée</Link>
+                            <Link href="/terms" className="text-[11px] sm:text-sm text-muted-foreground hover:text-foreground transition-colors">Conditions</Link>
                         </div>
                     </div>
 
                     <div className="flex flex-wrap items-center justify-center gap-6">
                         <LatestReleaseBadge />
-                        <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                        <div className="h-4 w-[1px] bg-border hidden sm:block" />
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                             <Image
                                 src="/icons/open-source.png"
                                 alt="Open Source"

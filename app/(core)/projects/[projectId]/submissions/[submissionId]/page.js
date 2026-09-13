@@ -252,9 +252,9 @@ export default function SubmissionDetailPage() {
     if (error || !submission || !project) {
         return (
             <main className="container max-w-3xl px-4 py-16 text-center md:px-6">
-                <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10">
-                    <h1 className="text-3xl font-black text-slate-950">Introuvable</h1>
-                    <p className="mt-3 text-sm text-slate-500">{error?.message || 'Une erreur est survenue.'}</p>
+                <div className="rounded-xl border border-dashed border-border bg-card p-10">
+                    <h1 className="text-3xl font-black text-foreground">Introuvable</h1>
+                    <p className="mt-3 text-sm text-muted-foreground">{error?.message || 'Une erreur est survenue.'}</p>
                     <Button asChild className="mt-6 rounded-full">
                         <Link href="/projects">Retour au hub</Link>
                     </Button>
@@ -267,8 +267,8 @@ export default function SubmissionDetailPage() {
     const isOwnSubmission = user && submission.authorId === user.uid;
 
     return (
-        <main className="min-h-screen bg-slate-50/50 pb-20">
-            <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
+        <main className="min-h-screen bg-muted/50 pb-20">
+            <header className="bg-card border-b border-border sticky top-0 z-20">
                 <div className="container px-4 py-4 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4 truncate">
                         <Button asChild variant="ghost" size="icon" className="rounded-full shrink-0">
@@ -277,10 +277,10 @@ export default function SubmissionDetailPage() {
                             </Link>
                         </Button>
                         <div className="truncate">
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 truncate">
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground truncate">
                                 Challenge: {project.title}
                             </p>
-                            <h1 className="text-xl font-black text-slate-900 truncate">
+                            <h1 className="text-xl font-black text-foreground truncate">
                                 {submission.title}
                             </h1>
                         </div>
@@ -306,9 +306,9 @@ export default function SubmissionDetailPage() {
                 <div className="grid gap-8 lg:grid-cols-[1fr_350px]">
                     <div className="space-y-8">
                         {/* Main Content Card */}
-                        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
                             {submission.coverImage && (
-                                <div className="aspect-video w-full overflow-hidden border-b border-slate-100">
+                                <div className="aspect-video w-full overflow-hidden border-b border-border">
                                     <img src={submission.coverImage} className="h-full w-full object-cover" alt="" />
                                 </div>
                             )}
@@ -316,29 +316,29 @@ export default function SubmissionDetailPage() {
                                 <div className="space-y-4">
                                     <div className="flex flex-wrap gap-2">
                                         {submission.techStack.map(tech => (
-                                            <Badge key={tech} variant="secondary" className="rounded-full bg-slate-100 text-slate-600 border-none px-3">
+                                            <Badge key={tech} variant="secondary" className="rounded-full bg-muted text-muted-foreground border-none px-3">
                                                 {tech}
                                             </Badge>
                                         ))}
                                     </div>
-                                    <h2 className="text-3xl font-black text-slate-900 leading-tight md:text-4xl">
+                                    <h2 className="text-3xl font-black text-foreground leading-tight md:text-4xl">
                                         Description du build
                                     </h2>
-                                    <div className="prose prose-slate max-w-none text-slate-600 text-lg leading-relaxed">
+                                    <div className="prose prose-slate max-w-none text-muted-foreground text-lg leading-relaxed">
                                         {submission.description}
                                     </div>
                                 </div>
 
                                 {submission.notes && (
-                                    <div className="rounded-2xl bg-amber-50 p-6 border border-amber-100">
-                                        <h3 className="text-sm font-bold uppercase tracking-wider text-amber-700 mb-2">Note de l'auteur</h3>
-                                        <p className="text-slate-700 italic">{submission.notes}</p>
+                                    <div className="rounded-2xl bg-amber-50 p-6 border border-amber-100 dark:bg-amber-500/10 dark:border-amber-500/30">
+                                        <h3 className="text-sm font-bold uppercase tracking-wider text-amber-700 mb-2 dark:text-amber-300">Note de l'auteur</h3>
+                                        <p className="text-foreground italic">{submission.notes}</p>
                                     </div>
                                 )}
 
                                 <div className="flex flex-wrap gap-4 pt-4">
                                     {submission.githubUrl && (
-                                        <Button asChild variant="outline" className="rounded-full border-slate-200 h-12 px-6">
+                                        <Button asChild variant="outline" className="rounded-full border-border h-12 px-6">
                                             <a href={submission.githubUrl} target="_blank" rel="noopener noreferrer">
                                                 <Github className="mr-2 h-5 w-5" />
                                                 Repo GitHub
@@ -360,13 +360,13 @@ export default function SubmissionDetailPage() {
                         {/* Screenshots Carousel/Grid */}
                         {submission.screenshots?.length > 0 && (
                             <div className="space-y-4">
-                                <h3 className="text-xl font-black text-slate-900">Captures d'ecran</h3>
+                                <h3 className="text-xl font-black text-foreground">Captures d'ecran</h3>
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     {submission.screenshots.map((s, idx) => (
                                         <img 
                                             key={idx} 
                                             src={s} 
-                                            className="rounded-2xl border border-slate-200 shadow-sm transition-transform hover:scale-[1.02]" 
+                                            className="rounded-2xl border border-border shadow-sm transition-transform hover:scale-[1.02]" 
                                             alt="" 
                                         />
                                     ))}
@@ -375,16 +375,16 @@ export default function SubmissionDetailPage() {
                         )}
 
                         {/* Comments Section */}
-                        <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                            <div className="border-b border-slate-100 bg-slate-50/50 p-6">
-                                <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
+                        <div className="rounded-3xl border border-border bg-card shadow-sm overflow-hidden">
+                            <div className="border-b border-border bg-muted/50 p-6">
+                                <h3 className="text-xl font-black text-foreground flex items-center gap-3">
                                     <MessageCircle className="h-6 w-6 text-primary" />
                                     Commentaires ({submission.commentsCount || 0})
                                 </h3>
                             </div>
                             <div className="p-6 md:p-8 space-y-8">
                                 {user ? (
-                                    <div className="space-y-4 rounded-2xl border border-slate-100 bg-slate-50/50 p-4">
+                                    <div className="space-y-4 rounded-2xl border border-border bg-muted/50 p-4">
                                         <Textarea 
                                             placeholder="Bravo pour le taf ! Qu'est-ce qui t'a le plus bloque ?"
                                             value={commentText}
@@ -403,8 +403,8 @@ export default function SubmissionDetailPage() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center bg-slate-50/30">
-                                        <p className="text-slate-600 mb-4">Connecte-toi pour donner ton avis sur ce projet !</p>
+                                    <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-muted/30">
+                                        <p className="text-muted-foreground mb-4">Connecte-toi pour donner ton avis sur ce projet !</p>
                                         <Button asChild variant="outline" className="rounded-full">
                                             <Link href="/login">Se connecter</Link>
                                         </Button>
@@ -413,22 +413,22 @@ export default function SubmissionDetailPage() {
 
                                 <div className="space-y-6">
                                     {comments.filter(c => !c.isReply).length === 0 && (
-                                        <p className="text-center text-slate-400 italic py-4">Pas encore de retour...</p>
+                                        <p className="text-center text-muted-foreground italic py-4">Pas encore de retour...</p>
                                     )}
                                     {comments.filter(c => !c.isReply).map((comment) => (
                                         <div key={comment.id} className="space-y-4">
                                             <div className="flex gap-4">
-                                                <div className="h-10 w-10 shrink-0 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
-                                                    <User className="h-5 w-5 text-slate-400" />
+                                                <div className="h-10 w-10 shrink-0 rounded-full bg-muted flex items-center justify-center border border-border">
+                                                    <User className="h-5 w-5 text-muted-foreground" />
                                                 </div>
                                                 <div className="flex-1 space-y-2">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="font-bold text-slate-900">{comment.authorName}</span>
-                                                        <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                                                        <span className="font-bold text-foreground">{comment.authorName}</span>
+                                                        <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
                                                             {formatCommentDate(comment.timestamp)}
                                                         </span>
                                                     </div>
-                                                    <div className="text-slate-600 leading-relaxed bg-white border border-slate-100 rounded-2xl rounded-tl-none p-4 shadow-sm">
+                                                    <div className="text-muted-foreground leading-relaxed bg-card border border-border rounded-2xl rounded-tl-none p-4 shadow-sm">
                                                         {comment.text}
                                                     </div>
                                                     <div className="flex items-center gap-4">
@@ -446,7 +446,7 @@ export default function SubmissionDetailPage() {
 
                                             {/* Reply Input */}
                                             {expandedReplies[comment.id] && (
-                                                <div className="ml-14 space-y-4 bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
+                                                <div className="ml-14 space-y-4 bg-muted/50 p-4 rounded-2xl border border-border">
                                                     <Textarea 
                                                         placeholder="Ta reponse..."
                                                         value={replyTexts[comment.id] || ''}
@@ -472,17 +472,17 @@ export default function SubmissionDetailPage() {
                                             {/* Replies List */}
                                             {comments.filter(c => c.parentId === comment.id).map(reply => (
                                                 <div key={reply.id} className="ml-14 flex gap-3">
-                                                    <div className="h-8 w-8 shrink-0 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100">
-                                                        <User className="h-4 w-4 text-slate-400" />
+                                                    <div className="h-8 w-8 shrink-0 rounded-full bg-muted flex items-center justify-center border border-border">
+                                                        <User className="h-4 w-4 text-muted-foreground" />
                                                     </div>
                                                     <div className="flex-1 space-y-1">
                                                         <div className="flex items-center gap-2">
-                                                            <span className="font-bold text-sm text-slate-800">{reply.authorName}</span>
-                                                            <span className="text-[9px] font-bold text-slate-400 uppercase">
+                                                            <span className="font-bold text-sm text-foreground">{reply.authorName}</span>
+                                                            <span className="text-[9px] font-bold text-muted-foreground uppercase">
                                                                 {formatCommentDate(reply.timestamp)}
                                                             </span>
                                                         </div>
-                                                        <div className="text-sm text-slate-600 bg-white border border-slate-100 rounded-xl rounded-tl-none p-3">
+                                                        <div className="text-sm text-muted-foreground bg-card border border-border rounded-xl rounded-tl-none p-3">
                                                             {reply.text}
                                                         </div>
                                                     </div>
@@ -498,44 +498,44 @@ export default function SubmissionDetailPage() {
                     {/* Sidebar */}
                     <aside className="space-y-6">
                         <div className="sticky top-28 space-y-6">
-                            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">A propos de l'auteur</h3>
+                            <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+                                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground mb-4">A propos de l'auteur</h3>
                                 <div className="flex items-center gap-4">
                                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                                         <User className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <p className="font-black text-slate-900">{submission.authorName}</p>
-                                        <p className="text-xs text-slate-500">Membre de la communaute</p>
+                                        <p className="font-black text-foreground">{submission.authorName}</p>
+                                        <p className="text-xs text-muted-foreground">Membre de la communaute</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Statistiques</h3>
+                            <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+                                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground mb-4">Statistiques</h3>
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-500">Votes recus</span>
-                                        <span className="font-bold text-slate-900 text-lg">{submission.votesCount}</span>
+                                        <span className="text-sm text-muted-foreground">Votes recus</span>
+                                        <span className="font-bold text-foreground text-lg">{submission.votesCount}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-500">Commentaires</span>
-                                        <span className="font-bold text-slate-900 text-lg">{submission.commentsCount || 0}</span>
+                                        <span className="text-sm text-muted-foreground">Commentaires</span>
+                                        <span className="font-bold text-foreground text-lg">{submission.commentsCount || 0}</span>
                                     </div>
-                                    <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-                                        <span className="text-sm text-slate-500 flex items-center gap-2">
+                                    <div className="flex items-center justify-between border-t border-border pt-4">
+                                        <span className="text-sm text-muted-foreground flex items-center gap-2">
                                             <CalendarDays className="h-4 w-4" />
                                             Soumis le
                                         </span>
-                                        <span className="font-bold text-slate-900 text-xs">{formatProjectDate(submission.createdAt)}</span>
+                                        <span className="font-bold text-foreground text-xs">{formatProjectDate(submission.createdAt)}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="rounded-3xl border border-emerald-100 bg-emerald-50/50 p-6 shadow-sm">
+                            <div className="rounded-3xl border border-emerald-100 bg-emerald-50/50 p-6 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10">
                                 <Trophy className="h-8 w-8 text-emerald-600 mb-4" />
-                                <h3 className="font-black text-slate-900 mb-2">Classement</h3>
-                                <p className="text-xs text-slate-600 leading-relaxed">
+                                <h3 className="font-black text-foreground mb-2">Classement</h3>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
                                     Ce build participe au challenge <span className="font-bold">{project.title}</span>. Les votes determinent l'implementation gagnante a la fin du challenge.
                                 </p>
                                 <Button asChild variant="link" className="px-0 text-emerald-700 h-auto mt-4 font-bold">

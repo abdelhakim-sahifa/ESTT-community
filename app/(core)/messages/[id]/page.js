@@ -518,7 +518,7 @@ export default function DirectMessagePage() {
     if (authLoading || loading) return (
         <div className="flex flex-col items-center justify-center min-h-[80vh] gap-3">
             <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            <p className="text-sm font-medium text-slate-500">Chargement de la conversation...</p>
+            <p className="text-sm font-medium text-muted-foreground">Chargement de la conversation...</p>
         </div>
     );
 
@@ -530,32 +530,32 @@ export default function DirectMessagePage() {
         : Object.entries(typingUsers).some(([uid, t]) => t && uid === recipientId);
 
     return (
-        <main className="fixed inset-0 z-[100] h-[100dvh] bg-white flex flex-col font-sans overflow-hidden overscroll-none">
+        <main className="fixed inset-0 z-[100] h-[100dvh] bg-card flex flex-col font-sans overflow-hidden overscroll-none">
             <ChatTermsDialog />
             {/* DM Header */}
-            <div className="bg-white border-b border-slate-100 px-4 py-3 shrink-0">
+            <div className="bg-card border-b border-border px-4 py-3 shrink-0">
                 <div className="max-w-4xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href="/messages" className="p-1.5 text-slate-500 hover:bg-slate-50 rounded-full transition-all">
+                        <Link href="/messages" className="p-1.5 text-muted-foreground hover:bg-muted rounded-full transition-all">
                             <ArrowLeft className="w-6 h-6" />
                         </Link>
                         {isEsttAiChat ? (
                             <div className="flex items-center gap-3">
                                 <div className="relative">
-                                    <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden">
+                                    <div className="w-10 h-10 rounded-full bg-muted overflow-hidden">
                                         {activeRecipientProfile?.photoUrl ? (
                                             <img src={activeRecipientProfile.photoUrl} alt="" className="w-full h-full object-cover" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-slate-400">
+                                            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-muted-foreground">
                                                 {activeRecipientProfile?.firstName?.[0]}{activeRecipientProfile?.lastName?.[0]}
                                             </div>
                                         )}
                                     </div>
-                                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full dark:border-background" />
                                 </div>
                                 <div className="flex flex-col">
                                     <div className="flex items-center gap-1.5 flex-wrap">
-                                        <span className="text-sm font-bold text-slate-900">
+                                        <span className="text-sm font-bold text-foreground">
                                             {recipientDisplayName}
                                         </span>
                                         <span
@@ -564,11 +564,11 @@ export default function DirectMessagePage() {
                                         >
                                             verified
                                         </span>
-                                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+                                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
                                             Officiel
                                         </span>
                                     </div>
-                                    <span className="text-[10px] font-medium text-slate-500">
+                                    <span className="text-[10px] font-medium text-muted-foreground">
                                         Agent officiel ESTT Community
                                     </span>
                                 </div>
@@ -576,22 +576,22 @@ export default function DirectMessagePage() {
                         ) : (
                             <Link href={`/profile/${recipientId}`} className="flex items-center gap-3 group">
                                 <div className="relative">
-                                    <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden">
+                                    <div className="w-10 h-10 rounded-full bg-muted overflow-hidden">
                                         {activeRecipientProfile?.photoUrl ? (
                                             <img src={activeRecipientProfile.photoUrl} alt="" className="w-full h-full object-cover" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-slate-400">
+                                            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-muted-foreground">
                                                 {activeRecipientProfile?.firstName?.[0]}{activeRecipientProfile?.lastName?.[0]}
                                             </div>
                                         )}
                                     </div>
                                     {isOnline && (
-                                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
+<div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full dark:border-background" />
                                     )}
                                 </div>
                                 <div className="flex flex-col">
                                     <div className="flex items-center gap-1.5">
-                                        <span className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">
+                                        <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
                                             {recipientDisplayName}
                                         </span>
                                         {activeRecipientProfile?.verifiedEmail && (
@@ -611,7 +611,7 @@ export default function DirectMessagePage() {
                                             </div>
                                         )}
                                     </div>
-                                    <span className="text-[10px] font-medium text-slate-500">
+                                    <span className="text-[10px] font-medium text-muted-foreground">
                                         {isOnline ? 'En ligne' : 'Hors ligne'}
                                     </span>
                                 </div>
@@ -620,7 +620,7 @@ export default function DirectMessagePage() {
                     </div>
                     <div className="flex items-center gap-2">
                         {sharedKey && !isEsttAiChat && (
-                            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
+                            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100 dark:bg-emerald-500/15 dark:border-emerald-500/40">
                                 <Lock className="w-3 h-3 text-emerald-600" />
                                 <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Chiffré</span>
                             </div>
@@ -638,10 +638,10 @@ export default function DirectMessagePage() {
                                             : 'Activer les notifications'
                                 }
                                 className={`p-2 rounded-full transition-all ${permission === 'granted'
-                                    ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
+                                    ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25'
                                     : permission === 'denied'
-                                        ? 'text-slate-300 cursor-not-allowed'
-                                        : 'text-slate-400 hover:text-primary hover:bg-primary/5'
+                                        ? 'text-muted-foreground cursor-not-allowed'
+                                        : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
                                     }`}
                                 disabled={permission === 'denied'}
                             >
@@ -657,7 +657,7 @@ export default function DirectMessagePage() {
                             <button
                                 onClick={handleClearChat}
                                 title="Effacer la conversation"
-                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                                className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-full transition-all dark:hover:bg-red-500/10"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
@@ -667,21 +667,21 @@ export default function DirectMessagePage() {
             </div>
 
             {/* Messages Body */}
-            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-6 md:px-12 scroll-smooth bg-white custom-scrollbar overscroll-contain">
+            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-6 md:px-12 scroll-smooth bg-card custom-scrollbar overscroll-contain">
                 <div className="max-w-4xl mx-auto">
                     {messages.length === 0 ? (
                         <div className="py-16">
                             {isEsttAiChat ? (
-                                <div className="rounded-[2rem] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 md:p-10 shadow-sm">
+                                <div className="rounded-[2rem] border border-border bg-gradient-to-br from-white to-slate-50 dark:from-card dark:to-muted/50 p-8 md:p-10 shadow-sm">
                                     <div className="flex flex-col items-center text-center">
-                                        <div className="w-20 h-20 rounded-[2rem] overflow-hidden border border-slate-200 shadow-sm mb-5">
+                                        <div className="w-20 h-20 rounded-[2rem] overflow-hidden border border-border shadow-sm mb-5">
                                             <img src={ESTT_AI_PROFILE.photoUrl} alt="ESTT-AI" className="w-full h-full object-cover" />
                                         </div>
-                                        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
+                                        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
                                             ESTT-AI
                                         </div>
-                                        <h2 className="mt-4 text-2xl font-black text-slate-900">Agent officiel de la communaute ESTT</h2>
-                                        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-500">
+                                        <h2 className="mt-4 text-2xl font-black text-foreground">Agent officiel de la communaute ESTT</h2>
+                                        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
                                             Posez vos questions sur la plateforme, les clubs, les evenements, les contributions ou demandez de l'aide pour rediger un message, une annonce ou une presentation.
                                         </p>
                                     </div>
@@ -692,7 +692,7 @@ export default function DirectMessagePage() {
                         Object.entries(groupedMessages).map(([date, msgs]) => (
                             <div key={date}>
                                 <div className="flex items-center justify-center mb-8">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 bg-white px-4">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-card px-4">
                                         {date}
                                     </span>
                                 </div>
@@ -730,11 +730,11 @@ export default function DirectMessagePage() {
             </div>
 
             {/* Input Area */}
-            <div className="bg-white border-t border-slate-100 p-3 md:p-6 pb-4 md:pb-8 shrink-0">
+            <div className="bg-card border-t border-border p-3 md:p-6 pb-4 md:pb-8 shrink-0">
                 <div className="max-w-4xl mx-auto">
                     {isAiSearching && (
                         <div className="flex items-center gap-2 mb-2 animate-in fade-in slide-in-from-bottom-1 duration-200">
-                            <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full border border-blue-100">
+                            <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full border border-blue-100 dark:bg-blue-500/15 dark:border-blue-500/40">
                                 <Search className="w-3 h-3 text-blue-500 animate-pulse" />
                                 <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
                                     ESTT-AI recherche des ressources...
@@ -745,23 +745,23 @@ export default function DirectMessagePage() {
 
                     {recipientIsTyping && !isAiSearching && (
                         <div className="flex items-center gap-2 mb-2 animate-in fade-in slide-in-from-bottom-1 duration-200">
-                            <span className="text-[10px] font-medium text-slate-400 italic">
+                            <span className="text-[10px] font-medium text-muted-foreground italic">
                                 {activeRecipientProfile?.firstName} est en train d'écrire...
                             </span>
                         </div>
                     )}
 
                     {replyingTo && (
-                        <div className="mb-3 p-3 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-between">
+                        <div className="mb-3 p-3 bg-muted border border-border rounded-xl flex items-center justify-between">
                             <div className="flex items-center gap-3 overflow-hidden">
                                 <div className="w-1 h-8 bg-primary rounded-full shrink-0" />
                                 <div className="flex flex-col min-w-0">
                                     <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Réponse</span>
-                                    <p className="text-xs text-slate-500 truncate italic">{replyingTo.text}</p>
+                                    <p className="text-xs text-muted-foreground truncate italic">{replyingTo.text}</p>
                                 </div>
                             </div>
-                            <button onClick={() => setReplyingTo(null)} className="p-1 hover:bg-slate-200 rounded-full transition-all">
-                                <X className="w-4 h-4 text-slate-400" />
+                            <button onClick={() => setReplyingTo(null)} className="p-1 hover:bg-muted rounded-full transition-all">
+                                <X className="w-4 h-4 text-muted-foreground" />
                             </button>
                         </div>
                     )}
@@ -775,7 +775,7 @@ export default function DirectMessagePage() {
                                 <div className="flex-1 text-center md:text-left space-y-2">
                                     <h3 className="text-xl font-black text-white tracking-tight flex items-center justify-center md:justify-start gap-2">
                                         Accès Premium ESTT-AI
-                                        <span className="text-[10px] bg-white text-violet-600 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter shadow-sm">Plus+</span>
+                                        <span className="text-[10px] bg-card text-violet-600 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter shadow-sm">Plus+</span>
                                     </h3>
                                     <p className="text-sm text-white/80 font-medium leading-relaxed max-w-lg">
                                         Notre assistant intelligent est réservé aux membres <strong>ESTTPlus+</strong>.
@@ -786,7 +786,7 @@ export default function DirectMessagePage() {
                                     <Button
                                         // onClick={() => router.push(`/profile/${user?.uid}`)}
                                         onClick={() => router.push(`/?from=qr11434`)}
-                                        className="w-full md:w-auto bg-white text-violet-600 hover:bg-white/90 font-bold px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                        className="w-full md:w-auto bg-card text-violet-600 hover:bg-white/90 font-bold px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                                     >
                                         Devenir Membre Plus+
                                     </Button>
@@ -794,14 +794,14 @@ export default function DirectMessagePage() {
                             </div>
                         </div>
                     ) : isEsttAiChat && !isPremium && aiMessageCount >= 2 ? (
-                        <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 shadow-sm animate-in fade-in duration-300">
+                        <div className="bg-muted p-6 rounded-3xl border border-border shadow-sm animate-in fade-in duration-300">
                             <div className="flex flex-col items-center text-center gap-3">
-                                <div className="w-12 h-12 rounded-2xl bg-slate-200 flex items-center justify-center">
-                                    <Lock className="w-6 h-6 text-slate-400" />
+                                <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center">
+                                    <Lock className="w-6 h-6 text-muted-foreground" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h3 className="text-base font-bold text-slate-900">Limite quotidienne atteinte</h3>
-                                    <p className="text-sm text-slate-500">
+                                    <h3 className="text-base font-bold text-foreground">Limite quotidienne atteinte</h3>
+                                    <p className="text-sm text-muted-foreground">
                                         Vous avez utilisé vos 2 messages gratuits pour aujourd'hui.
                                         Revenez demain ou passez à <strong>ESTTPlus+</strong> pour un accès illimité.
                                     </p>

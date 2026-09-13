@@ -601,7 +601,7 @@ export default function ResourcePage() {
     const downloadUrl = ensureProtocol(resource.url || resource.link || resource.file);
 
     return (
-        <main className="min-h-screen bg-slate-50/50 py-8 px-4">
+        <main className="min-h-screen bg-muted/50 py-8 px-4">
             <div className="max-w-4xl mx-auto space-y-6">
                 <div className="flex justify-between items-center w-full">
                     <Button variant="ghost" size="sm" onClick={() => router.back()}>
@@ -727,7 +727,7 @@ export default function ResourcePage() {
                                 <CardTitle className="text-2xl font-bold mb-2">
                                     {resource.title}
                                 </CardTitle>
-                                <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600">
+                                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                                     {resource.professor && (
                                         <span>Prof. {resource.professor}</span>
                                     )}
@@ -735,18 +735,18 @@ export default function ResourcePage() {
                                         <span>{new Date(resource.createdAt).toLocaleDateString('fr-FR')}</span>
                                     )}
                                     {viewCount !== null && (
-                                        <span className="flex items-center gap-1 text-xs text-slate-500">
+                                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                             <Eye className="w-3 h-3" />
                                             {viewCount.toLocaleString('fr-FR')} vue{viewCount > 1 ? 's' : ''}
                                         </span>
                                     )}
                                     {resource.ratingAverage && resource.ratingCount > 0 && (
-                                        <div className="flex items-center gap-1 text-xs text-slate-600">
+                                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                             <div className="flex items-center gap-0.5">
                                                 {[1, 2, 3, 4, 5].map((value) => (
                                                     <Star
                                                         key={value}
-                                                        className={`w-3 h-3 ${value <= Math.round(resource.ratingAverage) ? 'text-yellow-500 fill-yellow-500' : 'text-slate-300'}`}
+                                                        className={`w-3 h-3 ${value <= Math.round(resource.ratingAverage) ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}`}
                                                     />
                                                 ))}
                                             </div>
@@ -762,7 +762,7 @@ export default function ResourcePage() {
 
                     <CardContent className="py-6 space-y-6">
                         {resource.description && (
-                            <div className="text-sm text-slate-700 leading-relaxed">
+                            <div className="text-sm text-foreground leading-relaxed">
                                 {resource.description}
                             </div>
                         )}
@@ -782,7 +782,7 @@ export default function ResourcePage() {
                         )}
 
                         {!getYouTubeEmbedUrl(downloadUrl) && isPdfUrl(downloadUrl) && (
-                            <div className="w-full h-[60vh] sm:h-[600px] md:h-[700px] rounded-xl overflow-hidden border shadow-sm bg-slate-50 transition-all hover:shadow-md">
+                            <div className="w-full h-[60vh] sm:h-[600px] md:h-[700px] rounded-xl overflow-hidden border shadow-sm bg-muted transition-all hover:shadow-md">
                                 <object
                                     data={downloadUrl}
                                     type="application/pdf"
@@ -796,8 +796,8 @@ export default function ResourcePage() {
                                         title="PDF viewer"
                                         frameBorder="0"
                                     >
-                                        <div className="flex flex-col items-center justify-center h-full p-6 text-center text-slate-500 bg-slate-50/50">
-                                            <FileText className="w-12 h-12 mb-3 text-slate-300" />
+                                        <div className="flex flex-col items-center justify-center h-full p-6 text-center text-muted-foreground bg-muted/50">
+                                            <FileText className="w-12 h-12 mb-3 text-muted-foreground" />
                                             <p className="mb-4">Votre navigateur ne supporte pas l'affichage direct des PDF.</p>
                                             <Button asChild>
                                                 <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="gap-2">
@@ -812,7 +812,7 @@ export default function ResourcePage() {
                         )}
 
                         {!getYouTubeEmbedUrl(downloadUrl) && !isPdfUrl(downloadUrl) && getGoogleWorkspaceEmbedUrl(downloadUrl) && (
-                            <div className="w-full h-[60vh] sm:h-[600px] md:h-[700px] rounded-xl overflow-hidden border shadow-sm bg-slate-50 transition-all hover:shadow-md">
+                            <div className="w-full h-[60vh] sm:h-[600px] md:h-[700px] rounded-xl overflow-hidden border shadow-sm bg-muted transition-all hover:shadow-md">
                                 <iframe
                                     width="100%"
                                     height="100%"
@@ -826,14 +826,14 @@ export default function ResourcePage() {
 
                         {/* Fallback for generic links (Not YouTube, Not PDF, Not Google Workspace) */}
                         {downloadUrl && !getYouTubeEmbedUrl(downloadUrl) && !isPdfUrl(downloadUrl) && !getGoogleWorkspaceEmbedUrl(downloadUrl) && resource.type === 'link' && (
-                            <div className="border rounded-xl p-5 sm:p-6 bg-slate-50 hover:bg-slate-100/80 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-4 shadow-sm hover:shadow-md mt-6">
+                            <div className="border rounded-xl p-5 sm:p-6 bg-muted hover:bg-muted/80 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-4 shadow-sm hover:shadow-md mt-6">
                                 <div className="flex items-start sm:items-center gap-4 w-full sm:w-auto">
                                     <div className="p-3 bg-primary/10 rounded-full text-primary shrink-0 mt-1 sm:mt-0">
                                         <LinkIcon className="w-6 h-6" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h4 className="font-semibold text-slate-900 mb-1 text-base sm:text-lg">Lien externe</h4>
-                                        <p className="text-sm text-slate-500 truncate w-full max-w-[200px] xs:max-w-xs sm:max-w-sm md:max-w-md">
+                                        <h4 className="font-semibold text-foreground mb-1 text-base sm:text-lg">Lien externe</h4>
+                                        <p className="text-sm text-muted-foreground truncate w-full max-w-[200px] xs:max-w-xs sm:max-w-sm md:max-w-md">
                                             {downloadUrl}
                                         </p>
                                     </div>
@@ -849,14 +849,14 @@ export default function ResourcePage() {
 
                         {/* Interactive HTML page preview box */}
                         {downloadUrl && !getYouTubeEmbedUrl(downloadUrl) && !isPdfUrl(downloadUrl) && !getGoogleWorkspaceEmbedUrl(downloadUrl) && resource.type === 'html' && (
-                            <div className="border rounded-xl p-5 sm:p-6 bg-slate-50 hover:bg-slate-100/80 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-4 shadow-sm hover:shadow-md mt-6">
+                            <div className="border rounded-xl p-5 sm:p-6 bg-muted hover:bg-muted/80 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-4 shadow-sm hover:shadow-md mt-6">
                                 <div className="flex items-start sm:items-center gap-4 w-full sm:w-auto">
                                     <div className="p-3 bg-primary/10 rounded-full text-primary shrink-0 mt-1 sm:mt-0">
                                         <Globe className="w-6 h-6" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h4 className="font-semibold text-slate-900 mb-1 text-base sm:text-lg">Page HTML Interactive</h4>
-                                        <p className="text-sm text-slate-500 truncate w-full max-w-[200px] xs:max-w-xs sm:max-w-sm md:max-w-md">
+                                        <h4 className="font-semibold text-foreground mb-1 text-base sm:text-lg">Page HTML Interactive</h4>
+                                        <p className="text-sm text-muted-foreground truncate w-full max-w-[200px] xs:max-w-xs sm:max-w-sm md:max-w-md">
                                             {resource.fileName || 'page.html'}
                                         </p>
                                     </div>
@@ -872,7 +872,7 @@ export default function ResourcePage() {
 
                         {((resource.fields && resource.fields.length > 0) || resource.field) && (
                             <div className="border-t pt-4">
-                                <p className="text-xs font-semibold text-slate-600 mb-3">Filières</p>
+                                <p className="text-xs font-semibold text-muted-foreground mb-3">Filières</p>
                                 <div className="flex flex-wrap gap-2">
                                     {resource.field && (
                                         <Badge variant="secondary">
@@ -896,7 +896,7 @@ export default function ResourcePage() {
                                 {(resource.type === 'link' || resource.type === 'html' || resource.type === 'video') ? 'Ouvrir' : 'Télécharger'}
                             </a>
                         </Button>
-                        <Button variant="outline" size="sm" onClick={handleShare} className="gap-2 text-slate-600 hover:text-primary flex-1 sm:flex-none">
+                        <Button variant="outline" size="sm" onClick={handleShare} className="gap-2 text-muted-foreground hover:text-primary flex-1 sm:flex-none">
                             <Share2 className="w-4 h-4" />
                             Partager
                         </Button>
@@ -914,7 +914,7 @@ export default function ResourcePage() {
                     <CardContent className="py-4 space-y-6">
                         {/* Comment Form */}
                         {user ? (
-                            <div className="border rounded-lg p-4 bg-slate-50">
+                            <div className="border rounded-lg p-4 bg-muted">
                                 <Textarea
                                     placeholder="Partagez votre avis..."
                                     value={commentText}
@@ -932,7 +932,7 @@ export default function ResourcePage() {
                                 </Button>
                             </div>
                         ) : (
-                            <div className="text-center py-4 text-sm text-slate-600">
+                            <div className="text-center py-4 text-sm text-muted-foreground">
                                 <Link href="/login" className="text-primary font-semibold hover:underline">
                                     Connectez-vous
                                 </Link>
@@ -942,24 +942,24 @@ export default function ResourcePage() {
 
                         <div className="border-t pt-4">
                             {comments.length === 0 && (
-                                <p className="text-center text-slate-500 text-sm py-6">Aucun commentaire pour l'instant.</p>
+                                <p className="text-center text-muted-foreground text-sm py-6">Aucun commentaire pour l'instant.</p>
                             )}
                             {comments.length > 0 && (
                                 <div className="space-y-4">
                                     {getParentComments().map((comment) => (
                                         <div key={comment.id} className="space-y-4">
                                             {/* Parent Comment */}
-                                            <div className="border rounded-lg p-3 bg-slate-50">
+                                            <div className="border rounded-lg p-3 bg-muted">
                                                 <div className="flex items-start gap-3">
                                                     <div className="flex-shrink-0">
-                                                        <User className="w-4 h-4 text-slate-400" />
+                                                        <User className="w-4 h-4 text-muted-foreground" />
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-2 mb-2">
                                                             <span className="font-semibold text-sm">{comment.authorName}</span>
-                                                            <span className="text-xs text-slate-500">{formatCommentDate(comment.timestamp)}</span>
+                                                            <span className="text-xs text-muted-foreground">{formatCommentDate(comment.timestamp)}</span>
                                                         </div>
-                                                        <p className="text-sm text-slate-700 mb-2">{comment.text}</p>
+                                                        <p className="text-sm text-foreground mb-2">{comment.text}</p>
                                                         {user && (
                                                             <Button
                                                                 variant="ghost"
@@ -976,7 +976,7 @@ export default function ResourcePage() {
 
                                             {/* Reply Form */}
                                             {expandedReplies[comment.id] && user && (
-                                                <div className="ml-6 border rounded-lg p-3 bg-slate-50">
+                                                <div className="ml-6 border rounded-lg p-3 bg-muted">
                                                     <Textarea
                                                         placeholder="Votre réponse..."
                                                         value={replyTexts[comment.id] || ''}
@@ -1008,15 +1008,15 @@ export default function ResourcePage() {
                                             {getReplies(comment.id).length > 0 && (
                                                 <div className="ml-6 space-y-2 border-l px-3">
                                                     {getReplies(comment.id).map((reply) => (
-                                                        <div key={reply.id} className="bg-slate-50 rounded p-3 text-xs">
+                                                        <div key={reply.id} className="bg-muted rounded p-3 text-xs">
                                                             <div className="flex items-start gap-2">
-                                                                <User className="w-3 h-3 text-slate-400 flex-shrink-0 mt-0.5" />
+                                                                <User className="w-3 h-3 text-muted-foreground flex-shrink-0 mt-0.5" />
                                                                 <div className="flex-1 min-w-0">
                                                                     <div className="flex items-center gap-2 mb-1">
                                                                         <span className="font-semibold text-xs">{reply.authorName}</span>
-                                                                        <span className="text-slate-500">{formatCommentDate(reply.timestamp)}</span>
+                                                                        <span className="text-muted-foreground">{formatCommentDate(reply.timestamp)}</span>
                                                                     </div>
-                                                                    <p className="text-slate-700">{reply.text}</p>
+                                                                    <p className="text-foreground">{reply.text}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1039,7 +1039,7 @@ export default function ResourcePage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="py-4 space-y-3">
-                        <p className="text-xs text-slate-600">
+                        <p className="text-xs text-muted-foreground">
                             Ta note s&apos;affiche en moyenne d&apos;étoiles pour tout le monde, mais ton commentaire écrit reste privé pour les admins.
                         </p>
                         {user ? (
@@ -1057,7 +1057,7 @@ export default function ResourcePage() {
                                                 className={`w-6 h-6 ${
                                                     value <= userRating
                                                         ? 'text-yellow-500 fill-yellow-500'
-                                                        : 'text-slate-300'
+                                                        : 'text-muted-foreground'
                                                 }`}
                                             />
                                         </button>
@@ -1067,7 +1067,7 @@ export default function ResourcePage() {
                                     )}
                                 </div>
                                 <div className="space-y-1">
-                                    <Label htmlFor="user-review" className="text-xs text-slate-600">
+                                    <Label htmlFor="user-review" className="text-xs text-muted-foreground">
                                         Avis (optionnel, uniquement pour les admins)
                                     </Label>
                                     <Textarea
@@ -1093,7 +1093,7 @@ export default function ResourcePage() {
                                 </Button>
                             </div>
                         ) : (
-                            <p className="text-xs text-slate-600">
+                            <p className="text-xs text-muted-foreground">
                                 <Link href="/login" className="text-primary font-semibold hover:underline">
                                     Connecte-toi
                                 </Link>{' '}

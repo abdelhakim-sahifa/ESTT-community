@@ -127,9 +127,9 @@ export default function ModeratorDashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50/50 flex flex-col">
+        <div className="min-h-screen bg-muted/50 flex flex-col">
             {/* Mobile Header */}
-            <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 sticky top-0 z-50">
+            <div className="md:hidden flex items-center justify-between p-4 bg-card border-b border-border sticky top-0 z-50">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
                         <ShieldCheck className="w-5 h-5" />
