@@ -19,7 +19,7 @@ import {
 import { Badge, Loader2, FileText, Video, ImageIcon, Link as LinkIcon, ArrowRight, FolderOpen, User, Star, BookOpen, ClipboardList, FlaskConical, FileCheck, Layers, Globe, ListPlus, Search, X } from 'lucide-react';
 
 const TYPE_CATEGORIES = [
-    { id: 'all', label: 'Tous', icon: <Layers className="w-5 h-5 text-slate-500" /> },
+    { id: 'all', label: 'Tous', icon: <Layers className="w-5 h-5 text-muted-foreground" /> },
     { id: 'Cours', label: 'Cours', icon: <BookOpen className="w-5 h-5 text-blue-500" /> },
     { id: 'TD', label: 'TD', icon: <ClipboardList className="w-5 h-5 text-indigo-500" /> },
     { id: 'TP', label: 'TP', icon: <FlaskConical className="w-5 h-5 text-emerald-500" /> },
@@ -151,11 +151,11 @@ export default function MyListPage() {
                     {[1, 2, 3, 4, 5].map((value) => (
                         <Star
                             key={value}
-                            className={`w-3 h-3 ${value <= Math.round(average) ? 'text-yellow-500 fill-yellow-500' : 'text-slate-300'}`}
+                            className={`w-3 h-3 ${value <= Math.round(average) ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}`}
                         />
                     ))}
                 </div>
-                <span className="text-[11px] text-slate-500">{rounded.toFixed(1)} ({count})</span>
+                <span className="text-[11px] text-muted-foreground">{rounded.toFixed(1)} ({count})</span>
             </div>
         );
     };
@@ -226,25 +226,25 @@ export default function MyListPage() {
             <Link
                 key={resourceId}
                 href={`/resource/${resourceId}`}
-                className="group flex flex-col h-full border border-slate-200 rounded-xl hover:border-primary/50 transition-all hover:shadow-md bg-white p-5 cursor-pointer"
+                className="group flex flex-col h-full border border-border rounded-xl hover:border-primary/50 transition-all hover:shadow-md bg-card p-5 cursor-pointer"
             >
                 <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400 shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                    <div className="p-2.5 bg-muted rounded-xl text-muted-foreground shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                         {getResourceIcon(resource.type)}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                        <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                             {resource.title || 'Ressource'}
                         </h3>
                         <div className="flex flex-col mt-1.5 gap-1">
                             <div className="flex flex-wrap items-center gap-1.5">
                                 {resource.professor && (
-                                    <span className="text-[10px] font-medium text-slate-400 flex items-center gap-1">
+                                    <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
                                         <User className="w-3 h-3" />
                                         {resource.professor}
                                     </span>
                                 )}
-                                <span className="text-[10px] font-bold uppercase py-0.5 px-1.5 bg-slate-100 text-slate-500 rounded">
+                                <span className="text-[10px] font-bold uppercase py-0.5 px-1.5 bg-muted text-muted-foreground rounded">
                                     {resource.type}
                                 </span>
                                 {resource.docType && (
@@ -258,7 +258,7 @@ export default function MyListPage() {
                     </div>
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
                     <button
                         onClick={(e) => handleRemoveFavorite(e, resourceId)}
                         disabled={togglingFav === resourceId}
@@ -298,7 +298,7 @@ export default function MyListPage() {
 
             <section className="mb-6">
                 <div className="relative max-w-md mx-auto">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                         type="text"
                         placeholder="Rechercher dans ma liste..."
@@ -309,7 +309,7 @@ export default function MyListPage() {
                     {searchQuery && (
                         <button
                             onClick={() => setSearchQuery('')}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                         >
                             <X className="w-4 h-4" />
                         </button>
@@ -419,14 +419,14 @@ export default function MyListPage() {
                         <p className="text-muted-foreground">Chargement de votre liste...</p>
                     </div>
                 ) : filteredFavorites.length === 0 ? (
-                    <div className="text-center py-16 border border-dashed border-slate-200 rounded-xl">
-                        <div className="mx-auto w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                            <ListPlus className="w-7 h-7 text-slate-400" />
+                    <div className="text-center py-16 border border-dashed border-border rounded-xl">
+                        <div className="mx-auto w-14 h-14 bg-muted rounded-full flex items-center justify-center mb-4">
+                            <ListPlus className="w-7 h-7 text-muted-foreground" />
                         </div>
-                        <p className="font-semibold text-slate-900 mb-1">
+                        <p className="font-semibold text-foreground mb-1">
                             {favorites.length === 0 ? 'Votre liste est vide' : 'Aucun résultat trouvé'}
                         </p>
-                        <p className="text-sm text-slate-400 max-w-sm mx-auto mb-6">
+                        <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-6">
                             {favorites.length === 0
                                 ? 'Ajoutez des ressources depuis la page Ressources pour les retrouver ici.'
                                 : 'Essayez de modifier vos filtres pour trouver ce que vous cherchez.'}
@@ -445,11 +445,11 @@ export default function MyListPage() {
 
                             return (
                                 <div key={category.id} className="space-y-6">
-                                    <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-                                        <div className="p-2 bg-slate-50 rounded-lg">
+                                    <div className="flex items-center gap-3 border-b border-border pb-3">
+                                        <div className="p-2 bg-muted rounded-lg">
                                             {category.icon}
                                         </div>
-                                        <h3 className="text-xl font-bold text-slate-800">{category.label}</h3>
+                                        <h3 className="text-xl font-bold text-foreground">{category.label}</h3>
                                         <Badge variant="outline" className="ml-2">{categoryItems.length}</Badge>
                                     </div>
 
@@ -462,11 +462,11 @@ export default function MyListPage() {
 
                         {Object.keys(groupedFavorites).filter(type => !TYPE_CATEGORIES.find(c => c.id === type)).map(type => (
                             <div key={type} className="space-y-6">
-                                <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-                                    <div className="p-2 bg-slate-50 rounded-lg">
-                                        <Layers className="w-5 h-5 text-slate-400" />
+                                <div className="flex items-center gap-3 border-b border-border pb-3">
+                                    <div className="p-2 bg-muted rounded-lg">
+                                        <Layers className="w-5 h-5 text-muted-foreground" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-slate-800">{type}</h3>
+                                    <h3 className="text-xl font-bold text-foreground">{type}</h3>
                                     <Badge variant="outline" className="ml-2">{groupedFavorites[type].length}</Badge>
                                 </div>
 

@@ -1247,7 +1247,7 @@ export default function ClubAdminPage() {
                     <div className="flex flex-col md:flex-row gap-8">
                         {/* Sidebar / Navigation */}
                         <div className={cn(
-                            "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 md:bg-transparent md:border-none",
+                            "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 md:bg-transparent md:border-none",
                             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                         )}>
                             <div className="p-4 md:p-0">
@@ -1272,7 +1272,7 @@ export default function ClubAdminPage() {
                                     </TabsTrigger>
                                     <Link
                                         href={`/clubs/${clubId}/admin/scanner`}
-                                        className="flex items-center gap-3 h-11 px-4 text-sm font-medium rounded-md hover:bg-slate-100 transition-colors text-primary"
+                                        className="flex items-center gap-3 h-11 px-4 text-sm font-medium rounded-md hover:bg-muted transition-colors text-primary"
                                     >
                                         <Scan className="w-4 h-4" /> Ouvrir le Scanneur
                                     </Link>
@@ -1557,7 +1557,7 @@ export default function ClubAdminPage() {
                                                                 </div>
                                                             </div>
                                                             {newEvent.imageUrl && (
-                                                                <div className="w-24 h-16 rounded border overflow-hidden bg-slate-100 flex-shrink-0 shadow-sm">
+                                                                <div className="w-24 h-16 rounded border overflow-hidden bg-muted flex-shrink-0 shadow-sm">
                                                                     <img src={newEvent.imageUrl} alt="Event Preview" className="w-full h-full object-cover" />
                                                                 </div>
                                                             )}
@@ -1575,7 +1575,7 @@ export default function ClubAdminPage() {
                                                     />
                                                 </div>
 
-                                                <div className="space-y-4 border p-4 rounded-md bg-slate-50/50">
+                                                <div className="space-y-4 border p-4 rounded-md bg-muted/50">
                                                     <div className="flex items-center justify-between">
                                                         <Label className="font-bold">Champs du formulaire d'inscription</Label>
                                                         <Button type="button" variant="outline" size="sm" onClick={handleAddEventField}>
@@ -1585,7 +1585,7 @@ export default function ClubAdminPage() {
 
                                                     <div className="space-y-3">
                                                         {newEvent.fields.map((field) => (
-                                                            <div key={field.id} className="flex gap-2 items-start bg-white p-2 rounded-md border shadow-sm">
+                                                            <div key={field.id} className="flex gap-2 items-start bg-card p-2 rounded-md border shadow-sm">
                                                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 flex-1">
                                                                     <Input
                                                                         placeholder="Nom du champ"
@@ -1713,7 +1713,7 @@ export default function ClubAdminPage() {
                                                                 <Button
                                                                     variant="outline"
                                                                     size="sm"
-                                                                    className="bg-slate-50 border-slate-200 w-full"
+                                                                    className="bg-muted border-border w-full"
                                                                     onClick={() => {
                                                                         const eventParticipants = tickets.filter(t => t.eventId === event.id);
                                                                         generateAttendanceList(eventParticipants, event, club);
@@ -1770,7 +1770,7 @@ export default function ClubAdminPage() {
                                     </CardHeader>
                                     <CardContent className="space-y-6">
                                         {/* Add Member Form */}
-                                        <div className="p-4 bg-slate-50 rounded-lg border">
+                                        <div className="p-4 bg-muted rounded-lg border">
                                             <h3 className="text-sm font-semibold mb-3">Ajouter un membre</h3>
                                             <form onSubmit={handleAddMember} className="grid sm:grid-cols-4 gap-3">
                                                 <Input
@@ -1811,7 +1811,7 @@ export default function ClubAdminPage() {
                                             ) : (
                                                 <div className="grid gap-2">
                                                     {club.members.map((member, idx) => (
-                                                        <div key={idx} className="flex items-center justify-between p-3 border rounded-lg bg-white">
+                                                        <div key={idx} className="flex items-center justify-between p-3 border rounded-lg bg-card">
                                                             <div>
                                                                 <p className="font-medium text-sm">{member.name}</p>
                                                                 <p className="text-xs text-muted-foreground">{member.email}</p>
@@ -1969,7 +1969,7 @@ export default function ClubAdminPage() {
                                                 <p className="text-xs text-muted-foreground italic">Les sauts de ligne seront convertis en paragraphes.</p>
                                             </div>
 
-                                            <div className="grid md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg border">
+                                            <div className="grid md:grid-cols-2 gap-4 p-4 bg-muted rounded-lg border">
                                                 <div className="space-y-2">
                                                     <Label>Texte du bouton (Optionnel)</Label>
                                                     <Input 
@@ -2031,7 +2031,7 @@ export default function ClubAdminPage() {
                                                             </div>
                                                         </div>
                                                         {newEmail.coverImageUrl && (
-                                                            <div className="w-24 h-16 rounded border overflow-hidden bg-slate-100 flex-shrink-0">
+                                                            <div className="w-24 h-16 rounded border overflow-hidden bg-muted flex-shrink-0">
                                                                 <img src={newEmail.coverImageUrl} alt="Preview" className="w-full h-full object-cover" />
                                                             </div>
                                                         )}
@@ -2094,7 +2094,7 @@ export default function ClubAdminPage() {
                                                         <span>Envoi en cours...</span>
                                                         <span>{Math.round((emailProgress.current / emailProgress.total) * 100)}% ({emailProgress.current}/{emailProgress.total})</span>
                                                     </div>
-                                                    <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                                    <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                                                         <div 
                                                             className="bg-primary h-full transition-all duration-300" 
                                                             style={{ width: `${(emailProgress.current / emailProgress.total) * 100}%` }}
@@ -2130,8 +2130,8 @@ export default function ClubAdminPage() {
                                                             <DialogTitle>Aperçu de l'email</DialogTitle>
                                                             <DialogDescription>Voici comment vos membres verront votre message.</DialogDescription>
                                                         </DialogHeader>
-                                                        <div className="bg-slate-100 p-4 rounded-md border text-slate-900 shadow-inner overflow-hidden">
-                                                            <div className="bg-white max-w-xl mx-auto shadow-sm rounded-lg overflow-hidden border">
+                                                        <div className="bg-muted p-4 rounded-md border text-foreground shadow-inner overflow-hidden">
+                                                            <div className="bg-card max-w-xl mx-auto shadow-sm rounded-lg overflow-hidden border">
                                                                 <div 
                                                                     className="p-4 text-white text-center font-bold text-xl flex items-center justify-between px-8"
                                                                     style={{ borderTop: `4px solid ${club.themeColor || '#2563eb'}` }}
@@ -2139,10 +2139,10 @@ export default function ClubAdminPage() {
                                                                     {club.logo ? (
                                                                         <img src={club.logo} alt="Club Logo" className="h-8 w-auto rounded" />
                                                                     ) : (
-                                                                        <span className="text-slate-900 text-sm">{club.name}</span>
+                                                                        <span className="text-foreground text-sm">{club.name}</span>
                                                                     )}
-                                                                    <span className="text-slate-400 font-light mx-2">&times;</span>
-                                                                    <div className="text-slate-900">
+                                                                    <span className="text-muted-foreground font-light mx-2">&times;</span>
+                                                                    <div className="text-foreground">
                                                                         ESTT<span className="text-primary">.Community</span>
                                                                     </div>
                                                                 </div>
@@ -2155,7 +2155,7 @@ export default function ClubAdminPage() {
 
                                                                 <div className="p-8">
                                                                     <h2 className="text-2xl font-bold mb-4">{newEmail.title || 'Titre de l\'email'}</h2>
-                                                                    <div className="text-slate-600 mb-6 space-y-4">
+                                                                    <div className="text-muted-foreground mb-6 space-y-4">
                                                                         {newEmail.content ? newEmail.content.split('\n').map((p, i) => <p key={i}>{p}</p>) : <p>Le contenu de votre message apparaîtra ici...</p>}
                                                                     </div>
                                                                     {newEmail.ctaLabel && (
@@ -2168,7 +2168,7 @@ export default function ClubAdminPage() {
                                                                             </span>
                                                                         </div>
                                                                     )}
-                                                                    <div className="text-slate-500 text-sm italic">
+                                                                    <div className="text-muted-foreground text-sm italic">
                                                                         Cordialement,<br />
                                                                         <strong>L'équipe {club.name}</strong>
                                                                     </div>
@@ -2272,7 +2272,7 @@ export default function ClubAdminPage() {
                                                         </div>
                                                     </div>
                                                     {newPost.imageUrl && (
-                                                        <div className="w-24 h-16 rounded border overflow-hidden bg-slate-100 flex-shrink-0 shadow-sm">
+                                                        <div className="w-24 h-16 rounded border overflow-hidden bg-muted flex-shrink-0 shadow-sm">
                                                             <img src={newPost.imageUrl} alt="Post Preview" className="w-full h-full object-cover" />
                                                         </div>
                                                     )}
@@ -2358,7 +2358,7 @@ export default function ClubAdminPage() {
                                                 <Input
                                                     readOnly
                                                     value={`${typeof window !== 'undefined' ? window.location.origin : ''}/clubs/${clubId}/join`}
-                                                    className="bg-white"
+                                                    className="bg-card"
                                                 />
                                                 <Button
                                                     variant="outline"
@@ -2373,7 +2373,7 @@ export default function ClubAdminPage() {
                                         </div>
 
                                         {/* Custom Questions Management */}
-                                        <div className="space-y-4 border p-4 rounded-lg bg-slate-50">
+                                        <div className="space-y-4 border p-4 rounded-lg bg-muted">
                                             <div className="flex items-center justify-between">
                                                 <div className="space-y-1">
                                                     <h3 className="font-semibold">Questions personnalisées</h3>
@@ -2385,18 +2385,18 @@ export default function ClubAdminPage() {
                                             </div>
 
                                             <div className="space-y-3">
-                                                <div className="bg-white p-3 border rounded-md space-y-2 opacity-60">
+                                                <div className="bg-card p-3 border rounded-md space-y-2 opacity-60">
                                                     <Badge variant="outline">Questions standard (fixes)</Badge>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                                                        <div className="flex items-center gap-2 p-2 border rounded bg-slate-50">Nom complet</div>
-                                                        <div className="flex items-center gap-2 p-2 border rounded bg-slate-50">Email</div>
-                                                        <div className="flex items-center gap-2 p-2 border rounded bg-slate-50">Téléphone</div>
-                                                        <div className="flex items-center gap-2 p-2 border rounded bg-slate-50">Motivation</div>
+                                                        <div className="flex items-center gap-2 p-2 border rounded bg-muted">Nom complet</div>
+                                                        <div className="flex items-center gap-2 p-2 border rounded bg-muted">Email</div>
+                                                        <div className="flex items-center gap-2 p-2 border rounded bg-muted">Téléphone</div>
+                                                        <div className="flex items-center gap-2 p-2 border rounded bg-muted">Motivation</div>
                                                     </div>
                                                 </div>
 
                                                 {joinFormQuestions.map((q) => (
-                                                    <div key={q.id} className="flex gap-2 items-start bg-white p-3 border rounded-md shadow-sm">
+                                                    <div key={q.id} className="flex gap-2 items-start bg-card p-3 border rounded-md shadow-sm">
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1">
                                                             <Input
                                                                 placeholder="Votre question"
@@ -2464,7 +2464,7 @@ export default function ClubAdminPage() {
 
                                         <div className="space-y-4">
                                             {joinRequests.length === 0 ? (
-                                                <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50/50">
+                                                <div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted/50">
                                                     <p className="text-muted-foreground">Aucune demande en attente.</p>
                                                 </div>
                                             ) : (
@@ -2476,17 +2476,17 @@ export default function ClubAdminPage() {
                                                                 <div className="text-sm text-muted-foreground space-y-1">
                                                                     <p>{req.email}</p>
                                                                     <p>{req.phone}</p>
-                                                                    <p className="mt-2 text-slate-800 bg-slate-100 p-2 rounded text-xs italic">
+                                                                    <p className="mt-2 text-foreground bg-muted p-2 rounded text-xs italic">
                                                                         "{req.reason}"
                                                                     </p>
 
                                                                     {req.answers && Object.keys(req.answers).length > 0 && (
-                                                                        <div className="mt-3 space-y-2 pt-2 border-t border-slate-200">
+                                                                        <div className="mt-3 space-y-2 pt-2 border-t border-border">
                                                                             <p className="text-xs font-semibold text-primary">Réponses complémentaires :</p>
                                                                             {joinFormQuestions.map(q => req.answers[q.id] && (
                                                                                 <div key={q.id} className="text-xs">
-                                                                                    <span className="font-medium text-slate-600">{q.label} : </span>
-                                                                                    <span className="text-slate-700">
+                                                                                    <span className="font-medium text-muted-foreground">{q.label} : </span>
+                                                                                    <span className="text-foreground">
                                                                                         {typeof req.answers[q.id] === 'boolean'
                                                                                             ? (req.answers[q.id] ? 'Oui' : 'Non')
                                                                                             : req.answers[q.id]}
@@ -2574,7 +2574,7 @@ export default function ClubAdminPage() {
                                                     </div>
                                                 ) : (
                                                     <table className="w-full text-sm text-left">
-                                                        <thead className="bg-slate-50 text-slate-500 font-medium border-b">
+                                                        <thead className="bg-muted text-muted-foreground font-medium border-b">
                                                             <tr>
                                                                 <th className="p-4 w-[200px]">Date</th>
                                                                 {selectedForm.fields.map(field => (
@@ -2585,8 +2585,8 @@ export default function ClubAdminPage() {
                                                         </thead>
                                                         <tbody className="divide-y">
                                                             {submissions.map(sub => (
-                                                                <tr key={sub.id} className="hover:bg-slate-50/50">
-                                                                    <td className="p-4 text-slate-500">
+                                                                <tr key={sub.id} className="hover:bg-muted/50">
+                                                                    <td className="p-4 text-muted-foreground">
                                                                         {new Date(sub.submittedAt).toLocaleDateString()} {new Date(sub.submittedAt).toLocaleTimeString()}
                                                                     </td>
                                                                     {selectedForm.fields.map(field => (
@@ -2735,7 +2735,7 @@ export default function ClubAdminPage() {
                                                 ) : (
                                                     <div className="space-y-4">
                                                         {forms.map(form => (
-                                                            <Card key={form.id} className="bg-slate-50">
+                                                            <Card key={form.id} className="bg-muted">
                                                                 <div className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                                                     <div>
                                                                         <h3 className="font-bold flex items-center gap-2">
@@ -2752,7 +2752,7 @@ export default function ClubAdminPage() {
                                                                             >
                                                                                 Copier le lien
                                                                             </button>
-                                                                            <span className="text-slate-300">|</span>
+                                                                            <span className="text-muted-foreground">|</span>
                                                                             <Link href={`/clubs/${clubId}/forms/${form.id}`} target="_blank" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
                                                                                 Voir le formulaire
                                                                             </Link>
@@ -2803,7 +2803,7 @@ export default function ClubAdminPage() {
                                             <div className="space-y-4">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     {tickets.map(ticket => (
-                                                        <Card key={ticket.id} className={`p-4 ${ticket.status === 'pending' ? 'border-orange-200 bg-orange-50' : 'bg-white'}`}>
+                                                        <Card key={ticket.id} className={`p-4 ${ticket.status === 'pending' ? 'border-orange-200 bg-orange-50' : 'bg-card'}`}>
                                                             <div className="flex justify-between items-start">
                                                                 <div>
                                                                     <div className="flex items-center gap-2 mb-1">
@@ -2906,10 +2906,10 @@ export default function ClubAdminPage() {
                                                             </AlertDescription>
                                                         </Alert>
                                                     ) : (
-                                                        <div className="space-y-4 border p-4 rounded-lg bg-slate-50">
+                                                        <div className="space-y-4 border p-4 rounded-lg bg-muted">
                                                             <h3 className="font-medium text-sm mb-2">Modifier l'organigramme</h3>
                                                             {orgChartItems.map((item) => (
-                                                                <div key={item.id} className="bg-white p-3 border rounded space-y-3">
+                                                                <div key={item.id} className="bg-card p-3 border rounded space-y-3">
                                                                     <div className="grid grid-cols-2 gap-2">
                                                                         <div className="space-y-1">
                                                                             <Label className="text-xs">Rôle</Label>
@@ -2976,7 +2976,7 @@ export default function ClubAdminPage() {
                                     <CardContent>
                                         <form onSubmit={handleSaveSettings} className="space-y-6">
                                             <h3 className="text-sm font-medium">Notifications</h3>
-                                            <div className="flex items-center space-x-2 border p-4 rounded-md bg-slate-50">
+                                            <div className="flex items-center space-x-2 border p-4 rounded-md bg-muted">
                                                 <input
                                                     type="checkbox"
                                                     id="notifEnabledClub"

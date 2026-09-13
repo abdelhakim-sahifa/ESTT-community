@@ -63,19 +63,19 @@ export default function RemerciementsPage() {
     const getRankIcon = (index) => {
         switch (index) {
             case 0: return <Trophy className="w-4 h-4 text-yellow-500" />;
-            case 1: return <Medal className="w-4 h-4 text-slate-400" />;
+            case 1: return <Medal className="w-4 h-4 text-muted-foreground" />;
             case 2: return <Medal className="w-4 h-4 text-amber-600" />;
-            default: return <span className="text-slate-400 text-[10px] font-bold">#{index + 1}</span>;
+            default: return <span className="text-muted-foreground text-[10px] font-bold">#{index + 1}</span>;
         }
     };
 
     return (
-        <main className="min-h-screen bg-white">
+        <main className="min-h-screen bg-card">
             {/* Standard Hero */}
-            <section className="bg-white pt-20 pb-16 lg:pt-32 lg:pb-24 border-b border-slate-100">
+            <section className="bg-card pt-20 pb-16 lg:pt-32 lg:pb-24 border-b border-border">
                 <div className="container px-4 md:px-6 flex flex-col items-center text-center">
                     <Button variant="ghost" size="sm" asChild className="mb-8 group rounded-full">
-                        <Link href="/" className="flex items-center gap-2 text-slate-500">
+                        <Link href="/" className="flex items-center gap-2 text-muted-foreground">
                             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                             Retour
                         </Link>
@@ -94,7 +94,7 @@ export default function RemerciementsPage() {
                         <div className="flex items-center gap-2">
                             <strong className="text-primary text-lg">{stats.resources}</strong> ressources partagées
                         </div>
-                        <span className="text-slate-300">·</span>
+                        <span className="text-muted-foreground">·</span>
                         <div className="flex items-center gap-2">
                             <span className="text-primary font-bold">MERCI !</span>
                         </div>
@@ -103,13 +103,13 @@ export default function RemerciementsPage() {
             </section>
 
             {/* List Section */}
-            <section className="py-20 bg-slate-50/50">
+            <section className="py-20 bg-muted/50">
                 <div className="container max-w-3xl">
                     <div className="max-w-2xl mb-12">
-                        <h2 className="text-2xl font-bold tracking-tight text-slate-900 mb-3 text-center sm:text-left">
+                        <h2 className="text-2xl font-bold tracking-tight text-foreground mb-3 text-center sm:text-left">
                             Tableau d'honneur
                         </h2>
-                        <p className="text-slate-500 text-base text-center sm:text-left">
+                        <p className="text-muted-foreground text-base text-center sm:text-left">
                             Tous les membres qui ont contribué au succès de la plateforme.
                         </p>
                     </div>
@@ -117,7 +117,7 @@ export default function RemerciementsPage() {
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-20 gap-4">
                             <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                            <p className="text-slate-400 text-sm">Chargement des héros...</p>
+                            <p className="text-muted-foreground text-sm">Chargement des héros...</p>
                         </div>
                     ) : (
                         <div className="space-y-2">
@@ -130,22 +130,22 @@ export default function RemerciementsPage() {
                                         <CardWrapper
                                             key={idx}
                                             {...wrapperProps}
-                                            className="bg-white border border-slate-200 rounded-xl p-3 sm:p-4 flex items-center justify-between group hover:border-primary/50 transition-colors cursor-pointer block"
+                                            className="bg-card border border-border rounded-xl p-3 sm:p-4 flex items-center justify-between group hover:border-primary/50 transition-colors cursor-pointer block"
                                         >
                                             <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
                                                 <div className="w-6 sm:w-8 flex flex-shrink-0 justify-center">
                                                     {getRankIcon(idx)}
                                                 </div>
 
-                                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0 group-hover:bg-primary/5 group-hover:text-primary transition-colors">
+                                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground flex-shrink-0 group-hover:bg-primary/5 group-hover:text-primary transition-colors">
                                                     <User className="w-4 h-4 sm:w-5 sm:h-5" />
                                                 </div>
 
                                                 <div className="flex-1 min-w-0">
-                                                    <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate group-hover:text-primary transition-colors">
+                                                    <h3 className="text-sm sm:text-base font-bold text-foreground truncate group-hover:text-primary transition-colors">
                                                         {contributor.name}
                                                     </h3>
-                                                    <p className="text-[10px] sm:text-[11px] font-medium text-slate-400">
+                                                    <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground">
                                                         Activité : {new Date(contributor.lastContribution).toLocaleDateString()}
                                                     </p>
                                                 </div>
@@ -156,19 +156,19 @@ export default function RemerciementsPage() {
                                                     <p className="text-sm sm:text-base font-black text-primary leading-tight">
                                                         {contributor.count}
                                                     </p>
-                                                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                                                    <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">
                                                         {contributor.count > 1 ? 'Partages' : 'Partage'}
                                                     </p>
                                                 </div>
-                                                <ChevronRight className="w-3 h-3 text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                                                <ChevronRight className="w-3 h-3 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                                             </div>
                                         </CardWrapper>
                                     );
                                 })
                             ) : (
-                                <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
+                                <div className="py-20 text-center bg-card rounded-3xl border border-dashed border-border">
                                     <Heart className="w-10 h-10 text-slate-200 mx-auto mb-4" />
-                                    <p className="text-slate-400">La liste sera bientôt remplie par nos héros.</p>
+                                    <p className="text-muted-foreground">La liste sera bientôt remplie par nos héros.</p>
                                     <Button asChild variant="outline" className="mt-6 rounded-full px-8">
                                         <Link href="/contribute">Devenir le premier</Link>
                                     </Button>
@@ -180,13 +180,13 @@ export default function RemerciementsPage() {
             </section>
 
             {/* Standard Bottom Section */}
-            <section className="py-20 bg-white">
+            <section className="py-20 bg-card">
                 <div className="container text-center">
                     <div className="max-w-xl mx-auto">
-                        <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-6 font-heading leading-tight">
+                        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-6 font-heading leading-tight">
                             Rejoignez le tableau d'honneur
                         </h2>
-                        <p className="text-slate-500 text-lg mb-10">
+                        <p className="text-muted-foreground text-lg mb-10">
                             Aidez vos camarades et laissez votre empreinte sur la plateforme.
                         </p>
                         <Button size="lg" className="rounded-full px-10 h-14 text-lg font-bold shadow-lg shadow-primary/20" asChild>

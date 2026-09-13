@@ -112,15 +112,15 @@ export default function StickerManagement() {
     };
 
     return (
-        <main className="min-h-screen bg-slate-50 py-12 px-4 selection:bg-primary/10">
+        <main className="min-h-screen bg-muted py-12 px-4 selection:bg-primary/10">
             <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+                        <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
                             <Package className="w-8 h-8 text-primary" />
                             Gestion des Stickers
                         </h1>
-                        <p className="text-slate-500 mt-2">Créez et organisez vos packs de stickers .webp</p>
+                        <p className="text-muted-foreground mt-2">Créez et organisez vos packs de stickers .webp</p>
                     </div>
                     <Link href="/chat">
                         <Button variant="outline" className="rounded-xl">Retour au Chat</Button>
@@ -130,21 +130,21 @@ export default function StickerManagement() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Upload Form */}
                     <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                        <div className="bg-card rounded-3xl p-8 border border-border shadow-sm">
                             <div className="space-y-6">
                                 <div>
-                                    <label className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2 block">Nom du Pack</label>
+                                    <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Nom du Pack</label>
                                     <Input 
                                         placeholder="Ex: Pepa Pig Fun, Coding Memes..."
                                         value={categoryName}
                                         onChange={(e) => setCategoryName(e.target.value)}
-                                        className="h-14 px-6 rounded-2xl border-slate-200 focus:ring-primary/20 text-lg font-medium"
+                                        className="h-14 px-6 rounded-2xl border-border focus:ring-primary/20 text-lg font-medium"
                                         disabled={uploading}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2 block">Sélectionner les Stickers (.webp)</label>
+                                    <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Sélectionner les Stickers (.webp)</label>
                                     <input 
                                         type="file" 
                                         multiple 
@@ -157,15 +157,15 @@ export default function StickerManagement() {
                                     <div 
                                         onClick={() => !uploading && fileInputRef.current.click()}
                                         className={cn(
-                                            "border-2 border-dashed border-slate-200 rounded-3xl p-12 flex flex-col items-center justify-center transition-all cursor-pointer hover:border-primary/50 hover:bg-primary/5",
+                                            "border-2 border-dashed border-border rounded-3xl p-12 flex flex-col items-center justify-center transition-all cursor-pointer hover:border-primary/50 hover:bg-primary/5",
                                             uploading && "opacity-50 cursor-not-allowed"
                                         )}
                                     >
                                         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4">
                                             <Upload className="w-8 h-8" />
                                         </div>
-                                        <p className="font-bold text-slate-900">Cliquez pour ajouter des fichiers</p>
-                                        <p className="text-sm text-slate-400 mt-1">Glissez-déposez vos fichiers .webp ici</p>
+                                        <p className="font-bold text-foreground">Cliquez pour ajouter des fichiers</p>
+                                        <p className="text-sm text-muted-foreground mt-1">Glissez-déposez vos fichiers .webp ici</p>
                                     </div>
                                 </div>
 
@@ -179,16 +179,16 @@ export default function StickerManagement() {
                                 {uploading && (
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between text-sm font-bold">
-                                            <span className="text-slate-600">Upload en cours...</span>
+                                            <span className="text-muted-foreground">Upload en cours...</span>
                                             <span className="text-primary">{Math.round(progress)}%</span>
                                         </div>
-                                        <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <div className="h-3 w-full bg-muted rounded-full overflow-hidden">
                                             <div 
                                                 className="h-full bg-primary transition-all duration-300 shadow-sm"
                                                 style={{ width: `${progress}%` }}
                                             />
                                         </div>
-                                        <p className="text-xs text-slate-400 text-center italic">
+                                        <p className="text-xs text-muted-foreground text-center italic">
                                             Merci de ne pas fermer cette page
                                         </p>
                                     </div>
@@ -214,8 +214,8 @@ export default function StickerManagement() {
 
                     {/* Preview Area */}
                     <div className="space-y-6">
-                        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm min-h-[400px]">
-                            <h2 className="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
+                        <div className="bg-card rounded-3xl p-6 border border-border shadow-sm min-h-[400px]">
+                            <h2 className="text-lg font-black text-foreground mb-4 flex items-center gap-2">
                                 <ImageIcon className="w-5 h-5 text-primary" />
                                 Aperçu ({selectedFiles.length})
                             </h2>
@@ -228,7 +228,7 @@ export default function StickerManagement() {
                             ) : (
                                 <div className="grid grid-cols-2 gap-3">
                                     {selectedFiles.map((file, i) => (
-                                        <div key={i} className="group relative aspect-square bg-slate-50 rounded-2xl p-2 border border-slate-100 flex items-center justify-center overflow-hidden">
+                                        <div key={i} className="group relative aspect-square bg-muted rounded-2xl p-2 border border-border flex items-center justify-center overflow-hidden">
                                             <img 
                                                 src={URL.createObjectURL(file)} 
                                                 alt="preview"
@@ -249,7 +249,7 @@ export default function StickerManagement() {
                                     ))}
                                     <button 
                                         onClick={() => fileInputRef.current.click()}
-                                        className="aspect-square bg-slate-50 rounded-2xl border border-dashed border-slate-200 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/50 transition-all"
+                                        className="aspect-square bg-muted rounded-2xl border border-dashed border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all"
                                     >
                                         <Plus className="w-6 h-6" />
                                     </button>

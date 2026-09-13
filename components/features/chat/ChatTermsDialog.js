@@ -26,13 +26,13 @@ export default function ChatTermsDialog() {
     };
 
     return (
-        <div className="fixed inset-0 z-[200] bg-white/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-bottom-4 zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[200] bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-card rounded-3xl shadow-xl border border-border p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-bottom-4 zoom-in-95 duration-300">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto shrink-0">
                     <ShieldAlert className="w-8 h-8 text-primary" />
                 </div>
-                <h2 className="text-xl md:text-2xl font-black text-center mb-4 text-slate-900">Bienvenue dans l'espace discussion</h2>
-                <div className="space-y-4 text-xs md:text-sm text-slate-600 mb-8 leading-relaxed">
+                <h2 className="text-xl md:text-2xl font-black text-center mb-4 text-foreground">Bienvenue dans l'espace discussion</h2>
+                <div className="space-y-4 text-xs md:text-sm text-muted-foreground mb-8 leading-relaxed">
                     <p>
                         Afin de garantir la meilleure expérience et de développer de nouveaux outils pour la communauté, nous tenons à vous informer sur la politique de gestion de vos échanges :
                     </p>

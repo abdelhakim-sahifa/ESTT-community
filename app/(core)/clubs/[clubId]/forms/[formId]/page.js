@@ -174,7 +174,7 @@ export default function CustomFormPage() {
 
     if (submitted) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-muted flex items-center justify-center p-4">
                 <Card className="w-full max-w-md text-center">
                     <CardHeader>
                         <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -243,7 +243,7 @@ export default function CustomFormPage() {
                 </Button>
 
                 <div className="text-center space-y-4">
-                    <div className="w-20 h-20 mx-auto relative rounded-xl overflow-hidden bg-white shadow-md border border-slate-100">
+                    <div className="w-20 h-20 mx-auto relative rounded-xl overflow-hidden bg-card shadow-md border border-border">
                         {club.logo ? (
                             <Image
                                 src={club.logo}
@@ -309,7 +309,7 @@ export default function CustomFormPage() {
                                                         required={field.required}
                                                         checked={formData[field.id] === opt}
                                                         onChange={() => handleChange(field.id, opt)}
-                                                        className="w-4 h-4 text-primary focus:ring-primary border-slate-300"
+                                                        className="w-4 h-4 text-primary focus:ring-primary border-border"
                                                     />
                                                     <Label htmlFor={`field-${field.id}-${opt}`} className="font-normal cursor-pointer">
                                                         {opt}

@@ -774,7 +774,7 @@ export default function AdminResources({ resources }) {
 
             <Card className="border-none shadow-sm overflow-hidden">
                 <Table>
-                    <TableHeader className="bg-slate-50">
+                    <TableHeader className="bg-muted">
                         <TableRow>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Titre</TableHead>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Module</TableHead>
@@ -787,7 +787,7 @@ export default function AdminResources({ resources }) {
                     </TableHeader>
                     <TableBody>
                         {filteredResources.map((res) => (
-                            <TableRow key={res.id} className="hover:bg-slate-50/50 transition-colors">
+                            <TableRow key={res.id} className="hover:bg-muted/50 transition-colors">
                                 <TableCell className="font-bold text-sm">{res.title}</TableCell>
                                 <TableCell className="text-xs text-muted-foreground font-medium uppercase" title={res.fullModuleName || res.module}>
                                     {res.fullModuleName || res.module}
@@ -810,7 +810,7 @@ export default function AdminResources({ resources }) {
                                                     {[1, 2, 3, 4, 5].map((star) => (
                                                         <Star
                                                             key={star}
-                                                            className={`w-3 h-3 ${star <= Math.round(average) ? 'text-yellow-500 fill-yellow-500' : 'text-slate-300'}`}
+                                                            className={`w-3 h-3 ${star <= Math.round(average) ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}`}
                                                         />
                                                     ))}
                                                 </div>
@@ -900,7 +900,7 @@ export default function AdminResources({ resources }) {
                     </DialogHeader>
                     <div className="space-y-6 py-4">
                         {itemToRate && (
-                            <div className="rounded-lg border bg-slate-50 px-4 py-3">
+                            <div className="rounded-lg border bg-muted px-4 py-3">
                                 <p className="text-sm font-semibold">{itemToRate.title}</p>
                                 <p className="text-xs text-muted-foreground">
                                     {itemToRate.module} {itemToRate.docType ? `· ${itemToRate.docType}` : ''}
@@ -924,7 +924,7 @@ export default function AdminResources({ resources }) {
                                     {currentRatings.map((r) => (
                                         <div
                                             key={`${r.userId}-${r.updatedAt || r.createdAt || ''}`}
-                                            className="border rounded-lg px-3 py-2 bg-slate-50"
+                                            className="border rounded-lg px-3 py-2 bg-muted"
                                         >
                                             <div className="flex items-center justify-between mb-1">
                                                 <div className="flex items-center gap-2">
@@ -937,7 +937,7 @@ export default function AdminResources({ resources }) {
                                                                 key={value}
                                                                 className={`w-3 h-3 ${value <= (r.rating || 0)
                                                                     ? 'text-yellow-500 fill-yellow-500'
-                                                                    : 'text-slate-300'
+                                                                    : 'text-muted-foreground'
                                                                     }`}
                                                             />
                                                         ))}
@@ -950,7 +950,7 @@ export default function AdminResources({ resources }) {
                                                 )}
                                             </div>
                                             {r.review && (
-                                                <p className="text-xs text-slate-700 whitespace-pre-wrap">
+                                                <p className="text-xs text-foreground whitespace-pre-wrap">
                                                     {r.review}
                                                 </p>
                                             )}
@@ -1056,7 +1056,7 @@ export default function AdminResources({ resources }) {
                                     : [];
 
                                 return (
-                                    <div key={field.id} className="space-y-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50/50 transition-colors">
+                                    <div key={field.id} className="space-y-3 p-3 rounded-xl border border-border hover:bg-muted/50 transition-colors">
                                         <div className="flex items-center space-x-2">
                                             <Checkbox
                                                 id={`field-${field.id}`}
@@ -1090,7 +1090,7 @@ export default function AdminResources({ resources }) {
                                                         ));
                                                     }}
                                                 >
-                                                    <SelectTrigger className="h-9 text-xs bg-white">
+                                                    <SelectTrigger className="h-9 text-xs bg-card">
                                                         <SelectValue placeholder="Choisir le module" />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -1128,12 +1128,12 @@ export default function AdminResources({ resources }) {
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         {itemToContact && (
-                            <div className="rounded-xl border bg-slate-50 p-4">
-                                <p className="font-semibold text-slate-900">{itemToContact.title}</p>
-                                <p className="mt-1 text-xs text-slate-500">
+                            <div className="rounded-xl border bg-muted p-4">
+                                <p className="font-semibold text-foreground">{itemToContact.title}</p>
+                                <p className="mt-1 text-xs text-muted-foreground">
                                     {itemToContact.fullModuleName || itemToContact.module || 'Module non specifie'}
                                 </p>
-                                <p className="mt-2 text-xs text-slate-500">
+                                <p className="mt-2 text-xs text-muted-foreground">
                                     Statut: {itemToContact.unverified ? 'En attente de validation' : 'Acceptee'}
                                 </p>
                             </div>

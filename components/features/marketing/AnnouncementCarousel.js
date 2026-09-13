@@ -18,11 +18,11 @@ export default function AnnouncementCarousel({
     if (!announcements || announcements.length === 0) return null;
 
     return (
-        <section className="py-12 md:py-20 bg-slate-50/50">
+        <section className="py-12 md:py-20 bg-muted/50">
             <div className="container px-4 md:px-6">
                 <div className="max-w-2xl mb-8 md:mb-10">
-                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 mb-2">À ne pas manquer</h2>
-                    <p className="text-slate-500 text-base md:text-lg">Les annonces et événements récents de la communauté.</p>
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-2">À ne pas manquer</h2>
+                    <p className="text-muted-foreground text-base md:text-lg">Les annonces et événements récents de la communauté.</p>
                 </div>
 
                 <div className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden bg-slate-950 h-[400px] sm:h-auto sm:aspect-[16/9] md:aspect-[21/7] shadow-xl group">

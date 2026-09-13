@@ -156,7 +156,7 @@ export default function ProfileProjectsPage() {
 
     return (
         <main className="min-h-screen bg-[linear-gradient(180deg,_#eff6ff_0%,_#ffffff_28%,_#f8fafc_100%)]">
-            <section className="border-b border-slate-200 bg-white/80 backdrop-blur">
+            <section className="border-b border-border bg-background/80 backdrop-blur">
                 <div className="container px-4 py-12 md:px-6 md:py-16">
                     <Button asChild variant="ghost" className="mb-6 rounded-full">
                         <Link href={`/profile/${id}`}>
@@ -167,26 +167,26 @@ export default function ProfileProjectsPage() {
 
                     <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
                         <div className="space-y-3 sm:space-y-4">
-                            <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
+                            <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl md:text-5xl">
                                 Les projets de {displayName}
                             </h1>
-                            <p className="max-w-2xl text-sm sm:text-base leading-relaxed text-slate-600">
+                            <p className="max-w-2xl text-sm sm:text-base leading-relaxed text-muted-foreground">
                                 Regroupe les challenges crees, les implementations soumises et les projets publies dans le showcase.
                             </p>
                         </div>
 
                         <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                            <div className="rounded-xl border border-slate-200 bg-white px-3 py-3 sm:px-5 sm:py-4 shadow-sm flex flex-col items-center justify-center">
-                                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] text-slate-400 text-center">Challenges</p>
-                                <p className="mt-1 sm:mt-2 text-xl sm:text-2xl font-black text-slate-950 text-center">{projects.length}</p>
+                            <div className="rounded-xl border border-border bg-card px-3 py-3 sm:px-5 sm:py-4 shadow-sm flex flex-col items-center justify-center">
+                                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] text-muted-foreground text-center">Challenges</p>
+                                <p className="mt-1 sm:mt-2 text-xl sm:text-2xl font-black text-foreground text-center">{projects.length}</p>
                             </div>
-                            <div className="rounded-xl border border-slate-200 bg-white px-3 py-3 sm:px-5 sm:py-4 shadow-sm flex flex-col items-center justify-center">
-                                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] text-slate-400 text-center">Builds</p>
-                                <p className="mt-1 sm:mt-2 text-xl sm:text-2xl font-black text-slate-950 text-center">{submissions.length}</p>
+                            <div className="rounded-xl border border-border bg-card px-3 py-3 sm:px-5 sm:py-4 shadow-sm flex flex-col items-center justify-center">
+                                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] text-muted-foreground text-center">Builds</p>
+                                <p className="mt-1 sm:mt-2 text-xl sm:text-2xl font-black text-foreground text-center">{submissions.length}</p>
                             </div>
-                            <div className="rounded-xl border border-slate-200 bg-white px-3 py-3 sm:px-5 sm:py-4 shadow-sm flex flex-col items-center justify-center">
-                                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] text-slate-400 text-center">Showcase</p>
-                                <p className="mt-1 sm:mt-2 text-xl sm:text-2xl font-black text-slate-950 text-center">{showcases.length}</p>
+                            <div className="rounded-xl border border-border bg-card px-3 py-3 sm:px-5 sm:py-4 shadow-sm flex flex-col items-center justify-center">
+                                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] text-muted-foreground text-center">Showcase</p>
+                                <p className="mt-1 sm:mt-2 text-xl sm:text-2xl font-black text-foreground text-center">{showcases.length}</p>
                             </div>
                         </div>
                     </div>
@@ -195,7 +195,7 @@ export default function ProfileProjectsPage() {
 
             <section className="container px-4 py-12 md:px-6 md:py-16">
                 <Tabs defaultValue="challenges" className="space-y-8">
-                <TabsList className="h-auto w-full flex-wrap justify-between sm:justify-start gap-2 rounded-xl border border-slate-200 bg-white p-2 shadow-sm">
+                <TabsList className="h-auto w-full flex-wrap justify-between sm:justify-start gap-2 rounded-xl border border-border bg-card p-2 shadow-sm">
                         <TabsTrigger value="challenges" className="flex-1 sm:flex-none justify-center rounded-lg px-2 sm:px-5 py-2 sm:py-3 text-xs sm:text-sm">
                             <Layers3 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                             Challenges
@@ -212,9 +212,9 @@ export default function ProfileProjectsPage() {
 
                     <TabsContent value="challenges">
                         {projects.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10 text-center">
-                                <p className="text-lg font-bold text-slate-900">Aucun challenge cree</p>
-                                <p className="mt-2 text-sm text-slate-500">
+                            <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
+                                <p className="text-lg font-bold text-foreground">Aucun challenge cree</p>
+                                <p className="mt-2 text-sm text-muted-foreground">
                                     Les briefs proposes apparaitront ici des leur creation.
                                 </p>
                             </div>
@@ -229,9 +229,9 @@ export default function ProfileProjectsPage() {
 
                     <TabsContent value="submissions">
                         {submissions.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10 text-center">
-                                <p className="text-lg font-bold text-slate-900">Aucune implementation publiee</p>
-                                <p className="mt-2 text-sm text-slate-500">
+                            <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
+                                <p className="text-lg font-bold text-foreground">Aucune implementation publiee</p>
+                                <p className="mt-2 text-sm text-muted-foreground">
                                     Les reponses aux challenges apparaitront ici.
                                 </p>
                             </div>
@@ -246,9 +246,9 @@ export default function ProfileProjectsPage() {
 
                     <TabsContent value="showcase">
                         {showcases.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10 text-center">
-                                <p className="text-lg font-bold text-slate-900">Aucun projet showcase</p>
-                                <p className="mt-2 text-sm text-slate-500">
+                            <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
+                                <p className="text-lg font-bold text-foreground">Aucun projet showcase</p>
+                                <p className="mt-2 text-sm text-muted-foreground">
                                     Les projets libres publies dans le showcase apparaitront ici.
                                 </p>
                             </div>

@@ -399,7 +399,7 @@ export default function PublicProfilePage() {
     })();
 
     return (
-        <main className="min-h-screen bg-white py-12 border-t border-slate-100">
+        <main className="min-h-screen bg-card py-12 border-t border-border">
             <div className="container max-w-5xl mx-auto px-4">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -407,9 +407,9 @@ export default function PublicProfilePage() {
                     <div className="space-y-4">
 
                         {/* Profile Card */}
-                        <div className="border border-slate-200 rounded-xl overflow-hidden text-center relative bg-white">
+                        <div className="border border-border rounded-xl overflow-hidden text-center relative bg-card">
                             {/* Banner Area */}
-                            <div className="h-28 bg-slate-50 relative group">
+                            <div className="h-28 bg-muted relative group">
                                 {profile.bannerUrl ? (
                                     <Image
                                         src={profile.bannerUrl}
@@ -456,8 +456,8 @@ export default function PublicProfilePage() {
                             </div>
 
                             <div className="p-8 -mt-12 relative">
-                                <div className="w-24 h-24 bg-white rounded-full border-4 border-white flex items-center justify-center mx-auto mb-4 shadow-sm z-10 overflow-hidden relative group">
-                                    <div className="w-full h-full bg-slate-100 rounded-full flex items-center justify-center relative">
+                                <div className="w-24 h-24 bg-card rounded-full border-4 border-white flex items-center justify-center mx-auto mb-4 shadow-sm z-10 overflow-hidden relative group">
+                                    <div className="w-full h-full bg-muted rounded-full flex items-center justify-center relative">
                                         {profile.photoUrl ? (
                                             <Image
                                                 src={profile.photoUrl}
@@ -466,7 +466,7 @@ export default function PublicProfilePage() {
                                                 className="object-cover"
                                             />
                                         ) : (
-                                            <User className="w-10 h-10 text-slate-400" />
+                                            <User className="w-10 h-10 text-muted-foreground" />
                                         )}
                                     </div>
 
@@ -493,7 +493,7 @@ export default function PublicProfilePage() {
                                         onChange={handleAvatarUpload}
                                     />
                                 </div>
-                                <h1 className="text-xl font-bold text-slate-900 flex items-center justify-center gap-1.5">
+                                <h1 className="text-xl font-bold text-foreground flex items-center justify-center gap-1.5">
                                     {profile.firstName} {profile.lastName}
                                     {profile.verifiedEmail && (
                                         <div className="group relative flex items-center">
@@ -510,7 +510,7 @@ export default function PublicProfilePage() {
 
                                     {affiliatedClub && (
                                         <Link href={`/clubs/${affiliatedClub.id}`} className="group relative flex items-center">
-                                            <div className="w-[18px] h-[18px] rounded-[3px] overflow-hidden border border-slate-100 bg-white">
+                                            <div className="w-[18px] h-[18px] rounded-[3px] overflow-hidden border border-border bg-card">
                                                 {affiliatedClub.logo ? (
                                                     <Image
                                                         src={affiliatedClub.logo}
@@ -520,7 +520,7 @@ export default function PublicProfilePage() {
                                                         className="object-cover"
                                                     />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center bg-slate-100 text-[10px] font-bold text-slate-500">
+                                                    <div className="w-full h-full flex items-center justify-center bg-muted text-[10px] font-bold text-muted-foreground">
                                                         {affiliatedClub.name.charAt(0)}
                                                     </div>
                                                 )}
@@ -532,11 +532,11 @@ export default function PublicProfilePage() {
                                     )}
                                 </h1>
                                 {profile.email && (
-                                    <p className="text-slate-400 text-sm mt-0.5 select-all font-normal">
+                                    <p className="text-muted-foreground text-sm mt-0.5 select-all font-normal">
                                         @{profile.email.split('@')[0]}
                                     </p>
                                 )}
-                                <p className="text-slate-500 text-sm mt-1">
+                                <p className="text-muted-foreground text-sm mt-1">
                                     {profile.filiere?.toUpperCase()} · {level === 1 ? 'S1/S2' : 'S3/S4'}
                                 </p>
                                 
@@ -585,7 +585,7 @@ export default function PublicProfilePage() {
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         <Label htmlFor="email">Email</Label>
-                                                        <Input id="email" value={profile.email} disabled className="rounded-lg bg-slate-50 text-slate-500" />
+                                                        <Input id="email" value={profile.email} disabled className="rounded-lg bg-muted text-muted-foreground" />
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="space-y-1.5">
@@ -610,7 +610,7 @@ export default function PublicProfilePage() {
                                                             <Button
                                                                 type="button"
                                                                 variant="outline"
-                                                                className="rounded-lg gap-2 shrink-0 bg-slate-50"
+                                                                className="rounded-lg gap-2 shrink-0 bg-muted"
                                                                 disabled={avatarUploading}
                                                                 onClick={() => document.getElementById('dialog-avatar-upload').click()}
                                                             >
@@ -649,7 +649,7 @@ export default function PublicProfilePage() {
                                                             <Button
                                                                 type="button"
                                                                 variant="outline"
-                                                                className="rounded-lg gap-2 shrink-0 bg-slate-50"
+                                                                className="rounded-lg gap-2 shrink-0 bg-muted"
                                                                 disabled={bannerUploading}
                                                                 onClick={() => document.getElementById('dialog-banner-upload').click()}
                                                             >
@@ -677,7 +677,7 @@ export default function PublicProfilePage() {
                                                         <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Taille reco: 800x200 max 10 Mo</p>
                                                     </div>
 
-                                                    <div className="mt-4 p-3 bg-blue-50/50 border border-blue-100 rounded-lg text-xs leading-5 text-slate-500">
+                                                    <div className="mt-4 p-3 bg-blue-50/50 border border-blue-100 rounded-lg text-xs leading-5 text-muted-foreground">
                                                         <strong>Mise en garde :</strong> L'outil d'upload d'images utilise <a href="https://imgbb.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">ImgBB</a>, un service tiers. Veuillez ne pas télécharger d'images contenant des informations personnelles sensibles.
                                                     </div>
                                                 </div>
@@ -718,27 +718,27 @@ export default function PublicProfilePage() {
                         </div>
 
                         {/* About */}
-                        <div className="border border-slate-200 rounded-xl p-5">
-                            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">À propos</h3>
+                        <div className="border border-border rounded-xl p-5">
+                            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">À propos</h3>
                             <div className="space-y-3">
-                                <div className="flex items-center gap-3 text-sm text-slate-600">
-                                    <Mail className="w-4 h-4 text-slate-400 shrink-0" />
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <Mail className="w-4 h-4 text-muted-foreground shrink-0" />
                                     <span className="truncate">{profile.email}</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-slate-600">
-                                    <GraduationCap className="w-4 h-4 text-slate-400 shrink-0" />
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <GraduationCap className="w-4 h-4 text-muted-foreground shrink-0" />
                                     <span>Promotion {profile.startYear}</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-slate-600">
-                                    <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
                                     <span>Membre depuis {new Date(profile.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Badges */}
-                        <div className="border border-slate-200 rounded-xl p-5">
-                            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Succès</h3>
+                        <div className="border border-border rounded-xl p-5">
+                            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Succès</h3>
                             <div className="flex flex-wrap gap-2">
                                 {contributionsCount >= 1 && (
                                     <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-green-50 text-green-700">
@@ -759,7 +759,7 @@ export default function PublicProfilePage() {
                                     </span>
                                 )}
                                 {level === 2 && (
-                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600">
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md bg-muted text-muted-foreground">
                                         <GraduationCap className="w-3.5 h-3.5" />
                                         Ancien
                                     </span>
@@ -784,15 +784,15 @@ export default function PublicProfilePage() {
                                 )}
                                 {contributionsCount === 0 && starCount < 5 && level !== 2 && verifiedReports === 0 && reportedBugsFixed === 0 && !isSubscribed && (
 
-                                    <span className="text-xs text-slate-400 italic">Aucun succès pour le moment.</span>
+                                    <span className="text-xs text-muted-foreground italic">Aucun succès pour le moment.</span>
                                 )}
                             </div>
                         </div>
 
                         {/* Account & Verification */}
                         {currentUser && currentUser.uid === resolvedUid && (
-                            <div className="border border-slate-200 rounded-xl p-5 space-y-4">
-                                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Compte</h3>
+                            <div className="border border-border rounded-xl p-5 space-y-4">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Compte</h3>
 
                                 {!profile.verifiedEmail && (
                                     <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl">
@@ -859,18 +859,18 @@ export default function PublicProfilePage() {
                             ]}
                         >
                             <div className="mt-4 space-y-3">
-                                <Label htmlFor="vcode" className="text-xs font-bold text-slate-500 uppercase">Code de vérification</Label>
+                                <Label htmlFor="vcode" className="text-xs font-bold text-muted-foreground uppercase">Code de vérification</Label>
                                 <Input
                                     id="vcode"
                                     placeholder="Ex: 123456"
                                     value={verificationCode}
                                     onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                                    className="text-center text-2xl tracking-[0.5em] font-mono h-14 rounded-xl border-slate-200 focus:border-primary"
+                                    className="text-center text-2xl tracking-[0.5em] font-mono h-14 rounded-xl border-border focus:border-primary"
                                 />
                                 <div className="flex justify-between items-center px-1">
-                                    <p className="text-[10px] text-slate-400">Pensez à vérifier vos spams.</p>
+                                    <p className="text-[10px] text-muted-foreground">Pensez à vérifier vos spams.</p>
                                     {cooldown > 0 ? (
-                                        <span className="text-[10px] font-bold text-slate-400">Renvoyer dans {cooldown}s</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground">Renvoyer dans {cooldown}s</span>
                                     ) : (
                                         <button
                                             onClick={handleSendVerificationCode}
@@ -901,8 +901,8 @@ export default function PublicProfilePage() {
                         <section>
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
-                                    <h2 className="text-base font-bold text-slate-900">Contributions</h2>
-                                    <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                                    <h2 className="text-base font-bold text-foreground">Contributions</h2>
+                                    <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
                                         {contributionsCount}
                                     </span>
                                 </div>
@@ -925,17 +925,17 @@ export default function PublicProfilePage() {
                                             <Link
                                                 key={cid}
                                                 href={`/resource/${cid}`}
-                                                className="min-w-[260px] max-w-xs group p-4 border border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white flex flex-col justify-between"
+                                                className="min-w-[260px] max-w-xs group p-4 border border-border rounded-xl hover:border-primary/50 transition-colors bg-card flex flex-col justify-between"
                                             >
                                                 <div>
-                                                    <h3 className="font-semibold text-sm text-slate-900 group-hover:text-primary transition-colors line-clamp-2">
+                                                    <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2">
                                                         {item.title}
                                                     </h3>
                                                     <div className="flex items-center gap-2 mt-2 text-xs">
                                                         <span className="font-bold text-primary">
                                                             {item.module || 'Ressource'}
                                                         </span>
-                                                        <span className="text-slate-400">
+                                                        <span className="text-muted-foreground">
                                                             · {new Date(item.timestamp).toLocaleDateString()}
                                                         </span>
                                                     </div>
@@ -944,21 +944,21 @@ export default function PublicProfilePage() {
                                         ))}
                                 </div>
                             ) : (
-                                <div className="text-center py-10 border border-dashed border-slate-200 rounded-xl">
-                                    <p className="text-slate-400 text-sm">Aucune contribution pour le moment.</p>
+                                <div className="text-center py-10 border border-dashed border-border rounded-xl">
+                                    <p className="text-muted-foreground text-sm">Aucune contribution pour le moment.</p>
                                 </div>
                             )}
                         </section>
 
                         {/* Clubs */}
                         <section>
-                            <h2 className="text-base font-bold text-slate-900 mb-4">Clubs</h2>
+                            <h2 className="text-base font-bold text-foreground mb-4">Clubs</h2>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {loadingClubs ? (
                                     <Loader2 className="w-5 h-5 animate-spin text-primary mx-auto col-span-full" />
                                 ) : userClubs.length > 0 ? (
                                     userClubs.map(club => (
-                                        <div key={club.id} className="group relative border border-slate-200 rounded-xl hover:border-primary/50 transition-colors text-center p-4 bg-white">
+                                        <div key={club.id} className="group relative border border-border rounded-xl hover:border-primary/50 transition-colors text-center p-4 bg-card">
                                             <Link href={`/clubs/${club.id}`}>
                                                 <div className="relative w-10 h-10 mx-auto mb-2">
                                                     {club.logo ? (
@@ -969,7 +969,7 @@ export default function PublicProfilePage() {
                                                         </div>
                                                     )}
                                                 </div>
-                                                <p className="text-xs font-bold text-slate-700 truncate group-hover:text-primary transition-colors">{club.name}</p>
+                                                <p className="text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors">{club.name}</p>
                                             </Link>
 
                                             {currentUser && currentUser.uid === resolvedUid && club.userMemberId && (
@@ -984,8 +984,8 @@ export default function PublicProfilePage() {
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="col-span-full text-center py-8 border border-dashed border-slate-200 rounded-xl">
-                                        <p className="text-slate-400 text-sm">Aucun club.</p>
+                                    <div className="col-span-full text-center py-8 border border-dashed border-border rounded-xl">
+                                        <p className="text-muted-foreground text-sm">Aucun club.</p>
                                     </div>
                                 )}
                             </div>
@@ -994,20 +994,20 @@ export default function PublicProfilePage() {
                         {/* Tickets (own profile only) */}
                         {currentUser && currentUser.uid === resolvedUid && (
                             <section>
-                                <h2 className="text-base font-bold text-slate-900 mb-4">Mes Tickets</h2>
+                                <h2 className="text-base font-bold text-foreground mb-4">Mes Tickets</h2>
                                 <div className="grid gap-2">
                                     {loadingTickets ? (
-                                        <Loader2 className="w-5 h-5 animate-spin text-slate-400 mx-auto" />
+                                        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground mx-auto" />
                                     ) : tickets.length > 0 ? (
                                         tickets.map(ticket => (
-                                            <div key={ticket.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-xl bg-white">
+                                            <div key={ticket.id} className="flex items-center justify-between p-4 border border-border rounded-xl bg-card">
                                                 <div>
-                                                    <h3 className="font-semibold text-sm text-slate-900">{ticket.eventName}</h3>
+                                                    <h3 className="font-semibold text-sm text-foreground">{ticket.eventName}</h3>
                                                     <div className="flex items-center gap-2 mt-1">
                                                         <span className={cn("text-xs font-bold px-2 py-0.5 rounded-md", ticket.status === 'valid' ? "bg-green-50 text-green-700" : "bg-orange-50 text-orange-700")}>
                                                             {ticket.status === 'valid' ? 'Validé' : 'En attente'}
                                                         </span>
-                                                        <span className="text-xs text-slate-400">{ticket.clubName}</span>
+                                                        <span className="text-xs text-muted-foreground">{ticket.clubName}</span>
                                                     </div>
                                                 </div>
                                                 <a href={`/tickets/${ticket.id}`} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-primary hover:underline">
@@ -1016,8 +1016,8 @@ export default function PublicProfilePage() {
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="text-center py-8 border border-dashed border-slate-200 rounded-xl">
-                                            <p className="text-slate-400 text-sm">Aucun ticket.</p>
+                                        <div className="text-center py-8 border border-dashed border-border rounded-xl">
+                                            <p className="text-muted-foreground text-sm">Aucun ticket.</p>
                                         </div>
                                     )}
                                 </div>

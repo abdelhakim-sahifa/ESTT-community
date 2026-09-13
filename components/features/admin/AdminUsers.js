@@ -226,7 +226,7 @@ export default function AdminUsers({ users }) {
             {/* Table */}
             <Card className="border-none shadow-sm overflow-hidden">
                 <Table>
-                    <TableHeader className="bg-slate-50">
+                    <TableHeader className="bg-muted">
                         <TableRow>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Nom</TableHead>
                             <TableHead className="font-black uppercase text-[10px] tracking-widest">Email</TableHead>
@@ -244,14 +244,14 @@ export default function AdminUsers({ users }) {
                             </TableRow>
                         ) : (
                             filtered.map((u) => (
-                                <TableRow key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                                <TableRow key={u.id} className="hover:bg-muted/50 transition-colors">
                                     <TableCell className="font-bold text-sm">{u.firstName} {u.lastName}</TableCell>
                                     <TableCell className="text-xs text-muted-foreground">{u.email}</TableCell>
                                     <TableCell className="text-xs font-bold uppercase">{u.filiere}</TableCell>
                                     <TableCell>
                                         <Badge
                                             variant="outline"
-                                            className={`text-[8px] font-black uppercase tracking-tighter ${ROLE_BADGE_CLASSES[(u.role || '').toLowerCase()] || 'bg-slate-100 text-slate-800 border-slate-200'}`}
+                                            className={`text-[8px] font-black uppercase tracking-tighter ${ROLE_BADGE_CLASSES[(u.role || '').toLowerCase()] || 'bg-muted text-foreground border-border'}`}
                                         >
                                             {u.role || 'Étudiant'}
                                         </Badge>

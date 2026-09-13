@@ -290,7 +290,7 @@ export default function ContributeDrivePage() {
                                         }}
                                         required
                                     >
-                                        <SelectTrigger id="field" className="bg-white">
+                                        <SelectTrigger id="field" className="bg-card">
                                             <SelectValue placeholder="Sélectionnez une filière" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -312,7 +312,7 @@ export default function ContributeDrivePage() {
                                         required
                                         disabled={!formData.field}
                                     >
-                                        <SelectTrigger id="semester" className="bg-white">
+                                        <SelectTrigger id="semester" className="bg-card">
                                             <SelectValue placeholder="Sélectionnez un semestre" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -333,7 +333,7 @@ export default function ContributeDrivePage() {
                                         required
                                         disabled={!formData.semester}
                                     >
-                                        <SelectTrigger id="module" className="bg-white">
+                                        <SelectTrigger id="module" className="bg-card">
                                             <SelectValue placeholder="Sélectionnez un module" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -350,7 +350,7 @@ export default function ContributeDrivePage() {
                                         value={formData.professor}
                                         onValueChange={(v) => handleChange('professor', v)}
                                     >
-                                        <SelectTrigger id="professor" className="bg-white">
+                                        <SelectTrigger id="professor" className="bg-card">
                                             <SelectValue placeholder="Sélectionnez un professeur" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -372,7 +372,7 @@ export default function ContributeDrivePage() {
                                 <Label htmlFor="title">Titre de la ressource *</Label>
                                 <Input
                                     id="title"
-                                    className="bg-white"
+                                    className="bg-card"
                                     placeholder="Ex: Cours complet chapitre 3"
                                     value={formData.title}
                                     onChange={(e) => handleChange('title', e.target.value)}
@@ -384,7 +384,7 @@ export default function ContributeDrivePage() {
                                 <Label htmlFor="description">Description</Label>
                                 <Textarea
                                     id="description"
-                                    className="bg-white"
+                                    className="bg-card"
                                     placeholder="Décrivez brièvement la ressource..."
                                     value={formData.description}
                                     onChange={(e) => handleChange('description', e.target.value)}
@@ -400,7 +400,7 @@ export default function ContributeDrivePage() {
                                         onValueChange={(v) => handleChange('type', v)}
                                         required
                                     >
-                                        <SelectTrigger id="type" className="bg-white">
+                                        <SelectTrigger id="type" className="bg-card">
                                             <SelectValue placeholder="Type de ressource" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -419,7 +419,7 @@ export default function ContributeDrivePage() {
                                         onValueChange={(v) => handleChange('docType', v)}
                                         required
                                     >
-                                        <SelectTrigger id="docType" className="bg-white">
+                                        <SelectTrigger id="docType" className="bg-card">
                                             <SelectValue placeholder="Choisir le type" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -436,7 +436,7 @@ export default function ContributeDrivePage() {
                                         <Label htmlFor="url">URL *</Label>
                                         <Input
                                             id="url"
-                                            className="bg-white"
+                                            className="bg-card"
                                             type="url"
                                             placeholder="https://..."
                                             value={formData.url}
@@ -447,7 +447,7 @@ export default function ContributeDrivePage() {
                                 ) : (
                                     <div className="space-y-2">
                                         <Label htmlFor="file">Fichier (Google Drive) *</Label>
-                                        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-primary/20 border-dashed rounded-md bg-white hover:bg-muted/50 transition-colors cursor-pointer relative group">
+                                        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-primary/20 border-dashed rounded-md bg-card hover:bg-muted/50 transition-colors cursor-pointer relative group">
                                             <div className="space-y-1 text-center">
                                                 <CloudUpload className="mx-auto h-12 w-12 text-primary group-hover:scale-110 transition-transform" />
                                                 <div className="flex text-sm text-muted-foreground">

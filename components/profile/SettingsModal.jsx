@@ -40,8 +40,8 @@ function SectionHeader({ icon: Icon, title, description }) {
                 <Icon className="w-4 h-4 text-primary" />
             </div>
             <div>
-                <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-                {description && <p className="text-xs text-slate-500 mt-0.5">{description}</p>}
+                <h3 className="text-sm font-bold text-foreground">{title}</h3>
+                {description && <p className="text-xs text-muted-foreground mt-0.5">{description}</p>}
             </div>
         </div>
     );
@@ -51,7 +51,7 @@ function FieldRow({ label, children, htmlFor }) {
     return (
         <div className="space-y-1.5">
             {label && (
-                <label htmlFor={htmlFor} className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                <label htmlFor={htmlFor} className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     {label}
                 </label>
             )}
@@ -62,8 +62,8 @@ function FieldRow({ label, children, htmlFor }) {
 
 function DisabledBadge({ label = 'Bientôt disponible' }) {
     return (
-        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-400 border border-slate-200 uppercase tracking-wide">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block" />
+        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border uppercase tracking-wide">
+            <span className="w-1.5 h-1.5 rounded-full bg-muted inline-block" />
             {label}
         </span>
     );
@@ -73,18 +73,18 @@ function DisabledToggle({ label, description, icon: Icon, checked = false }) {
     return (
         <div className="flex items-center justify-between py-3 opacity-50 cursor-not-allowed select-none">
             <div className="flex items-center gap-3">
-                <div className="p-1.5 bg-slate-100 rounded-md">
-                    <Icon className="w-3.5 h-3.5 text-slate-400" />
+                <div className="p-1.5 bg-muted rounded-md">
+                    <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                 </div>
                 <div>
-                    <p className="text-sm font-medium text-slate-700">{label}</p>
-                    {description && <p className="text-xs text-slate-400">{description}</p>}
+                    <p className="text-sm font-medium text-foreground">{label}</p>
+                    {description && <p className="text-xs text-muted-foreground">{description}</p>}
                 </div>
             </div>
             <div className="flex items-center gap-2">
                 <DisabledBadge />
-                <div className={`w-10 h-6 rounded-full border-2 flex items-center transition-colors ${checked ? 'bg-slate-300 border-slate-300' : 'bg-slate-100 border-slate-200'}`}>
-                    <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform mx-0.5 ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
+                <div className={`w-10 h-6 rounded-full border-2 flex items-center transition-colors ${checked ? 'bg-muted-foreground border-muted-foreground' : 'bg-muted border-border'}`}>
+                    <div className={`w-4 h-4 rounded-full bg-card shadow-sm transition-transform mx-0.5 ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
             </div>
         </div>
@@ -94,7 +94,7 @@ function DisabledToggle({ label, description, icon: Icon, checked = false }) {
 function DisabledButton({ label, icon: Icon, variant = 'default' }) {
     const base = variant === 'danger'
         ? 'border-red-100 text-red-300 bg-red-50/50'
-        : 'border-slate-200 text-slate-400 bg-slate-50';
+        : 'border-border text-muted-foreground bg-muted';
     return (
         <button
             disabled
@@ -110,7 +110,7 @@ function DisabledButton({ label, icon: Icon, variant = 'default' }) {
 }
 
 function Divider() {
-    return <div className="border-t border-slate-100 my-4" />;
+    return <div className="border-t border-border my-4" />;
 }
 
 // ─── Tab Panels ───────────────────────────────────────────────────────────────
@@ -213,7 +213,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                 <FieldRow label="Photo de profil">
                     <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
                         <div className="relative group shrink-0">
-                            <div className="w-16 h-16 rounded-full overflow-hidden bg-slate-100 border-2 border-slate-200 flex items-center justify-center">
+                            <div className="w-16 h-16 rounded-full overflow-hidden bg-muted border-2 border-border flex items-center justify-center">
                                 {formData.photoUrl ? (
                                     <Image
                                         src={formData.photoUrl}
@@ -223,7 +223,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                                         className="object-cover w-full h-full"
                                     />
                                 ) : (
-                                    <User className="w-7 h-7 text-slate-400" />
+                                    <User className="w-7 h-7 text-muted-foreground" />
                                 )}
                             </div>
                             <button
@@ -248,12 +248,12 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                             <button
                                 onClick={() => avatarInputRef.current?.click()}
                                 disabled={avatarUploading}
-                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <Upload className="w-3.5 h-3.5" />
                                 {avatarUploading ? 'Téléchargement...' : 'Changer la photo'}
                             </button>
-                            <p className="text-[10px] text-slate-400 mt-1.5">JPG, PNG ou GIF · Max 5 Mo</p>
+                            <p className="text-[10px] text-muted-foreground mt-1.5">JPG, PNG ou GIF · Max 5 Mo</p>
                         </div>
                     </div>
                 </FieldRow>
@@ -264,7 +264,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                             id="s-firstName"
                             value={formData.firstName}
                             onChange={e => setFormData(p => ({ ...p, firstName: e.target.value }))}
-                            className="w-full px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white"
+                            className="w-full px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-card"
                             placeholder="Prénom"
                         />
                     </FieldRow>
@@ -273,7 +273,7 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                             id="s-lastName"
                             value={formData.lastName}
                             onChange={e => setFormData(p => ({ ...p, lastName: e.target.value }))}
-                            className="w-full px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white"
+                            className="w-full px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-card"
                             placeholder="Nom de famille"
                         />
                     </FieldRow>
@@ -285,25 +285,25 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                             id="s-email"
                             value={formData.email}
                             readOnly
-                            className="w-full px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed"
+                            className="w-full px-3 py-2.5 sm:py-2 text-sm rounded-lg border border-border bg-muted text-muted-foreground cursor-not-allowed"
                         />
-                        <p className="text-[10px] text-slate-400 mt-1">L'adresse email ne peut pas être modifiée ici.</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">L'adresse email ne peut pas être modifiée ici.</p>
                     </FieldRow>
                 </div>
 
                 {/* Language — disabled */}
-                <div className="mt-4 p-3 sm:p-4 rounded-xl border border-slate-200 bg-slate-50/70 opacity-70">
+                <div className="mt-4 p-3 sm:p-4 rounded-xl border border-border bg-muted/70 opacity-70">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
                         <div className="flex items-center gap-2">
-                            <Globe className="w-4 h-4 text-slate-400 shrink-0" />
+                            <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
                             <div>
-                                <p className="text-sm font-medium text-slate-700">Langue de l'interface</p>
-                                <p className="text-xs text-slate-400">Français</p>
+                                <p className="text-sm font-medium text-foreground">Langue de l'interface</p>
+                                <p className="text-xs text-muted-foreground">Français</p>
                             </div>
                         </div>
-                        <span className="text-xs text-slate-400 bg-white border border-slate-200 px-2 py-1 rounded-md font-medium w-fit">FR</span>
+                        <span className="text-xs text-muted-foreground bg-card border border-border px-2 py-1 rounded-md font-medium w-fit">FR</span>
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-2 leading-relaxed border-t border-slate-200 pt-2">
+                    <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed border-t border-border pt-2">
                         Pour l'instant, seule la langue française est disponible.
                     </p>
                 </div>
@@ -329,14 +329,14 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                 />
 
                 {/* Password reset */}
-                <div className="p-4 rounded-xl border border-slate-200 bg-white">
+                <div className="p-4 rounded-xl border border-border bg-card">
                     <div className="flex items-start gap-3">
                         <div className="p-2 bg-blue-50 rounded-lg shrink-0">
                             <Lock className="w-4 h-4 text-blue-500" />
                         </div>
                         <div className="flex-1">
-                            <p className="text-sm font-semibold text-slate-800">Modifier le mot de passe</p>
-                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                            <p className="text-sm font-semibold text-foreground">Modifier le mot de passe</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                                 Un lien de réinitialisation sera envoyé à votre adresse email.
                             </p>
                             {passwordSent && (
@@ -358,15 +358,15 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                 </div>
 
                 {/* 2FA — disabled */}
-                <div className="mt-3 p-4 rounded-xl border border-slate-200 bg-slate-50/60 opacity-60 cursor-not-allowed">
+                <div className="mt-3 p-4 rounded-xl border border-border bg-muted/60 opacity-60 cursor-not-allowed">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-slate-100 rounded-lg">
-                                <ShieldOff className="w-4 h-4 text-slate-400" />
+                            <div className="p-2 bg-muted rounded-lg">
+                                <ShieldOff className="w-4 h-4 text-muted-foreground" />
                             </div>
                             <div>
-                                <p className="text-sm font-semibold text-slate-700">Authentification à deux facteurs (2FA)</p>
-                                <p className="text-xs text-slate-400">Renforcez la sécurité de votre compte.</p>
+                                <p className="text-sm font-semibold text-foreground">Authentification à deux facteurs (2FA)</p>
+                                <p className="text-xs text-muted-foreground">Renforcez la sécurité de votre compte.</p>
                             </div>
                         </div>
                         <DisabledBadge label="Coming Soon" />
@@ -384,11 +384,11 @@ function AccountTab({ profile, resolvedUid, onClose }) {
                     description="Informations sur votre compte et options de déconnexion."
                 />
 
-                <div className="p-4 rounded-xl border border-slate-200 bg-white flex items-center gap-3 mb-3">
-                    <CalendarDays className="w-4 h-4 text-slate-400 shrink-0" />
+                <div className="p-4 rounded-xl border border-border bg-card flex items-center gap-3 mb-3">
+                    <CalendarDays className="w-4 h-4 text-muted-foreground shrink-0" />
                     <div>
-                        <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">Inscrit le</p>
-                        <p className="text-sm font-semibold text-slate-800 mt-0.5">{signupDate}</p>
+                        <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Inscrit le</p>
+                        <p className="text-sm font-semibold text-foreground mt-0.5">{signupDate}</p>
                     </div>
                 </div>
 
@@ -415,7 +415,7 @@ function AppearanceTab() {
                     title="Thème & Apparence"
                     description="Personnalisez l'apparence visuelle de l'application."
                 />
-                <div className="space-y-1 divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
+                <div className="space-y-1 divide-y divide-border rounded-xl border border-border overflow-hidden bg-card">
                     <DisabledToggle icon={Moon}    label="Mode sombre"          description="Interface en thème foncé"         />
                     <DisabledToggle icon={Sun}      label="Mode clair"           description="Interface en thème clair"         checked />
                     <DisabledToggle icon={Monitor}  label="Thème système"        description="Suit les préférences de votre OS" />
@@ -432,7 +432,7 @@ function AppearanceTab() {
                     title="Accessibilité"
                     description="Ajustez l'interface pour une meilleure expérience."
                 />
-                <div className="space-y-1 divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
+                <div className="space-y-1 divide-y divide-border rounded-xl border border-border overflow-hidden bg-card">
                     <DisabledToggle icon={Sliders}       label="Mise à l'échelle des polices"   description="Agrandissez ou réduisez le texte"    />
                     <DisabledToggle icon={Eye}           label="Mode contraste élevé"           description="Améliore la lisibilité"              />
                     <DisabledToggle icon={Accessibility} label="Optimisation lecteur d'écran"   description="Compatibilité assistive renforcée"   />
@@ -448,7 +448,7 @@ function AppearanceTab() {
                     title="Régionalisation"
                     description="Configurez votre fuseau horaire et vos formats régionaux."
                 />
-                <div className="space-y-1 divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
+                <div className="space-y-1 divide-y divide-border rounded-xl border border-border overflow-hidden bg-card">
                     <DisabledToggle icon={Clock}  label="Fuseau horaire"          description="Afrique/Casablanca (UTC+1)"                />
                     <DisabledToggle icon={CalendarDays} label="Format de date"    description="JJ/MM/AAAA"                               />
                     <DisabledToggle icon={Ruler}  label="Unités de mesure"        description="Système métrique"                         />
@@ -512,7 +512,7 @@ function NotificationsTab({ profile, resolvedUid }) {
                     title="Canaux de notification"
                     description="Choisissez comment vous souhaitez être notifié."
                 />
-                <div className="space-y-1 divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
+                <div className="space-y-1 divide-y divide-border rounded-xl border border-border overflow-hidden bg-card">
                     <DisabledToggle icon={BellRing}    label="Notifications push"     description="Alertes en temps réel dans le navigateur" checked />
                     <DisabledToggle icon={Mail}        label="Notifications par email" description="Résumé quotidien et alertes critiques"     />
                     <DisabledToggle icon={MessageSquare} label="Notifications SMS"    description="Alertes urgentes par SMS"                  />
@@ -529,7 +529,7 @@ function NotificationsTab({ profile, resolvedUid }) {
                     title="Confidentialité"
                     description="Contrôlez qui peut voir votre profil et vos données."
                 />
-                <div className="space-y-1 divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden bg-white">
+                <div className="space-y-1 divide-y divide-border rounded-xl border border-border overflow-hidden bg-card">
                     <DisabledToggle icon={Eye}    label="Profil public"           description="Visible par tous les membres"       checked />
                     <DisabledToggle icon={EyeOff} label="Profil privé"            description="Visible uniquement par vous"               />
                     <DisabledToggle icon={Users}  label="Partage de données"      description="Améliore les recommandations"       checked />
@@ -576,7 +576,7 @@ function NotificationsTab({ profile, resolvedUid }) {
                     </button>
 
                     {exporting && (
-                        <p className="text-xs text-slate-500 px-1 leading-relaxed animate-pulse">
+                        <p className="text-xs text-muted-foreground px-1 leading-relaxed animate-pulse">
                             Génération de votre lien sécurisé temporaire et envoi de l'email en cours…
                         </p>
                     )}
@@ -585,8 +585,8 @@ function NotificationsTab({ profile, resolvedUid }) {
                 </div>
             </section>
 
-            <div className="flex items-center gap-2 mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500">
-                <AlertCircle className="w-4 h-4 shrink-0 text-slate-400" />
+            <div className="flex items-center gap-2 mt-2 p-3 bg-muted border border-border rounded-xl text-xs text-muted-foreground">
+                <AlertCircle className="w-4 h-4 shrink-0 text-muted-foreground" />
                 Les notifications et la suppression de compte seront disponibles prochainement.
             </div>
         </div>
@@ -662,10 +662,10 @@ function AdvancedTab({ profile, resolvedUid }) {
                 </div>
             </section>
 
-            <div className="p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 text-center">
-                <Code2 className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                <p className="text-sm font-semibold text-slate-500">Section développeur</p>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed max-w-xs mx-auto">
+            <div className="p-4 rounded-xl border border-dashed border-border bg-muted text-center">
+                <Code2 className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm font-semibold text-muted-foreground">Section développeur</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed max-w-xs mx-auto">
                     Ces options avancées seront disponibles dans une prochaine mise à jour de la plateforme.
                 </p>
                 <DisabledBadge label="En développement" />
@@ -724,22 +724,22 @@ export default function SettingsModal({ isOpen, onClose, profile, resolvedUid })
             aria-modal="true"
             aria-label="Paramètres"
         >
-            <div className="relative w-full max-w-sm sm:max-w-2xl lg:max-w-3xl max-h-[85vh] sm:max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-sm sm:max-w-2xl lg:max-w-3xl max-h-[85vh] sm:max-h-[90vh] bg-card rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
 
                 {/* ── Header ─────────────────────────────────────────── */}
-                <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 shrink-0">
+                <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-border shrink-0">
                     <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
                         <div className="p-1.5 bg-primary/10 rounded-lg shrink-0">
                             <UserCog className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                         </div>
                         <div className="min-w-0">
-                            <h2 className="text-sm sm:text-base font-bold text-slate-900 truncate">Paramètres</h2>
-                            <p className="text-[10px] sm:text-xs text-slate-500 truncate">Gérez votre compte</p>
+                            <h2 className="text-sm sm:text-base font-bold text-foreground truncate">Paramètres</h2>
+                            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">Gérez votre compte</p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors shrink-0 ml-2"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0 ml-2"
                         aria-label="Fermer"
                     >
                         <X className="w-4 h-4" />
@@ -750,7 +750,7 @@ export default function SettingsModal({ isOpen, onClose, profile, resolvedUid })
                 <div className="flex flex-col lg:flex-row flex-1 min-h-0">
 
                     {/* Sidebar Navigation - Hidden on mobile, shown on lg screens */}
-                    <nav className="hidden lg:flex lg:w-52 lg:shrink-0 border-r border-slate-100 bg-slate-50/70 p-3 flex-col gap-0.5 overflow-y-auto">
+                    <nav className="hidden lg:flex lg:w-52 lg:shrink-0 border-r border-border bg-muted/70 p-3 flex-col gap-0.5 overflow-y-auto">
                         {TABS.map(tab => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
@@ -762,15 +762,15 @@ export default function SettingsModal({ isOpen, onClose, profile, resolvedUid })
                                     className={`
                                         w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium transition-all group
                                         ${isActive
-                                            ? 'bg-white text-primary shadow-sm border border-slate-200'
-                                            : 'text-slate-500 hover:bg-white/70 hover:text-slate-800'}
+                                            ? 'bg-card text-primary shadow-sm border border-border'
+                                            : 'text-muted-foreground hover:bg-card/70 hover:text-foreground'}
                                     `}
                                 >
-                                    <Icon className={`w-4 h-4 shrink-0 transition-colors ${isActive ? 'text-primary' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                                    <Icon className={`w-4 h-4 shrink-0 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
                                     <span className="flex-1 leading-tight">{tab.label}</span>
                                     {isActive && <ChevronRight className="w-3 h-3 text-primary/60 shrink-0" />}
                                     {isDisabled && !isActive && (
-                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0" />
+                                        <span className="w-1.5 h-1.5 rounded-full bg-muted shrink-0" />
                                     )}
                                 </button>
                             );
@@ -778,7 +778,7 @@ export default function SettingsModal({ isOpen, onClose, profile, resolvedUid })
                     </nav>
 
                     {/* Mobile Tab Navigation - Shown on small screens, hidden on lg */}
-                    <nav className="lg:hidden border-b border-slate-100 bg-white px-2 py-2 overflow-x-auto shrink-0">
+                    <nav className="lg:hidden border-b border-border bg-card px-2 py-2 overflow-x-auto shrink-0">
                         <div className="flex gap-1 min-w-min">
                             {TABS.map(tab => {
                                 const Icon = tab.icon;
@@ -791,7 +791,7 @@ export default function SettingsModal({ isOpen, onClose, profile, resolvedUid })
                                             flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap shrink-0
                                             ${isActive
                                                 ? 'bg-primary text-white shadow-sm'
-                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}
+                                                : 'bg-muted text-muted-foreground hover:bg-muted'}
                                         `}
                                     >
                                         <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />

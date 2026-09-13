@@ -117,7 +117,7 @@ export default function ResourceContactPage() {
 
     if (loading) {
         return (
-            <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+            <main className="flex min-h-screen items-center justify-center bg-muted px-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </main>
         );
@@ -125,10 +125,10 @@ export default function ResourceContactPage() {
 
     if (!thread) {
         return (
-            <main className="min-h-screen bg-slate-50 px-4 py-20">
+            <main className="min-h-screen bg-muted px-4 py-20">
                 <div className="mx-auto max-w-2xl">
                     <Card>
-                        <CardContent className="p-8 text-center text-slate-600">
+                        <CardContent className="p-8 text-center text-muted-foreground">
                             Cette room n'existe pas ou n'est plus disponible.
                         </CardContent>
                     </Card>
@@ -138,14 +138,14 @@ export default function ResourceContactPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 px-4 py-10">
+        <main className="min-h-screen bg-muted px-4 py-10">
             <div className="mx-auto max-w-3xl space-y-6">
                 <Card>
                     <CardHeader>
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <CardTitle className="text-2xl">Question sur ta ressource</CardTitle>
-                                <p className="mt-2 text-sm text-slate-500">
+                                <p className="mt-2 text-sm text-muted-foreground">
                                     {thread.resourceTitle} {thread.resourceModule ? `· ${thread.resourceModule}` : ''}
                                 </p>
                             </div>
@@ -163,7 +163,7 @@ export default function ResourceContactPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {messages.length === 0 ? (
-                            <p className="text-sm text-slate-500">Aucun message pour le moment.</p>
+                            <p className="text-sm text-muted-foreground">Aucun message pour le moment.</p>
                         ) : (
                             messages.map((message) => (
                                 <div
@@ -175,14 +175,14 @@ export default function ResourceContactPage() {
                                     }`}
                                 >
                                     <div className="mb-2 flex items-center justify-between gap-3">
-                                        <p className="text-sm font-semibold text-slate-900">
+                                        <p className="text-sm font-semibold text-foreground">
                                             {message.senderType === 'admin' ? 'Administration' : (message.senderName || 'Contributeur')}
                                         </p>
-                                        <p className="text-xs text-slate-500">
+                                        <p className="text-xs text-muted-foreground">
                                             {message.createdAt ? new Date(message.createdAt).toLocaleString('fr-FR') : ''}
                                         </p>
                                     </div>
-                                    <p className="whitespace-pre-wrap text-sm text-slate-700">{message.body}</p>
+                                    <p className="whitespace-pre-wrap text-sm text-foreground">{message.body}</p>
                                 </div>
                             ))
                         )}

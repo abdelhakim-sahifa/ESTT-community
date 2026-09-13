@@ -455,7 +455,7 @@ export default function ContributePage() {
                                                 : [];
 
                                             return (
-                                                <div key={lIndex} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-white/50 rounded-xl border border-muted-foreground/5 relative group">
+                                                <div key={lIndex} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-card/50 rounded-xl border border-muted-foreground/5 relative group">
                                                     <div className="space-y-1.5">
                                                         <Label className="text-[10px] font-bold uppercase opacity-70">Filière</Label>
                                                         <Select

@@ -39,13 +39,13 @@ export default function ContributorsSection() {
                     Open Source
                 </div>
 
-                <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight mb-4 leading-tight">
+                <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4 leading-tight">
                     Créé par les étudiants de l&apos;ESTT
                 </h1>
 
-                <p className="text-slate-500 text-base leading-relaxed">
+                <p className="text-muted-foreground text-base leading-relaxed">
                     Cette plateforme est propulsée par les contributions des{' '}
-                    <span className="text-slate-700 font-medium">étudiants talentueux</span> de l&apos;EST Tétouan.
+                    <span className="text-foreground font-medium">étudiants talentueux</span> de l&apos;EST Tétouan.
                     Rejoignez-nous et laissez votre marque&nbsp;!
                 </p>
             </div>
@@ -61,12 +61,12 @@ export default function ContributorsSection() {
                     {Array.from({ length: 4 }).map((_, i) => (
                         <div
                             key={i}
-                            className="w-[170px] rounded-2xl bg-white border border-slate-100 shadow-sm p-6 flex flex-col items-center gap-3 animate-pulse"
+                            className="w-[170px] rounded-2xl bg-card border border-border shadow-sm p-6 flex flex-col items-center gap-3 animate-pulse"
                         >
-                            <div className="w-16 h-16 rounded-full bg-slate-100" />
-                            <div className="w-24 h-3.5 rounded-full bg-slate-100" />
-                            <div className="w-16 h-3 rounded-full bg-slate-100" />
-                            <div className="w-14 h-3 rounded-full bg-slate-100 mt-1" />
+                            <div className="w-16 h-16 rounded-full bg-muted" />
+                            <div className="w-24 h-3.5 rounded-full bg-muted" />
+                            <div className="w-16 h-3 rounded-full bg-muted" />
+                            <div className="w-14 h-3 rounded-full bg-muted mt-1" />
                         </div>
                     ))}
                 </div>
@@ -78,7 +78,7 @@ export default function ContributorsSection() {
                     {contributors.map((c) => (
                         <div
                             key={c.id}
-                            className="w-[170px] rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200 p-6 flex flex-col items-center gap-2"
+                            className="w-[170px] rounded-2xl bg-card border border-border shadow-sm hover:shadow-md transition-shadow duration-200 p-6 flex flex-col items-center gap-2"
                         >
                             {/* Avatar */}
                             <div className="relative w-16 h-16 rounded-full overflow-hidden mb-1">
@@ -92,12 +92,12 @@ export default function ContributorsSection() {
                             </div>
 
                             {/* Username */}
-                            <p className="text-sm font-semibold text-slate-800 text-center truncate w-full">
+                            <p className="text-sm font-semibold text-foreground text-center truncate w-full">
                                 {c.login}
                             </p>
 
                             {/* Commits */}
-                            <p className="text-xs text-slate-400 flex items-center gap-1">
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
                                 <GitCommit className="w-3 h-3 text-blue-400" />
                                 {c.contributions} commit{c.contributions > 1 ? 's' : ''}
                             </p>

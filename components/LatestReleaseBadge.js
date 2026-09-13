@@ -36,17 +36,17 @@ export default function LatestReleaseBadge() {
             href={release.html_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-full hover:border-blue-400 transition-colors group"
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800/80 dark:to-slate-800/40 border border-blue-200 dark:border-border rounded-full hover:border-blue-400 dark:hover:border-border transition-colors group"
             title={`Latest release: ${release.name || release.tag_name}`}
         >
             <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-xs font-semibold text-slate-700 group-hover:text-blue-600 transition-colors">
+                <span className="text-xs font-semibold text-foreground group-hover:text-blue-600 transition-colors">
                     v{release.tag_name.replace(/^v/, '')}
                 </span>
             </span>
             {!release.draft && !release.prerelease && (
-                <span className="text-[10px] font-bold uppercase tracking-widest text-green-600">Live</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-green-600 dark:text-green-400">Live</span>
             )}
             {release.prerelease && (
                 <span className="text-[10px] font-bold uppercase tracking-widest text-orange-600">Beta</span>

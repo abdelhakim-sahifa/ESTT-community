@@ -35,11 +35,11 @@ const StatusBadge = ({ status }) => {
         case AD_STATUSES.PAYMENT_REQUIRED:
             return <Badge className="bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-50 animate-pulse"><CreditCard className="w-3 h-3 mr-1" /> Paiement Requis</Badge>;
         case AD_STATUSES.EXPIRED:
-            return <Badge className="bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-50">Expiré</Badge>;
+            return <Badge className="bg-muted text-muted-foreground border-border hover:bg-muted">Expiré</Badge>;
         case AD_STATUSES.REFUSED:
             return <Badge className="bg-red-50 text-red-600 border-red-100 hover:bg-red-50"><XCircle className="w-3 h-3 mr-1" /> Refusé</Badge>;
         case AD_STATUSES.DRAFT:
-            return <Badge className="bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-100">Brouillon</Badge>;
+            return <Badge className="bg-muted text-muted-foreground border-border hover:bg-muted">Brouillon</Badge>;
         default:
             return <Badge>{status}</Badge>;
     }
@@ -141,15 +141,15 @@ export default function UserAdsDashboard() {
 
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-card">
             <div className="container max-w-6xl mx-auto px-4 py-16">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
                     <div>
-                        <h1 className="text-4xl font-black text-slate-900 flex items-center gap-3">
+                        <h1 className="text-4xl font-black text-foreground flex items-center gap-3">
                             <LayoutDashboard className="w-10 h-10 text-blue-600" />
                             Mes Annonces
                         </h1>
-                        <p className="text-slate-500 mt-2">Gérez vos campagnes publicitaires et suivez leur performance.</p>
+                        <p className="text-muted-foreground mt-2">Gérez vos campagnes publicitaires et suivez leur performance.</p>
                     </div>
                     <Button
                         onClick={() => router.push('/ads-portal/submit')}
@@ -163,16 +163,16 @@ export default function UserAdsDashboard() {
                 {loading ? (
                     <div className="space-y-4">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="h-40 bg-slate-50 rounded-3xl animate-pulse" />
+                            <div key={i} className="h-40 bg-muted rounded-3xl animate-pulse" />
                         ))}
                     </div>
                 ) : ads.length === 0 ? (
-                    <div className="text-center py-20 bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
-                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                            <Plus className="w-10 h-10 text-slate-300" />
+                    <div className="text-center py-20 bg-muted rounded-[40px] border border-dashed border-border">
+                        <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                            <Plus className="w-10 h-10 text-muted-foreground" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Aucune annonce trouvée</h2>
-                        <p className="text-slate-500 max-w-sm mx-auto mb-8">
+                        <h2 className="text-2xl font-bold text-foreground mb-2">Aucune annonce trouvée</h2>
+                        <p className="text-muted-foreground max-w-sm mx-auto mb-8">
                             Partagez votre première annonce dès aujourd'hui pour gagner en visibilité auprès de la communauté.
                         </p>
                         <Button variant="outline" onClick={() => router.push('/ads-portal/submit')} className="rounded-full h-12 px-8">
@@ -182,11 +182,11 @@ export default function UserAdsDashboard() {
                 ) : (
                     <div className="grid grid-cols-1 gap-6">
                         {ads.map((ad) => (
-                            <Card key={ad.id} className="overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow rounded-[32px] bg-white">
+                            <Card key={ad.id} className="overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow rounded-[32px] bg-card">
                                 <CardContent className="p-0">
                                     <div className="flex flex-col md:flex-row">
                                         {/* Media Preview */}
-                                        <div className="w-full md:w-64 h-48 md:h-auto relative bg-slate-100">
+                                        <div className="w-full md:w-64 h-48 md:h-auto relative bg-muted">
                                             {ad.type === 'video' ? (
                                                 <video src={ad.url} className="w-full h-full object-cover" muted />
                                             ) : (
@@ -204,32 +204,32 @@ export default function UserAdsDashboard() {
                                             <div className="flex justify-between items-start mb-4">
                                                 <div>
                                                     <div className="flex items-center gap-3 mb-1">
-                                                        <h3 className="text-xl font-bold text-slate-900">{ad.title}</h3>
+                                                        <h3 className="text-xl font-bold text-foreground">{ad.title}</h3>
                                                         <StatusBadge status={ad.status} />
                                                     </div>
-                                                    <p className="text-slate-500 text-sm line-clamp-2 max-w-xl">
+                                                    <p className="text-muted-foreground text-sm line-clamp-2 max-w-xl">
                                                         {ad.description}
                                                     </p>
                                                 </div>
-                                                <span className="text-xs font-medium text-slate-400">
+                                                <span className="text-xs font-medium text-muted-foreground">
                                                     Soumise le {new Date(ad.createdAt).toLocaleDateString()}
                                                 </span>
                                             </div>
 
-                                            <div className="flex flex-wrap gap-6 pt-6 border-t border-slate-50 items-center justify-between">
+                                            <div className="flex flex-wrap gap-6 pt-6 border-t border-border items-center justify-between">
                                                 <div className="flex gap-8">
                                                     <div>
-                                                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Prix</p>
-                                                        <p className="text-sm font-bold text-slate-900">{ad.price} MAD</p>
+                                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Prix</p>
+                                                        <p className="text-sm font-bold text-foreground">{ad.price} MAD</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Durée</p>
-                                                        <p className="text-sm font-bold text-slate-900">{ad.duration} jours</p>
+                                                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Durée</p>
+                                                        <p className="text-sm font-bold text-foreground">{ad.duration} jours</p>
                                                     </div>
                                                     {ad.status === AD_STATUSES.LIVE && (
                                                         <div>
                                                             <p className="text-[10px] uppercase tracking-widest text-emerald-500 font-bold mb-1">Expiration</p>
-                                                            <p className="text-sm font-bold text-slate-900">
+                                                            <p className="text-sm font-bold text-foreground">
                                                                 {ad.expirationDate ? new Date(ad.expirationDate).toLocaleDateString() : 'Bientôt'}
                                                             </p>
                                                         </div>
@@ -241,7 +241,7 @@ export default function UserAdsDashboard() {
                                                         <div className="flex gap-2">
                                                             <Button
                                                                 disabled={true}
-                                                                className="bg-slate-100 text-slate-400 h-10 px-6 rounded-xl font-bold border border-slate-200"
+                                                                className="bg-muted text-muted-foreground h-10 px-6 rounded-xl font-bold border border-border"
                                                             >
                                                                 <CreditCard className="w-4 h-4 mr-2" />
                                                                 Carte (Bientôt)
@@ -257,9 +257,9 @@ export default function UserAdsDashboard() {
                                                             </Button>
                                                         </div>
                                                     )}
-                                                    <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-slate-50" asChild>
+                                                    <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-muted" asChild>
                                                         <a href={ad.url} target="_blank" rel="noopener noreferrer">
-                                                            <ExternalLink className="w-4 h-4 text-slate-400" />
+                                                            <ExternalLink className="w-4 h-4 text-muted-foreground" />
                                                         </a>
                                                     </Button>
                                                     <Button
@@ -268,7 +268,7 @@ export default function UserAdsDashboard() {
                                                         onClick={() => handleDelete(ad)}
                                                         className="h-10 w-10 rounded-xl hover:bg-red-50 group"
                                                     >
-                                                        <Trash2 className="w-4 h-4 text-slate-400 group-hover:text-red-500" />
+                                                        <Trash2 className="w-4 h-4 text-muted-foreground group-hover:text-red-500" />
                                                     </Button>
                                                 </div>
                                             </div>
@@ -299,7 +299,7 @@ export default function UserAdsDashboard() {
                             Notre équipe est là pour vous accompagner dans la réussite de votre publicité.
                             Contactez-nous si vous avez des questions sur le paiement ou le ciblage.
                         </p>
-                        <Button className="bg-white text-slate-900 hover:bg-slate-100 rounded-full px-8 font-bold">
+                        <Button className="bg-white text-slate-900 hover:bg-muted rounded-full px-8 font-bold">
                             <MessageSquare className="w-4 h-4 mr-2" />
                             Contacter le Support
                         </Button>

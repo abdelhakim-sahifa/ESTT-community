@@ -85,21 +85,21 @@ export default function ContactPage() {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-slate-50 py-20 px-4">
+            <div className="min-h-screen bg-muted py-20 px-4">
                 <div className="max-w-2xl mx-auto text-center space-y-8">
                     <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto animate-in zoom-in duration-500">
                         <CheckCircle2 className="w-10 h-10" />
                     </div>
                     <div className="space-y-3">
-                        <h1 className="text-4xl font-black tracking-tight text-slate-900">Message envoyé !</h1>
-                        <p className="text-lg text-slate-500">Merci de nous avoir contactés. Nous vous répondrons dès que possible.</p>
+                        <h1 className="text-4xl font-black tracking-tight text-foreground">Message envoyé !</h1>
+                        <p className="text-lg text-muted-foreground">Merci de nous avoir contactés. Nous vous répondrons dès que possible.</p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <Button asChild className="rounded-2xl h-12 px-8 font-bold">
                             <Link href="/">Retour à l'accueil</Link>
                         </Button>
-                        <Button variant="outline" onClick={() => { setSuccess(false); setFormData(prev => ({ ...prev, subject: '', message: '' })); }} className="rounded-2xl h-12 px-8 font-bold bg-white">
+                        <Button variant="outline" onClick={() => { setSuccess(false); setFormData(prev => ({ ...prev, subject: '', message: '' })); }} className="rounded-2xl h-12 px-8 font-bold bg-card">
                             Envoyer un autre message
                         </Button>
                     </div>
@@ -109,10 +109,10 @@ export default function ContactPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 py-12 px-4">
+        <main className="min-h-screen bg-muted py-12 px-4">
             <div className="max-w-5xl mx-auto">
                 <section className="mb-12 text-center relative">
-                    <Link href="/" className="absolute left-0 top-0 hidden md:flex items-center gap-2 text-slate-500 hover:text-primary transition-colors group">
+                    <Link href="/" className="absolute left-0 top-0 hidden md:flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors group">
                         <ArrowLeft className="w-4 h-4" />
                         <span className="text-sm font-bold">Retour</span>
                     </Link>
@@ -229,32 +229,32 @@ export default function ContactPage() {
                                 <CardTitle className="text-lg">Informations de contact</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-5">
-                                <a href="mailto:contact@estt.ma" className="flex items-center gap-3 text-slate-600 hover:text-primary transition-colors group">
-                                    <div className="p-2.5 bg-slate-100 rounded-xl group-hover:bg-primary/10 transition-colors">
-                                        <Mail className="w-5 h-5 text-slate-500 group-hover:text-primary" />
+                                <a href="mailto:contact@estt.ma" className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors group">
+                                    <div className="p-2.5 bg-muted rounded-xl group-hover:bg-primary/10 transition-colors">
+                                        <Mail className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email</p>
+                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Email</p>
                                         <p className="text-sm font-medium">contact@estt.ma</p>
                                     </div>
                                 </a>
 
-                                <a href="tel:+212715307349" className="flex items-center gap-3 text-slate-600 hover:text-primary transition-colors group">
-                                    <div className="p-2.5 bg-slate-100 rounded-xl group-hover:bg-primary/10 transition-colors">
-                                        <Phone className="w-5 h-5 text-slate-500 group-hover:text-primary" />
+                                <a href="tel:+212715307349" className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors group">
+                                    <div className="p-2.5 bg-muted rounded-xl group-hover:bg-primary/10 transition-colors">
+                                        <Phone className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Téléphone</p>
+                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Téléphone</p>
                                         <p className="text-sm font-medium">+212 715 307 349</p>
                                     </div>
                                 </a>
 
-                                <div className="flex items-center gap-3 text-slate-600">
-                                    <div className="p-2.5 bg-slate-100 rounded-xl">
-                                        <MapPin className="w-5 h-5 text-slate-500" />
+                                <div className="flex items-center gap-3 text-muted-foreground">
+                                    <div className="p-2.5 bg-muted rounded-xl">
+                                        <MapPin className="w-5 h-5 text-muted-foreground" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Adresse</p>
+                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Adresse</p>
                                         <p className="text-sm font-medium">École Supérieure de Technologie, Tétouan</p>
                                     </div>
                                 </div>
@@ -268,15 +268,15 @@ export default function ContactPage() {
                             <CardContent>
                                 <div className="flex items-center gap-3">
                                     <a href="https://github.com/abdelhakim-sahifa/ESTT-community/" target="_blank" rel="noopener noreferrer"
-                                        className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
+                                        className="p-2.5 bg-card border border-border rounded-xl text-muted-foreground hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                         <Github className="w-5 h-5" />
                                     </a>
                                     <a href="https://estt.uae.ac.ma" target="_blank" rel="noopener noreferrer"
-                                        className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
+                                        className="p-2.5 bg-card border border-border rounded-xl text-muted-foreground hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                         <Globe className="w-5 h-5" />
                                     </a>
                                     <a href="mailto:contact@estt.ma"
-                                        className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
+                                        className="p-2.5 bg-card border border-border rounded-xl text-muted-foreground hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                         <Mail className="w-5 h-5" />
                                     </a>
                                 </div>

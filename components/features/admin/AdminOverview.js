@@ -173,7 +173,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
 
             {/* Top Stat Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <Card className="border-none shadow-sm bg-white overflow-hidden group col-span-1">
+                <Card className="border-none shadow-sm bg-card overflow-hidden group col-span-1">
                     <div className="h-1 bg-blue-600 w-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     <CardContent className="p-4 md:p-6">
                         <div className="flex items-center justify-between mb-2 md:mb-4">
@@ -186,7 +186,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                         <h3 className="text-xl md:text-3xl font-black mt-1">{stats.users}</h3>
                     </CardContent>
                 </Card>
-                <Card className="border-none shadow-sm bg-white overflow-hidden group col-span-1">
+                <Card className="border-none shadow-sm bg-card overflow-hidden group col-span-1">
                     <div className="h-1 bg-purple-600 w-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     <CardContent className="p-4 md:p-6">
                         <div className="flex items-center justify-between mb-2 md:mb-4">
@@ -216,7 +216,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Repartition par Type & Statut */}
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-card">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0">
                         <div>
                             <CardTitle className="text-lg font-black uppercase tracking-tight">Analyse des Ressources</CardTitle>
@@ -295,7 +295,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                 </Card>
 
                 {/* Popularite Filiere & Modules */}
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-card">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0">
                         <div>
                             <CardTitle className="text-lg font-black uppercase tracking-tight">Popularité</CardTitle>
@@ -330,7 +330,7 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                                         </ResponsiveContainer>
                                     </div>
                                     
-                                    <hr className="border-slate-50" />
+                                    <hr className="border-border" />
 
                                     <div className="space-y-4">
                                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -393,8 +393,8 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* User Distribution */}
-                <Card className="border-none shadow-sm bg-white overflow-hidden">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-slate-50">
+                <Card className="border-none shadow-sm bg-card overflow-hidden">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-border">
                         <div>
                             <CardTitle className="text-lg font-black uppercase tracking-tight">Utilisateurs par Filière</CardTitle>
                             <CardDescription>Répartition démographique.</CardDescription>
@@ -437,15 +437,15 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                 </Card>
 
                 {/* Recent Resources */}
-                <Card className="border-none shadow-sm bg-white overflow-hidden">
-                    <CardHeader className="border-b border-slate-50">
+                <Card className="border-none shadow-sm bg-card overflow-hidden">
+                    <CardHeader className="border-b border-border">
                         <CardTitle className="text-lg font-black uppercase tracking-tight">Dernières Ressources</CardTitle>
                         <CardDescription>Les 5 ressources les plus récentes ajoutées.</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
-                        <div className="divide-y divide-slate-50">
+                        <div className="divide-y divide-border">
                             {resources.slice(0, 5).map((res) => (
-                                <div key={res.id} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
+                                <div key={res.id} className="flex items-center justify-between p-4 hover:bg-muted transition-colors">
                                     <div className="flex items-center gap-3 overflow-hidden">
                                         <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
                                             <FileText className="w-5 h-5" />
@@ -465,8 +465,8 @@ export default function AdminOverview({ stats, resources, users = [], setActiveT
                                 </div>
                             ))}
                         </div>
-                        <div className="p-4 bg-slate-50/50">
-                            <Button variant="ghost" className="w-full text-xs font-bold uppercase tracking-widest text-primary hover:bg-white" onClick={() => setActiveTab('resources')}>
+                        <div className="p-4 bg-muted/50">
+                            <Button variant="ghost" className="w-full text-xs font-bold uppercase tracking-widest text-primary hover:bg-card" onClick={() => setActiveTab('resources')}>
                                 Voir toutes les ressources <ArrowUpRight className="ml-2 w-3 h-3" />
                             </Button>
                         </div>
