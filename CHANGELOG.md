@@ -1,3 +1,19 @@
+# [1.32.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.31.0...v1.32.0) (2026-09-13)
+
+
+### Features
+
+* add floating ESTT-AI assistant widget ([4e27afb](https://github.com/abdelhakim-sahifa/ESTT-community/commit/4e27afb1506d9f6825300217c41f9dcd727ea99f))
+
+# [1.31.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.30.2...v1.31.0) (2026-09-13)
+
+
+### Features
+
+* add dark mode support ([10f6406](https://github.com/abdelhakim-sahifa/ESTT-community/commit/10f6406e1963160fbb9294e984544451c73d7df5))
+* add theme preference options to profile settings ([23848b7](https://github.com/abdelhakim-sahifa/ESTT-community/commit/23848b77249682438791643fbc18bce3ef94fe5e))
+* add theme preference options to profile settings ([fdc8ba2](https://github.com/abdelhakim-sahifa/ESTT-community/commit/fdc8ba2db028ad47ed81490be4530fd10c8acc07))
+
 ## [1.30.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.30.1...v1.30.2) (2026-09-12)
 
 ## [1.30.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.30.0...v1.30.1) (2026-09-06)
