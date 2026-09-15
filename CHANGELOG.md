@@ -1,3 +1,11 @@
+# [1.34.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.33.2...v1.34.0) (2026-09-15)
+
+
+### Features
+
+* v1.34.0 - Change the LLM from Gemini to GPT-OSS 120B ([1dcf3e3](https://github.com/abdelhakim-sahifa/ESTT-community/commit/1dcf3e310586d1e3568a3d04c1dc1273d130b0c9))
+* v1.34.0 - Change the LLM from Gemini to GPT-OSS 120B ([3159f24](https://github.com/abdelhakim-sahifa/ESTT-community/commit/3159f24f2172b1c855274fd95ef311576c0e1e13))
+
 ## [1.33.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.33.1...v1.33.2) (2026-09-15)
 
 ## [1.33.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.33.0...v1.33.1) (2026-09-15)
