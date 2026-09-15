@@ -158,14 +158,14 @@ export default function NewProjectPage() {
     if (!loading && !user) {
         return (
             <main className="container max-w-3xl px-4 py-16 md:px-6">
-                <Card className="rounded-2xl border-slate-200 shadow-lg">
+                <Card className="rounded-2xl border-border shadow-lg">
                     <CardHeader className="space-y-3">
-                        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-orange-600">
+                        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-orange-600 dark:border-orange-500/30 dark:bg-orange-500/10 dark:text-orange-300">
                             <Rocket className="h-3.5 w-3.5" />
                             Nouveau challenge
                         </div>
-                        <CardTitle className="text-3xl font-black text-slate-950">Connecte-toi pour proposer un projet</CardTitle>
-                        <CardDescription className="text-base text-slate-500">
+                        <CardTitle className="text-3xl font-black text-foreground">Connecte-toi pour proposer un projet</CardTitle>
+                        <CardDescription className="text-base text-muted-foreground">
                             La creation de briefs est reservee aux membres connectes afin de garder des auteurs identifies et de limiter le spam.
                         </CardDescription>
                     </CardHeader>
@@ -183,22 +183,22 @@ export default function NewProjectPage() {
     }
 
     return (
-        <main className="bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_35%,_#f8fafc_100%)]">
+        <main className="bg-[linear-gradient(180deg,_#fff7ed_0%,_#ffffff_35%,_#f8fafc_100%)] dark:bg-[linear-gradient(180deg,_#0c0a09_0%,_#020617_35%,_#020617_100%)]">
             <div className="container max-w-4xl px-4 py-14 md:px-6">
                 <div className="mb-10 space-y-4">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-orange-600 shadow-sm">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-orange-600 shadow-sm dark:border-orange-500/30 dark:text-orange-300">
                         <Rocket className="h-4 w-4" />
                         Proposer un challenge
                     </div>
-                    <h1 className="text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+                    <h1 className="text-4xl font-black tracking-tight text-foreground md:text-5xl">
                         Lance un projet que d'autres etudiants pourront construire.
                     </h1>
-                    <p className="max-w-2xl text-base leading-relaxed text-slate-600">
+                    <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
                         Decris le probleme, le niveau, les attentes et les criteres d evaluation. La communaute pourra ensuite soumettre des implementations et voter.
                     </p>
                 </div>
 
-                <Card className="rounded-2xl border-white/70 shadow-xl">
+                <Card className="rounded-2xl border-white/70 shadow-xl dark:border-border">
                     <CardHeader>
                         <CardTitle>Brief du projet</CardTitle>
                         <CardDescription>
@@ -208,7 +208,7 @@ export default function NewProjectPage() {
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-8">
                             {message && (
-                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}>
+                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:text-emerald-300'}>
                                     {isError ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
                                     <AlertTitle>{isError ? 'Erreur' : 'Succes'}</AlertTitle>
                                     <AlertDescription>{message}</AlertDescription>
@@ -329,7 +329,7 @@ export default function NewProjectPage() {
                                         onChange={(event) => handleChange('coverImage', event.target.value)}
                                         placeholder="https://..."
                                     />
-                                    <p className="text-xs text-slate-500">
+                                    <p className="text-xs text-muted-foreground">
                                         {uploadingCover ? 'Envoi vers ImgBB...' : "Tu peux uploader une image directement ou coller une URL existante."}
                                     </p>
                                 </div>
@@ -357,9 +357,9 @@ export default function NewProjectPage() {
                                 </div>
                             </div>
 
-                            <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Regle de vote MVP</p>
-                                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                            <div className="rounded-xl border border-border bg-muted p-5">
+                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Regle de vote MVP</p>
+                                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                                     Chaque utilisateur peut placer un vote sur une seule implementation par challenge, avec possibilite de changer ce vote tant que le projet reste ouvert.
                                 </p>
                             </div>

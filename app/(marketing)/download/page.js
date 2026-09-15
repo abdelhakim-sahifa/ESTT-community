@@ -25,7 +25,7 @@ export default function DownloadPage() {
     return (
         <main className="min-h-screen">
             {/* Hero Section - Aligned with the rest of the app */}
-            <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24 overflow-hidden">
+            <section id="hero" className="relative bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white pt-20 pb-16 lg:pt-32 lg:pb-24 overflow-hidden dark:from-blue-950/60 dark:via-indigo-950/30 dark:to-background">
                 <div className="container relative mx-auto px-4 md:px-6 flex flex-col items-center text-center">
                     {/* App Icon */}
                     <div className="mb-8 relative w-24 h-24 md:w-32 md:h-32 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -38,7 +38,7 @@ export default function DownloadPage() {
                         />
                     </div>
 
-                    <Badge variant="outline" className="mb-6 px-4 py-1.5 border-primary/20 bg-white/60 backdrop-blur text-primary rounded-full shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <Badge variant="outline" className="mb-6 px-4 py-1.5 border-primary/20 bg-background/60 backdrop-blur text-primary rounded-full shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <Sparkles className="w-3.5 h-3.5 mr-2" />
                         L'application mobile est arrivée
                     </Badge>
@@ -58,7 +58,7 @@ export default function DownloadPage() {
                                 Télécharger APK
                             </a>
                         </Button>
-                        <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12 bg-white/60 backdrop-blur shadow-sm transition-all duration-300 transform hover:-translate-y-1 text-primary border-primary/20 hover:bg-white" asChild>
+                        <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12 bg-background/60 backdrop-blur shadow-sm transition-all duration-300 transform hover:-translate-y-1 text-primary border-primary/20 hover:bg-background" asChild>
                             <a href={webAppUrl} target="_blank" rel="noopener noreferrer">
                                 <ExternalLink className="mr-2 h-5 w-5" />
                                 Version Web
@@ -69,7 +69,7 @@ export default function DownloadPage() {
             </section>
 
             {/* Showcase Section - Using shadcn Badge and Card-like layout */}
-            <section className="py-16 bg-white border-y border-slate-100">
+            <section className="py-16 bg-card border-y border-border">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="flex flex-col items-center mb-16 text-center">
                         <h2 className="text-3xl font-heading font-bold mb-4 tracking-tight">Une interface moderne et intuitive</h2>
@@ -107,7 +107,7 @@ export default function DownloadPage() {
             </section>
 
             {/* Platform Details - Using shadcn Cards strictly */}
-            <section className="py-24 px-4 md:px-6 bg-slate-50/50">
+            <section className="py-24 px-4 md:px-6 bg-muted/50">
                 <div className="container mx-auto max-w-6xl">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Android Card */}
@@ -122,7 +122,7 @@ export default function DownloadPage() {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="p-8 pt-4 flex-grow flex flex-col">
-                                <ul className="space-y-4 mb-10 text-slate-600">
+                                <ul className="space-y-4 mb-10 text-muted-foreground">
                                     <li className="flex items-start">
                                         <Zap className="w-5 h-5 text-primary mr-3 mt-0.5" />
                                         <span>Notifications en temps réel</span>
@@ -145,7 +145,7 @@ export default function DownloadPage() {
                         {/* iOS Card */}
                         <Card className="rounded-[2rem] border-none shadow-xl shadow-slate-500/5 overflow-hidden flex flex-col h-full hover:shadow-2xl hover:shadow-slate-500/10 transition-all duration-500">
                             <CardHeader className="p-8 pb-4">
-                                <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-6 text-slate-900">
+                                <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center mb-6 text-foreground">
                                     <Apple className="w-7 h-7" />
                                 </div>
                                 <CardTitle className="text-3xl font-heading font-bold">iOS</CardTitle>
@@ -154,13 +154,13 @@ export default function DownloadPage() {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="p-8 pt-4 flex-grow flex flex-col">
-                                <ul className="space-y-4 mb-10 text-slate-600">
+                                <ul className="space-y-4 mb-10 text-muted-foreground">
                                     <li className="flex items-start">
-                                        <ExternalLink className="w-5 h-5 text-slate-400 mr-3 mt-0.5" />
+                                        <ExternalLink className="w-5 h-5 text-muted-foreground mr-3 mt-0.5" />
                                         <span>Installation PWA recommandée</span>
                                     </li>
                                     <li className="flex items-start">
-                                        <Smartphone className="w-5 h-5 text-slate-400 mr-3 mt-0.5" />
+                                        <Smartphone className="w-5 h-5 text-muted-foreground mr-3 mt-0.5" />
                                         <span>Fluidité comparable à une app native</span>
                                     </li>
                                     <li className="flex items-start">

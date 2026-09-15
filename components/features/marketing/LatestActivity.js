@@ -4,13 +4,13 @@ import ActivityFeed from '@/components/features/feed/ActivityFeed';
 
 export default function LatestActivity() {
     return (
-        <section id="activity-feed" className="py-12 md:py-20 bg-white">
+        <section id="activity-feed" className="py-12 md:py-20 bg-background">
             <div className="container">
                 <div className="max-w-2xl mb-8 md:mb-12">
-                    <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-4">
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
                         Dernières Activités
                     </h2>
-                    <p className="text-slate-500 text-lg">
+                    <p className="text-muted-foreground text-lg">
                         Les derniers partages de la communauté en temps réel.
                     </p>
                 </div>

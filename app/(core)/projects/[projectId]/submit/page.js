@@ -190,10 +190,10 @@ export default function SubmitProjectImplementationPage() {
     if (!loading && !user) {
         return (
             <main className="container max-w-3xl px-4 py-16 md:px-6">
-                <Card className="rounded-2xl border-slate-200 shadow-lg">
+                <Card className="rounded-2xl border-border shadow-lg">
                     <CardHeader>
-                        <CardTitle className="text-3xl font-black text-slate-950">Connexion requise</CardTitle>
-                        <CardDescription className="text-base text-slate-500">
+                        <CardTitle className="text-3xl font-black text-foreground">Connexion requise</CardTitle>
+                        <CardDescription className="text-base text-muted-foreground">
                             Il faut etre connecte pour soumettre une implementation et apparaitre comme auteur dans le classement.
                         </CardDescription>
                     </CardHeader>
@@ -221,9 +221,9 @@ export default function SubmitProjectImplementationPage() {
     if (!project) {
         return (
             <main className="container max-w-3xl px-4 py-16 text-center md:px-6">
-                <div className="rounded-xl border border-dashed border-slate-200 bg-white p-10">
-                    <h1 className="text-3xl font-black text-slate-950">Challenge introuvable</h1>
-                    <p className="mt-3 text-sm text-slate-500">
+                <div className="rounded-xl border border-dashed border-border bg-card p-10">
+                    <h1 className="text-3xl font-black text-foreground">Challenge introuvable</h1>
+                    <p className="mt-3 text-sm text-muted-foreground">
                         Recharge depuis le hub des projets et reessaie.
                     </p>
                     <Button asChild className="mt-6 rounded-full">
@@ -235,31 +235,31 @@ export default function SubmitProjectImplementationPage() {
     }
 
     return (
-        <main className="bg-[linear-gradient(180deg,_#eff6ff_0%,_#ffffff_35%,_#f8fafc_100%)]">
+        <main className="bg-[linear-gradient(180deg,_#eff6ff_0%,_#ffffff_35%,_#f8fafc_100%)] dark:bg-[linear-gradient(180deg,_#0c1226_0%,_#020617_35%,_#020617_100%)]">
             <div className="container max-w-4xl px-4 py-14 md:px-6">
                 <div className="mb-10 space-y-4">
                     <Button asChild variant="ghost" className="rounded-full">
                         <Link href={`/projects/${project.id}`}>Retour au challenge</Link>
                     </Button>
-                    <h1 className="text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+                    <h1 className="text-4xl font-black tracking-tight text-foreground md:text-5xl">
                         Soumettre une implementation
                     </h1>
-                    <p className="max-w-2xl text-base leading-relaxed text-slate-600">
-                        Tu soumets une reponse au challenge <span className="font-bold text-slate-950">{project.title}</span>. Ajoute une explication claire, un repo, une demo et quelques visuels.
+                    <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
+                        Tu soumets une reponse au challenge <span className="font-bold text-foreground">{project.title}</span>. Ajoute une explication claire, un repo, une demo et quelques visuels.
                     </p>
                 </div>
 
-                <Card className="mb-8 rounded-2xl border-slate-200 shadow-sm">
+                <Card className="mb-8 rounded-2xl border-border shadow-sm">
                     <CardHeader>
                         <CardTitle>{project.title}</CardTitle>
                         <CardDescription>{project.summary || project.description}</CardDescription>
                     </CardHeader>
-                    <CardContent className="text-sm text-slate-500">
-                        Statut du challenge: <span className="font-semibold text-slate-900">{runtimeStatus === 'open' ? 'Ouvert' : 'Ferme'}</span>
+                    <CardContent className="text-sm text-muted-foreground">
+                        Statut du challenge: <span className="font-semibold text-foreground">{runtimeStatus === 'open' ? 'Ouvert' : 'Ferme'}</span>
                     </CardContent>
                 </Card>
 
-                <Card className="rounded-2xl border-white/70 shadow-xl">
+                <Card className="rounded-2xl border-white/70 shadow-xl dark:border-border">
                     <CardHeader>
                         <CardTitle>Ton build</CardTitle>
                         <CardDescription>
@@ -269,7 +269,7 @@ export default function SubmitProjectImplementationPage() {
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-8">
                             {message && (
-                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}>
+                                <Alert className={isError ? '' : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:text-emerald-300'}>
                                     {isError ? <AlertCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
                                     <AlertTitle>{isError ? 'Erreur' : 'Succes'}</AlertTitle>
                                     <AlertDescription>{message}</AlertDescription>
@@ -326,7 +326,7 @@ export default function SubmitProjectImplementationPage() {
                                         onChange={(event) => handleChange('coverImage', event.target.value)}
                                         placeholder="https://..."
                                     />
-                                    <p className="text-xs text-slate-500">
+                                    <p className="text-xs text-muted-foreground">
                                         {uploadingCover ? 'Envoi vers ImgBB...' : "Tu peux uploader une image directement ou garder une URL externe."}
                                     </p>
                                 </div>

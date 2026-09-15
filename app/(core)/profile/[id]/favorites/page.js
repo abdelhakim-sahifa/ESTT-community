@@ -57,20 +57,20 @@ export default function FavoritesPage() {
 
 
     return (
-        <main className="min-h-screen bg-white py-12 border-t border-slate-100">
+        <main className="min-h-screen bg-card py-12 border-t border-border">
             <div className="container max-w-5xl mx-auto px-4 space-y-8">
                 <div className="flex items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">
+                        <h1 className="text-2xl font-bold text-foreground">
                             {isOwnProfile ? 'Mes ressources enregistrées' : 'Ressources enregistrées'}
                         </h1>
-                        <p className="text-sm text-slate-500 mt-1">
+                        <p className="text-sm text-muted-foreground mt-1">
                             Toutes les ressources sauvegardées pour ce profil.
                         </p>
                     </div>
                     <Link
                         href={`/profile/${id}`}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-primary"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-primary"
                     >
                         <ArrowLeft className="w-3 h-3" />
                         Retour au profil
@@ -82,8 +82,8 @@ export default function FavoritesPage() {
                         <Loader2 className="w-6 h-6 animate-spin text-primary" />
                     </div>
                 ) : favorites.length === 0 ? (
-                    <div className="text-center py-16 border border-dashed border-slate-200 rounded-xl">
-                        <p className="text-slate-400 text-sm">
+                    <div className="text-center py-16 border border-dashed border-border rounded-xl">
+                        <p className="text-muted-foreground text-sm">
                             Aucune ressource enregistrée pour le moment.
                         </p>
                     </div>
@@ -93,17 +93,17 @@ export default function FavoritesPage() {
                             <Link
                                 key={fav.id}
                                 href={`/resource/${fav.resourceId}`}
-                                className="group p-4 border border-slate-200 rounded-xl hover:border-primary/50 transition-colors bg-white flex flex-col justify-between"
+                                className="group p-4 border border-border rounded-xl hover:border-primary/50 transition-colors bg-card flex flex-col justify-between"
                             >
                                 <div className="flex items-start gap-3 mb-3">
-                                    <div className="p-2 bg-slate-100 rounded-lg text-slate-500 shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                    <div className="p-2 bg-muted rounded-lg text-muted-foreground shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                                         <FileText className="w-4 h-4" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h2 className="text-sm font-semibold text-slate-900 group-hover:text-primary transition-colors line-clamp-2">
+                                        <h2 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
                                             {fav.title || 'Ressource'}
                                         </h2>
-                                        <div className="flex flex-wrap gap-1 mt-1 text-[10px] uppercase text-slate-400">
+                                        <div className="flex flex-wrap gap-1 mt-1 text-[10px] uppercase text-muted-foreground">
                                             {fav.type && <span>{fav.type}</span>}
                                             {fav.docType && (
                                                 <span className="text-primary">· {fav.docType}</span>
@@ -111,7 +111,7 @@ export default function FavoritesPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-auto pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                                <div className="mt-auto pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
                                     {fav.createdAt && (
                                         <span>
                                             Enregistrée le{' '}

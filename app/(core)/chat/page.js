@@ -342,17 +342,17 @@ export default function DiscussionPage() {
     if (authLoading) return (
         <div className="flex flex-col items-center justify-center min-h-[80vh] gap-3">
             <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            <p className="text-sm font-medium text-slate-500">Chargement de votre session...</p>
+            <p className="text-sm font-medium text-muted-foreground">Chargement de votre session...</p>
         </div>
     );
 
     if (!user) return (
         <div className="flex flex-col items-center justify-center min-h-[80vh] text-center p-6">
-            <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-                <Lock className="w-10 h-10 text-slate-400" />
+            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+                <Lock className="w-10 h-10 text-muted-foreground" />
             </div>
             <h1 className="text-2xl font-black mb-2">Accès Restreint</h1>
-            <p className="text-slate-500 max-w-sm mb-8">
+            <p className="text-muted-foreground max-w-sm mb-8">
                 Vous devez être connecté pour accéder à l'espace de discussion de votre promotion.
             </p>
         </div>
@@ -384,16 +384,16 @@ export default function DiscussionPage() {
     };
 
     return (
-        <main className="fixed inset-0 z-[100] h-[100dvh] bg-white flex flex-col font-sans overflow-hidden overscroll-none">
+        <main className="fixed inset-0 z-[100] h-[100dvh] bg-card flex flex-col font-sans overflow-hidden overscroll-none">
             <ChatTermsDialog />
             {/* Header Area */}
-            <div className="bg-white border-b border-slate-100 px-4 py-3 md:px-12 md:py-4 shrink-0">
+            <div className="bg-card border-b border-border px-4 py-3 md:px-12 md:py-4 shrink-0">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         {/* Back to Messages */}
                         <Link
                             href="/messages"
-                            className="p-2 rounded-xl text-slate-500 hover:text-primary hover:bg-primary/5 transition-all"
+                            className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
                             title="Retour aux messages"
                         >
                             <ArrowLeft className="w-5 h-5" />
@@ -403,7 +403,7 @@ export default function DiscussionPage() {
                         <div className="md:hidden">
                             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                                 <SheetTrigger asChild>
-                                    <button className="p-1.5 text-slate-500 hover:text-slate-900 transition-colors">
+                                    <button className="p-1.5 text-muted-foreground hover:text-foreground transition-colors">
                                         <Menu className="w-6 h-6" />
                                     </button>
                                 </SheetTrigger>
@@ -425,8 +425,8 @@ export default function DiscussionPage() {
                                                 key={item.href}
                                                 href={item.href}
                                                 className={cn(
-                                                    "flex items-center py-3 text-lg font-semibold transition-colors hover:text-primary border-b border-slate-50",
-                                                    item.href === '/chat' ? "text-primary" : "text-slate-600"
+                                                    "flex items-center py-3 text-lg font-semibold transition-colors hover:text-primary border-b border-border",
+                                                    item.href === '/chat' ? "text-primary" : "text-muted-foreground"
                                                 )}
                                                 onClick={() => setIsMenuOpen(false)}
                                             >
@@ -438,19 +438,19 @@ export default function DiscussionPage() {
                                     <div className="mt-auto pt-6">
                                         {user && (
                                             <div className="flex flex-col gap-4">
-                                                <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                                <div className="flex items-center gap-3 p-4 bg-muted rounded-2xl border border-border">
                                                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shadow-inner">
                                                         {profile?.firstName?.charAt(0) || user.email?.charAt(0).toUpperCase()}
                                                     </div>
                                                     <div className="flex flex-col min-w-0">
-                                                        <span className="text-sm font-bold text-slate-900 truncate">
+                                                        <span className="text-sm font-bold text-foreground truncate">
                                                             {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : 'Étudiant'}
                                                         </span>
-                                                        <span className="text-[10px] text-slate-500 truncate leading-tight">{user.email}</span>
+                                                        <span className="text-[10px] text-muted-foreground truncate leading-tight">{user.email}</span>
                                                     </div>
                                                 </div>
                                                 <div className="grid grid-cols-1 gap-2">
-                                                    <Button variant="ghost" className="w-full justify-start h-11 px-4 text-slate-600 hover:text-primary hover:bg-primary/5 rounded-xl gap-3" asChild onClick={() => setIsMenuOpen(false)}>
+                                                    <Button variant="ghost" className="w-full justify-start h-11 px-4 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl gap-3" asChild onClick={() => setIsMenuOpen(false)}>
                                                         <Link href="/profile">
                                                             <UserIcon className="w-4 h-4" />
                                                             Mon Profil
@@ -476,8 +476,8 @@ export default function DiscussionPage() {
                         </div>
 
                         <div className="flex flex-col">
-                            <h1 className="text-base md:text-xl font-bold tracking-tight text-slate-900 leading-tight">
-                                Filière {filiereName} <span className="text-slate-400 font-medium md:ml-1 md:inline block text-xs md:text-base">{semesterLabel}</span>
+                            <h1 className="text-base md:text-xl font-bold tracking-tight text-foreground leading-tight">
+                                Filière {filiereName} <span className="text-muted-foreground font-medium md:ml-1 md:inline block text-xs md:text-base">{semesterLabel}</span>
                             </h1>
                             <div className="flex items-center gap-1.5 mt-0.5">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -503,10 +503,10 @@ export default function DiscussionPage() {
                                             : 'Activer les notifications'
                                 }
                                 className={`p-2 rounded-full transition-all ${permission === 'granted'
-                                    ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
+                                    ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25'
                                     : permission === 'denied'
-                                        ? 'text-slate-300 cursor-not-allowed'
-                                        : 'text-slate-400 hover:text-primary hover:bg-primary/5'
+                                        ? 'text-muted-foreground cursor-not-allowed'
+                                        : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
                                     }`}
                                 disabled={permission === 'denied'}
                             >
@@ -522,13 +522,13 @@ export default function DiscussionPage() {
                             {onlineProfiles.slice(0, facepileLimit).map((p, i) => (
                                 <div
                                     key={i}
-                                    className="inline-block h-8 w-8 md:h-10 md:w-10 rounded-full ring-2 md:ring-4 ring-white transition-transform hover:translate-y-[-2px] cursor-pointer"
+                                    className="inline-block h-8 w-8 md:h-10 md:w-10 rounded-full ring-2 md:ring-4 ring-white dark:ring-border transition-transform hover:translate-y-[-2px] cursor-pointer"
                                     title={`${p.firstName} ${p.lastName}`}
                                 >
                                     {p.photoUrl ? (
-                                        <img className="h-full w-full object-cover rounded-full bg-slate-100" src={p.photoUrl} alt="" />
+                                        <img className="h-full w-full object-cover rounded-full bg-muted" src={p.photoUrl} alt="" />
                                     ) : (
-                                        <div className="h-full w-full rounded-full bg-slate-100 flex items-center justify-center text-[10px] md:text-xs font-bold text-slate-500">
+                                        <div className="h-full w-full rounded-full bg-muted flex items-center justify-center text-[10px] md:text-xs font-bold text-muted-foreground">
                                             {p.firstName?.[0]}{p.lastName?.[0]}
                                         </div>
                                     )}
@@ -536,7 +536,7 @@ export default function DiscussionPage() {
                             ))}
                         </div>
                         {extraCount > 0 && (
-                            <div className="flex items-center justify-center h-8 w-8 md:h-10 md:w-10 rounded-full ring-2 md:ring-4 ring-white bg-slate-800 text-white text-[9px] md:text-[10px] font-black -ml-2 md:-ml-3 z-10 border-2 border-white">
+                            <div className="flex items-center justify-center h-8 w-8 md:h-10 md:w-10 rounded-full ring-2 md:ring-4 ring-white dark:ring-border bg-slate-800 text-white text-[9px] md:text-[10px] font-black -ml-2 md:-ml-3 z-10 border-2 border-white dark:border-border">
                                 +{extraCount}
                             </div>
                         )}
@@ -547,7 +547,7 @@ export default function DiscussionPage() {
             {/* Chat Body */}
             <div
                 ref={scrollContainerRef}
-                className="flex-1 overflow-y-auto px-6 py-10 md:px-12 scroll-smooth bg-white custom-scrollbar overscroll-contain"
+                className="flex-1 overflow-y-auto px-6 py-10 md:px-12 scroll-smooth bg-card custom-scrollbar overscroll-contain"
             >
                 <div className="max-w-4xl mx-auto">
                     {hasMore && messages.length >= messageLimit && (
@@ -556,7 +556,7 @@ export default function DiscussionPage() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={handleLoadMore}
-                                className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-primary hover:bg-primary/5 transition-all px-6 py-2 rounded-full border border-slate-100 shadow-sm"
+                                className="text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all px-6 py-2 rounded-full border border-border shadow-sm"
                             >
                                 Voir les messages plus anciens
                             </Button>
@@ -564,22 +564,22 @@ export default function DiscussionPage() {
                     )}
                     {loading ? (
                         <div className="flex items-center justify-center py-20">
-                            <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
+                            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
                         </div>
                     ) : messages.length === 0 ? (
                         <div className="text-center py-20 px-6">
-                            <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
-                                <PeopleIcon size={32} className="text-slate-300" />
+                            <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4 border border-border">
+                                <PeopleIcon size={32} className="text-muted-foreground" />
                             </div>
-                            <h3 className="text-lg font-bold text-slate-900 mb-1">Pas encore de messages</h3>
-                            <p className="text-sm text-slate-500">Commencez la discussion avec vos camarades de promotion !</p>
+                            <h3 className="text-lg font-bold text-foreground mb-1">Pas encore de messages</h3>
+                            <p className="text-sm text-muted-foreground">Commencez la discussion avec vos camarades de promotion !</p>
                         </div>
                     ) : (
                         Object.entries(groupedMessages).map(([date, msgs]) => (
                             <div key={date}>
                                 {/* Date Separator */}
                                 <div className="flex items-center justify-center mb-10 overflow-hidden">
-                                    <div className="text-[12px] font-black uppercase tracking-[0.1em] text-slate-300 bg-white px-4">
+                                    <div className="text-[12px] font-black uppercase tracking-[0.1em] text-muted-foreground bg-card px-4">
                                         {date}
                                     </div>
                                 </div>
@@ -618,7 +618,7 @@ export default function DiscussionPage() {
             </div>
 
             {/* Input Area */}
-            <div className="bg-white border-t border-slate-100 pb-4 md:pb-8 pt-4 px-6 md:px-12 shrink-0 pb-safe">
+            <div className="bg-card border-t border-border pb-4 md:pb-8 pt-4 px-6 md:px-12 shrink-0 pb-safe">
                 <div className="max-w-4xl mx-auto w-full">
                     {/* Typing Indicator */}
                     {(() => {
@@ -635,7 +635,7 @@ export default function DiscussionPage() {
 
                         return (
                             <div className="flex items-center gap-2 mb-2 animate-in fade-in slide-in-from-bottom-1 duration-300">
-                                <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1.5">
+                                <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
                                     <span className="flex gap-0.5">
                                         <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce" />
                                         <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce [animation-delay:0.2s]" />
@@ -649,14 +649,14 @@ export default function DiscussionPage() {
 
                     {/* Reply Preview */}
                     {replyingTo && (
-                        <div className="mb-3 p-3 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-between animate-in slide-in-from-bottom-2 duration-200">
+                        <div className="mb-3 p-3 bg-muted border border-border rounded-xl flex items-center justify-between animate-in slide-in-from-bottom-2 duration-200">
                             <div className="flex items-center gap-3 overflow-hidden">
                                 <div className="w-1 h-10 bg-blue-500 rounded-full shrink-0" />
                                 <div className="flex flex-col min-w-0">
                                     <span className="text-[11px] font-black uppercase tracking-wider text-blue-600">
                                         Réponse à {replyingTo.userName}
                                     </span>
-                                    <p className="text-sm text-slate-500 truncate italic">
+                                    <p className="text-sm text-muted-foreground truncate italic">
                                         {replyingTo.text}
                                     </p>
                                 </div>

@@ -7,7 +7,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { cn, getUserLevel } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Bell, LogOut, User as UserIcon, Search, MessageSquare, Home, Calendar, PlusCircle, ShieldCheck, BookOpen, HelpCircle, ListPlus } from 'lucide-react';
+import { Menu, X, Bell, LogOut, User as UserIcon, Search, MessageSquare, Home, Calendar, PlusCircle, ShieldCheck, BookOpen, HelpCircle, ListPlus, Sun, Moon } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { db, ref, onValue } from '@/lib/firebase';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -21,6 +22,7 @@ import {
 export default function Header() {
     const { user, profile, signOut } = useAuth();
     const pathname = usePathname();
+    const { theme, setTheme } = useTheme();
     
     // Hide header in dedicated chat views
     const isIndividualDM = pathname?.startsWith('/messages/') && pathname !== '/messages';
@@ -107,7 +109,7 @@ export default function Header() {
                         <Image
                             src="/assets/images/platform_logo.svg"
                             alt="EST Tétouan Logo"
-                            className="h-10 w-auto"
+                            className="h-10 w-auto dark:brightness-0 dark:invert"
                             width={150}
                             height={50}
                             priority
@@ -135,6 +137,13 @@ export default function Header() {
 
                     
                     <div className="hidden md:flex items-center gap-4">
+                        <button
+                            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                            className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
+                            aria-label="Toggle theme"
+                        >
+                            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                        </button>
                         {!user ? (
                             <>
                                 <Button variant="ghost" asChild>
@@ -227,20 +236,27 @@ export default function Header() {
                                     <Image
                                         src="/assets/images/platform_logo.svg"
                                         alt="EST Tétouan Logo"
-                                        className="h-8 w-auto"
+                                        className="h-8 w-auto dark:brightness-0 dark:invert"
                                         width={120}
                                         height={40}
                                     />
                                 </SheetTitle>
                             </SheetHeader>
                             <nav className="flex flex-col gap-1 mt-2">
+                                <button
+                                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                                    className="flex items-center gap-3 px-3 py-3 text-base font-medium transition-colors rounded-xl text-muted-foreground hover:bg-muted"
+                                >
+                                    {theme === 'dark' ? <Sun className="w-[22px] h-[22px]" /> : <Moon className="w-[22px] h-[22px]" />}
+                                    {theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+                                </button>
                                 {navItems.map((item) => (
                                     <Link
                                         key={item.href}
                                         href={item.href}
                                         className={cn(
                                             "flex items-center gap-3 px-3 py-3 text-base font-medium transition-colors rounded-xl shadow-none",
-                                            isActive(item.href) ? "text-primary font-semibold bg-primary/5" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                            isActive(item.href) ? "text-primary font-semibold bg-primary/5" : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                         )}
                                         onClick={() => setOpen(false)}
                                     >
@@ -250,7 +266,7 @@ export default function Header() {
                                 ))}
                             </nav>
 
-                            <div className="mt-auto pt-4 border-t border-slate-100 pb-2">
+                            <div className="mt-auto pt-4 border-t border-border pb-2">
                                 {!user ? (
                                     <div className="flex flex-col gap-2">
                                         <Button variant="outline" className="w-full justify-center h-11 shadow-none" asChild onClick={() => setOpen(false)}>
@@ -263,7 +279,7 @@ export default function Header() {
                                 ) : (
                                     <div className="flex flex-col">
                                         <div className="flex items-center gap-3 px-3 py-2 mb-2">
-                                            <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border border-slate-200">
+                                            <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border border-border">
                                                 {profile?.photoUrl || profile?.photoURL || user?.photoURL ? (
                                                     <Image src={profile?.photoUrl || profile?.photoURL || user?.photoURL} alt="Profile" fill className="object-cover" />
                                                 ) : (
@@ -274,7 +290,7 @@ export default function Header() {
                                             </div>
                                             <div className="flex flex-col min-w-0 flex-1">
                                                 <div className="flex items-center gap-1.5 flex-wrap">
-                                                    <span className="text-sm font-semibold text-slate-900 truncate">
+                                                    <span className="text-sm font-semibold text-foreground truncate">
                                                         {profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}` : 'Étudiant'}
                                                     </span>
 
@@ -284,11 +300,11 @@ export default function Header() {
                                                         </span>
                                                     )}
                                                 </div>
-                                                <span className="text-xs text-slate-500 truncate leading-relaxed opacity-90">{user.email}</span>
+                                                <span className="text-xs text-muted-foreground truncate leading-relaxed opacity-90">{user.email}</span>
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-1 gap-1">
-                                            <Button variant="ghost" className="w-full justify-start h-11 px-3 text-slate-600 hover:text-primary hover:bg-slate-50 rounded-xl gap-3 shadow-none" asChild onClick={() => setOpen(false)}>
+                                            <Button variant="ghost" className="w-full justify-start h-11 px-3 text-muted-foreground hover:text-primary hover:bg-muted rounded-xl gap-3 shadow-none" asChild onClick={() => setOpen(false)}>
                                                 <Link href="/profile">
                                                     <UserIcon className="w-5 h-5 opacity-70" />
                                                     <span className="font-medium text-sm">Mon Profil</span>
@@ -296,7 +312,7 @@ export default function Header() {
                                             </Button>
                                             <Button
                                                 variant="ghost"
-                                                className="w-full justify-start h-11 px-3 text-destructive hover:text-destructive hover:bg-red-50 rounded-xl gap-3 shadow-none"
+                                                className="w-full justify-start h-11 px-3 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-xl gap-3 shadow-none"
                                                 onClick={() => {
                                                     signOut();
                                                     setOpen(false);

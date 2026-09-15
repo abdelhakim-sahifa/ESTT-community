@@ -7,12 +7,12 @@ export default function AdsPreview({ ads }) {
     if (!ads || ads.length === 0) return null;
 
     return (
-        <section id="student-ads" className="py-12 md:py-20 bg-white">
+        <section id="student-ads" className="py-12 md:py-20 bg-background">
             <div className="container">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-12 gap-4">
                     <div className="max-w-2xl">
-                        <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-2 md:mb-4">Projets & Partenaires</h2>
-                        <p className="text-slate-500 text-lg">
+                        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2 md:mb-4">Projets & Partenaires</h2>
+                        <p className="text-muted-foreground text-lg">
                             Soutenez les initiatives et services créés par vos camarades de l'ESTT.
                         </p>
                     </div>
@@ -23,8 +23,8 @@ export default function AdsPreview({ ads }) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                     {ads.map((ad) => (
-                        <div key={ad.id} className="group border border-slate-200 rounded-xl overflow-hidden hover:border-primary/50 transition-colors">
-                            <div className="relative aspect-video overflow-hidden bg-slate-100">
+                        <div key={ad.id} className="group border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-colors">
+                            <div className="relative aspect-video overflow-hidden bg-muted">
                                 {ad.type === 'video' ? (
                                     <video
                                         src={ad.url}
@@ -43,24 +43,24 @@ export default function AdsPreview({ ads }) {
                                     />
                                 )}
                                 <div className="absolute top-3 left-3">
-                                    <span className="inline-block bg-white/90 text-slate-700 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    <span className="inline-block bg-background/90 text-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
                                         {ad.type === 'video' ? 'Vidéo' : 'Focus'}
                                     </span>
                                 </div>
                             </div>
                             <div className="p-3 md:p-5">
-                                <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors mb-2 line-clamp-1">
+                                <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-1">
                                     {ad.title}
                                 </h3>
-                                <p className="text-slate-500 text-sm line-clamp-2 mb-4">
+                                <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
                                     {ad.description}
                                 </p>
-                                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                                <div className="flex items-center justify-between pt-4 border-t border-border">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-[10px] font-bold">
+                                        <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-[10px] font-bold">
                                             {ad.publisherEmail?.charAt(0).toUpperCase()}
                                         </div>
-                                        <span className="text-xs text-slate-400 font-medium">Communauté</span>
+                                        <span className="text-xs text-muted-foreground font-medium">Communauté</span>
                                     </div>
                                     {ad.link && (
                                         <a href={ad.link} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-primary hover:underline">

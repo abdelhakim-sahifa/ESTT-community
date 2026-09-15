@@ -18,7 +18,7 @@ export default function Hero({ stats }) {
     };
 
     return (
-        <section id="hero" className="bg-white pt-20 pb-16 lg:pt-32 lg:pb-24 border-b border-slate-100">
+        <section id="hero" className="bg-background pt-20 pb-16 lg:pt-32 lg:pb-24 border-b border-border">
             <div className="container px-4 md:px-6 flex flex-col items-center text-center">
                 <h1 className="text-3xl font-heading font-black tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl leading-tight">
                     Partage tes ressources — aide tes camarades, gagne du temps
@@ -32,12 +32,12 @@ export default function Hero({ stats }) {
                         <strong className="text-3xl font-black text-primary" id="hero-stat-resources">{stats.resources}</strong>
                         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Ressources</span>
                     </div>
-                    <div className="w-px h-10 bg-slate-100 hidden sm:block"></div>
+                    <div className="w-px h-10 bg-border hidden sm:block"></div>
                     <div className="flex flex-col items-center gap-1">
                         <strong className="text-3xl font-black text-primary" id="hero-stat-contributions">{stats.contributions}</strong>
                         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">En attente</span>
                     </div>
-                    <div className="w-px h-10 bg-slate-100 hidden sm:block"></div>
+                    <div className="w-px h-10 bg-border hidden sm:block"></div>
                     <div className="flex flex-col items-center gap-1">
                         <strong className="text-3xl font-black text-primary" id="hero-stat-modules">{stats.modules}</strong>
                         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Modules</span>
@@ -45,13 +45,13 @@ export default function Hero({ stats }) {
                 </div>
 
                 <form onSubmit={handleSearch} className="mt-8 w-full max-w-xl mx-auto relative flex items-center">
-                    <Search className="w-5 h-5 absolute left-5 text-slate-400" />
+                    <Search className="w-5 h-5 absolute left-5 text-muted-foreground" />
                     <input
                         type="search"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Rechercher un module, un cours..."
-                        className="w-full h-14 pl-14 pr-6 rounded-full bg-slate-100/80 hover:bg-slate-100 text-slate-900 border-0 focus:ring-0 outline-none transition-colors placeholder:text-slate-500 shadow-none"
+                        className="w-full h-14 pl-14 pr-6 rounded-full bg-muted hover:bg-muted/80 text-foreground border-0 focus:ring-0 outline-none transition-colors placeholder:text-muted-foreground shadow-none"
                     />
                 </form>
 
@@ -61,12 +61,12 @@ export default function Hero({ stats }) {
                             Contribuer une ressource
                         </Link>
                     </Button>
-                    <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12 shadow-none bg-slate-50" asChild>
+                    <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12 shadow-none bg-muted/50" asChild>
                         <Link href="/browse">
                             Parcourir les ressources
                         </Link>
                     </Button>
-                    <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12 shadow-none bg-slate-50" asChild>
+                    <Button size="lg" variant="outline" className="rounded-full px-8 text-lg h-12 shadow-none bg-muted/50" asChild>
                         <Link href="/clubs">
                             Découvrir les clubs
                         </Link>

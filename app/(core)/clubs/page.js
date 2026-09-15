@@ -66,9 +66,9 @@ export default function ClubsPage() {
     };
 
     return (
-        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-background">
             {/* Header Section */}
-            <section className="bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white border-b">
+            <section className="bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white border-b dark:from-blue-950/60 dark:via-indigo-950/30 dark:to-background">
                 <div className="container py-16 px-4 md:px-6">
                     <div className="max-w-3xl">
                         <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tight mb-4">

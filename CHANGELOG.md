@@ -1,3 +1,77 @@
+# [1.33.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.32.2...v1.33.0) (2026-09-13)
+
+
+### Features
+
+* update emails content + design ([7ef8d52](https://github.com/abdelhakim-sahifa/ESTT-community/commit/7ef8d526cc687b41f140fcc597cfe8b96042e910))
+
+## [1.32.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.32.1...v1.32.2) (2026-09-13)
+
+## [1.32.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.32.0...v1.32.1) (2026-09-13)
+
+
+### Bug Fixes
+
+* dark mode styling across the site ([81a1c40](https://github.com/abdelhakim-sahifa/ESTT-community/commit/81a1c404c59fd1b2361bbb38cf2172642bbce285))
+
+# [1.32.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.31.0...v1.32.0) (2026-09-13)
+
+
+### Features
+
+* add floating ESTT-AI assistant widget ([4e27afb](https://github.com/abdelhakim-sahifa/ESTT-community/commit/4e27afb1506d9f6825300217c41f9dcd727ea99f))
+
+# [1.31.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.30.2...v1.31.0) (2026-09-13)
+
+
+### Features
+
+* add dark mode support ([10f6406](https://github.com/abdelhakim-sahifa/ESTT-community/commit/10f6406e1963160fbb9294e984544451c73d7df5))
+* add theme preference options to profile settings ([23848b7](https://github.com/abdelhakim-sahifa/ESTT-community/commit/23848b77249682438791643fbc18bce3ef94fe5e))
+* add theme preference options to profile settings ([fdc8ba2](https://github.com/abdelhakim-sahifa/ESTT-community/commit/fdc8ba2db028ad47ed81490be4530fd10c8acc07))
+
+## [1.30.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.30.1...v1.30.2) (2026-09-12)
+
+## [1.30.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.30.0...v1.30.1) (2026-09-06)
+
+
+### Bug Fixes
+
+* properly inject the real order ID into the URL upon redirect ([b14098f](https://github.com/abdelhakim-sahifa/ESTT-community/commit/b14098fedee6a81aaa108e6f3607aa588308ecb0))
+
+# [1.30.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.29.0...v1.30.0) (2026-09-05)
+
+
+### Features
+
+* add two new filière ([a2ec26d](https://github.com/abdelhakim-sahifa/ESTT-community/commit/a2ec26dd12177af57d69898fc22c527576b3fef9))
+* replace stripe with lemonsqeezy ([a8e006d](https://github.com/abdelhakim-sahifa/ESTT-community/commit/a8e006d112eade9f68229d7c4a807d744588c18d))
+
+# [1.29.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.28.0...v1.29.0) (2026-08-20)
+
+
+### Bug Fixes
+
+* 3-mode system instruction - RAG extracts answers from content, Summary summarizes, Find recommends ([12bf6aa](https://github.com/abdelhakim-sahifa/ESTT-community/commit/12bf6aaa4cf928271d53cc2df59f17ea1a910d18))
+* add markdown formatting rules to prevent AI from wrapping everything in one code block ([2783f70](https://github.com/abdelhakim-sahifa/ESTT-community/commit/2783f700b4e41d96ddef7bff5d8fc345f73eb136))
+* crash-proof extraction + 15k char limit + AI-driven context-aware follow-up search ([ab58824](https://github.com/abdelhakim-sahifa/ESTT-community/commit/ab5882495170d44ce1565768747ab3abd3893eab))
+* escape backticks in template literal breaking Vercel build ([0f3e34c](https://github.com/abdelhakim-sahifa/ESTT-community/commit/0f3e34c03baa534e377d9bf3ebb3fd44f78abc02))
+* only strip orphaned code fences, preserve legitimate code blocks with content ([9260191](https://github.com/abdelhakim-sahifa/ESTT-community/commit/926019175b6f404cdae46a334f315ece07106aa1))
+* proper markdown unwrapping - handles nested code fences inside broken code blocks ([0aee07a](https://github.com/abdelhakim-sahifa/ESTT-community/commit/0aee07a50e16e8c1d293f5ff3ca42c0845ae5e46))
+* restore intent detection so greetings work normally, expanded academic patterns ([9302309](https://github.com/abdelhakim-sahifa/ESTT-community/commit/930230976e1a82b4fff7bfa7ea6c2306b0bb0c55))
+* strict AI formatting rules + ChatBubble `	ext wrapper fix ([fdcd2d0](https://github.com/abdelhakim-sahifa/ESTT-community/commit/fdcd2d09cc5c423ab73f426cb2532995296c44d8))
+* unwrap outer code blocks in ChatBubble + stronger formatting rules in system instruction ([951d53c](https://github.com/abdelhakim-sahifa/ESTT-community/commit/951d53c2cb49e6bf7b52902e08989523b9017a99))
+* use specific action JSON regex to avoid matching code block braces ([5ef7250](https://github.com/abdelhakim-sahifa/ESTT-community/commit/5ef7250ff9aa2262781c05ecc4e03c13de6de36a))
+* word-level resource search + strip markdown code fences from AI replies ([f8ae79f](https://github.com/abdelhakim-sahifa/ESTT-community/commit/f8ae79fa613ec102a17c3fecf4d77418cb37bdc0))
+
+
+### Features
+
+* clean AI output + KaTeX math rendering ([e5a5d63](https://github.com/abdelhakim-sahifa/ESTT-community/commit/e5a5d6338b8da04688c2de1fa4477ccced492adb))
+* ESTT-AI resources-only mode - always search Firebase, never fallback to own knowledge ([5f5e89d](https://github.com/abdelhakim-sahifa/ESTT-community/commit/5f5e89d97da687591eeb8eef767ed95dd1524a9c))
+* multi-format text extraction - Google Drive, Google Docs, Word docs with Markdown output ([134ec90](https://github.com/abdelhakim-sahifa/ESTT-community/commit/134ec90d2662b9bd4a5800b2764bf573c47609fb))
+* proactive query rewrite, safe file fetching with 10MB limit, semantic section extraction for relevant content ([ab53d77](https://github.com/abdelhakim-sahifa/ESTT-community/commit/ab53d77f8a1db69e54eb60d7e58a060a55a3b75e))
+
 # [1.28.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.27.2...v1.28.0) (2026-08-17)
 
 

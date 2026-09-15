@@ -160,10 +160,10 @@ export default function AdminAds() {
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <h2 className="text-2xl font-bold text-slate-900">Modération des Annonces</h2>
+                <h2 className="text-2xl font-bold text-foreground">Modération des Annonces</h2>
                 <div className="flex flex-wrap gap-2">
                     <div className="relative">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Rechercher..."
                             className="pl-10 w-64 h-10 rounded-xl"
@@ -172,7 +172,7 @@ export default function AdminAds() {
                         />
                     </div>
                     <select
-                        className="h-10 px-4 rounded-xl border border-slate-200 text-sm outline-none bg-white"
+                        className="h-10 px-4 rounded-xl border border-border text-sm outline-none bg-card"
                         onValue={filter}
                         onChange={(e) => setFilter(e.target.value)}
                     >
@@ -187,10 +187,10 @@ export default function AdminAds() {
 
             <div className="grid grid-cols-1 gap-4">
                 {filteredAds.map((ad) => (
-                    <Card key={ad.id} className="rounded-2xl border-slate-100 overflow-hidden hover:shadow-sm transition-shadow">
+                    <Card key={ad.id} className="rounded-2xl border-border overflow-hidden hover:shadow-sm transition-shadow">
                         <CardContent className="p-6">
                             <div className="flex flex-col lg:flex-row gap-6">
-                                <div className="w-full lg:w-48 h-32 relative rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+                                <div className="w-full lg:w-48 h-32 relative rounded-lg overflow-hidden bg-muted flex-shrink-0">
                                     {ad.type === 'video' ? (
                                         <video src={ad.url} className="w-full h-full object-cover" />
                                     ) : (
@@ -201,34 +201,34 @@ export default function AdminAds() {
                                 <div className="flex-grow min-w-0">
                                     <div className="flex items-start justify-between mb-2">
                                         <div>
-                                            <h3 className="font-bold text-slate-900 truncate">{ad.title}</h3>
-                                            <p className="text-sm text-slate-500 line-clamp-1">{ad.publisherEmail}</p>
+                                            <h3 className="font-bold text-foreground truncate">{ad.title}</h3>
+                                            <p className="text-sm text-muted-foreground line-clamp-1">{ad.publisherEmail}</p>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             {ad.status === AD_STATUSES.UNDER_REVIEW && (
-                                                <Badge className="bg-blue-50 text-blue-600 border-blue-100">À Réviser</Badge>
+                                                <Badge className="bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/40">À Réviser</Badge>
                                             )}
                                             {ad.status === AD_STATUSES.PAYMENT_REQUIRED && (
-                                                <Badge className="bg-orange-50 text-orange-600 border-orange-100">Attente Paiement</Badge>
+                                                <Badge className="bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-500/15 dark:text-orange-300 dark:border-orange-500/40">Attente Paiement</Badge>
                                             )}
                                             {ad.status === AD_STATUSES.LIVE && (
-                                                <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100">Actif</Badge>
+                                                <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40">Actif</Badge>
                                             )}
                                             {ad.paymentStatus === 'paid' ? (
-                                                <Badge variant="outline" className="border-emerald-200 text-emerald-600 bg-emerald-50/30">
+                                                <Badge variant="outline" className="border-emerald-200 text-emerald-600 bg-emerald-50/30 dark:border-emerald-500/40 dark:text-emerald-300 dark:bg-emerald-500/10">
                                                     {ad.stripeSessionId ? <CreditCard className="w-3 h-3 mr-1" /> : null}
                                                     Payé
                                                 </Badge>
                                             ) : (
-                                                <Badge variant="outline" className="border-slate-200 text-slate-400">Paiement Attente</Badge>
+                                                <Badge variant="outline" className="border-border text-muted-foreground">Paiement Attente</Badge>
                                             )}
                                         </div>
                                     </div>
 
-                                    <p className="text-sm text-slate-600 line-clamp-2 mt-2">{ad.description}</p>
+                                    <p className="text-sm text-muted-foreground line-clamp-2 mt-2">{ad.description}</p>
 
-                                    <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-slate-50">
-                                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                    <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-border">
+                                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                                             {ad.price} MAD · {ad.duration} jours
                                         </div>
 
@@ -245,7 +245,7 @@ export default function AdminAds() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-9 px-4 rounded-lg text-red-600 hover:bg-red-50 font-bold"
+                                                        className="h-9 px-4 rounded-lg text-red-600 hover:bg-red-50 font-bold dark:text-red-400 dark:hover:bg-red-500/10"
                                                         onClick={() => { setSelectedAd(ad); setShowRejectModal(true); }}
                                                     >
                                                         <XCircle className="w-4 h-4 mr-2" /> Refuser
@@ -264,7 +264,7 @@ export default function AdminAds() {
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
-                                                        className="h-9 px-4 rounded-lg border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold"
+                                                        className="h-9 px-4 rounded-lg border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold dark:border-emerald-500/40 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
                                                         asChild
                                                     >
                                                         <a href={`https://wa.me/${ad.whatsapp?.replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer">
@@ -298,7 +298,7 @@ export default function AdminAds() {
                     </DialogHeader>
                     <div className="py-4">
                         <textarea
-                            className="w-full min-h-[120px] rounded-2xl border border-slate-200 p-4 text-sm outline-none focus:ring-2 focus:ring-red-500"
+                            className="w-full min-h-[120px] rounded-2xl border border-border p-4 text-sm outline-none focus:ring-2 focus:ring-red-500"
                             placeholder="Ex: Image de mauvaise qualité, texte inapproprié..."
                             value={rejectReason}
                             onChange={(e) => setRejectReason(e.target.value)}
@@ -338,7 +338,7 @@ export default function AdminAds() {
                             Marquer cette annonce comme payée. Elle deviendra immédiatement **Live** sur le site et une facture sera générée.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="bg-orange-50 p-4 rounded-xl text-[13px] text-orange-800 border border-orange-100 mt-2">
+                    <div className="bg-orange-50 p-4 rounded-xl text-[13px] text-orange-800 border border-orange-100 mt-2 dark:bg-orange-500/10 dark:text-orange-300 dark:border-orange-500/30">
                         <AlertCircle className="w-4 h-4 inline mr-2" />
                         Assurez-vous d'avoir reçu les {selectedAd?.price} MAD via WhatsApp avant de confirmer.
                     </div>

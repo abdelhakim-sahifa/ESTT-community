@@ -109,11 +109,11 @@ export default function AdminShortUrls() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black tracking-tightest">URLs <span className="text-primary">Courts</span></h1>
-                    <p className="text-slate-500 font-medium">Gérez vos redirections personnalisées es.to/re/[id]</p>
+                    <p className="text-muted-foreground font-medium">Gérez vos redirections personnalisées es.to/re/[id]</p>
                 </div>
             </div>
 
-            <Card className="border-slate-200">
+            <Card className="border-border">
                 <CardHeader>
                     <CardTitle className="text-xl font-bold flex items-center gap-2">
                         <Plus className="w-5 h-5 text-primary" /> Créer une nouvelle redirection
@@ -125,7 +125,7 @@ export default function AdminShortUrls() {
                 <CardContent>
                     <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">URL Originale</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">URL Originale</label>
                             <Input 
                                 placeholder="https://example.com/very-long-url" 
                                 value={newUrl.originalUrl}
@@ -134,7 +134,7 @@ export default function AdminShortUrls() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">ID Personnalisé (facultatif)</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">ID Personnalisé (facultatif)</label>
                             <Input 
                                 placeholder="mon-lien" 
                                 value={newUrl.customId}
@@ -151,14 +151,14 @@ export default function AdminShortUrls() {
                 </CardContent>
             </Card>
 
-            <Card className="border-slate-200">
+            <Card className="border-border">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
                         <CardTitle className="text-xl font-bold">Redirections Actives</CardTitle>
                         <CardDescription>Liste de toutes les URLs raccourcies.</CardDescription>
                     </div>
                     <div className="relative w-full max-w-sm">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input 
                             placeholder="Rechercher..." 
                             className="pl-9"
@@ -168,9 +168,9 @@ export default function AdminShortUrls() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="rounded-xl border border-slate-100 overflow-hidden">
+                    <div className="rounded-xl border border-border overflow-hidden">
                         <Table>
-                            <TableHeader className="bg-slate-50/50">
+                            <TableHeader className="bg-muted/50">
                                 <TableRow>
                                     <TableHead className="font-bold">Short ID</TableHead>
                                     <TableHead className="font-bold">Destination</TableHead>
@@ -181,7 +181,7 @@ export default function AdminShortUrls() {
                             <TableBody>
                                 {filteredUrls.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={4} className="text-center py-10 text-slate-400 italic">
+                                        <TableCell colSpan={4} className="text-center py-10 text-muted-foreground italic">
                                             Aucune redirection trouvée.
                                         </TableCell>
                                     </TableRow>
@@ -189,7 +189,7 @@ export default function AdminShortUrls() {
                                     filteredUrls.map((url) => (
                                         <TableRow key={url.id}>
                                             <TableCell className="font-mono font-bold text-primary">/re/{url.id}</TableCell>
-                                            <TableCell className="max-w-md truncate text-slate-600 font-medium">
+                                            <TableCell className="max-w-md truncate text-muted-foreground font-medium">
                                                 {url.originalUrl}
                                             </TableCell>
                                             <TableCell className="text-center">
@@ -199,15 +199,15 @@ export default function AdminShortUrls() {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
-                                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400 hover:text-primary" onClick={() => copyToClipboard(url.id)}>
+                                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => copyToClipboard(url.id)}>
                                                         <Copy className="w-4 h-4" />
                                                     </Button>
-                                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400 hover:text-blue-500" asChild>
+                                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-blue-500" asChild>
                                                         <a href={url.originalUrl} target="_blank" rel="noopener noreferrer">
                                                             <ExternalLink className="w-4 h-4" />
                                                         </a>
                                                     </Button>
-                                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400 hover:text-destructive" onClick={() => handleDelete(url.id)}>
+                                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(url.id)}>
                                                         <Trash2 className="w-4 h-4" />
                                                     </Button>
                                                 </div>

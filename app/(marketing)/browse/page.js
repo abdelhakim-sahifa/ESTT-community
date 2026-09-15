@@ -21,7 +21,7 @@ const RESOURCE_CATEGORIES = [
     { id: 'TD', label: 'Travaux Dirigés (TD)', icon: <ClipboardList className="w-5 h-5 text-indigo-500" /> },
     { id: 'TP', label: 'Travaux Pratiques (TP)', icon: <FlaskConical className="w-5 h-5 text-emerald-500" /> },
     { id: 'Exam', label: 'Examens & Contrôles', icon: <FileCheck className="w-5 h-5 text-amber-500" /> },
-    { id: 'Autres', label: 'Autres Ressources', icon: <Layers className="w-5 h-5 text-slate-500" /> },
+    { id: 'Autres', label: 'Autres Ressources', icon: <Layers className="w-5 h-5 text-muted-foreground" /> },
 ];
 
 let _savedField = '';
@@ -243,11 +243,11 @@ export default function BrowsePage() {
                     {[1, 2, 3, 4, 5].map((value) => (
                         <Star
                             key={value}
-                            className={`w-3 h-3 ${value <= Math.round(average) ? 'text-yellow-500 fill-yellow-500' : 'text-slate-300'}`}
+                            className={`w-3 h-3 ${value <= Math.round(average) ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}`}
                         />
                     ))}
                 </div>
-                <span className="text-[11px] text-slate-500">
+                <span className="text-[11px] text-muted-foreground">
                     {rounded.toFixed(1)} ({count})
                 </span>
             </div>
@@ -260,22 +260,22 @@ export default function BrowsePage() {
         const isFav = favorites[resource.id] || false;
 
         return (
-            <Link key={resource.id} href={`/resource/${resource.id}`} className="group flex flex-col h-full border border-slate-200 rounded-xl hover:border-primary/50 transition-all hover:shadow-md bg-white p-5 cursor-pointer">
+            <Link key={resource.id} href={`/resource/${resource.id}`} className="group flex flex-col h-full border border-border rounded-xl hover:border-primary/50 transition-all hover:shadow-md bg-card p-5 cursor-pointer">
                 <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400 shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                    <div className="p-2.5 bg-muted rounded-xl text-muted-foreground shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                         {getResourceIcon(resource.type)}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <h3 className="text-base font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">{resource.title}</h3>
+                        <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">{resource.title}</h3>
                         <div className="flex flex-col mt-1.5 gap-1">
                             <div className="flex flex-wrap items-center gap-1.5">
                                 {resource.professor && (
-                                    <span className="text-[10px] font-medium text-slate-400 flex items-center gap-1">
+                                    <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
                                         <User className="w-3 h-3" />
                                         {resource.professor}
                                     </span>
                                 )}
-                                <span className="text-[10px] font-bold uppercase py-0.5 px-1.5 bg-slate-100 text-slate-500 rounded">{resource.type}</span>
+                                <span className="text-[10px] font-bold uppercase py-0.5 px-1.5 bg-muted text-muted-foreground rounded">{resource.type}</span>
                                 {resource.docType && (
                                     <span className="text-[10px] font-bold uppercase py-0.5 px-1.5 bg-primary/10 text-primary rounded">{resource.docType}</span>
                                 )}
@@ -285,14 +285,14 @@ export default function BrowsePage() {
                     </div>
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
                     <button
                         onClick={(e) => handleToggleFavorite(e, resource)}
                         disabled={togglingFav === resource.id}
                         className={`text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-full transition-colors ${
                             isFav
                                 ? 'bg-primary/10 text-primary'
-                                : 'bg-slate-50 text-slate-400 hover:bg-primary/5 hover:text-primary'
+                                : 'bg-muted text-muted-foreground hover:bg-primary/5 hover:text-primary'
                         }`}
                     >
                         {togglingFav === resource.id ? (
@@ -307,12 +307,16 @@ export default function BrowsePage() {
                             Ouvrir <ArrowRight className="w-3 h-3" />
                         </span>
                     ) : (
-                        <span className="text-xs text-slate-300">Non disponible</span>
+                        <span className="text-xs text-muted-foreground">Non disponible</span>
                     )}
                 </div>
             </Link>
         );
     };
+
+    const availableSemesters = selectedField 
+        ? (staticDb.fields.find(f => f.id === selectedField)?.semesters || staticDb.semesters)
+        : staticDb.semesters;
 
     return (
         <main className="container py-6 md:py-10">
@@ -370,7 +374,7 @@ export default function BrowsePage() {
                             <SelectValue placeholder="Sélectionnez un semestre" />
                         </SelectTrigger>
                         <SelectContent>
-                            {staticDb.semesters.map((sem) => (
+                            {availableSemesters.map((sem) => (
                                 <SelectItem key={sem} value={sem}>
                                     {sem}
                                 </SelectItem>
@@ -421,12 +425,12 @@ export default function BrowsePage() {
                             <p className="text-muted-foreground">Recherche des ressources...</p>
                         </div>
                     ) : resources.length === 0 ? (
-                        <div className="text-center py-16 border border-dashed border-slate-200 rounded-xl">
-                            <div className="mx-auto w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                                <FolderOpen className="w-7 h-7 text-slate-400" />
+                        <div className="text-center py-16 border border-dashed border-border rounded-xl">
+                            <div className="mx-auto w-14 h-14 bg-muted rounded-full flex items-center justify-center mb-4">
+                                <FolderOpen className="w-7 h-7 text-muted-foreground" />
                             </div>
-                            <p className="font-semibold text-slate-900 mb-1">Aucune ressource disponible</p>
-                            <p className="text-sm text-slate-400 max-w-sm mx-auto mb-6">Aidez vos camarades en étant le premier à partager une ressource pour ce module !</p>
+                            <p className="font-semibold text-foreground mb-1">Aucune ressource disponible</p>
+                            <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-6">Aidez vos camarades en étant le premier à partager une ressource pour ce module !</p>
                             <Link href="/contribute">
                                 <Button size="sm" className="rounded-full px-6">Contribuer une ressource</Button>
                             </Link>
@@ -449,8 +453,8 @@ export default function BrowsePage() {
                                                 <div className="flex items-center gap-1.5 mb-0.5">
                                                     <Badge className="bg-primary/10 text-primary border-0 text-[9px] font-black uppercase py-0 px-1.5">Focus</Badge>
                                                 </div>
-                                                <p className="text-sm font-bold text-slate-900 line-clamp-1">{ads[0].title}</p>
-                                                <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">{ads[0].description}</p>
+                                                <p className="text-sm font-bold text-foreground line-clamp-1">{ads[0].title}</p>
+                                                <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{ads[0].description}</p>
                                             </div>
                                             {ads[0].link && (
                                                 <a href={ads[0].link} target="_blank" rel="noopener noreferrer" className="shrink-0">
@@ -472,8 +476,8 @@ export default function BrowsePage() {
                                         </div>
                                         <div className="flex-1 space-y-4">
                                             <div>
-                                                <h3 className="text-2xl font-black text-slate-900 mb-2">{ads[0].title}</h3>
-                                                <p className="text-slate-600 text-lg leading-relaxed">{ads[0].description}</p>
+                                                <h3 className="text-2xl font-black text-foreground mb-2">{ads[0].title}</h3>
+                                                <p className="text-muted-foreground text-lg leading-relaxed">{ads[0].description}</p>
                                             </div>
                                             {ads[0].link && (
                                                 <a href={ads[0].link} target="_blank" rel="noopener noreferrer">
@@ -497,11 +501,11 @@ export default function BrowsePage() {
 
                                 return (
                                     <div key={category.id} className="space-y-6">
-                                        <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-                                            <div className="p-2 bg-slate-50 rounded-lg">
+                                        <div className="flex items-center gap-3 border-b border-border pb-3">
+                                            <div className="p-2 bg-muted rounded-lg">
                                                 {category.icon}
                                             </div>
-                                            <h3 className="text-xl font-bold text-slate-800">{category.label}</h3>
+                                            <h3 className="text-xl font-bold text-foreground">{category.label}</h3>
                                         </div>
                                         
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -514,11 +518,11 @@ export default function BrowsePage() {
                             {/* Handle remaining types not in official list */}
                             {Object.keys(groupedResources).filter(type => !RESOURCE_CATEGORIES.find(c => c.id === type) && type !== 'Autres').map(type => (
                                 <div key={type} className="space-y-6">
-                                    <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-                                        <div className="p-2 bg-slate-50 rounded-lg">
-                                            <Layers className="w-5 h-5 text-slate-400" />
+                                    <div className="flex items-center gap-3 border-b border-border pb-3">
+                                        <div className="p-2 bg-muted rounded-lg">
+                                            <Layers className="w-5 h-5 text-muted-foreground" />
                                         </div>
-                                        <h3 className="text-xl font-bold text-slate-800">{type}</h3>
+                                        <h3 className="text-xl font-bold text-foreground">{type}</h3>
                                     </div>
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

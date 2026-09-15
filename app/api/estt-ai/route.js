@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
     AI_MODELS,
     DEFAULT_AI_MODEL,
+    ESTT_AI_SYSTEM_INSTRUCTION,
 } from '@/lib/estt-ai';
 import { searchResourcesAction } from '@/lib/resourceUtils';
 
 export const dynamic = 'force-dynamic';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 let TurndownService;
 let mammoth;
@@ -19,7 +17,6 @@ function extractAiResponse(text) {
     if (!text) return { reply: null, action: null };
 
     try {
-        // First: find action JSON inside code blocks and strip the entire block
         const allCodeBlocks = text.match(/```[\s\S]*?```/g) || [];
         for (const block of allCodeBlocks) {
             if (block.includes('"action"')) {
@@ -35,7 +32,6 @@ function extractAiResponse(text) {
             }
         }
 
-        // Second: try bare JSON (not in code block)
         const jsonMatch = text.match(/\{"action"\s*:\s*"[^"]+"[\s\S]*?\}/);
         if (jsonMatch) {
             const rawJson = jsonMatch[0];
@@ -100,120 +96,33 @@ async function extractTextFromPdfUrl(url) {
         if (!response || !response.ok) return null;
 
         const arrayBuffer = await response.arrayBuffer();
-        if (arrayBuffer.byteLength > MAX_FILE_SIZE) return null;
-
         const buffer = Buffer.from(arrayBuffer);
         const data = await parse(buffer);
-
-        if (!data || !data.text) return null;
-        return data.text.substring(0, 15000);
+        return data?.text || null;
     } catch (error) {
-        console.warn(`[ESTT-AI] Failed to extract text from ${url}:`, error.message);
-        return null;
-    }
-}
-
-function detectUrlType(url) {
-    if (!url) return 'unknown';
-    if (url.endsWith('.pdf')) return 'pdf';
-    if (url.includes('docs.google.com/document')) return 'gdoc';
-    if (url.includes('drive.google.com/file')) return 'gdrive-file';
-    if (url.includes('drive.google.com/drive') || url.includes('drive.google.com/folder')) return 'gdrive-folder';
-    if (url.endsWith('.docx') || url.includes('.docx?')) return 'docx';
-    return 'unknown';
-}
-
-function extractRelevantSection(text, query, maxLength = 15000) {
-    if (!text || !query) return text?.substring(0, maxLength) || '';
-    if (text.length <= maxLength) return text;
-
-    const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
-    if (queryWords.length === 0) return text.substring(0, maxLength);
-
-    // Split text into paragraphs/sections
-    const sections = text.split(/\n\s*\n/);
-
-    // Score each section by keyword matches
-    const scored = sections.map((section, idx) => {
-        const lower = section.toLowerCase();
-        const score = queryWords.reduce((sum, word) => sum + (lower.includes(word) ? 1 : 0), 0);
-        return { section, score, idx };
-    });
-
-    // Sort by score (descending), take top sections that fit within maxLength
-    scored.sort((a, b) => b.score - a.score);
-
-    let result = '';
-    for (const { section } of scored) {
-        if (result.length + section.length + 2 > maxLength) break;
-        result += section.trim() + '\n\n';
-    }
-
-    // If no sections matched, fallback to beginning of text
-    if (!result.trim()) {
-        return text.substring(0, maxLength);
-    }
-
-    return result.trim();
-}
-
-function htmlToMarkdown(html) {
-    try {
-        if (!TurndownService) return null;
-        const turndown = new TurndownService({
-            headingStyle: 'atx',
-            bulletListMarker: '-',
-            codeBlockStyle: 'fenced',
-        });
-        return turndown.turndown(html).substring(0, 15000);
-    } catch (error) {
-        console.warn('[ESTT-AI] HTML to Markdown conversion failed:', error.message);
+        console.warn(`[ESTT-AI] PDF extraction failed for ${url}:`, error.message);
         return null;
     }
 }
 
 async function extractTextFromGDrive(url) {
     try {
-        const match = url.match(/\/file\/d\/([^/]+)/);
-        if (!match) return null;
-
-        const fileId = match[1];
+        const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (!fileIdMatch) return null;
+        const fileId = fileIdMatch[1];
         const exportUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-
-        const response = await safeFetch(exportUrl, 15000);
+        const response = await safeFetch(exportUrl, 10000);
         if (!response || !response.ok) return null;
-
-        const contentType = (response.headers.get('content-type') || '').toLowerCase();
-        const arrayBuffer = await response.arrayBuffer();
-        if (arrayBuffer.byteLength > MAX_FILE_SIZE) return null;
-
-        const buffer = Buffer.from(arrayBuffer);
-
-        // If it's a PDF, extract text with pdf-parse
-        if (contentType.includes('pdf') || buffer[0] === 0x25) { // %PDF magic bytes
-            try {
-                const parse = require('pdf-parse/lib/pdf-parse.js');
-                if (typeof parse === 'function') {
-                    const data = await parse(buffer);
-                    if (data?.text) return data.text.substring(0, 15000);
-                }
-            } catch {}
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('application/pdf')) {
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            const parse = require('pdf-parse/lib/pdf-parse.js');
+            if (typeof parse !== 'function') return null;
+            const data = await parse(buffer);
+            return data?.text || null;
         }
-
-        // If it's HTML, convert to Markdown
-        if (contentType.includes('text/html') || contentType.includes('html')) {
-            const html = new TextDecoder().decode(arrayBuffer);
-            const md = htmlToMarkdown(html);
-            if (md) return md;
-        }
-
-        // Fallback: try as plain text
-        const text = new TextDecoder().decode(buffer);
-        if (text.length > 100 && !contentType.includes('application/json')) {
-            return text.substring(0, 15000);
-        }
-
-        return null;
+        return await response.text();
     } catch (error) {
         console.warn(`[ESTT-AI] Google Drive extraction failed: ${error.message}`);
         return null;
@@ -222,20 +131,11 @@ async function extractTextFromGDrive(url) {
 
 async function extractTextFromGDoc(url) {
     try {
-        const match = url.match(/\/document\/d\/([^/]+)/);
-        if (!match) return null;
-
-        const docId = match[1];
-        const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=html`;
-
-        const response = await safeFetch(exportUrl, 15000);
+        if (!url.includes('docs.google.com')) return null;
+        const exportUrl = url.replace(/\/edit.*$/, '/export?format=txt');
+        const response = await safeFetch(exportUrl, 10000);
         if (!response || !response.ok) return null;
-
-        const html = await response.text();
-        if (!html || html.length < 50) return null;
-
-        const md = htmlToMarkdown(html);
-        return md || null;
+        return await response.text();
     } catch (error) {
         console.warn(`[ESTT-AI] Google Docs extraction failed: ${error.message}`);
         return null;
@@ -245,33 +145,57 @@ async function extractTextFromGDoc(url) {
 async function extractTextFromDocx(url) {
     try {
         if (!mammoth) return null;
-        const response = await safeFetch(url, 15000);
+        const response = await safeFetch(url, 10000);
         if (!response || !response.ok) return null;
-
         const arrayBuffer = await response.arrayBuffer();
-        if (arrayBuffer.byteLength > MAX_FILE_SIZE) return null;
-
-        // Try HTML output first (preserves structure)
-        const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
-        if (htmlResult?.value && htmlResult.value.length > 50) {
-            const md = htmlToMarkdown(htmlResult.value);
-            if (md) return md;
-        }
-
-        // Fallback to plain text
-        const textResult = await mammoth.extractRawText({ arrayBuffer });
-        if (textResult?.value) return textResult.value.substring(0, 15000);
-
-        return null;
+        const buffer = Buffer.from(arrayBuffer);
+        const result = await mammoth.extractRawText({ buffer });
+        return result?.value || null;
     } catch (error) {
         console.warn(`[ESTT-AI] Word document extraction failed: ${error.message}`);
         return null;
     }
 }
 
+function detectUrlType(url) {
+    if (!url) return 'unknown';
+    if (url.includes('drive.google.com')) {
+        if (url.includes('/document/')) return 'gdoc';
+        return 'gdrive-file';
+    }
+    if (url.includes('docs.google.com')) return 'gdoc';
+    if (url.match(/\.pdf$/i)) return 'pdf';
+    if (url.match(/\.(docx|doc)$/i)) return 'docx';
+    if (url.match(/\.(pptx|ppt)$/i)) return 'powerpoint';
+    if (url.match(/\.(xlsx|xls)$/i)) return 'excel';
+    return 'unknown';
+}
+
+function extractRelevantSection(rawText, query, maxChars = 1500) {
+    if (!rawText || !query) return rawText?.substring(0, maxChars) || '';
+
+    const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+    const sentences = rawText.split(/[.!?]\s+/);
+    const scored = sentences.map(sentence => {
+        const lower = sentence.toLowerCase();
+        const score = queryWords.reduce((acc, word) => acc + (lower.includes(word) ? 1 : 0), 0);
+        return { sentence, score };
+    });
+
+    scored.sort((a, b) => b.score - a.score);
+    const top = scored.filter(s => s.score > 0).slice(0, 10);
+    if (top.length === 0) return rawText.substring(0, maxChars);
+
+    const result = top.map(s => s.sentence).join('. ');
+    return result.substring(0, maxChars);
+}
+
 async function enrichResourcesWithText(searchResults) {
+    const MAX_RESOURCES = 3;
+    const limited = searchResults.slice(0, MAX_RESOURCES);
+
     return Promise.all(
-        searchResults.map(async (res) => {
+        limited.map(async (res) => {
             try {
                 let rawText = null;
                 const url = res.file || res.url;
@@ -306,10 +230,18 @@ async function enrichResourcesWithText(searchResults) {
     );
 }
 
+const MAX_RESOURCE_TEXT_CHARS = 1500;
+const MAX_TOTAL_CONTEXT_CHARS = 4000;
+
 function buildResourceContext(searchResults, searchQuery = '') {
     if (!searchResults || searchResults.length === 0) return '';
 
-    const sections = searchResults.map((res, i) => {
+    let totalChars = 0;
+    const sections = [];
+
+    for (const [i, res] of searchResults.entries()) {
+        if (totalChars >= MAX_TOTAL_CONTEXT_CHARS) break;
+
         const parts = [
             `[${i + 1}] ID: ${res.id}`,
             `Title: ${res.title}`,
@@ -322,12 +254,15 @@ function buildResourceContext(searchResults, searchQuery = '') {
         if (res.file) parts.push(`File URL: ${res.file}`);
         if (res.url) parts.push(`Link: ${res.url}`);
         if (res.rawText) {
-            const relevantText = extractRelevantSection(res.rawText, searchQuery);
+            const relevantText = extractRelevantSection(res.rawText, searchQuery, MAX_RESOURCE_TEXT_CHARS);
             parts.push(`Content:\n${relevantText}`);
         }
 
-        return parts.join('\n');
-    });
+        const section = parts.join('\n');
+        const remaining = MAX_TOTAL_CONTEXT_CHARS - totalChars;
+        sections.push(section.substring(0, remaining));
+        totalChars += section.length;
+    }
 
     return sections.join('\n\n---\n\n');
 }
@@ -341,11 +276,7 @@ function sanitizeQuery(text) {
         .trim();
 }
 
-function getReasoningEffort(message, isAcademic, provider) {
-    return undefined;
-}
-
-async function callGroq(modelId, messages, systemInstruction) {
+async function callGroq(messages, systemInstruction) {
     const allMessages = [];
     if (systemInstruction) {
         allMessages.push({ role: 'system', content: systemInstruction });
@@ -353,7 +284,7 @@ async function callGroq(modelId, messages, systemInstruction) {
     allMessages.push(...messages);
 
     const apiKey = process.env.GROQ_API_KEY;
-    console.log(`🔍 [Groq] Calling model: ${modelId}, messages: ${allMessages.length}, hasKey: ${!!apiKey}`);
+    console.log(`🔍 [Groq] Calling model: ${DEFAULT_AI_MODEL}, messages: ${allMessages.length}, hasKey: ${!!apiKey}`);
 
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -362,7 +293,7 @@ async function callGroq(modelId, messages, systemInstruction) {
             'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-            model: modelId,
+            model: DEFAULT_AI_MODEL,
             messages: allMessages,
             max_tokens: 4096,
         }),
@@ -405,42 +336,7 @@ function toOpenAIMessages(history) {
     return messages;
 }
 
-async function callLLM({ modelId, history, userMessage, systemInstruction, reasoningEffort }) {
-    const modelConfig = AI_MODELS[modelId];
-    if (!modelConfig) throw new Error(`Unknown model: ${modelId}`);
-
-    if (modelConfig.provider === 'groq') {
-        const messages = toOpenAIMessages(history);
-        messages.push({ role: 'user', content: userMessage });
-        return await callGroq(modelId, messages, systemInstruction);
-    }
-
-    // Default: Gemini
-    const model = genAI.getGenerativeModel({
-        model: modelId,
-        systemInstruction,
-    });
-    const chat = model.startChat({ history });
-    const result = await chat.sendMessage(userMessage);
-    return result.response.text();
-}
-
-async function callLLMSimple({ modelId, prompt, systemInstruction }) {
-    const modelConfig = AI_MODELS[modelId];
-    if (!modelConfig) throw new Error(`Unknown model: ${modelId}`);
-
-    if (modelConfig.provider === 'groq') {
-        const messages = [{ role: 'user', content: prompt }];
-        return await callGroq(modelId, messages, systemInstruction);
-    }
-
-    // Default: Gemini
-    const model = genAI.getGenerativeModel({ model: modelId });
-    const result = await model.generateContent(prompt);
-    return result.response.text();
-}
-
-async function rewriteQueryWithLLM(message, history, modelId) {
+async function rewriteQueryWithLLM(message, history) {
     const historyContext = history.slice(-4)
         .map(msg => `${msg.role === 'model' ? 'AI' : 'User'}: ${msg.parts?.[0]?.text || ''}`)
         .join('\n');
@@ -462,7 +358,8 @@ ${historyContext ? `Conversation history:\n${historyContext}` : ''}
 
 User message: "${message}"`;
 
-    const text = await callLLMSimple({ modelId, prompt });
+    const messages = [{ role: 'user', content: prompt }];
+    const text = await callGroq(messages);
     return sanitizeQuery(text);
 }
 
@@ -504,7 +401,7 @@ function detectAcademicIntent(message) {
 export async function POST(request) {
     console.log('🚀 [ESTT-AI] POST request received');
     try {
-        let message, history = [], userProfile = null, purpose = 'chat', selectedModel = DEFAULT_AI_MODEL;
+        let message, history = [], userProfile = null, purpose = 'chat';
 
         const contentType = request.headers.get('content-type') || '';
 
@@ -519,16 +416,15 @@ export async function POST(request) {
                 const extractedText = await extractTextFromServer(file);
                 if (!extractedText) throw new Error('No text extracted from PDF');
 
-                const aiText = await callLLMSimple({
-                    modelId: selectedModel,
-                    prompt: `${context}\n\nTexte extrait :\n${extractedText.substring(0, 30000)}`,
-                });
+                const prompt = `${context}\n\nTexte extrait :\n${extractedText.substring(0, 30000)}`;
+                const messages = [{ role: 'user', content: prompt }];
+                const aiText = await callGroq(messages);
                 const { action } = extractAiResponse(aiText);
 
                 return NextResponse.json({
                     action,
                     reply: aiText,
-                    model: selectedModel,
+                    model: DEFAULT_AI_MODEL,
                 });
             }
         } else {
@@ -537,25 +433,21 @@ export async function POST(request) {
             history = body.history || [];
             userProfile = body.userProfile || null;
             purpose = body.purpose || 'chat';
-            selectedModel = body.model || DEFAULT_AI_MODEL;
 
             if (purpose === 'pdf-analysis') {
-                const aiText = await callLLMSimple({
-                    modelId: selectedModel,
-                    prompt: message,
-                });
+                const messages = [{ role: 'user', content: message }];
+                const aiText = await callGroq(messages);
                 const { action } = extractAiResponse(aiText);
 
                 return NextResponse.json({
                     action,
                     reply: aiText,
-                    model: selectedModel,
+                    model: DEFAULT_AI_MODEL,
                 });
             }
         }
 
-        const modelConfig = AI_MODELS[selectedModel];
-        const baseInstruction = modelConfig?.systemInstruction || ESTT_AI_SYSTEM_INSTRUCTION;
+        const baseInstruction = ESTT_AI_SYSTEM_INSTRUCTION;
 
         const userContext = [
             userProfile?.firstName ? `First name: ${userProfile.firstName}` : null,
@@ -585,7 +477,7 @@ export async function POST(request) {
             parts: item.parts,
         }));
 
-        // Ensure history alternates strictly (required by Gemini, safe for all providers)
+        // Ensure history alternates strictly
         const sanitizedHistory = [];
         let expectedRole = 'user';
         for (const item of chatHistory) {
@@ -595,59 +487,52 @@ export async function POST(request) {
             }
         }
 
-        // Limit history for Groq (8B model, keep it snappy)
-        const limitedHistory = modelConfig?.provider === 'groq'
-            ? sanitizedHistory.slice(-6)
-            : sanitizedHistory;
+        // Limit history for Groq (keep context tight)
+        const limitedHistory = sanitizedHistory.slice(-6);
 
-        console.log(`📋 [ESTT-AI] Model: ${selectedModel}, History: ${limitedHistory.length} messages (from ${sanitizedHistory.length} total), Gemini key: ${!!process.env.GEMINI_API_KEY}, Groq key: ${!!process.env.GROQ_API_KEY}`);
+        console.log(`📋 [ESTT-AI] Model: ${DEFAULT_AI_MODEL}, History: ${limitedHistory.length} messages (from ${sanitizedHistory.length} total), Groq key: ${!!process.env.GROQ_API_KEY}`);
 
         const userMessage = message?.trim() || '';
 
-        // Allow greetings/small talk to pass through without search
-        const isGreeting = /^(bonjour|salut|hello|hi|hey|merci|ok|oui|non|au revoir|goodbye|bye|cc|slt|cc|bonsoir)/i.test(userMessage.trim());
-
-        // Detect platform navigation questions — answer from PLATFORM GUIDE, not resource search
-        const isPlatformQuestion = /(comment|how|where|quoi|qu'est|est-ce que|peut-on|est-il|s'inscrire|contribuer|créer|ajouter|publier|rejoindre|s'abonner|clube?|événement|ressource|profil|message|chat|recherche|browse|filter|club|event|contribute|profile|message|notification)/i.test(userMessage)
-            && /(comment|how to|where|plateforme|platform|page|site|appli|application|menu|bouton|navigation|utiliser|use|accéder|access|aller|go to)/i.test(userMessage);
+        // Allow greetings to pass through without search
+        const isGreeting = /^(bonjour|salut|hello|hi|hey|merci|ok|oui|non|au revoir|goodbye|bye|cc|slt|bonsoir)/i.test(userMessage.trim());
 
         // Detect intent for RAG mode (summarize/find/general)
         const { isAcademic, intent } = detectAcademicIntent(userMessage);
         let forcedResourceContext = '';
 
-        if (!isGreeting && !isPlatformQuestion) {
-            // Always search for resources — academic AND platform questions
+        if (!isGreeting && isAcademic) {
+            // Search for resources only for academic queries
             let rewrittenQuery = '';
             try {
-                rewrittenQuery = await rewriteQueryWithLLM(userMessage, limitedHistory, selectedModel);
+                rewrittenQuery = await rewriteQueryWithLLM(userMessage, limitedHistory);
             } catch (e) {
                 console.warn(`[ESTT-AI] Query rewrite failed: ${e.message}`);
             }
 
             let results = [];
 
-            // Search with rewritten query + filiere
             if (rewrittenQuery && rewrittenQuery !== 'NONE') {
                 console.log(`🧠 [ESTT-AI] Query rewrite: "${rewrittenQuery}"`);
                 results = await searchResourcesAction(rewrittenQuery, userProfile?.filiere);
             }
 
-            // GUARDRAIL — fallback without filiere
+            // Fallback without filiere
             if (results.length === 0 && rewrittenQuery && rewrittenQuery !== 'NONE') {
                 results = await searchResourcesAction(rewrittenQuery, null);
             }
 
-            // GUARDRAIL — raw query fallback
+            // Fallback with raw query
             if (results.length === 0) {
                 const rawQuery = userMessage.substring(0, 100);
                 results = await searchResourcesAction(rawQuery, userProfile?.filiere);
             }
 
-            // Enrich + build context
+            // Enrich + build context (truncated for Groq's TPM limit)
             if (results.length > 0) {
                 const enriched = await enrichResourcesWithText(results);
                 forcedResourceContext = buildResourceContext(enriched, rewrittenQuery || userMessage);
-                console.log(`📥 [ESTT-AI] Found ${results.length} resources`);
+                console.log(`📥 [ESTT-AI] Found ${results.length} resources, context: ${forcedResourceContext.length} chars`);
             }
         }
 
@@ -655,34 +540,26 @@ export async function POST(request) {
         let finalSystemInstruction = systemInstruction;
         if (forcedResourceContext) {
             const intentLabel = intent === 'summarize' ? 'SUMMARY' : intent === 'find' ? 'FIND' : 'RAG';
-            const resourceInstruction = `You have [RESOURCE DATA] from the platform. Follow these rules:
+            const isFind = intent === 'find';
+            const resourceInstruction = `You have [RESOURCE DATA] from the platform.
 
 Mode: ${intentLabel}.
-- Answer DIRECTLY from the [RESOURCE DATA] content. Do NOT use your training knowledge.
-- ${intent === 'summarize' ? 'Summarize the key points from the content.' : intent === 'find' ? 'Recommend the most relevant resources.' : 'Extract the answer from the content.'}
-- If the resources do NOT answer the question, respond: "Je n'ai pas trouvé d'information pertinente dans les ressources disponibles pour cette demande. Veuillez consulter la page Ressources ou contacter un administrateur." Do NOT give a general answer.
-- NEVER invent button names, page names, menu items, or UI steps.
-- NEVER add tips, suggestions, advice, or extra information beyond what is EXPLICITLY stated in the [RESOURCE DATA]. Only state facts from the resources — nothing more.
-- Use plain Markdown. Code blocks only for actual code.
+${isFind ? `- List ALL resources from [RESOURCE DATA] by their Title, Module, Professor, and Type. Always list them even if the content excerpt is short.
+- The JSON action at the end MUST include ALL resource IDs from [RESOURCE DATA].` : intent === 'summarize' ? '- Summarize the key points from the content.' : '- Extract the answer from the content.'}
+- NEVER fabricate. Only use what is in [RESOURCE DATA].
+- If [RESOURCE DATA] is truly empty, say: "Aucune ressource trouvée. Consultez /browse pour explorer les ressources disponibles."
+- Use plain Markdown.
 - End with JSON (NOT inside code fences): {"action": "display_resources", "resource_ids": ["id1"]}`;
             finalSystemInstruction = `${systemInstruction}\n\n## RETRIEVED RESOURCES\n${resourceInstruction}\n\n[RESOURCE DATA]\n${forcedResourceContext}\n[END RESOURCE DATA]`;
-        } else if (!isGreeting && !isPlatformQuestion) {
-            // No resources found — direct refusal, no general answers
-            finalSystemInstruction = `${systemInstruction}\n\nNo resources were found on the platform for this request. You MUST respond with: "Je n'ai pas trouvé de ressources correspondantes sur la plateforme pour cette demande. Veuillez consulter la page Ressources pour trouver ce que vous cherchez." Do NOT answer from your own knowledge. Do NOT give a general answer.`;
         }
 
-        console.log(`🤖 [ESTT-AI] Sending to ${modelConfig?.shortName || selectedModel}...`);
-        const reasoningEffort = getReasoningEffort(userMessage, isAcademic, modelConfig?.provider);
-        console.log(`🧠 [ESTT-AI] Reasoning effort: ${reasoningEffort || 'default'} (provider: ${modelConfig?.provider})`);
-        const aiText = await callLLM({
-            modelId: selectedModel,
-            history: limitedHistory,
-            userMessage,
-            systemInstruction: finalSystemInstruction,
-            reasoningEffort,
-        });
+        console.log(`🤖 [ESTT-AI] Sending to Groq...`);
+        const messages = toOpenAIMessages(limitedHistory);
+        messages.push({ role: 'user', content: userMessage });
+        const aiText = await callGroq(messages, finalSystemInstruction);
         const { reply, action } = extractAiResponse(aiText);
 
+        // RAG pipeline: if model wants to read more resources
         if (action?.action === 'read' && action?.target === 'resources') {
             console.log(`📡 [ESTT-AI] RAG: Searching for "${action.query}"`);
             const searchResults = await searchResourcesAction(action.query, userProfile?.filiere);
@@ -697,25 +574,20 @@ Mode: ${intentLabel}.
                     `We found ${searchResults.length} relevant resources:`,
                     resourceContext,
                     `\n[END RESOURCE DATA]`,
-                    `\nBased on the resources above, recommend 2-5 of the most relevant ones.`,
+                    `\nBased on the resources above, recommend 2-3 of the most relevant ones.`,
                     `Return your response with a JSON action block:`,
-                    `{"action": "display_resources", "resource_ids": ["id1", "id2", "..."]}`,
-                    `Keep your human response helpful and concise. Do not expose raw data or JSON to the user.`,
+                    `{"action": "display_resources", "resource_ids": ["id1", "id2"]}`,
+                    `Keep your human response helpful and concise.`,
                 ].join('\n\n');
 
-                // Extend history with the initial user message and AI response for context
-                const ragHistory = [
-                    ...limitedHistory,
-                    { role: 'user', parts: [{ text: userMessage }] },
-                    { role: 'model', parts: [{ text: aiText }] },
+                const ragMessages = [
+                    ...toOpenAIMessages(limitedHistory),
+                    { role: 'user', content: userMessage },
+                    { role: 'assistant', content: aiText },
+                    { role: 'user', content: ragPrompt },
                 ];
 
-                const ragText = await callLLM({
-                    modelId: selectedModel,
-                    history: ragHistory,
-                    userMessage: ragPrompt,
-                    systemInstruction: finalSystemInstruction,
-                });
+                const ragText = await callGroq(ragMessages, finalSystemInstruction);
                 const final = extractAiResponse(ragText);
 
                 console.log('✅ [ESTT-AI] RAG Pipeline COMPLETE');
@@ -723,7 +595,7 @@ Mode: ${intentLabel}.
                     reply: final.reply || reply,
                     action: final.action,
                     interimReply: reply,
-                    model: selectedModel,
+                    model: DEFAULT_AI_MODEL,
                 });
             }
         }
@@ -732,7 +604,7 @@ Mode: ${intentLabel}.
         return NextResponse.json({
             reply,
             action,
-            model: selectedModel,
+            model: DEFAULT_AI_MODEL,
         });
 
     } catch (error) {
