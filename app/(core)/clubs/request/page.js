@@ -328,7 +328,7 @@ export default function ClubRequestPage() {
 
     return (
         <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-background py-12">
-            <div className="container px-4 md:px-6 max-w-4xl">
+            <div className="container px-2 sm:px-4 md:px-6 max-w-4xl">
                 <Button variant="ghost" size="sm" asChild className="mb-6 gap-2">
                     <Link href="/clubs">
                         <ArrowLeft className="w-4 h-4" />
@@ -388,7 +388,7 @@ export default function ClubRequestPage() {
                                 <div className="space-y-2">
                                     <Label htmlFor="logo">Logo du club *</Label>
                                     <div className="flex flex-col gap-4">
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex flex-wrap items-center gap-4">
                                             <Input
                                                 id="logo"
                                                 type="file"
@@ -417,7 +417,7 @@ export default function ClubRequestPage() {
 
                             {/* Organizational Chart */}
                             <div className="space-y-4">
-                                <div className="flex items-center justify-between">
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                     <h3 className="text-xl font-semibold">Organigramme *</h3>
                                     <Button
                                         type="button"
@@ -425,7 +425,7 @@ export default function ClubRequestPage() {
                                         size="sm"
                                         onClick={addOrgChartPosition}
                                         disabled={loading}
-                                        className="gap-2"
+                                        className="gap-2 w-full sm:w-auto"
                                     >
                                         <Plus className="w-4 h-4" />
                                         Ajouter une position
@@ -540,7 +540,7 @@ export default function ClubRequestPage() {
 
                                                 <div className="space-y-2">
                                                     <Label>Photo (optionnel)</Label>
-                                                    <div className="flex items-center gap-4">
+                                                    <div className="flex flex-wrap items-center gap-4">
                                                         <Input
                                                             type="file"
                                                             accept="image/jpeg,image/jpg,image/png,image/webp"
@@ -565,7 +565,7 @@ export default function ClubRequestPage() {
 
                             {/* Optional Members */}
                             <div className="space-y-4">
-                                <div className="flex items-center justify-between">
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                     <div>
                                         <h3 className="text-xl font-semibold">Membres réguliers (optionnel)</h3>
                                         <p className="text-sm text-muted-foreground">
@@ -578,7 +578,7 @@ export default function ClubRequestPage() {
                                         size="sm"
                                         onClick={addMember}
                                         disabled={loading}
-                                        className="gap-2"
+                                        className="gap-2 w-full sm:w-auto"
                                     >
                                         <Plus className="w-4 h-4" />
                                         Ajouter un membre
@@ -590,8 +590,8 @@ export default function ClubRequestPage() {
                                         {members.map((member, index) => (
                                             <Card key={member.id} className="border-muted">
                                                 <CardContent className="pt-4 pb-4">
-                                                    <div className="flex items-end gap-4">
-                                                        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-4">
+                                                        <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-3 gap-4">
                                                             <div className="space-y-2">
                                                                 <Label className="text-xs">Nom</Label>
                                                                 <Input
@@ -639,6 +639,7 @@ export default function ClubRequestPage() {
                                                             size="sm"
                                                             onClick={() => removeMember(member.id)}
                                                             disabled={loading}
+                                                            className="self-end sm:self-auto shrink-0"
                                                         >
                                                             <Trash2 className="w-4 h-4 text-destructive" />
                                                         </Button>
@@ -651,11 +652,11 @@ export default function ClubRequestPage() {
                             </div>
 
                             {/* Submit */}
-                            <div className="flex gap-4 pt-4">
+                            <div className="flex flex-col gap-2 pt-4 sm:flex-row sm:gap-4">
                                 <Button
                                     type="submit"
                                     disabled={loading || uploadingLogo || !formData.logoUrl}
-                                    className="flex-1"
+                                    className="w-full sm:flex-1"
                                 >
                                     {loading ? (
                                         <>
@@ -671,6 +672,7 @@ export default function ClubRequestPage() {
                                     variant="outline"
                                     asChild
                                     disabled={loading}
+                                    className="w-full sm:w-auto"
                                 >
                                     <Link href="/clubs">Annuler</Link>
                                 </Button>

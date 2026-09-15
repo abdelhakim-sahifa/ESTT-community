@@ -35,7 +35,17 @@ export default function ClubCard({ club }) {
                             {club.name}
                         </h3>
                         {club.verified && (
-                            <i className="fa-solid fa-circle-check text-blue-500 text-[10px] flex-shrink-0"></i>
+                            <div className="group relative flex items-center">
+                                <span
+                                    className="material-symbols-outlined select-none text-blue-500"
+                                    style={{ fontVariationSettings: "'FILL' 1", fontSize: '14px' }}
+                                >
+                                    verified
+                                </span>
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
+                                    Club Vérifié
+                                </div>
+                            </div>
                         )}
                     </div>
                     <p className="text-[10px] md:text-sm text-muted-foreground line-clamp-2 md:line-clamp-3">

@@ -1249,7 +1249,7 @@ export default function ClubAdminPage() {
 
     return (
         <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-background py-8">
-            <div className="container px-4 md:px-6 max-w-6xl">
+            <div className="container px-2 sm:px-4 md:px-6 max-w-6xl">
                 <div className="mb-6 flex items-center justify-between">
                     <Button variant="ghost" size="sm" asChild className="gap-2">
                         <Link href={`/clubs/${clubId}`}>
@@ -1279,7 +1279,7 @@ export default function ClubAdminPage() {
                     <div className="flex flex-col md:flex-row gap-8">
                         {/* Sidebar / Navigation */}
                         <div className={cn(
-                            "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 md:bg-transparent md:border-none",
+                            "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 md:bg-transparent md:border-none overflow-y-auto",
                             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                         )}>
                             <div className="p-4 md:p-0">
@@ -1551,7 +1551,7 @@ export default function ClubAdminPage() {
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Image de couverture (Optionnel)</Label>
-                                                        <div className="flex gap-4 items-start">
+                                                        <div className="flex flex-wrap gap-4 items-start">
                                                             <div className="flex-1 space-y-2">
                                                                 <Input 
                                                                     placeholder="URL de l'image (ex: https://i.ibb.co/...)" 
@@ -1608,7 +1608,7 @@ export default function ClubAdminPage() {
                                                 </div>
 
                                                 <div className="space-y-4 border p-4 rounded-md bg-muted/50">
-                                                    <div className="flex items-center justify-between">
+                                                    <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                                                         <Label className="font-bold">Champs du formulaire d'inscription</Label>
                                                         <Button type="button" variant="outline" size="sm" onClick={handleAddEventField}>
                                                             <Plus className="w-4 h-4 mr-2" /> Ajouter un champ
@@ -1843,12 +1843,12 @@ export default function ClubAdminPage() {
                                             ) : (
                                                 <div className="grid gap-2">
                                                     {club.members.map((member, idx) => (
-                                                        <div key={idx} className="flex items-center justify-between p-3 border rounded-lg bg-card">
-                                                            <div>
-                                                                <p className="font-medium text-sm">{member.name}</p>
+                                                        <div key={idx} className="flex flex-col items-start gap-3 p-3 border rounded-lg bg-card sm:flex-row sm:items-center sm:justify-between">
+                                                            <div className="min-w-0 flex-1 w-full break-words">
+                                                                <p className="font-medium text-sm truncate">{member.name}</p>
                                                                 <p className="text-xs text-muted-foreground">{member.email}</p>
                                                             </div>
-                                                            <div className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-2">
+                                                            <div className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-2 w-full shrink-0 sm:w-auto">
                                                                 <Badge variant="secondary" className="text-xs">{member.filiere}</Badge>
                                                                 <div /> {/* Spacer */}
                                                                 <Button
@@ -1898,18 +1898,18 @@ export default function ClubAdminPage() {
                                                 {posts.map(post => (
                                                     <Card key={post.id} className="border-muted">
                                                         <CardHeader>
-                                                            <div className="flex items-start justify-between">
-                                                                <div className="flex-1">
+                                                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                                                <div className="min-w-0 flex-1">
                                                                     <CardTitle className="text-lg">{post.title}</CardTitle>
                                                                     <p className="text-sm text-muted-foreground mt-1">
                                                                         {new Date(post.createdAt).toLocaleDateString('fr-FR')} • {post.type === 'article' ? 'Article' : post.type === 'announcement' ? 'Annonce' : 'Activité'}
                                                                     </p>
                                                                 </div>
-                                                                <div className="grid grid-cols-2 gap-2">
+                                                                <div className="grid grid-cols-2 gap-2 w-full sm:w-auto shrink-0">
                                                                     <Button
                                                                         variant="outline"
                                                                         size="sm"
-                                                                        className="h-8"
+                                                                        className="h-8 w-full sm:w-auto"
                                                                         onClick={() => generatePostPDF(post, club)}
                                                                         title="Exporter en PDF"
                                                                     >
@@ -1918,7 +1918,7 @@ export default function ClubAdminPage() {
                                                                     </Button>
                                                                     <Dialog>
                                                                         <DialogTrigger asChild>
-                                                                            <Button variant="ghost" size="sm" className="h-8 text-destructive hover:bg-destructive/10">
+                                                                            <Button variant="ghost" size="sm" className="h-8 w-full sm:w-auto text-destructive hover:bg-destructive/10">
                                                                                 <Trash2 className="w-4 h-4 mr-2" />
                                                                                 Supprimer
                                                                             </Button>
@@ -2022,7 +2022,7 @@ export default function ClubAdminPage() {
                                                 </div>
                                                 <div className="space-y-2 md:col-span-2 pt-2 border-t mt-2">
                                                     <Label>Image de couverture</Label>
-                                                    <div className="flex gap-4 items-start">
+                                                    <div className="flex flex-wrap gap-4 items-start">
                                                         <div className="flex-1 space-y-2">
                                                             <Input 
                                                                 placeholder="URL de l'image (ex: https://i.ibb.co/...)" 
@@ -2135,8 +2135,8 @@ export default function ClubAdminPage() {
                                                 </div>
                                             )}
 
-                                            <div className="flex gap-4 pt-4">
-                                                <Button type="submit" className="flex-1" disabled={sendingEmails}>
+                                            <div className="flex flex-col gap-2 pt-4 sm:flex-row sm:gap-4">
+                                                <Button type="submit" className="w-full sm:flex-1" disabled={sendingEmails}>
                                                     {sendingEmails ? (
                                                         <>
                                                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -2152,7 +2152,7 @@ export default function ClubAdminPage() {
                                                 
                                                 <Dialog open={showEmailPreview} onOpenChange={setShowEmailPreview}>
                                                     <DialogTrigger asChild>
-                                                        <Button variant="outline" type="button" disabled={sendingEmails}>
+                                                        <Button variant="outline" type="button" disabled={sendingEmails} className="w-full sm:w-auto">
                                                             <FileText className="w-4 h-4 mr-2" />
                                                             Aperçu
                                                         </Button>
@@ -2263,7 +2263,7 @@ export default function ClubAdminPage() {
 
                                             <div className="space-y-2">
                                                 <Label>Image de couverture (Optionnel)</Label>
-                                                <div className="flex gap-4 items-start">
+                                                <div className="flex flex-wrap gap-4 items-start">
                                                     <div className="flex-1 space-y-2">
                                                         <Input 
                                                             placeholder="URL de l'image (ex: https://i.ibb.co/...)" 
@@ -2386,14 +2386,15 @@ export default function ClubAdminPage() {
                                                 <h3 className="font-semibold text-blue-900">Lien d'invitation</h3>
                                                 <p className="text-sm text-blue-700">Partagez ce lien pour inviter des étudiants à rejoindre le club.</p>
                                             </div>
-                                            <div className="flex items-center gap-2 w-full sm:w-auto">
+                                            <div className="flex flex-col items-stretch gap-2 w-full sm:flex-row sm:items-center sm:w-auto">
                                                 <Input
                                                     readOnly
                                                     value={`${typeof window !== 'undefined' ? window.location.origin : ''}/clubs/${clubId}/join`}
-                                                    className="bg-card"
+                                                    className="bg-card min-w-0 flex-1"
                                                 />
                                                 <Button
                                                     variant="outline"
+                                                    className="w-full sm:w-auto"
                                                     onClick={() => {
                                                         navigator.clipboard.writeText(`${window.location.origin}/clubs/${clubId}/join`);
                                                         setMessage('Lien copié !');
@@ -2406,7 +2407,7 @@ export default function ClubAdminPage() {
 
                                         {/* Custom Questions Management */}
                                         <div className="space-y-4 border p-4 rounded-lg bg-muted">
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                                 <div className="space-y-1">
                                                     <h3 className="font-semibold">Questions personnalisées</h3>
                                                     <p className="text-sm text-muted-foreground">Ajoutez des questions spécifiques pour votre formulaire d'adhésion.</p>
@@ -2428,19 +2429,19 @@ export default function ClubAdminPage() {
                                                 </div>
 
                                                 {joinFormQuestions.map((q) => (
-                                                    <div key={q.id} className="flex gap-2 items-start bg-card p-3 border rounded-md shadow-sm">
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1">
+                                                    <div key={q.id} className="flex flex-col items-stretch gap-2 bg-card p-3 border rounded-md shadow-sm sm:flex-row sm:items-start sm:gap-2">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1 min-w-0">
                                                             <Input
                                                                 placeholder="Votre question"
                                                                 value={q.label}
                                                                 onChange={e => handleUpdateJoinQuestion(q.id, 'label', e.target.value)}
                                                             />
-                                                            <div className="flex items-center gap-4">
+                                                            <div className="flex items-center gap-2">
                                                                 <Select
                                                                     value={q.type}
                                                                     onValueChange={v => handleUpdateJoinQuestion(q.id, 'type', v)}
                                                                 >
-                                                                    <SelectTrigger className="w-full">
+                                                                    <SelectTrigger className="w-full flex-1 min-w-0">
                                                                         <SelectValue />
                                                                     </SelectTrigger>
                                                                     <SelectContent>
@@ -2456,10 +2457,11 @@ export default function ClubAdminPage() {
                                                                     </SelectContent>
                                                                 </Select>
                                                                 <div className="flex items-center gap-2 shrink-0">
-                                                                    <Label className="text-xs">Requis</Label>
+                                                                    <Label className="text-xs whitespace-nowrap">Requis</Label>
                                                                     <input
                                                                         type="checkbox"
                                                                         checked={q.required}
+                                                                        className="h-4 w-4 shrink-0"
                                                                         onChange={e => handleUpdateJoinQuestion(q.id, 'required', e.target.checked)}
                                                                     />
                                                                 </div>
@@ -2478,7 +2480,7 @@ export default function ClubAdminPage() {
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            className="text-destructive hover:bg-red-50 dark:hover:bg-red-500/10"
+                                                            className="self-end sm:self-auto shrink-0 text-destructive hover:bg-red-50 dark:hover:bg-red-500/10"
                                                             onClick={() => handleRemoveJoinQuestion(q.id)}
                                                         >
                                                             <Trash2 className="w-4 h-4" />
@@ -2680,7 +2682,7 @@ export default function ClubAdminPage() {
 
 
                                                     <div className="space-y-3 border p-4 rounded-md">
-                                                        <div className="flex items-center justify-between">
+                                                        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                                                             <Label>Champs du formulaire</Label>
                                                             <Button type="button" variant="outline" size="sm" onClick={handleAddField}>
                                                                 <Plus className="w-4 h-4 mr-2" /> Ajouter un champ
@@ -2836,9 +2838,9 @@ export default function ClubAdminPage() {
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     {tickets.map(ticket => (
                                                         <Card key={ticket.id} className={`p-4 ${ticket.status === 'pending' ? 'border-orange-200 bg-orange-50 dark:border-orange-500/50 dark:bg-orange-500/10' : 'bg-card'}`}>
-                                                            <div className="flex justify-between items-start">
-                                                                <div>
-                                                                    <div className="flex items-center gap-2 mb-1">
+                                                            <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-start">
+                                                                <div className="min-w-0 flex-1 break-words">
+                                                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                                                                         <h3 className="font-bold">
                                                                             {ticket.firstName ? `${ticket.firstName} ${ticket.lastName || ''}` : (ticket.userName || ticket.userEmail || 'Participant')}
                                                                         </h3>
@@ -2849,7 +2851,7 @@ export default function ClubAdminPage() {
                                                                     <p className="text-xs text-muted-foreground">Événement: {ticket.eventName}</p>
                                                                     <p className="text-xs text-muted-foreground">Date: {new Date(ticket.createdAt).toLocaleDateString()}</p>
                                                                 </div>
-                                                                <div className="grid grid-cols-2 gap-2">
+                                                                <div className="flex items-center gap-2 shrink-0">
                                                                     {ticket.status === 'pending' && (
                                                                         <Button
                                                                             size="sm"

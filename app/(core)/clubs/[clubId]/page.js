@@ -16,6 +16,27 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
+function FaviconWithFallback({ hostname, alt }) {
+    const [attempt, setAttempt] = useState(0);
+    const sources = [
+        `https://favicondl.com/api/extract?url=${hostname}&size=64`,
+        `https://${hostname}/apple-touch-icon.png`
+    ];
+
+    if (attempt >= sources.length) {
+        return <i className="fa-solid fa-globe text-lg"></i>;
+    }
+
+    return (
+        <img
+            src={sources[attempt]}
+            alt={alt}
+            className="w-5 h-5"
+            onError={() => setAttempt(a => a + 1)}
+        />
+    );
+}
+
 export default function ClubProfilePage() {
     const params = useParams();
     const router = useRouter();
@@ -224,13 +245,17 @@ export default function ClubProfilePage() {
                                     <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
                                         <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight leading-tight">{club.name}</h1>
                                         {club.verified && (
-                                            <Badge className="bg-blue-500 hover:bg-blue-600 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1.5 border-0">
-                                                <i className="fa-solid fa-circle-check text-[10px]"></i>
-                                                <span className="text-[10px] font-bold uppercase tracking-wider">Vérifié</span>
-                                            </Badge>
+                                            <div className="group relative flex items-center">
+                                                <span className="material-symbols-outlined select-none text-blue-500" style={{ fontVariationSettings: "'FILL' 1", fontSize: '22px' }}>
+                                                    verified
+                                                </span>
+                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
+                                                    Club Vérifié
+                                                </div>
+                                            </div>
                                         )}
                                     </div>
-                                    <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto md:mx-0 leading-relaxed font-medium">{club.description}</p>
+                                    <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto md:mx-0 leading-relaxed font-medium text-justify">{club.description}</p>
 
                                     {club.socialLinks && Object.values(club.socialLinks).some(link => link) && (
                                         <div className="flex flex-wrap gap-3 pt-2 justify-center md:justify-start">
@@ -268,18 +293,7 @@ export default function ClubProfilePage() {
                                                         {iconClass ? (
                                                             <i className={`${iconClass} text-lg`}></i>
                                                         ) : (
-                                                            <>
-                                                                <img
-                                                                    src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
-                                                                    alt={platform}
-                                                                    className="w-5 h-5"
-                                                                    onError={(e) => {
-                                                                        e.target.style.display = 'none';
-                                                                        if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
-                                                                    }}
-                                                                />
-                                                                <i className="fa-solid fa-globe text-lg" style={{ display: 'none' }}></i>
-                                                            </>
+                                                            <FaviconWithFallback hostname={hostname} alt={platform} />
                                                         )}
                                                     </a>
                                                 );
