@@ -639,6 +639,34 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                                     const trimmed = text.trim();
                                                     const firstFence = trimmed.indexOf("```");
                                                     if (firstFence === -1) return trimmed;
+
+                                                    // ── Step 1: Unwrap outer code fence ──
+                                                    // Gemini sometimes wraps the entire response in ```text ... ``` or ``` ... ```
+                                                    if (firstFence === 0) {
+                                                        const lastFence = trimmed.lastIndexOf("```");
+                                                        if (lastFence > 3) {
+                                                            const blockRaw = trimmed.substring(3, lastFence);
+                                                            const fenceCount = (blockRaw.match(/```/g) || []).length;
+                                                            let outerLang = "";
+                                                            const langMatch = blockRaw.match(/^(\w+)\n/);
+                                                            if (langMatch) outerLang = langMatch[1];
+                                                            const isOuterText = /^(text|txt)?$/i.test(outerLang);
+
+                                                            if (isOuterText) {
+                                                                // Text-type outer fence — always unwrap
+                                                                let content = blockRaw;
+                                                                if (langMatch) content = blockRaw.substring(langMatch[0].length);
+                                                                return content.trim();
+                                                            } else if (fenceCount >= 2) {
+                                                                // Non-text outer fence with inner fences — unwrap
+                                                                let content = blockRaw;
+                                                                if (langMatch) content = blockRaw.substring(langMatch[0].length);
+                                                                return content.trim();
+                                                            }
+                                                        }
+                                                    }
+
+                                                    // ── Step 2: Handle heading-inside-code-block splitting ──
                                                     const lastFence = trimmed.lastIndexOf("```");
                                                     if (firstFence === lastFence) return trimmed;
                                                     const before = trimmed.substring(0, firstFence);
@@ -648,8 +676,7 @@ export default function ChatBubble({ message, isOwn, onReact, onDelete, onReply,
                                                     let outerLang = "";
                                                     const langMatch = blockRaw.match(/^(\w+)\n/);
                                                     if (langMatch) outerLang = langMatch[1];
-                                                    const isOuterText = /^(text|txt)$/i.test(outerLang);
-                                                    if (fenceCount % 2 === 0 && fenceCount > 0 && !isOuterText) return trimmed;
+                                                    if (fenceCount % 2 === 0 && fenceCount > 0) return trimmed;
                                                     if (fenceCount === 0 && !/^###\s|^\*\*|^\*\s/m.test(blockRaw)) return trimmed;
                                                     if (fenceCount === 0) return before + blockRaw + after;
                                                     let blockContent = blockRaw;

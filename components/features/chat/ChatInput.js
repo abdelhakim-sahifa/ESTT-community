@@ -1,4 +1,4 @@
-import { ArrowUp, Image as ImageIcon, Loader2, Library, Search, FileText, Video, Link as LinkIcon, ArrowRight, BookOpen, Sticker, Globe } from 'lucide-react';
+import { ArrowUp, Image as ImageIcon, Loader2, Library, Search, FileText, Video, Link as LinkIcon, ArrowRight, BookOpen, Sticker, Globe, Bot, ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { uploadToImgBB } from '@/lib/uploadUtils';
 import { db, ref, get, onValue } from '@/lib/firebase';
@@ -17,6 +17,13 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { AI_MODELS } from '@/lib/estt-ai';
 import { useState, useRef, useEffect } from 'react';
 export default function ChatInput({
     onSendMessage,
@@ -25,6 +32,8 @@ export default function ChatInput({
     mentionableUsers = [],
     textOnly = false,
     placeholder = "Ecrivez votre message...",
+    selectedModel,
+    onModelChange,
 }) {
     const [message, setMessage] = useState('');
     const [isUploading, setIsUploading] = useState(false);
@@ -296,6 +305,35 @@ export default function ChatInput({
                 onSubmit={handleSubmit}
                 className="flex items-center w-full gap-2"
             >
+                {textOnly && selectedModel && onModelChange && (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                type="button"
+                                className="h-10 w-[110px] flex items-center gap-1 px-2.5 rounded-full border border-slate-200 bg-slate-50 text-[11px] font-medium text-slate-600 hover:bg-slate-100 transition-all shrink-0 outline-none"
+                            >
+                                <Bot className="w-3 h-3 text-slate-500" />
+                                <span>{AI_MODELS[selectedModel]?.shortName || 'Model'}</span>
+                                <ChevronDown className="w-3 h-3 text-slate-400 ml-auto" />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent side="top" align="start" className="z-[200] min-w-[120px]">
+                            {Object.entries(AI_MODELS).map(([id, m]) => (
+                                <DropdownMenuItem
+                                    key={id}
+                                    onClick={() => onModelChange(id)}
+                                    className={cn(
+                                        "text-xs cursor-pointer",
+                                        selectedModel === id && "bg-slate-100 font-bold"
+                                    )}
+                                >
+                                    {m.shortName}
+                                    {selectedModel === id && <Check className="w-3 h-3 ml-auto text-primary" />}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
                 <div className="relative flex-1 group flex items-center gap-2">
                     <input
                         type="file"

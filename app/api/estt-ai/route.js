@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
-    ESTT_AI_MODEL,
-    ESTT_AI_SYSTEM_INSTRUCTION,
+    AI_MODELS,
+    DEFAULT_AI_MODEL,
 } from '@/lib/estt-ai';
 import { searchResourcesAction } from '@/lib/resourceUtils';
 
@@ -19,16 +19,29 @@ function extractAiResponse(text) {
     if (!text) return { reply: null, action: null };
 
     try {
-        // Match action JSON specifically (starts with {"action":) to avoid matching code block braces
+        // First: find action JSON inside code blocks and strip the entire block
+        const allCodeBlocks = text.match(/```[\s\S]*?```/g) || [];
+        for (const block of allCodeBlocks) {
+            if (block.includes('"action"')) {
+                const jsonMatch = block.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    const actionData = JSON.parse(jsonMatch[0]);
+                    const reply = text.replace(block, '').trim();
+                    return {
+                        reply: reply || actionData.message || null,
+                        action: actionData,
+                    };
+                }
+            }
+        }
+
+        // Second: try bare JSON (not in code block)
         const jsonMatch = text.match(/\{"action"\s*:\s*"[^"]+"[\s\S]*?\}/);
         if (jsonMatch) {
             const rawJson = jsonMatch[0];
             const actionData = JSON.parse(rawJson);
             let reply = text.replace(rawJson, '').trim();
-            // Strip orphaned code fences left after JSON removal (```json\n\n```)
             reply = reply.replace(/```\w*\s*```/g, '').trim();
-            reply = reply.replace(/^```+\s*$/gm, '').trim();
-
             return {
                 reply: reply || actionData.message || null,
                 action: actionData,
@@ -328,14 +341,111 @@ function sanitizeQuery(text) {
         .trim();
 }
 
-async function rewriteQueryWithGemini(message, history) {
+function getReasoningEffort(message, isAcademic, provider) {
+    return undefined;
+}
+
+async function callGroq(modelId, messages, systemInstruction) {
+    const allMessages = [];
+    if (systemInstruction) {
+        allMessages.push({ role: 'system', content: systemInstruction });
+    }
+    allMessages.push(...messages);
+
+    const apiKey = process.env.GROQ_API_KEY;
+    console.log(`🔍 [Groq] Calling model: ${modelId}, messages: ${allMessages.length}, hasKey: ${!!apiKey}`);
+
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+            model: modelId,
+            messages: allMessages,
+            max_tokens: 4096,
+        }),
+    });
+
+    console.log(`🔍 [Groq] Response status: ${res.status}`);
+
+    if (!res.ok) {
+        const err = await res.text();
+        console.error(`❌ [Groq] API error ${res.status}:`, err.substring(0, 500));
+        throw new Error(`Groq API error ${res.status}: ${err}`);
+    }
+
+    const data = await res.json();
+    console.log(`🔍 [Groq] Response keys: ${Object.keys(data).join(', ')}`);
+
+    try {
+        if (data.choices && data.choices.length > 0) {
+            const choice = data.choices[0];
+            if (choice.message && choice.message.content) {
+                return choice.message.content;
+            }
+        }
+        console.error('❌ [Groq] Unexpected response format:', JSON.stringify(data).substring(0, 500));
+        throw new Error('Unexpected response format from Groq API');
+    } catch (parseErr) {
+        console.error('❌ [Groq] Parse error:', parseErr.message);
+        throw parseErr;
+    }
+}
+
+function toOpenAIMessages(history) {
+    const messages = [];
+    for (const item of history) {
+        const text = item.parts?.[0]?.text || item.content || item.text || '';
+        if (!text) continue;
+        const role = item.role === 'model' || item.role === 'assistant' ? 'assistant' : 'user';
+        messages.push({ role, content: text });
+    }
+    return messages;
+}
+
+async function callLLM({ modelId, history, userMessage, systemInstruction, reasoningEffort }) {
+    const modelConfig = AI_MODELS[modelId];
+    if (!modelConfig) throw new Error(`Unknown model: ${modelId}`);
+
+    if (modelConfig.provider === 'groq') {
+        const messages = toOpenAIMessages(history);
+        messages.push({ role: 'user', content: userMessage });
+        return await callGroq(modelId, messages, systemInstruction);
+    }
+
+    // Default: Gemini
+    const model = genAI.getGenerativeModel({
+        model: modelId,
+        systemInstruction,
+    });
+    const chat = model.startChat({ history });
+    const result = await chat.sendMessage(userMessage);
+    return result.response.text();
+}
+
+async function callLLMSimple({ modelId, prompt, systemInstruction }) {
+    const modelConfig = AI_MODELS[modelId];
+    if (!modelConfig) throw new Error(`Unknown model: ${modelId}`);
+
+    if (modelConfig.provider === 'groq') {
+        const messages = [{ role: 'user', content: prompt }];
+        return await callGroq(modelId, messages, systemInstruction);
+    }
+
+    // Default: Gemini
+    const model = genAI.getGenerativeModel({ model: modelId });
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+}
+
+async function rewriteQueryWithLLM(message, history, modelId) {
     const historyContext = history.slice(-4)
         .map(msg => `${msg.role === 'model' ? 'AI' : 'User'}: ${msg.parts?.[0]?.text || ''}`)
         .join('\n');
 
-    const model = genAI.getGenerativeModel({ model: ESTT_AI_MODEL });
-    const result = await model.generateContent(
-        `You are a search query rewriter for an educational platform (ESTT).
+    const prompt = `You are a search query rewriter for an educational platform (ESTT).
 Rewrite the user's message into search-friendly keywords in French.
 
 RULES:
@@ -350,9 +460,10 @@ RULES:
 
 ${historyContext ? `Conversation history:\n${historyContext}` : ''}
 
-User message: "${message}"`
-    );
-    return sanitizeQuery(result.response.text());
+User message: "${message}"`;
+
+    const text = await callLLMSimple({ modelId, prompt });
+    return sanitizeQuery(text);
 }
 
 const ACADEMIC_INTENT_PATTERNS = [
@@ -366,7 +477,7 @@ const ACADEMIC_INTENT_PATTERNS = [
     /cours du module/i, /cours de/i, /td de/i, /tp de/i, /exam de/i, /examen de/i,
     /resume/i, /summary/i, /summarize/i,
     /syntaxe/i, /quel/i, /quelle/i, /explique/i, /d[eé]finition/i,
-    /règles?/i, /regles?/i, /comment/i, /pourquoi/i, /diff[eé]rence/i,
+    /règles?/i, /regles?/i, /comment (faire|calculer|résoudre|fonctionne|marche|créer|implémenter|écrire|programmer)/i, /pourquoi/i, /diff[eé]rence/i,
     /compare/i, /comparaison/i, /exemple/i, /application/i,
     /sql/i, /select/i, /where/i, /insert/i, /update/i, /delete/i,
     /mcd/i, /mld/i, /relation/i, /table/i, /base de donn[eé]es/i,
@@ -393,7 +504,7 @@ function detectAcademicIntent(message) {
 export async function POST(request) {
     console.log('🚀 [ESTT-AI] POST request received');
     try {
-        let message, history = [], userProfile = null, purpose = 'chat';
+        let message, history = [], userProfile = null, purpose = 'chat', selectedModel = DEFAULT_AI_MODEL;
 
         const contentType = request.headers.get('content-type') || '';
 
@@ -408,17 +519,16 @@ export async function POST(request) {
                 const extractedText = await extractTextFromServer(file);
                 if (!extractedText) throw new Error('No text extracted from PDF');
 
-                const model = genAI.getGenerativeModel({ model: ESTT_AI_MODEL });
-                const result = await model.generateContent(
-                    `${context}\n\nTexte extrait :\n${extractedText.substring(0, 30000)}`
-                );
-                const aiText = result.response.text();
+                const aiText = await callLLMSimple({
+                    modelId: selectedModel,
+                    prompt: `${context}\n\nTexte extrait :\n${extractedText.substring(0, 30000)}`,
+                });
                 const { action } = extractAiResponse(aiText);
 
                 return NextResponse.json({
                     action,
                     reply: aiText,
-                    model: ESTT_AI_MODEL,
+                    model: selectedModel,
                 });
             }
         } else {
@@ -427,20 +537,25 @@ export async function POST(request) {
             history = body.history || [];
             userProfile = body.userProfile || null;
             purpose = body.purpose || 'chat';
+            selectedModel = body.model || DEFAULT_AI_MODEL;
 
             if (purpose === 'pdf-analysis') {
-                const model = genAI.getGenerativeModel({ model: ESTT_AI_MODEL });
-                const result = await model.generateContent(message);
-                const aiText = result.response.text();
+                const aiText = await callLLMSimple({
+                    modelId: selectedModel,
+                    prompt: message,
+                });
                 const { action } = extractAiResponse(aiText);
 
                 return NextResponse.json({
                     action,
                     reply: aiText,
-                    model: ESTT_AI_MODEL,
+                    model: selectedModel,
                 });
             }
         }
+
+        const modelConfig = AI_MODELS[selectedModel];
+        const baseInstruction = modelConfig?.systemInstruction || ESTT_AI_SYSTEM_INSTRUCTION;
 
         const userContext = [
             userProfile?.firstName ? `First name: ${userProfile.firstName}` : null,
@@ -449,8 +564,8 @@ export async function POST(request) {
         ].filter(Boolean).join('\n');
 
         const systemInstruction = userContext
-            ? `${ESTT_AI_SYSTEM_INSTRUCTION}\n\nCurrent user context:\n${userContext}`
-            : ESTT_AI_SYSTEM_INSTRUCTION;
+            ? `${baseInstruction}\n\nCurrent user context:\n${userContext}`
+            : baseInstruction;
 
         const formattedHistory = Array.isArray(history)
             ? history
@@ -470,7 +585,7 @@ export async function POST(request) {
             parts: item.parts,
         }));
 
-        // Gemini requires history to start with 'user' and alternate strictly
+        // Ensure history alternates strictly (required by Gemini, safe for all providers)
         const sanitizedHistory = [];
         let expectedRole = 'user';
         for (const item of chatHistory) {
@@ -480,43 +595,55 @@ export async function POST(request) {
             }
         }
 
-        console.log(`📋 [ESTT-AI] History: ${sanitizedHistory.length} messages, API key present: ${!!process.env.GEMINI_API_KEY}`);
+        // Limit history for Groq (8B model, keep it snappy)
+        const limitedHistory = modelConfig?.provider === 'groq'
+            ? sanitizedHistory.slice(-6)
+            : sanitizedHistory;
+
+        console.log(`📋 [ESTT-AI] Model: ${selectedModel}, History: ${limitedHistory.length} messages (from ${sanitizedHistory.length} total), Gemini key: ${!!process.env.GEMINI_API_KEY}, Groq key: ${!!process.env.GROQ_API_KEY}`);
 
         const userMessage = message?.trim() || '';
 
-        // Detect academic intent — only search for academic queries
+        // Allow greetings/small talk to pass through without search
+        const isGreeting = /^(bonjour|salut|hello|hi|hey|merci|ok|oui|non|au revoir|goodbye|bye|cc|slt|cc|bonsoir)/i.test(userMessage.trim());
+
+        // Detect platform navigation questions — answer from PLATFORM GUIDE, not resource search
+        const isPlatformQuestion = /(comment|how|where|quoi|qu'est|est-ce que|peut-on|est-il|s'inscrire|contribuer|créer|ajouter|publier|rejoindre|s'abonner|clube?|événement|ressource|profil|message|chat|recherche|browse|filter|club|event|contribute|profile|message|notification)/i.test(userMessage)
+            && /(comment|how to|where|plateforme|platform|page|site|appli|application|menu|bouton|navigation|utiliser|use|accéder|access|aller|go to)/i.test(userMessage);
+
+        // Detect intent for RAG mode (summarize/find/general)
         const { isAcademic, intent } = detectAcademicIntent(userMessage);
         let forcedResourceContext = '';
 
-        if (isAcademic) {
-            // Step 1: Gemini rewrites query (decides on its own whether to use history)
+        if (!isGreeting && !isPlatformQuestion) {
+            // Always search for resources — academic AND platform questions
             let rewrittenQuery = '';
             try {
-                rewrittenQuery = await rewriteQueryWithGemini(userMessage, sanitizedHistory);
+                rewrittenQuery = await rewriteQueryWithLLM(userMessage, limitedHistory, selectedModel);
             } catch (e) {
-                console.warn(`[ESTT-AI] Gemini rewrite failed: ${e.message}`);
+                console.warn(`[ESTT-AI] Query rewrite failed: ${e.message}`);
             }
 
             let results = [];
 
-            // Step 2: Search with rewritten query + filiere
+            // Search with rewritten query + filiere
             if (rewrittenQuery && rewrittenQuery !== 'NONE') {
-                console.log(`🧠 [ESTT-AI] Gemini rewrite: "${rewrittenQuery}"`);
+                console.log(`🧠 [ESTT-AI] Query rewrite: "${rewrittenQuery}"`);
                 results = await searchResourcesAction(rewrittenQuery, userProfile?.filiere);
             }
 
-            // Step 3: GUARDRAIL — fallback without filiere
+            // GUARDRAIL — fallback without filiere
             if (results.length === 0 && rewrittenQuery && rewrittenQuery !== 'NONE') {
                 results = await searchResourcesAction(rewrittenQuery, null);
             }
 
-            // Step 4: GUARDRAIL — raw query fallback
+            // GUARDRAIL — raw query fallback
             if (results.length === 0) {
                 const rawQuery = userMessage.substring(0, 100);
                 results = await searchResourcesAction(rawQuery, userProfile?.filiere);
             }
 
-            // Step 5: Enrich + build context
+            // Enrich + build context
             if (results.length > 0) {
                 const enriched = await enrichResourcesWithText(results);
                 forcedResourceContext = buildResourceContext(enriched, rewrittenQuery || userMessage);
@@ -528,29 +655,32 @@ export async function POST(request) {
         let finalSystemInstruction = systemInstruction;
         if (forcedResourceContext) {
             const intentLabel = intent === 'summarize' ? 'SUMMARY' : intent === 'find' ? 'FIND' : 'RAG';
-            const resourceInstruction = `The user is asking about academic content. Mode: ${intentLabel}.
-Use the [RESOURCE DATA] below to provide an informed answer.
-${intent === 'summarize' ? 'Summarize the key points from the content. You may suggest consulting the full document.' : intent === 'find' ? 'Recommend the most relevant resources and briefly explain what each covers.' : 'Extract the answer DIRECTLY from the provided content. Present it clearly with examples/code if applicable. Do NOT just say "consult the document" — answer first, then suggest the resource for more details.'}
-Use plain Markdown for your response — code blocks only for actual code, equations in LaTeX ($...$ or $$...$$). NEVER wrap your response in a code block.
-Always include a JSON action block at the end (NOT inside code fences, just raw JSON):
-{"action": "display_resources", "resource_ids": ["id1", "id2", "..."]}`;
+            const resourceInstruction = `You have [RESOURCE DATA] from the platform. Follow these rules:
+
+Mode: ${intentLabel}.
+- Answer DIRECTLY from the [RESOURCE DATA] content. Do NOT use your training knowledge.
+- ${intent === 'summarize' ? 'Summarize the key points from the content.' : intent === 'find' ? 'Recommend the most relevant resources.' : 'Extract the answer from the content.'}
+- If the resources do NOT answer the question, respond: "Je n'ai pas trouvé d'information pertinente dans les ressources disponibles pour cette demande. Veuillez consulter la page Ressources ou contacter un administrateur." Do NOT give a general answer.
+- NEVER invent button names, page names, menu items, or UI steps.
+- NEVER add tips, suggestions, advice, or extra information beyond what is EXPLICITLY stated in the [RESOURCE DATA]. Only state facts from the resources — nothing more.
+- Use plain Markdown. Code blocks only for actual code.
+- End with JSON (NOT inside code fences): {"action": "display_resources", "resource_ids": ["id1"]}`;
             finalSystemInstruction = `${systemInstruction}\n\n## RETRIEVED RESOURCES\n${resourceInstruction}\n\n[RESOURCE DATA]\n${forcedResourceContext}\n[END RESOURCE DATA]`;
-        } else if (isAcademic) {
-            // Academic intent but no resources found — strict resources-only
-            const noResourceInstruction = `No resources were found on the platform for the user's request. You MUST respond with: "Je n'ai pas trouvé de ressources correspondantes sur la plateforme pour cette demande. Essayez de consulter la page Ressources pour trouver ce que vous cherchez." Do NOT answer from your own training knowledge.`;
-            finalSystemInstruction = `${systemInstruction}\n\n## NO RESOURCES FOUND\n${noResourceInstruction}`;
+        } else if (!isGreeting && !isPlatformQuestion) {
+            // No resources found — direct refusal, no general answers
+            finalSystemInstruction = `${systemInstruction}\n\nNo resources were found on the platform for this request. You MUST respond with: "Je n'ai pas trouvé de ressources correspondantes sur la plateforme pour cette demande. Veuillez consulter la page Ressources pour trouver ce que vous cherchez." Do NOT answer from your own knowledge. Do NOT give a general answer.`;
         }
 
-        const model = genAI.getGenerativeModel({
-            model: ESTT_AI_MODEL,
+        console.log(`🤖 [ESTT-AI] Sending to ${modelConfig?.shortName || selectedModel}...`);
+        const reasoningEffort = getReasoningEffort(userMessage, isAcademic, modelConfig?.provider);
+        console.log(`🧠 [ESTT-AI] Reasoning effort: ${reasoningEffort || 'default'} (provider: ${modelConfig?.provider})`);
+        const aiText = await callLLM({
+            modelId: selectedModel,
+            history: limitedHistory,
+            userMessage,
             systemInstruction: finalSystemInstruction,
+            reasoningEffort,
         });
-
-        const chat = model.startChat({ history: sanitizedHistory });
-
-        console.log('🤖 [ESTT-AI] Sending to Gemini...');
-        const result = await chat.sendMessage(userMessage);
-        const aiText = result.response.text();
         const { reply, action } = extractAiResponse(aiText);
 
         if (action?.action === 'read' && action?.target === 'resources') {
@@ -573,8 +703,19 @@ Always include a JSON action block at the end (NOT inside code fences, just raw 
                     `Keep your human response helpful and concise. Do not expose raw data or JSON to the user.`,
                 ].join('\n\n');
 
-                const ragResult = await chat.sendMessage(ragPrompt);
-                const ragText = ragResult.response.text();
+                // Extend history with the initial user message and AI response for context
+                const ragHistory = [
+                    ...limitedHistory,
+                    { role: 'user', parts: [{ text: userMessage }] },
+                    { role: 'model', parts: [{ text: aiText }] },
+                ];
+
+                const ragText = await callLLM({
+                    modelId: selectedModel,
+                    history: ragHistory,
+                    userMessage: ragPrompt,
+                    systemInstruction: finalSystemInstruction,
+                });
                 const final = extractAiResponse(ragText);
 
                 console.log('✅ [ESTT-AI] RAG Pipeline COMPLETE');
@@ -582,7 +723,7 @@ Always include a JSON action block at the end (NOT inside code fences, just raw 
                     reply: final.reply || reply,
                     action: final.action,
                     interimReply: reply,
-                    model: ESTT_AI_MODEL,
+                    model: selectedModel,
                 });
             }
         }
@@ -591,7 +732,7 @@ Always include a JSON action block at the end (NOT inside code fences, just raw 
         return NextResponse.json({
             reply,
             action,
-            model: ESTT_AI_MODEL,
+            model: selectedModel,
         });
 
     } catch (error) {

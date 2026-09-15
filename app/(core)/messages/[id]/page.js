@@ -20,6 +20,7 @@ import { notifyDM as rawNotifyDM } from '@/lib/browserNotifications';
 import {
     ESTT_AI_AGENT_ID,
     ESTT_AI_PROFILE,
+    DEFAULT_AI_MODEL,
     buildEsttAiHistory,
     isEsttAiAgent,
 } from '@/lib/estt-ai';
@@ -49,6 +50,7 @@ export default function DirectMessagePage() {
     const [isGeneratingAiResponse, setIsGeneratingAiResponse] = useState(false);
     const [isAiSearching, setIsAiSearching] = useState(false);
     const [aiMessageCount, setAiMessageCount] = useState(0);
+    const [selectedModel, setSelectedModel] = useState(DEFAULT_AI_MODEL);
 
     const messagesEndRef = useRef(null);
     const scrollContainerRef = useRef(null);
@@ -315,6 +317,9 @@ export default function DirectMessagePage() {
             actionData: action // Store raw action data for future reference
         });
 
+        // [TEMP] Tag which model generated this message for per-model memory testing
+        try { localStorage.setItem(`ai_model_${aiMessageRef.key}`, selectedModel); } catch (e) {}
+
         await update(ref(db, `userConversations/${user.uid}/${recipientId}`), {
             lastMessage: text,
             lastMessageSenderId: ESTT_AI_AGENT_ID,
@@ -332,7 +337,18 @@ export default function DirectMessagePage() {
         if (isEsttAiChat && (!text?.trim() || imageUrl || sharedResource || sharedEvent || extraData?.stickerUrl)) return;
         const newMessageRef = push(ref(db, `direct_messages/${roomId}/messages`));
         const aiHistory = isEsttAiChat
-            ? buildEsttAiHistory([...messages, { userId: user.uid, text }])
+            ? buildEsttAiHistory(
+                [...messages, { userId: user.uid, text }],
+                (msg, index, all) => {
+                    if (isEsttAiAgent(msg.userId)) {
+                        return localStorage.getItem(`ai_model_${msg.id}`) === selectedModel;
+                    }
+                    // User message: include only if the next AI response belongs to current model
+                    const nextAi = all.slice(index + 1).find(m => isEsttAiAgent(m.userId));
+                    if (!nextAi) return true; // no AI response yet (current message)
+                    return localStorage.getItem(`ai_model_${nextAi.id}`) === selectedModel;
+                }
+            )
             : [];
 
         let textToStore = text || "";
@@ -400,49 +416,52 @@ export default function DirectMessagePage() {
 
                 setIsGeneratingAiResponse(true);
 
+                const fetchAiResponse = async (input, history) => {
+                    const response = await fetch('/api/estt-ai', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: input,
+                            history: history,
+                            userProfile: currentUserProfile,
+                            model: selectedModel,
+                        }),
+                    });
+
+                    const payload = await response.json();
+                    if (!response.ok) throw new Error(payload?.error || 'AI Error');
+                    return payload;
+                };
+
+                // Initial acknowledgment — only for actual resource search queries, not platform navigation
+                const isResourceQuery = text.toLowerCase().match(/^(je veux|je cherche|donne|montre|t[eé]l[eé]charge|liste des|trouve|quel|quelle).*ressource|^(cours|exam|pdf|td|tp) /);
+                if (isResourceQuery) {
+                    setIsAiSearching(true);
+                }
+
                 try {
-                    const fetchAiResponse = async (input, history) => {
-                        const response = await fetch('/api/estt-ai', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                message: input,
-                                history: history,
-                                userProfile: currentUserProfile,
-                            }),
-                        });
-
-                        const payload = await response.json();
-                        if (!response.ok) throw new Error(payload?.error || 'AI Error');
-                        return payload;
-                    };
-
-                    // Initial acknowledgment if the user is asking for resources
-                    // Since the server handles the retrieval, we can show a generic "Searching..." if we detect resource keywords
-                    const isResourceQuery = text.toLowerCase().match(/ressource|cour|exam|pdf|math|physique|module/);
-                    if (isResourceQuery) {
-                        setIsAiSearching(true);
-                    }
-
                     const payload = await fetchAiResponse(text, aiHistory);
 
+                    // Clear indicators IMMEDIATELY — don't wait for Firebase persistence
                     setIsAiSearching(false);
+                    setIsGeneratingAiResponse(false);
 
                     if (payload.reply || payload.action) {
-                        await persistAiReply(payload.reply, payload.action, !document.hasFocus());
+                        persistAiReply(payload.reply, payload.action, !document.hasFocus()).catch(err =>
+                            console.error("❌ [ESTT-AI] Persistence failed:", err)
+                        );
                     }
                 } catch (error) {
                     console.error("❌ [ESTT-AI] FAILURE:", error);
                     setIsAiSearching(false);
-                    await persistAiReply(
+                    setIsGeneratingAiResponse(false);
+                    persistAiReply(
                         "Désolé, je rencontre une petite difficulté technique. Peux-tu reformuler ta demande ?",
                         null,
                         false
-                    );
-                } finally {
-                    setIsGeneratingAiResponse(false);
+                    ).catch(err => console.error("❌ [ESTT-AI] Fallback persistence failed:", err));
                 }
 
                 return;
@@ -735,9 +754,9 @@ export default function DirectMessagePage() {
                     {isAiSearching && (
                         <div className="flex items-center gap-2 mb-2 animate-in fade-in slide-in-from-bottom-1 duration-200">
                             <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full border border-blue-100">
-                                <Search className="w-3 h-3 text-blue-500 animate-pulse" />
+                                <Loader2 className="w-3 h-3 text-blue-500 animate-spin" />
                                 <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
-                                    ESTT-AI recherche des ressources...
+                                    ESTT-AI est en train d'écrire...
                                 </span>
                             </div>
                         </div>
@@ -822,6 +841,8 @@ export default function DirectMessagePage() {
                             disabled={loading || isGeneratingAiResponse}
                             textOnly={isEsttAiChat}
                             placeholder={isEsttAiChat ? "Envoyez un message a ESTT-AI..." : "Ecrivez votre message..."}
+                            selectedModel={selectedModel}
+                            onModelChange={setSelectedModel}
                         />
                     )}
                 </div>
