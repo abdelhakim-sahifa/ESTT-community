@@ -11,7 +11,7 @@ export default function ContributorsSection() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch('https://api.github.com/repos/abdelhakim-sahifa/ESTT-community/contributors')
+        fetch('https://api.github.com/repos/torchcoders/ESTT-community/contributors')
             .then((res) => {
                 if (!res.ok) throw new Error('Impossible de charger les contributeurs.');
                 return res.json();
@@ -116,7 +116,7 @@ export default function ContributorsSection() {
 
             {/* CTA Button */}
             <Link
-                href="https://github.com/abdelhakim-sahifa/ESTT-community"
+                href="https://github.com/torchcoders/ESTT-community"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-slate-900 text-white text-sm font-medium hover:bg-slate-700 transition-colors shadow-md"

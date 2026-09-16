@@ -6,7 +6,7 @@ Thank you for contributing to ESTT Community! This guide helps you understand ou
 
 1. **Fork & Clone**
    ```bash
-   git clone https://github.com/abdelhakim-sahifa/ESTT-community.git
+   git clone https://github.com/torchcoders/ESTT-community.git
    cd ESTT-community
    ```
 
@@ -87,7 +87,7 @@ git commit -m "docs: update setup instructions"
 
 ## Help & Questions
 
-- Open an [Issue](https://github.com/abdelhakim-sahifa/ESTT-community/issues)
+- Open an [Issue](https://github.com/torchcoders/ESTT-community/issues)
 - Check existing issues/discussions first
 - Use clear titles and descriptions
 

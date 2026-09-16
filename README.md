@@ -129,7 +129,7 @@ Organisation fonctionnelle dans `app/`:
 ### Lancement local
 
 ```bash
-git clone https://github.com/abdelhakim-sahifa/ESTT-community.git
+git clone https://github.com/torchcoders/ESTT-community.git
 cd ESTT-community
 npm install
 npm run dev

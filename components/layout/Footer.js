@@ -75,7 +75,7 @@ export default function Footer() {
                         </p>
 
                         <div className="flex items-center justify-center lg:justify-start gap-4 pt-2">
-                            <a href="https://github.com/abdelhakim-sahifa/ESTT-community/" target="_blank" rel="noopener noreferrer"
+                            <a href="https://github.com/torchcoders/ESTT-community/" target="_blank" rel="noopener noreferrer"
                                 className="p-2.5 bg-background border border-border rounded-xl text-muted-foreground hover:text-primary hover:border-primary/30 hover:shadow-sm transition-all shadow-sm">
                                 <Github className="w-5 h-5" />
                             </a>

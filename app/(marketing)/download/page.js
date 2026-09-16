@@ -11,7 +11,7 @@ import { Github, Smartphone, Apple, ExternalLink, Download, Sparkles, Shield, Za
 export default function DownloadPage() {
     const androidDownloadUrl = 'https://expo.dev/artifacts/eas/4QW4Fn5v85oLWxeTcoYeoi.apk';
     const webAppUrl = 'https://esttplus.vercel.app';
-    const githubRepo = 'https://github.com/abdelhakim-sahifa/esttplus';
+    const githubRepo = 'https://github.com/torchcoders/esttplus';
     const githubReleases = '#'; // Placeholder for now
 
     const screenshots = [

@@ -352,7 +352,7 @@ export default function GuidePage() {
                                 </p>
                             </div>
                             <Button asChild variant="outline" className="border-slate-700 bg-slate-800 text-white hover:bg-slate-700 gap-2 shrink-0">
-                                <a href="https://github.com/abdelhakim-sahifa/ESTT-community/" target="_blank" rel="noopener noreferrer">
+                                <a href="https://github.com/torchcoders/ESTT-community/" target="_blank" rel="noopener noreferrer">
                                     <Github className="h-4 w-4" />
                                     Consulter le Dépôt GitHub
                                 </a>

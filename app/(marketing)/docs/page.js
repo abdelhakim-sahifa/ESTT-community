@@ -77,7 +77,7 @@ export default function DocsPage() {
                         </Link>
                         <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
                             <Link href="/downloadAndroid" className="text-zinc-400 hover:text-zinc-50 transition-colors">Android Page</Link>
-                            <Link href="https://github.com/abdelhakim-sahifa/esttplus" target="_blank" className="text-zinc-400 hover:text-zinc-50 transition-colors">GitHub</Link>
+                            <Link href="https://github.com/torchcoders/esttplus" target="_blank" className="text-zinc-400 hover:text-zinc-50 transition-colors">GitHub</Link>
                         </nav>
                     </div>
                     <div className="flex items-center gap-2">
@@ -86,7 +86,7 @@ export default function DocsPage() {
                         </Button>
                         <div className="hidden md:flex gap-2">
                             <Button variant="outline" size="sm" className="h-8 border-zinc-800 bg-transparent hover:bg-zinc-900" asChild>
-                                <a href="https://github.com/abdelhakim-sahifa/esttplus/releases" target="_blank">
+                                <a href="https://github.com/torchcoders/esttplus/releases" target="_blank">
                                     Releases
                                 </a>
                             </Button>
@@ -246,7 +246,7 @@ export default function DocsPage() {
                                     EsttPlus is built by students, for students. The codebase is entirely open source and we welcome contributions to improve the ecosystem.
                                 </p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <a href="https://github.com/abdelhakim-sahifa/esttplus" target="_blank" className="flex items-center justify-between p-6 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-all group">
+                                    <a href="https://github.com/torchcoders/esttplus" target="_blank" className="flex items-center justify-between p-6 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-all group">
                                         <div className="flex items-center gap-4">
                                             <Github className="h-8 w-8 text-zinc-50" />
                                             <div>
@@ -256,7 +256,7 @@ export default function DocsPage() {
                                         </div>
                                         <ExternalLink className="h-4 w-4 text-zinc-700 group-hover:text-zinc-50 transition-colors" />
                                     </a>
-                                    <a href="https://github.com/abdelhakim-sahifa/esttplus/releases" target="_blank" className="flex items-center justify-between p-6 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-all group">
+                                    <a href="https://github.com/torchcoders/esttplus/releases" target="_blank" className="flex items-center justify-between p-6 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-all group">
                                         <div className="flex items-center gap-4">
                                             <Monitor className="h-8 w-8 text-zinc-50" />
                                             <div>
@@ -293,8 +293,8 @@ export default function DocsPage() {
             <footer className="border-t border-zinc-800 py-6 md:px-8 md:py-0">
                 <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
                     <p className="text-center text-sm leading-loose text-zinc-500 md:text-left">
-                        Built by the <a href="https://github.com/abdelhakim-sahifa" target="_blank" className="font-medium text-zinc-200 underline underline-offset-4">EsttPlus Community</a>.
-                        The source code is available on <a href="https://github.com/abdelhakim-sahifa/esttplus" target="_blank" className="font-medium text-zinc-200 underline underline-offset-4">GitHub</a>.
+                        Built by the <a href="https://github.com/torchcoders" target="_blank" className="font-medium text-zinc-200 underline underline-offset-4">EsttPlus Community</a>.
+                        The source code is available on <a href="https://github.com/torchcoders/esttplus" target="_blank" className="font-medium text-zinc-200 underline underline-offset-4">GitHub</a>.
                     </p>
                     <div className="flex items-center gap-4 text-zinc-500 text-xs font-medium">
                         <Link href="/privacy" className="hover:text-zinc-200">Privacy</Link>

@@ -72,7 +72,7 @@ export default function ClubsPage() {
                 <div className="container py-16 px-4 md:px-6">
                     <div className="max-w-3xl">
                         <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tight mb-4">
-                            Clubs Étudiants
+                            Clubs Etudiants
                         </h1>
                         <p className="text-lg text-muted-foreground mb-6">
                             Découvrez les clubs et associations de l'ESTT. Rejoignez une communauté passionnée et participez à des activités enrichissantes.

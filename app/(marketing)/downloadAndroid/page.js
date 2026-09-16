@@ -138,7 +138,7 @@ export default function DownloadAndroidPage() {
                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
                                     </button>
 
-                                    <a href="https://github.com/abdelhakim-sahifa/esttplus" target="_blank" className="flex items-center text-gray-500 hover:text-white transition-all duration-500 group">
+                                    <a href="https://github.com/torchcoders/esttplus" target="_blank" className="flex items-center text-gray-500 hover:text-white transition-all duration-500 group">
                                         <Github className="mr-4 w-10 h-10 group-hover:rotate-[15deg] group-hover:scale-110 transition-transform duration-500" />
                                         <div className="flex flex-col items-start leading-none">
                                             <span className="text-xl font-black uppercase tracking-widest border-b border-white/10 group-hover:border-white transition-all mb-1">OPEN SOURCE</span>
@@ -320,7 +320,7 @@ export default function DownloadAndroidPage() {
                                     </a>
 
                                     <div className="flex items-center gap-14">
-                                        <Link href="https://github.com/abdelhakim-sahifa/esttplus" target="_blank" className="flex flex-col items-center gap-4 group/link transition-all duration-500 hover:scale-110">
+                                        <Link href="https://github.com/torchcoders/esttplus" target="_blank" className="flex flex-col items-center gap-4 group/link transition-all duration-500 hover:scale-110">
                                             <div className="p-7 rounded-[2rem] bg-white/[0.05] border border-white/[0.1] group-hover/link:bg-white/[0.1] group-hover/link:border-blue-500/80 transition-all duration-500 group-hover/link:-translate-y-4 group-hover/link:shadow-2xl group-hover/link:shadow-blue-500/20">
                                                 <Github className="w-10 h-10" />
                                             </div>

@@ -10,7 +10,7 @@ export default function LatestReleaseBadge() {
     useEffect(() => {
         const fetchLatestRelease = async () => {
             try {
-                const response = await fetch('https://api.github.com/repos/abdelhakim-sahifa/ESTT-community/releases/latest');
+                const response = await fetch('https://api.github.com/repos/torchcoders/ESTT-community/releases/latest');
                 if (!response.ok) {
                     throw new Error('Failed to fetch latest release');
                 }
