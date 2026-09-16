@@ -42,6 +42,14 @@ export default function BrowsePage() {
     const [togglingFav, setTogglingFav] = useState(null);
 
     useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const fieldParam = params.get('field');
+        if (fieldParam && staticDb.fields.some(f => f.id === fieldParam)) {
+            setSelectedField(fieldParam);
+        }
+    }, []);
+
+    useEffect(() => {
         if (!db) return;
         if (selectedModule) {
             fetchResources();
