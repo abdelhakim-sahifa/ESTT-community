@@ -400,10 +400,10 @@ export default function ClubProfilePage() {
             {/* Main Content */}
             <section className="container py-12 px-4 md:px-6">
                 <Tabs defaultValue="activities" className="w-full">
-                    <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:max-w-md md:grid-cols-3 mb-8 no-scrollbar bg-muted p-1 rounded-xl">
-                        <TabsTrigger value="activities" className="whitespace-nowrap px-6 py-2">Actualités</TabsTrigger>
-                        <TabsTrigger value="structure" className="whitespace-nowrap px-6 py-2">Structure</TabsTrigger>
-                        <TabsTrigger value="members" className="whitespace-nowrap px-6 py-2">Membres</TabsTrigger>
+                    <TabsList className="flex w-full overflow-x-auto justify-start md:grid md:max-w-md md:grid-cols-3 mb-8 no-scrollbar bg-muted p-1 rounded-xl h-12">
+                        <TabsTrigger value="activities" className="whitespace-nowrap px-6 py-2.5 rounded-lg">Actualités</TabsTrigger>
+                        <TabsTrigger value="structure" className="whitespace-nowrap px-6 py-2.5 rounded-lg">Structure</TabsTrigger>
+                        <TabsTrigger value="members" className="whitespace-nowrap px-6 py-2.5 rounded-lg">Membres</TabsTrigger>
                         {userTickets.length > 0 && <TabsTrigger value="tickets" className="whitespace-nowrap px-6 py-2">Mes Tickets</TabsTrigger>}
                     </TabsList>
 

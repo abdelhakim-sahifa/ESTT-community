@@ -1,0 +1,428 @@
+
+> estt-community-nextjs@1.33.0 dev
+> next dev -H 0.0.0.0
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Network:      http://0.0.0.0:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+> [PWA] PWA support is disabled
+> [PWA] PWA support is disabled
+ ✓ Ready in 16.9s
+ ○ Compiling /api/estt-ai ...
+ ✓ Compiled /api/estt-ai in 2.8s (229 modules)
+🚀 [ESTT-AI] POST request received
+🚀 [ESTT-AI] POST request received
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 18581ms
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 19212ms
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 18595ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "programmation cours"
+(node:6184) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 26033ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 758ms
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 719ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "filères disponibles"
+📥 [ESTT-AI] Found 7 resources, context: 4007 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 11326ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "mathématiques cours"
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 14087ms
+ ○ Compiling /messages/[id] ...
+
+[1m[33mwarn[39m[22m - The class `duration-[1000ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;1000ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[1200ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;1200ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[1500ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;1500ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[2000ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;2000ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[3000ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;3000ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `duration-[800ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `duration-&lsqb;800ms&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `ease-[cubic-bezier(0.23,1,0.32,1)]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.23,1,0.32,1)&rsqb;` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `ease-[cubic-bezier(0.34,1.56,0.64,1)]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.34,1.56,0.64,1)&rsqb;` to silence this warning.
+ ✓ Compiled /messages/[id] in 28s (1780 modules)
+ ✓ Compiled in 285ms (753 modules)
+ GET /messages/estt-ai 200 in 28581ms
+ ✓ Compiled /api/estt-ai in 189ms (1119 modules)
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "algèbre linéaire cours résumé"
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 31557ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "architecture cours"
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 35878ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 1216ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 21560ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "réseaux cours"
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "mathématiques examen"
+📥 [ESTT-AI] Found 8 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 6114ms
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 19318ms
+ ✓ Compiled in 435ms (1872 modules)
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "architecture cours"
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 51843ms
+ ✓ Compiled in 407ms (1697 modules)
+ ✓ Compiled /api/estt-ai in 127ms (1119 modules)
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "architecture cours"
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 51718ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "réseaux cours"
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "TD"
+📥 [ESTT-AI] Found 8 resources, context: 4007 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 15194ms
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 34415ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 2935ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 1438ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 1187ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 676ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "cours"
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 29734ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "algebre lineaire cours resume"
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 48017ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "mathématiques cours"
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 30248ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 1, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+🧠 [ESTT-AI] Query rewrite: "mathématiques cours résumé"
+📥 [ESTT-AI] Found 10 resources, context: 4014 chars
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 22046ms
+🚀 [ESTT-AI] POST request received
+📋 [ESTT-AI] Model: openai/gpt-oss-120b, History: 0 messages (from 0 total), Groq key: true
+🤖 [ESTT-AI] Sending to Groq...
+🔍 [Groq] Calling model: openai/gpt-oss-120b, messages: 2, hasKey: true
+🔍 [Groq] Response status: 200
+🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
+✅ [ESTT-AI] Single-turn COMPLETE
+ POST /api/estt-ai 200 in 1888ms
+ ✓ Compiled in 1196ms (753 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1193ms (1686 modules)
+ GET /messages/estt-ai 404 in 1507ms
+ GET /_next/static/css/app/layout.css?v=1789590185132 404 in 85ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 84ms
+ GET /_next/static/chunks/main-app.js?v=1789590185132 404 in 83ms
+ GET /_next/static/chunks/app/layout.js 404 in 83ms
+ GET /_next/static/chunks/app/not-found.js 404 in 82ms
+ ⨯ Failed to generate static paths for /messages/[id]:
+Error: Cannot find module './vendor-chunks/mdast-util-to-markdown.js'
+Require stack:
+- C:\Users\PC\Desktop\ESTT-Community\.next\server\webpack-runtime.js
+- C:\Users\PC\Desktop\ESTT-Community\.next\server\app\(core)\messages\[id]\page.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\load-components.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\build\utils.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1500:15)
+    at C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require-hook.js:55:36
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1116:12)
+    at Module._load (node:internal/modules/cjs/loader:1285:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:153:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\.next\\server\\app\\(core)\\messages\\[id]\\page.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ]
+}
+ GET /messages/estt-ai 200 in 389ms
+ GET /_next/static/css/app/layout.css?v=1789590254050 404 in 144ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 143ms
+ GET /_next/static/chunks/main-app.js?v=1789590254050 404 in 144ms
+ GET /_next/static/chunks/app/(core)/messages/%5Bid%5D/page.js 404 in 143ms
+ GET /_next/static/css/app/(core)/messages/%5Bid%5D/page.css?v=1789590254050 404 in 142ms
+ GET /_next/static/chunks/app/layout.js 404 in 141ms
+ GET /_next/static/chunks/app/not-found.js 404 in 74ms
+ ⨯ Error: Cannot find module './vendor-chunks/mdast-util-to-markdown.js'
+Require stack:
+- C:\Users\PC\Desktop\ESTT-Community\.next\server\webpack-runtime.js
+- C:\Users\PC\Desktop\ESTT-Community\.next\server\app\(core)\messages\[id]\page.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\load-components.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\build\utils.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1500:15)
+    at C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require-hook.js:55:36
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1116:12)
+    at Module._load (node:internal/modules/cjs/loader:1285:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:153:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\.next\\server\\app\\(core)\\messages\\[id]\\page.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ],
+  page: '/messages/estt-ai'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2.1s (1913 modules)
+ GET /messages/estt-ai 500 in 3538ms

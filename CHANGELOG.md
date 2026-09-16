@@ -1,3 +1,29 @@
+# [1.35.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.34.1...v1.35.0) (2026-09-16)
+
+
+### Features
+
+* combined 6-banner grid layout ([6e0504c](https://github.com/abdelhakim-sahifa/ESTT-community/commit/6e0504c6d84d63d71e118a21e2f8c2c9ca2d6d42))
+* separate DUT and Bachelor banners with filiere filter on browse ([a28768b](https://github.com/abdelhakim-sahifa/ESTT-community/commit/a28768bfe32c2c6553f9fb37e26d57b4f6bc711a))
+
+## [1.34.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.34.0...v1.34.1) (2026-09-16)
+
+
+### Bug Fixes
+
+* v1.34.1 - tab bar styling on club page ([4c3dd19](https://github.com/abdelhakim-sahifa/ESTT-community/commit/4c3dd19d270bad4edccd466afa4ddeee1e152c99))
+* v1.34.1 - tab bar styling on club page ([9e3bc37](https://github.com/abdelhakim-sahifa/ESTT-community/commit/9e3bc378d1c1471464b0bc13b03d2b50a4d3bee0))
+
+# [1.34.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.33.2...v1.34.0) (2026-09-15)
+
+
+### Features
+
+* v1.34.0 - Change the LLM from Gemini to GPT-OSS 120B ([1dcf3e3](https://github.com/abdelhakim-sahifa/ESTT-community/commit/1dcf3e310586d1e3568a3d04c1dc1273d130b0c9))
+* v1.34.0 - Change the LLM from Gemini to GPT-OSS 120B ([3159f24](https://github.com/abdelhakim-sahifa/ESTT-community/commit/3159f24f2172b1c855274fd95ef311576c0e1e13))
+
+## [1.33.2](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.33.1...v1.33.2) (2026-09-15)
+
 ## [1.33.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.33.0...v1.33.1) (2026-09-15)
 
 # [1.33.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.32.2...v1.33.0) (2026-09-13)
