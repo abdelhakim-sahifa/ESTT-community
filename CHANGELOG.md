@@ -1,3 +1,11 @@
+## [1.34.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.34.0...v1.34.1) (2026-09-16)
+
+
+### Bug Fixes
+
+* v1.34.1 - tab bar styling on club page ([4c3dd19](https://github.com/abdelhakim-sahifa/ESTT-community/commit/4c3dd19d270bad4edccd466afa4ddeee1e152c99))
+* v1.34.1 - tab bar styling on club page ([9e3bc37](https://github.com/abdelhakim-sahifa/ESTT-community/commit/9e3bc378d1c1471464b0bc13b03d2b50a4d3bee0))
+
 # [1.34.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.33.2...v1.34.0) (2026-09-15)
 
 
