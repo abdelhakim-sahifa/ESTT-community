@@ -342,3 +342,87 @@
 🔍 [Groq] Response keys: id, object, created, model, choices, usage, usage_breakdown, system_fingerprint, x_groq, service_tier
 ✅ [ESTT-AI] Single-turn COMPLETE
  POST /api/estt-ai 200 in 1888ms
+ ✓ Compiled in 1196ms (753 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1193ms (1686 modules)
+ GET /messages/estt-ai 404 in 1507ms
+ GET /_next/static/css/app/layout.css?v=1789590185132 404 in 85ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 84ms
+ GET /_next/static/chunks/main-app.js?v=1789590185132 404 in 83ms
+ GET /_next/static/chunks/app/layout.js 404 in 83ms
+ GET /_next/static/chunks/app/not-found.js 404 in 82ms
+ ⨯ Failed to generate static paths for /messages/[id]:
+Error: Cannot find module './vendor-chunks/mdast-util-to-markdown.js'
+Require stack:
+- C:\Users\PC\Desktop\ESTT-Community\.next\server\webpack-runtime.js
+- C:\Users\PC\Desktop\ESTT-Community\.next\server\app\(core)\messages\[id]\page.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\load-components.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\build\utils.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1500:15)
+    at C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require-hook.js:55:36
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1116:12)
+    at Module._load (node:internal/modules/cjs/loader:1285:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:153:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\.next\\server\\app\\(core)\\messages\\[id]\\page.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ]
+}
+ GET /messages/estt-ai 200 in 389ms
+ GET /_next/static/css/app/layout.css?v=1789590254050 404 in 144ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 143ms
+ GET /_next/static/chunks/main-app.js?v=1789590254050 404 in 144ms
+ GET /_next/static/chunks/app/(core)/messages/%5Bid%5D/page.js 404 in 143ms
+ GET /_next/static/css/app/(core)/messages/%5Bid%5D/page.css?v=1789590254050 404 in 142ms
+ GET /_next/static/chunks/app/layout.js 404 in 141ms
+ GET /_next/static/chunks/app/not-found.js 404 in 74ms
+ ⨯ Error: Cannot find module './vendor-chunks/mdast-util-to-markdown.js'
+Require stack:
+- C:\Users\PC\Desktop\ESTT-Community\.next\server\webpack-runtime.js
+- C:\Users\PC\Desktop\ESTT-Community\.next\server\app\(core)\messages\[id]\page.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\load-components.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\build\utils.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1500:15)
+    at C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require-hook.js:55:36
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1116:12)
+    at Module._load (node:internal/modules/cjs/loader:1285:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (C:\Users\PC\Desktop\ESTT-Community\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:153:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\.next\\server\\app\\(core)\\messages\\[id]\\page.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\PC\\Desktop\\ESTT-Community\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ],
+  page: '/messages/estt-ai'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2.1s (1913 modules)
+ GET /messages/estt-ai 500 in 3538ms
