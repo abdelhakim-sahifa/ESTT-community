@@ -1,3 +1,11 @@
+# [1.35.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.34.1...v1.35.0) (2026-09-16)
+
+
+### Features
+
+* combined 6-banner grid layout ([6e0504c](https://github.com/abdelhakim-sahifa/ESTT-community/commit/6e0504c6d84d63d71e118a21e2f8c2c9ca2d6d42))
+* separate DUT and Bachelor banners with filiere filter on browse ([a28768b](https://github.com/abdelhakim-sahifa/ESTT-community/commit/a28768bfe32c2c6553f9fb37e26d57b4f6bc711a))
+
 ## [1.34.1](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.34.0...v1.34.1) (2026-09-16)
 
 
