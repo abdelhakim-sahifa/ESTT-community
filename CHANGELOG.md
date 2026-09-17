@@ -1,3 +1,11 @@
+## [1.35.2](https://github.com/torchcoders/ESTT-community/compare/v1.35.1...v1.35.2) (2026-09-17)
+
+
+### Bug Fixes
+
+* v1.35.2 - Fix Contribute page slowness ([290913c](https://github.com/torchcoders/ESTT-community/commit/290913ceb9bddd52725deb913422cc6b0208c810))
+* v1.35.2 - Fix Contribute page slowness ([13624c9](https://github.com/torchcoders/ESTT-community/commit/13624c9c157410af4f612ae486c2b5934d3424c6))
+
 ## [1.35.1](https://github.com/torchcoders/ESTT-community/compare/v1.35.0...v1.35.1) (2026-09-17)
 
 # [1.35.0](https://github.com/abdelhakim-sahifa/ESTT-community/compare/v1.34.1...v1.35.0) (2026-09-16)
