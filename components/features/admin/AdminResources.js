@@ -823,9 +823,9 @@ export default function AdminResources({ resources }) {
                                 </TableCell>
                                 <TableCell>
                                     {res.unverified ? (
-                                        <Badge variant="destructive" className="text-[8px] font-black uppercase tracking-tighter">En attente</Badge>
+                                        <Badge variant="destructive" className="text-[10px] font-bold uppercase whitespace-nowrap">En attente</Badge>
                                     ) : (
-                                        <Badge variant="outline" className="text-[8px] font-black uppercase tracking-tighter text-green-600 border-green-100">Vérifié</Badge>
+                                        <Badge className="text-[10px] font-bold uppercase whitespace-nowrap border-transparent bg-emerald-600 text-white hover:bg-emerald-600">Vérifié</Badge>
                                     )}
                                 </TableCell>
                                 <TableCell className="text-right">
