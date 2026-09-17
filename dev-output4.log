@@ -59,3 +59,160 @@
  ✓ Compiled in 517ms (2450 modules)
  GET /clubs/-OhPxD3gb3t5ApR1Xwwt 200 in 388ms
  ✓ Compiled in 478ms (2450 modules)
+ ✓ Compiled in 926ms (2450 modules)
+ ✓ Compiled in 705ms (1255 modules)
+ ✓ Compiled in 418ms (1255 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 819ms (2437 modules)
+ GET /assets/images/idbi.jpg 404 in 1128ms
+ ⨯ The requested resource isn't a valid image for /assets/images/idbi.jpg received null
+ GET /assets/images/imn.jpg 404 in 1119ms
+ ⨯ The requested resource isn't a valid image for /assets/images/imn.jpg received null
+ GET / 200 in 126ms
+ ○ Compiling /browse ...
+ ✓ Compiled /browse in 2.5s (2495 modules)
+ ✓ Compiled in 578ms (2509 modules)
+ ✓ Compiled in 918ms (2509 modules)
+ ✓ Compiled in 636ms (2509 modules)
+ ✓ Compiled in 562ms (2509 modules)
+ ✓ Compiled in 755ms (2509 modules)
+ ✓ Compiled in 844ms (2509 modules)
+ ✓ Compiled in 638ms (2509 modules)
+ ✓ Compiled in 479ms (2509 modules)
+ ✓ Compiled in 476ms (2509 modules)
+ ✓ Compiled in 433ms (2509 modules)
+ GET / 200 in 197ms
+ ✓ Compiled in 275ms (2509 modules)
+ ✓ Compiled in 440ms (2509 modules)
+ ✓ Compiled in 280ms (2509 modules)
+ ✓ Compiled in 433ms (2509 modules)
+ ✓ Compiled in 593ms (2509 modules)
+ GET / 200 in 263ms
+ ✓ Compiled in 420ms (2509 modules)
+ GET / 200 in 183ms
+ ⚠ Cross origin request detected from 192.168.0.110 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ✓ Compiled in 450ms (2509 modules)
+ ○ Compiling /clubs ...
+ ✓ Compiled /clubs in 1841ms (1233 modules)
+ ✓ Compiled in 1574ms (2516 modules)
+ ✓ Compiled in 202ms (1283 modules)
+ ✓ Compiled in 242ms (1283 modules)
+ ✓ Compiled in 196ms (1283 modules)
+ ✓ Compiled in 172ms (1283 modules)
+ ○ Compiling /contribute ...
+ ✓ Compiled /contribute in 1270ms (2551 modules)
+ GET /contribute 200 in 1461ms
+ ✓ Compiled /api/contribute-notify in 365ms (1309 modules)
+ ✓ Compiled /api/send-email in 321ms (1354 modules)
+
+📨 [POST /api/send-email] Incoming email request received:
+   - Recipient: thevcercle@gmail.com
+   - Subject: Action requise : Nouvelle ressource soumise (Drive)
+
+📧 [EmailService] Initiating Email Sending:
+   - To: thevcercle@gmail.com
+   - Subject: "Action requise : Nouvelle ressource soumise (Drive)"
+   - Active Provider: GMAIL
+   - Failover Enabled: true
+🚀 [EmailService] Connecting to Gmail SMTP (User: estt.community@gmail.com)...
+✅ [EmailService] Legacy Gmail SMTP Delivered Successfully! MessageId: <4a595c83-7ae4-2bcf-f43d-32c69782f2cb@gmail.com>
+✅ [POST /api/send-email] Successfully processed. Provider: gmail_legacy, Message ID: <4a595c83-7ae4-2bcf-f43d-32c69782f2cb@gmail.com>
+ POST /api/send-email 200 in 3647ms
+ ✓ Compiled /api/slack/notify in 135ms (1356 modules)
+Slack webhook URL for channel "admin" is not defined
+ POST /api/slack/notify 500 in 157ms
+ POST /api/contribute-notify 200 in 7412ms
+ ○ Compiling /api/upload-drive ...
+ ✓ Compiled /api/upload-drive in 17.4s (2009 modules)
+ POST /api/upload-drive 200 in 43995ms
+ ○ Compiling /api/contribute-notify ...
+ ✓ Compiled /api/contribute-notify in 915ms (3328 modules)
+ ✓ Compiled /api/send-email in 161ms (2082 modules)
+
+📨 [POST /api/send-email] Incoming email request received:
+   - Recipient: anas.basraoui@etu.uae.ac.ma
+   - Subject: Contribution reçue
+
+📧 [EmailService] Initiating Email Sending:
+   - To: anas.basraoui@etu.uae.ac.ma
+   - Subject: "Contribution reçue"
+   - Active Provider: GMAIL
+   - Failover Enabled: true
+🚀 [EmailService] Connecting to Gmail SMTP (User: estt.community@gmail.com)...
+✅ [EmailService] Legacy Gmail SMTP Delivered Successfully! MessageId: <bca0e005-4885-f8c9-0469-e6736bdfc649@gmail.com>
+✅ [POST /api/send-email] Successfully processed. Provider: gmail_legacy, Message ID: <bca0e005-4885-f8c9-0469-e6736bdfc649@gmail.com>
+ POST /api/send-email 200 in 8638ms
+
+📨 [POST /api/send-email] Incoming email request received:
+   - Recipient: thevcercle@gmail.com
+   - Subject: Action requise : Nouvelle ressource soumise (Drive)
+
+📧 [EmailService] Initiating Email Sending:
+   - To: thevcercle@gmail.com
+   - Subject: "Action requise : Nouvelle ressource soumise (Drive)"
+   - Active Provider: GMAIL
+   - Failover Enabled: true
+🚀 [EmailService] Connecting to Gmail SMTP (User: estt.community@gmail.com)...
+✅ [EmailService] Legacy Gmail SMTP Delivered Successfully! MessageId: <9d3d333e-2b18-a672-4b35-d450ca891abb@gmail.com>
+✅ [POST /api/send-email] Successfully processed. Provider: gmail_legacy, Message ID: <9d3d333e-2b18-a672-4b35-d450ca891abb@gmail.com>
+ POST /api/send-email 200 in 1113ms
+ ✓ Compiled /api/slack/notify in 446ms (2064 modules)
+Slack webhook URL for channel "admin" is not defined
+ POST /api/slack/notify 500 in 503ms
+ POST /api/contribute-notify 200 in 11821ms
+ ○ Compiling /messages ...
+ ✓ Compiled /messages in 1151ms (2463 modules)
+ ○ Compiling /profile ...
+ ✓ Compiled /profile in 990ms (3757 modules)
+ ○ Compiling /profile/[id] ...
+ ✓ Compiled /profile/[id] in 1871ms (3827 modules)
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 13.8s (5509 modules)
+ ✓ Compiled in 1720ms (4185 modules)
+ ✓ Compiled in 455ms (4185 modules)
+ ○ Compiling /api/upload-drive ...
+ ✓ Compiled /api/upload-drive in 1927ms (3300 modules)
+ POST /api/upload-drive 200 in 14015ms
+ ○ Compiling /api/contribute-notify ...
+ ✓ Compiled /api/contribute-notify in 581ms (3329 modules)
+ ○ Compiling /api/send-email ...
+ ✓ Compiled /api/send-email in 652ms (3368 modules)
+
+📨 [POST /api/send-email] Incoming email request received:
+   - Recipient: anas.basraoui@etu.uae.ac.ma
+   - Subject: Contribution reçue
+
+📧 [EmailService] Initiating Email Sending:
+   - To: anas.basraoui@etu.uae.ac.ma
+   - Subject: "Contribution reçue"
+   - Active Provider: GMAIL
+   - Failover Enabled: true
+🚀 [EmailService] Connecting to Gmail SMTP (User: estt.community@gmail.com)...
+✅ [EmailService] Legacy Gmail SMTP Delivered Successfully! MessageId: <21c58d53-b16b-411f-35db-d0e58961ec60@gmail.com>
+✅ [POST /api/send-email] Successfully processed. Provider: gmail_legacy, Message ID: <21c58d53-b16b-411f-35db-d0e58961ec60@gmail.com>
+ POST /api/send-email 200 in 2176ms
+
+📨 [POST /api/send-email] Incoming email request received:
+   - Recipient: thevcercle@gmail.com
+   - Subject: Action requise : Nouvelle ressource soumise (Drive)
+
+📧 [EmailService] Initiating Email Sending:
+   - To: thevcercle@gmail.com
+   - Subject: "Action requise : Nouvelle ressource soumise (Drive)"
+   - Active Provider: GMAIL
+   - Failover Enabled: true
+🚀 [EmailService] Connecting to Gmail SMTP (User: estt.community@gmail.com)...
+✅ [EmailService] Legacy Gmail SMTP Delivered Successfully! MessageId: <f590cf65-9fb5-fd01-9825-f2ac324017fd@gmail.com>
+✅ [POST /api/send-email] Successfully processed. Provider: gmail_legacy, Message ID: <f590cf65-9fb5-fd01-9825-f2ac324017fd@gmail.com>
+ POST /api/send-email 200 in 1738ms
+ ○ Compiling /api/slack/notify ...
+ ✓ Compiled /api/slack/notify in 600ms (3370 modules)
+Slack webhook URL for channel "admin" is not defined
+ POST /api/slack/notify 500 in 672ms
+ POST /api/contribute-notify 200 in 6715ms
+ ○ Compiling /profile ...
+ ✓ Compiled /profile in 1194ms (3374 modules)
+ GET /admin 200 in 287ms
+ ✓ Compiled in 1255ms (4185 modules)
+ ✓ Compiled in 818ms (4185 modules)

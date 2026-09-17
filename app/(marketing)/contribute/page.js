@@ -83,7 +83,7 @@ export default function ContributePage() {
         };
 
         fetchProfessors();
-    }, [db]);
+    }, []);
 
 
     // Returns the MIME/extension accept string for the <input> based on the selected type
@@ -261,108 +261,47 @@ export default function ContributePage() {
 
             await set(newResourceRef, updatedContributionData);
 
-            for (const link of finalFields) {
-                if (!link.fieldId || !link.moduleId) continue;
-
-                const moduleMappingRef = ref(db, `module_resources/${link.moduleId}/${resourceId}`);
-                await set(moduleMappingRef, true);
-
-                const keywordRef = ref(db, `metadata/keywords/${link.fieldId}/${resourceId}`);
-                await set(keywordRef, {
-                    title: formData.title,
-                    resourceId: resourceId
-                });
-            }
+            const writePromises = finalFields
+                .filter(link => link.fieldId && link.moduleId)
+                .flatMap(link => [
+                    set(ref(db, `module_resources/${link.moduleId}/${resourceId}`), true),
+                    set(ref(db, `metadata/keywords/${link.fieldId}/${resourceId}`), {
+                        title: formData.title,
+                        resourceId: resourceId
+                    })
+                ]);
 
             if (user) {
-                const userActivityRef = ref(db, `users/${user.uid}/contributions/${resourceId}`);
-                await set(userActivityRef, {
-                    module: shortModuleName,
-                    title: formData.title,
-                    timestamp: timestamp,
-                    unverified: true,
-                    storageType: formData.type === 'html' ? 'supabase' : 'google-drive'
-                });
+                writePromises.push(
+                    set(ref(db, `users/${user.uid}/contributions/${resourceId}`), {
+                        module: shortModuleName,
+                        title: formData.title,
+                        timestamp: timestamp,
+                        unverified: true,
+                        storageType: formData.type === 'html' ? 'supabase' : 'google-drive'
+                    })
+                );
             }
 
+            await Promise.all(writePromises);
+
             setMessage('Contribution envoyée avec succès ! Elle sera vérifiée sous peu.');
-            setTimeout(() => router.push('/thanks'), 2000);
+            router.push('/thanks');
 
-            // Background Emails
-            (async () => {
-                if (user && user.email) {
-                    try {
-                        const { resourceReceivedEmail } = await import('@/lib/email-templates');
-                        const html = resourceReceivedEmail(user.displayName || 'Étudiant', contributionData.title);
-
-                        await fetch('/api/send-email', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                to: user.email,
-                                subject: 'Contribution reçue',
-                                html: html
-                            })
-                        });
-                    } catch (err) {
-                        console.error("Failed to send resource received email:", err);
-                    }
-                }
-
-                try {
-                    const settingsSnap = await get(ref(db, 'adminSettings/notifications'));
-                    let sendAdminEmail = true;
-                    let adminEmail = 'thevcercle@gmail.com';
-
-                    if (settingsSnap.exists()) {
-                        const settings = settingsSnap.val();
-                        sendAdminEmail = settings.enabled !== false;
-                        if (settings.email) adminEmail = settings.email;
-                    }
-
-                    if (sendAdminEmail) {
-                        const { adminNotificationEmail } = await import('@/lib/email-templates');
-                        const adminHtml = adminNotificationEmail(
-                            'Admin',
-                            'Nouvelle Ressource (Drive)',
-                            `Une nouvelle ressource "<strong>${contributionData.title}</strong>" a été soumise pour le module ${contributionData.module} par ${contributionData.authorName}.`,
-                            'https://estt.ma/admin'
-                        );
-
-                        await fetch('/api/send-email', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                to: adminEmail,
-                                subject: 'Action requise : Nouvelle ressource soumise (Drive)',
-                                html: adminHtml
-                            })
-                        });
-                    }
-                } catch (adminErr) {
-                    console.error("Failed to notify admin:", adminErr);
-                }
-
-                try {
-                    const { notifySlack, SLACK_CHANNELS } = await import('@/lib/slack');
-                    await notifySlack(SLACK_CHANNELS.ADMIN, {
-                        title: '📚 Nouvelle Contribution',
-                        message: `Une nouvelle ressource a été soumise pour le module *${contributionData.fullModuleName || contributionData.module}*.`,
-                        user: {
-                            name: contributionData.authorName,
-                            email: user?.email || 'N/A',
-                            uid: user?.uid || 'N/A'
-                        },
-                        resource: {
-                            title: contributionData.title,
-                            type: contributionData.type || 'resource',
-                            id: resourceId
-                        }
-                    });
-                } catch (slackErr) {
-                    console.error('Failed to notify Slack about contribution:', slackErr);
-                }
-            })();
+            // Fire-and-forget: server-side emails + Slack
+            fetch('/api/contribute-notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userName: user?.displayName || 'Étudiant',
+                    userEmail: user?.email || null,
+                    userUid: user?.uid || null,
+                    title: contributionData.title,
+                    moduleName: contributionData.module,
+                    fullModuleName: contributionData.fullModuleName,
+                    authorName: contributionData.authorName
+                })
+            }).catch(() => {});
 
         } catch (error) {
             console.error('Error submitting contribution:', error);
