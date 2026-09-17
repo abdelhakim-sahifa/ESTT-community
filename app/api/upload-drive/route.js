@@ -1,15 +1,34 @@
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
-import { db, ref, get } from '@/lib/firebase';
+import { db, ref, get, set } from '@/lib/firebase';
+
+export const maxDuration = 60;
 
 const CLIENT_ID = "210065801527-qo2vl3cqamubuai4vnn3oldv0rsnm4a3.apps.googleusercontent.com";
 const CLIENT_SECRET = "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";
 const REDIRECT_URI = "http://localhost:3000/api/drive/callback";
 
-/**
- * Helper to find or create a folder in Google Drive
- */
-async function findOrCreateFolder(drive, name, parentId) {
+const CACHE_PATH = 'adminSettings/driveFolders';
+
+async function getCachedFolderId(cacheKey) {
+    try {
+        const snap = await get(ref(db, `${CACHE_PATH}/${cacheKey}`));
+        if (snap.exists()) return snap.val();
+    } catch (e) {}
+    return null;
+}
+
+async function setCachedFolderId(cacheKey, folderId) {
+    try {
+        await set(ref(db, `${CACHE_PATH}/${cacheKey}`), folderId);
+    } catch (e) {}
+}
+
+async function findOrCreateFolder(drive, name, parentId, cacheKey) {
+    const fullCacheKey = cacheKey || `${parentId || 'root'}/${name}`;
+    const cached = await getCachedFolderId(fullCacheKey);
+    if (cached) return cached;
+
     const q = `name = '${name.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false${parentId ? ` and '${parentId}' in parents` : ''}`;
 
     const response = await drive.files.list({
@@ -19,7 +38,9 @@ async function findOrCreateFolder(drive, name, parentId) {
     });
 
     if (response.data.files && response.data.files.length > 0) {
-        return response.data.files[0].id;
+        const id = response.data.files[0].id;
+        await setCachedFolderId(fullCacheKey, id);
+        return id;
     }
 
     const fileMetadata = {
@@ -33,7 +54,9 @@ async function findOrCreateFolder(drive, name, parentId) {
         fields: 'id',
     });
 
-    return folder.data.id;
+    const id = folder.data.id;
+    await setCachedFolderId(fullCacheKey, id);
+    return id;
 }
 
 export async function POST(req) {
@@ -41,7 +64,6 @@ export async function POST(req) {
         const formData = await req.formData();
         const file = formData.get('file');
 
-        // Optional folder hierarchy metadata
         const fieldName = formData.get('fieldName');
         const semester = formData.get('semester');
         const moduleName = formData.get('moduleName');
@@ -52,7 +74,6 @@ export async function POST(req) {
             return NextResponse.json({ error: 'No file provided' }, { status: 400 });
         }
 
-        // 1. Get Refresh Token from Firebase (Fallback to ENV)
         let refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN;
 
         if (!refreshToken) {
@@ -69,42 +90,37 @@ export async function POST(req) {
             }, { status: 500 });
         }
 
-        // 2. Initialize OAuth2 Client
         const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
         oauth2Client.setCredentials({ refresh_token: refreshToken });
 
         const drive = google.drive({ version: 'v3', auth: oauth2Client });
 
-        // 3. Handle Folder Hierarchy
         let targetFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
 
         if (isBugReport) {
             try {
-                targetFolderId = await findOrCreateFolder(drive, 'Bug Reports', targetFolderId);
+                targetFolderId = await findOrCreateFolder(drive, 'Bug Reports', targetFolderId, `bug-reports`);
             } catch (folderErr) {
                 console.warn('Bug Reports folder creation error:', folderErr);
             }
         } else if (fieldName && semester && moduleName) {
             try {
-                // Root -> Field -> Semester -> Module -> Professor/Autres
-                const fieldFolderId = await findOrCreateFolder(drive, fieldName, targetFolderId);
-                const semesterFolderId = await findOrCreateFolder(drive, semester, fieldFolderId);
-                const moduleFolderId = await findOrCreateFolder(drive, moduleName, semesterFolderId);
-
                 const profFolder = (!professorName || professorName === 'non-specifie') ? 'Autres' : professorName;
-                targetFolderId = await findOrCreateFolder(drive, profFolder, moduleFolderId);
+
+                const fieldFolderId = await findOrCreateFolder(drive, fieldName, targetFolderId, `field/${fieldName}`);
+                const semesterFolderId = await findOrCreateFolder(drive, semester, fieldFolderId, `field/${fieldName}/${semester}`);
+                const moduleFolderId = await findOrCreateFolder(drive, moduleName, semesterFolderId, `field/${fieldName}/${semester}/${moduleName}`);
+                targetFolderId = await findOrCreateFolder(drive, profFolder, moduleFolderId, `field/${fieldName}/${semester}/${moduleName}/${profFolder}`);
             } catch (folderErr) {
                 console.warn('Folder creation error, falling back to root:', folderErr);
             }
         }
 
-        // 4. Convert file
         const buffer = Buffer.from(await file.arrayBuffer());
         const stream = require('stream');
         const bufferStream = new stream.PassThrough();
         bufferStream.end(buffer);
 
-        // 5. Upload
         const originalName = file.name;
         const extension = originalName.includes('.') ? originalName.split('.').pop() : '';
         const displayName = formData.get('displayTitle');
@@ -128,7 +144,6 @@ export async function POST(req) {
 
         const uploadedFile = driveResponse.data;
 
-        // 6. Set Permission to public
         try {
             await drive.permissions.create({
                 fileId: uploadedFile.id,

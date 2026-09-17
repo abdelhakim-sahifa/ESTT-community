@@ -216,3 +216,81 @@ Slack webhook URL for channel "admin" is not defined
  GET /admin 200 in 287ms
  ✓ Compiled in 1255ms (4185 modules)
  ✓ Compiled in 818ms (4185 modules)
+ ✓ Compiled in 2.1s (2131 modules)
+ ✓ Compiled in 264ms (2131 modules)
+ ✓ Compiled in 248ms (2131 modules)
+ ○ Compiling /api/upload-drive ...
+ ✓ Compiled /api/upload-drive in 1461ms (3300 modules)
+ POST /api/upload-drive 400 in 4716ms
+ GET /contribute 200 in 139ms
+ GET /admin 200 in 107ms
+ POST /api/upload-drive 200 in 35148ms
+ ○ Compiling /api/contribute-notify ...
+ ✓ Compiled /api/contribute-notify in 696ms (3329 modules)
+ ○ Compiling /api/send-email ...
+ ✓ Compiled /api/send-email in 615ms (3368 modules)
+
+📨 [POST /api/send-email] Incoming email request received:
+   - Recipient: anas.basraoui@etu.uae.ac.ma
+   - Subject: Contribution reçue
+
+📧 [EmailService] Initiating Email Sending:
+   - To: anas.basraoui@etu.uae.ac.ma
+   - Subject: "Contribution reçue"
+   - Active Provider: GMAIL
+   - Failover Enabled: true
+🚀 [EmailService] Connecting to Gmail SMTP (User: estt.community@gmail.com)...
+✅ [EmailService] Legacy Gmail SMTP Delivered Successfully! MessageId: <dd3eaefe-b103-06ae-d7a6-089e09b215cb@gmail.com>
+✅ [POST /api/send-email] Successfully processed. Provider: gmail_legacy, Message ID: <dd3eaefe-b103-06ae-d7a6-089e09b215cb@gmail.com>
+ POST /api/send-email 200 in 2678ms
+
+📨 [POST /api/send-email] Incoming email request received:
+   - Recipient: thevcercle@gmail.com
+   - Subject: Action requise : Nouvelle ressource soumise (Drive)
+
+📧 [EmailService] Initiating Email Sending:
+   - To: thevcercle@gmail.com
+   - Subject: "Action requise : Nouvelle ressource soumise (Drive)"
+   - Active Provider: GMAIL
+   - Failover Enabled: true
+🚀 [EmailService] Connecting to Gmail SMTP (User: estt.community@gmail.com)...
+✅ [EmailService] Legacy Gmail SMTP Delivered Successfully! MessageId: <a44500f4-4ef7-df86-3898-f88f5f2d75d5@gmail.com>
+✅ [POST /api/send-email] Successfully processed. Provider: gmail_legacy, Message ID: <a44500f4-4ef7-df86-3898-f88f5f2d75d5@gmail.com>
+ POST /api/send-email 200 in 1764ms
+ ○ Compiling /api/slack/notify ...
+ ✓ Compiled /api/slack/notify in 540ms (3370 modules)
+Slack webhook URL for channel "admin" is not defined
+ POST /api/slack/notify 500 in 657ms
+ POST /api/contribute-notify 200 in 7216ms
+ POST /api/upload-drive 200 in 26880ms
+
+📨 [POST /api/send-email] Incoming email request received:
+   - Recipient: anas.basraoui@etu.uae.ac.ma
+   - Subject: Contribution reçue
+
+📧 [EmailService] Initiating Email Sending:
+   - To: anas.basraoui@etu.uae.ac.ma
+   - Subject: "Contribution reçue"
+   - Active Provider: GMAIL
+   - Failover Enabled: true
+🚀 [EmailService] Connecting to Gmail SMTP (User: estt.community@gmail.com)...
+✅ [EmailService] Legacy Gmail SMTP Delivered Successfully! MessageId: <7a1a46ba-a35d-0297-e94c-50217abdf528@gmail.com>
+✅ [POST /api/send-email] Successfully processed. Provider: gmail_legacy, Message ID: <7a1a46ba-a35d-0297-e94c-50217abdf528@gmail.com>
+ POST /api/send-email 200 in 1122ms
+
+📨 [POST /api/send-email] Incoming email request received:
+   - Recipient: thevcercle@gmail.com
+   - Subject: Action requise : Nouvelle ressource soumise (Drive)
+
+📧 [EmailService] Initiating Email Sending:
+   - To: thevcercle@gmail.com
+   - Subject: "Action requise : Nouvelle ressource soumise (Drive)"
+   - Active Provider: GMAIL
+   - Failover Enabled: true
+🚀 [EmailService] Connecting to Gmail SMTP (User: estt.community@gmail.com)...
+✅ [EmailService] Legacy Gmail SMTP Delivered Successfully! MessageId: <3210e00c-3c93-7c4c-a71c-53cfe9d6365f@gmail.com>
+✅ [POST /api/send-email] Successfully processed. Provider: gmail_legacy, Message ID: <3210e00c-3c93-7c4c-a71c-53cfe9d6365f@gmail.com>
+ POST /api/send-email 200 in 1147ms
+Slack webhook URL for channel "admin" is not defined
+ POST /api/slack/notify 500 in 9ms
+ POST /api/contribute-notify 200 in 2449ms
